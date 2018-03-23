@@ -1,0 +1,48 @@
+{
+    "name": "phly/keep-a-changelog-tagger",
+    "description": "Tag and release packages on GitHub using Keep A Changelog",
+    "license": "BSD-2-Clause",
+    "keywords": [
+        "keepachangelog"
+    ],
+    "support": {
+        "issues": "https://github.com/phly/keep-a-changelog-tagger/issues",
+        "source": "https://github.com/phly/keep-a-changelog-tagger",
+        "rss": "https://github.com/phly/keep-a-changelog-tagger/releases.atom"
+    },
+    "require": {
+        "php": "^7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0",
+        "zendframework/zend-coding-standard": "~1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Phly\\KeepAChangelog\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Phly\\KeepAChangelogTest\\": "test/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+    }
+}
