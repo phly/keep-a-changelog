@@ -69,6 +69,9 @@ EOH;
             $version
         );
 
+        $formatter = new ChangelogFormatter();
+        $changelog = $formatter->format($changelog);
+
         if (! $this->tagWithChangelog($package, $version, $changelog)) {
             $output->writeln('<error>Error creating tag!</error>');
             $output->writeln('Check the output logs for details');

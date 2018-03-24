@@ -25,7 +25,7 @@ class ChangelogParser
 
         $regex .= "\n\n(?P<changelog>.*?)(?=\n\#\# )";
         if (! preg_match('/' . $regex . '/s', $changelog, $matches)) {
-            throw new Exception\InvalidChangelogFormatException($regex);
+            throw new Exception\InvalidChangelogFormatException();
         }
 
         return $matches['changelog'];
