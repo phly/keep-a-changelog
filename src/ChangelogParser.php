@@ -5,3 +5,29 @@
  * @license   https://github.com/phly/keep-a-changelog-tagger/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
+namespace Phly\KeepAChangelog;
+
+class ChangelogParser
+{
+    public function findChangelogForVersion(string $changelog, string $version)
+    {
+        $regex = preg_quote('## ' . $version);
+        if (! preg_match('/^' . $regex . '/m', $changelog)) {
+            throw new Exception\ChangelogNotFoundException();
+        }
+
+        $regex .= ' - \d{4}-\d{2}-\d{2}';
+        if (! preg_match('/^' . $regex . '/m', $changelog)) {
+            throw new Exception\ChangelogMissingDateException();
+        }
+
+        $regex .= "\n\n(?P<changelog>.*?)(?=\n\#\# )";
+        if (! preg_match('/' . $regex . '/s', $changelog, $matches)) {
+            throw new Exception\InvalidChangelogFormatException($regex);
+        }
+
+        return $matches['changelog'];
+    }
+}
