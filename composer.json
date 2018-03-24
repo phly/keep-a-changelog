@@ -1,6 +1,6 @@
 {
-    "name": "phly/keep-a-changelog-tagger",
-    "description": "Tag and release packages on GitHub using Keep A Changelog",
+    "name": "phly/keep-a-changelog",
+    "description": "Tag and release packages on GitHub using Keep A Changelog; add new version entries to your changelog.",
     "license": "BSD-2-Clause",
     "keywords": [
         "keepachangelog"
@@ -11,7 +11,9 @@
         "rss": "https://github.com/phly/keep-a-changelog-tagger/releases.atom"
     },
     "require": {
-        "php": "^7.1"
+        "php": "^7.1",
+        "ocramius/package-versions": "^1.3",
+        "symfony/console": "^4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.0",

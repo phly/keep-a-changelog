@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @see       https://github.com/phly/keep-a-changelog-tagger for the canonical source repository
+ * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
+ * @license   https://github.com/phly/keep-a-changelog-tagger/blob/master/LICENSE.md New BSD License
+ */
+
+declare(strict_types=1);
+
+namespace Phly\KeepAChangelog;
+
+use PackageVersions\Versions;
+use Symfony\Component\Console\Application;
+
+// Setup/verify autoloading
+$cwd = getcwd();
+if (is_dir($cwd . '/vendor')) {
+    chdir($cwd);
+    require 'vendor/autoload.php';
+} elseif (file_exists($a = __DIR__ . '/../../../autoload.php')) {
+    require $a;
+} elseif (file_exists($a = __DIR__ . '/../vendor/autoload.php')) {
+    require $a;
+} elseif (file_exists($a = __DIR__ . '/../autoload.php')) {
+    require $a;
+} else {
+    fwrite(STDERR, 'Cannot locate autoloader; please run "composer install"' . PHP_EOL);
+    exit(1);
+}
+
+
+$version = strstr(Versions::getVersion('phly/keep-a-changelog'), '@', true);
+
+$application = new Application('keep-a-changelog', $version);
+$application->addCommands([
+    new TaggerCommand('tag'),
+]);
+$application->run();
