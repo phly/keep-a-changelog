@@ -25,7 +25,7 @@ Parses the CHANGELOG.md file and extracts the entry matching <version>; if no
 matching version is found, or the entry does not have a date set, the tool will
 raise an error.
 
-Once extracted, the command runs "git tag -s <version>" using the following
+Once extracted, the command runs "git tag -s <tagname>" using the following
 message format:
 
     <package> <version>
@@ -49,6 +49,12 @@ EOH;
             InputOption::VALUE_REQUIRED,
             'Package name; defaults to name of working directory'
         );
+        $this->addOption(
+            'tagname',
+            'a',
+            InputOption::VALUE_REQUIRED,
+            'Alternate git tag name to use when tagging; defaults to <version>'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
@@ -57,6 +63,7 @@ EOH;
 
         $version = $input->getArgument('version');
         $package = $input->getOption('package') ?: basename($cwd);
+        $tagName = $input->getOption('tagname') ?: $version;
 
         $changelogFile = sprintf('%s/CHANGELOG.md', $cwd);
         if (! is_readable($changelogFile)) {
@@ -72,7 +79,7 @@ EOH;
         $formatter = new ChangelogFormatter();
         $changelog = $formatter->format($changelog);
 
-        if (! $this->tagWithChangelog($package, $version, $changelog)) {
+        if (! $this->tagWithChangelog($tagName, $package, $version, $changelog)) {
             $output->writeln('<error>Error creating tag!</error>');
             $output->writeln('Check the output logs for details');
             return 1;
@@ -89,12 +96,12 @@ EOH;
         return 0;
     }
 
-    private function tagWithChangelog(string $package, string $version, string $changelog) : bool
+    private function tagWithChangelog(string $tagName, string $package, string $version, string $changelog) : bool
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'KAC');
         file_put_contents($tempFile, sprintf("%s %s\n\n%s", $package, $version, $changelog));
 
-        $command = sprintf('git tag -s -F %s %s', $tempFile, $version);
+        $command = sprintf('git tag -s -F %s %s', $tempFile, $tagName);
         system($command, $return);
 
         unlink($tempFile);
