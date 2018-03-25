@@ -36,5 +36,9 @@ $application = new Application('keep-a-changelog', $version);
 $application->addCommands([
     new ReleaseCommand('release'),
     new TaggerCommand('tag'),
+    new BumpBugfixCommand('bump'),
+    new BumpBugfixCommand('bump:bugfix'),
+    new BumpMinorCommand('bump:minor'),
+    new BumpMajorCommand('bump:major'),
 ]);
 $application->run();
