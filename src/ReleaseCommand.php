@@ -77,6 +77,12 @@ EOH;
             InputOption::VALUE_REQUIRED,
             'Alternate git tag name matching the release to push; defaults to <version>'
         );
+        $this->addOption(
+            'name',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Name of release to create on GitHub; defaults to "<package> <version>"'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
@@ -123,13 +129,19 @@ EOH;
             return 1;
         }
 
+        $releaseName = $this->createReleaseName($input, $package, $version);
         $output->writeln(sprintf(
-            '<info>Creating release %s %s</info>',
-            $package,
-            $version
+            '<info>Creating release "%s"</info>',
+            $releaseName
         ));
 
-        $release = $this->createRelease($package, $version, $tagName, $changelog, $token);
+        $release = $this->createRelease(
+            $package,
+            $releaseName,
+            $tagName,
+            $changelog,
+            $token
+        );
         if (! $release) {
             $output->writeln('<error>Error creating release!</error>');
             $output->writeln('Check the output logs for details');
@@ -187,9 +199,24 @@ EOH;
         chmod($tokenFile, 0600);
     }
 
-    private function createRelease(string $package, string $version, string $tagName, string $changelog, string $token) : ?string
+    private function createReleaseName(InputInterface $input, string $package, string $version) : string
     {
+        $name = $input->getOption('name');
+        if ($name) {
+            return $name;
+        }
         [$org, $repo] = explode('/', $package, 2);
+        return sprintf('%s %s', $repo, $version);
+    }
+
+    private function createRelease(
+        string $package,
+        string $releaseName,
+        string $tagName,
+        string $changelog,
+        string $token
+    ) : ?string {
+        [$org, $repo] = explode('/', $package);
         $client = new GitHubClient();
         $client->authenticate($token, GitHubClient::AUTH_HTTP_TOKEN);
         $release = $client->api('repo')->releases()->create(
@@ -197,7 +224,7 @@ EOH;
             $repo,
             [
                 'tag_name'   => $tagName,
-                'name'       => sprintf('%s %s', $repo, $version),
+                'name'       => $releaseName,
                 'body'       => $changelog,
                 'draft'      => false,
                 'prerelease' => false,
