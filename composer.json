@@ -39,6 +39,9 @@
             "dev-master": "1.0-dev"
         }
     },
+    "bin": [
+        "bin/keep-a-changelog"
+    ],
     "scripts": {
         "check": [
             "@cs-check",
