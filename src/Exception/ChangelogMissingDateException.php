@@ -13,4 +13,11 @@ use RuntimeException;
 
 class ChangelogMissingDateException extends RuntimeException
 {
+    public static function forVersion(string $version) : self
+    {
+        return new self(sprintf(
+            'Changelog entry found for version %s, but it does not have a date set for it yet.',
+            $version
+        ));
+    }
 }

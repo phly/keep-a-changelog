@@ -13,4 +13,11 @@ use RuntimeException;
 
 class ChangelogNotFoundException extends RuntimeException
 {
+    public static function forVersion(string $version) : self
+    {
+        return new self(sprintf(
+            'Unable to find changelog entry matching version %s',
+            $version
+        ));
+    }
 }

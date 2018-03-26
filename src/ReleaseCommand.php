@@ -102,7 +102,7 @@ EOH;
 
         $changelogFile = sprintf('%s/CHANGELOG.md', $cwd);
         if (! is_readable($changelogFile)) {
-            throw new Exception\ChangelogFileNotFoundException();
+            throw Exception\ChangelogFileNotFoundException::at($changelogFile);
         }
 
         $output->writeln('<info>Preparing changelog for release</info>');
@@ -239,7 +239,7 @@ EOH;
         $command = sprintf('git show %s', $version);
         exec($command, $output, $return);
         if (0 !== $return) {
-            throw new Exception\MissingTagException();
+            throw Exception\MissingTagException::forVersion($version);
         }
     }
 

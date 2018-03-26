@@ -31,7 +31,7 @@ class ChangelogBump
         $changelog = file_get_contents($this->changelogFile);
 
         if (! preg_match(self::CHANGELOG_LINE_REGEX, $changelog, $matches)) {
-            throw new Exception\ChangelogEntriesNotFoundException();
+            throw Exception\ChangelogEntriesNotFoundException::forFile($this->changelogFile);
         }
 
         return $matches['version'];

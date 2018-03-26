@@ -15,17 +15,17 @@ class ChangelogParser
     {
         $regex = preg_quote('## ' . $version);
         if (! preg_match('/^' . $regex . '/m', $changelog)) {
-            throw new Exception\ChangelogNotFoundException();
+            throw Exception\ChangelogNotFoundException::forVersion($version);
         }
 
         $regex .= ' - \d{4}-\d{2}-\d{2}';
         if (! preg_match('/^' . $regex . '/m', $changelog)) {
-            throw new Exception\ChangelogMissingDateException();
+            throw Exception\ChangelogMissingDateException::forVersion($version);
         }
 
         $regex .= "\n\n(?P<changelog>.*?)(?=\n\#\# )";
         if (! preg_match('/' . $regex . '/s', $changelog, $matches)) {
-            throw new Exception\InvalidChangelogFormatException();
+            throw Exception\InvalidChangelogFormatException::forVersion($version);
         }
 
         return $matches['changelog'];

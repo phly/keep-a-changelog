@@ -13,4 +13,11 @@ use RuntimeException;
 
 class ChangelogEntriesNotFoundException extends RuntimeException
 {
+    public static function forFile(string $changelogFile) : self
+    {
+        return new self(sprintf(
+            'Unable to find any changelog entries in file %s; is it formatted correctly?',
+            $changelogFile
+        ));
+    }
 }

@@ -13,4 +13,11 @@ use RuntimeException;
 
 class InvalidChangelogFormatException extends RuntimeException
 {
+    public static function forVersion(string $version) : self
+    {
+        return new self(sprintf(
+            'Changelog entry found for version %s, but it appears to be formatted incorrectly.',
+            $version
+        ));
+    }
 }

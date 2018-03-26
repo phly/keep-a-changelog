@@ -48,7 +48,7 @@ EOH;
     public function __construct(string $type, string $name = null)
     {
         if (! in_array($type, array_keys($this->bumpMethods), true)) {
-            throw new Exception\InvalidBumpTypeException();
+            throw Exception\InvalidBumpTypeException::forType($type);
         }
 
         $this->type = $type;
@@ -75,7 +75,7 @@ EOH;
 
         $changelogFile = sprintf('%s/CHANGELOG.md', $cwd);
         if (! is_readable($changelogFile)) {
-            throw new Exception\ChangelogFileNotFoundException();
+            throw Exception\ChangelogFileNotFoundException::at($changelogFile);
         }
 
         $method = $this->bumpMethods[$this->type];

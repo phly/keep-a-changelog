@@ -67,7 +67,7 @@ EOH;
 
         $changelogFile = sprintf('%s/CHANGELOG.md', $cwd);
         if (! is_readable($changelogFile)) {
-            throw new Exception\ChangelogFileNotFoundException();
+            throw Exception\ChangelogFileNotFoundException::at($changelogFile);
         }
 
         $parser = new ChangelogParser();
