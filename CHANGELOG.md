@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.0.2 - TBD
+## 1.0.2 - 2018-03-27
 
 ### Added
 
@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- Fixes an autoloading issue when running globally.
 
 ## 1.0.1 - 2018-03-27
 
