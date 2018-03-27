@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
 
 // Setup/verify autoloading
@@ -30,9 +29,7 @@ if (is_dir($cwd . '/vendor')) {
 }
 
 
-$version = strstr(Versions::getVersion('phly/keep-a-changelog'), '@', true);
-
-$application = new Application('keep-a-changelog', $version);
+$application = new Application('keep-a-changelog', '1.0.1dev1');
 $application->addCommands([
     new ReleaseCommand('release'),
     new TaggerCommand('tag'),
