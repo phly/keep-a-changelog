@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.0.1 - TBD
+## 1.0.1 - 2018-03-27
 
 ### Added
 
@@ -18,11 +18,12 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- Removes dependency on ocramius/package-versions.
 
 ### Fixed
 
-- Nothing.
+- Fixes error that occurs when running globally, due to a dependency that only
+  works when running in a local package.
 
 ## 1.0.0 - 2018-03-27
 
