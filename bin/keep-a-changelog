@@ -29,7 +29,7 @@ if (is_dir($cwd . '/vendor')) {
 }
 
 
-$application = new Application('keep-a-changelog', '1.0.1dev1');
+$application = new Application('keep-a-changelog', '1.0.1');
 $application->addCommands([
     new ReleaseCommand('release'),
     new TaggerCommand('tag'),
