@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/phly/keep-a-changelog/badge.svg?branch=master)](https://coveralls.io/github/phly/keep-a-changelog?branch=master)
 
 This project provides tooling support for working with [Keep A
-Changelog](https://keep-a-changelog.org).
+Changelog](https://keepachangelog.com).
 
 ## Installation
 
