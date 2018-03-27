@@ -25,7 +25,7 @@ if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
 }
 
 
-$application = new Application('keep-a-changelog', '1.0.2');
+$application = new Application('keep-a-changelog', '1.0.3dev1');
 $application->addCommands([
     new ReleaseCommand('release'),
     new TaggerCommand('tag'),
