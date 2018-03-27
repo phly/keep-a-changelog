@@ -13,11 +13,7 @@ namespace Phly\KeepAChangelog;
 use Symfony\Component\Console\Application;
 
 // Setup/verify autoloading
-$cwd = getcwd();
-if (is_dir($cwd . '/vendor')) {
-    chdir($cwd);
-    require 'vendor/autoload.php';
-} elseif (file_exists($a = __DIR__ . '/../../../autoload.php')) {
+if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
     require $a;
 } elseif (file_exists($a = __DIR__ . '/../vendor/autoload.php')) {
     require $a;
