@@ -14,6 +14,16 @@ Run the following to install this library:
 $ composer require phly/keep-a-changelog
 ```
 
+Alternately, install globally, for use with any repository:
+
+```php
+$ composer global require phly/keep-a-changelog
+```
+
+If you install globally, ensure you add `$HOME/.composer/bin` to your `$PATH`
+environment variable. Once setup this way, you can call `keep-a-changelog`
+instead of `./vendor/bin/keep-a-changelog`.
+
 ## Usage
 
 You may get a list of commands by running:
