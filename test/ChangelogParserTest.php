@@ -20,7 +20,7 @@ class ChangelogParserTest extends TestCase
         $this->changelog = file_get_contents(__DIR__ . '/_files/CHANGELOG.md');
         $this->parser = new ChangelogParser();
     }
-    
+
     public function testRaisesExceptionIfNoMatchingEntryForVersionFound()
     {
         $this->expectException(Exception\ChangelogNotFoundException::class);
