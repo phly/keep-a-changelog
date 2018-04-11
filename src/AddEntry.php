@@ -114,12 +114,18 @@ class AddEntry
     }
 
     /**
-     * Ensures that every new line is indented at least two characters.
+     * Formats the entry for use in the changelog.
+     *
+     * Prepends the string '- ', and appends a newline if none is present.
      *
      * If $withExtraLine is true, an extra newline is appended.
+     *
+     * If the string spans multiple lines, it ensures all additional lines are
+     * indented two characters.
      */
     private function formatEntry(string $entry, bool $withExtraLine = false) : string
     {
+        $entry = sprintf('- %s', $entry);
         $entry = preg_replace("/\n(?!\s{2}|$)/s", "\n  ", $entry);
         if ("\n" !== $entry[-1]) {
             // All entries need to end with a new line.
