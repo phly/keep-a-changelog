@@ -6,7 +6,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- Adds a new command, "ready", which will set the date for the first
+  un-dated changelog entry in the CHANGELOG.md. You may also pass the --date or -d option
+  to specify an alternate date, or to use a date formate other than YYYY-MM-DD.
 
 ### Changed
 
