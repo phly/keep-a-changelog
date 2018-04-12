@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.1.2 - 2018-04-12
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Sets the release version for the tool, bumping it to 1.1.2 from 1.0.3dev1.
+
 ## 1.1.1 - 2018-04-12
 
 ### Added
