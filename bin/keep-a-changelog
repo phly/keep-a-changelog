@@ -25,7 +25,7 @@ if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
 }
 
 
-$application = new Application('keep-a-changelog', '1.0.3dev1');
+$application = new Application('keep-a-changelog', '1.1.2');
 $application->addCommands([
     new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump'),
     new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump:bugfix'),
