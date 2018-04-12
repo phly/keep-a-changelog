@@ -80,7 +80,12 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $entry = $this->prepareEntry($input, $output);
+        $output->writeln(sprintf(
+            '<info>Preparing entry fro %s section</info>',
+            ucwords($this->type)
+        ));
+
+        $entry = $this->prepareEntry($input);
         $changelog = sprintf('%s/CHANGELOG.md', realpath(getcwd()));
 
         $output->writeln(sprintf(
@@ -101,7 +106,7 @@ EOH;
     /**
      * @throws Exception\EmptyEntryException
      */
-    private function prepareEntry(InputInterface $input, OutputInterface $output) : string
+    private function prepareEntry(InputInterface $input) : string
     {
         $entry = $input->getArgument('entry');
         if (empty($entry)) {
@@ -110,7 +115,7 @@ EOH;
 
         $pr = $input->getOption('pr');
         if (! $pr) {
-            return sprintf('- %s', $entry);
+            return $entry;
         }
 
         if (! preg_match('/^[1-9]\d*$/', (string) $pr)) {
@@ -118,7 +123,7 @@ EOH;
         }
 
         return sprintf(
-            '- [#%d](%s) %s',
+            '[#%d](%s) %s',
             (int) $pr,
             $this->preparePullRequestLink((int) $pr, $input->getOption('package')),
             $entry
@@ -128,6 +133,11 @@ EOH;
     private function preparePullRequestLink(int $pr, ?string $package) : string
     {
         $package = $package ?: (new ComposerPackage())->getName(realpath(getcwd()));
+
+        if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*/[a-z0-9]+[a-z0-9_-]*$#i', $package)) {
+            throw Exception\InvalidPackageNameException::forPackage($package);
+        }
+
         return sprintf(
             'https://github.com/%s/pull/%d',
             $package,
