@@ -2,11 +2,19 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.0.3 - TBD
+## 1.1.0 - 2018-04-12
 
 ### Added
 
-- Nothing.
+- Adds the command "entry:fixed", for adding an entry to the Fixed section of the current changelog.
+
+- Adds the command "entry:removed", for adding an entry to the Removed section of the current changelog.
+
+- Adds the command "entry:deprecated", for adding an entry to the Deprecated section of the current changelog.
+
+- Adds the command "entry:changed", for adding an entry to the Changed section of the current changelog.
+
+- Adds the command "entry:added", for adding an entry to the Added section of the current changelog.
 
 ### Changed
 

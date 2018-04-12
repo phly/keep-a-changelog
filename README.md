@@ -50,6 +50,21 @@ Currently supported commands include:
 - `bump:major` will prepend a new changelog entry for a new major
   release, based on the latest release found in the `CHANGELOG.md` file.
 
+- `entry:added` will add a new changelog entry to the Added section of the
+  current changelog within the `CHANGELOG.md` file.
+
+- `entry:changed` will add a new changelog entry to the Changed section of the
+  current changelog within the `CHANGELOG.md` file.
+
+- `entry:deprecated` will add a new changelog entry to the Deprecated section of
+  the current changelog within the `CHANGELOG.md` file.
+
+- `entry:removed` will add a new changelog entry to the Removed section of the
+  current changelog within the `CHANGELOG.md` file.
+
+- `entry:fixed` will add a new changelog entry to the Fixed section of the
+  current changelog within the `CHANGELOG.md` file.
+
 For a list of required parameters and all options for a command, run:
 
 ```bash
