@@ -34,6 +34,8 @@ $ ./vendor/bin/keep-a-changelog
 
 Currently supported commands include:
 
+- `ready` will set the planned release date for the most recent changelog entry.
+
 - `tag` allows tagging a release based on the latest version discovered in the
   `CHANGELOG.md` file. The tag will contain the changelog entry for that version
   within the commit message.

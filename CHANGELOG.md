@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.2.0 - TBD
+
+### Added
+
+- Adds a new command, "edit", which will open the most recent changelog entry
+  in an editor. By default, it uses `$EDITOR`, unless an alternate editor
+  is provided via the `--editor` option. It will edit the file `CHANGELOG.md`
+  unless an alternate file is provided via the `--file` option.
+
+- Adds a new command, "ready", which will set the date for the first
+  un-dated changelog entry in the CHANGELOG.md. You may also pass the --date or -d option
+  to specify an alternate date, or to use a date formate other than YYYY-MM-DD.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 1.1.3 - TBD
 
 ### Added
