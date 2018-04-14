@@ -31,6 +31,7 @@ $application->addCommands([
     new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump:bugfix'),
     new BumpCommand(BumpCommand::BUMP_MINOR, 'bump:minor'),
     new BumpCommand(BumpCommand::BUMP_MAJOR, 'bump:major'),
+    new EditCommand('edit'),
     new EntryCommand('entry:added'),
     new EntryCommand('entry:changed'),
     new EntryCommand('entry:deprecated'),
