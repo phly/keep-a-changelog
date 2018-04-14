@@ -67,6 +67,9 @@ Currently supported commands include:
 - `entry:fixed` will add a new changelog entry to the Fixed section of the
   current changelog within the `CHANGELOG.md` file.
 
+- `edit` will open the most recent changelog section in the system editor
+  to allow editing the full entry at once.
+
 For a list of required parameters and all options for a command, run:
 
 ```bash
