@@ -128,7 +128,7 @@ class Edit
      */
     public function spawnEditor(OutputInterface $output, string $editor, string $filename) : int
     {
-        $descriptorspec = array( STDIN, STDOUT, STDERR );
+        $descriptorspec = [STDIN, STDOUT, STDERR];
         $command = sprintf('%s %s', $editor, escapeshellarg($filename));
 
         $output->writeln(sprintf('<info>Executing "%s"</info>', $command));

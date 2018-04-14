@@ -135,7 +135,7 @@ EOH;
 EOH;
         $tempFile = tempnam(sys_get_temp_dir(), 'CAK');
         file_put_contents($tempFile, $expectedContents);
-        
+
         $edit = new Edit();
         $updateChangelogEntry = $this->reflectMethod($edit, 'updateChangelogEntry');
         $updateChangelogEntry->invoke($edit, $this->tempFile, $tempFile, 4, 22);
