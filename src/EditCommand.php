@@ -58,7 +58,7 @@ EOH;
         }
 
         $output->writeln(sprintf(
-            '<success>Edited most recent changelog in %s</success>',
+            '<info>Edited most recent changelog in %s</info>',
             $changelogFile
         ));
 
