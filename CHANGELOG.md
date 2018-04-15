@@ -22,6 +22,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- Fixes a problem with the edit command successful message template, switching from
+  `<success>` (which does not exist) to `<info>`.
+
 - [#10](https://github.com/phly/keep-a-changelog/pull/10) adds a dependency on ocramius/package-versions in order to ensure that the
   script version is auto-updated for each tag.
 
