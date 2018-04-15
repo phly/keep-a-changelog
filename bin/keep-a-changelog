@@ -39,6 +39,7 @@ $application->addCommands([
     new EntryCommand('entry:deprecated'),
     new EntryCommand('entry:removed'),
     new EntryCommand('entry:fixed'),
+    new NewChangelogCommand('new'),
     new ReadyCommand('ready'),
     new ReleaseCommand('release'),
     new TaggerCommand('tag'),

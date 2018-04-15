@@ -6,7 +6,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#11](https://github.com/phly/keep-a-changelog/pull/11) Adds a new command, "new", for creating a new changelog file. The file
+  will be created in CHANGELOG.md in the current directory unless a --file
+  option is provided. The initial version will be 0.1.0 unless an --initial-version
+  option is provided.
 
 ### Changed
 
