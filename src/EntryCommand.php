@@ -17,6 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EntryCommand extends Command
 {
+    use GetChangelogFileTrait;
+
     private const DESC_TEMPLATE = 'Create a new changelog entry for the latest changelog in the "%s" section';
 
     private const HELP_TEMPLATE = <<< 'EOH'
@@ -81,12 +83,12 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $output->writeln(sprintf(
-            '<info>Preparing entry fro %s section</info>',
+            '<info>Preparing entry for %s section</info>',
             ucwords($this->type)
         ));
 
         $entry = $this->prepareEntry($input);
-        $changelog = sprintf('%s/CHANGELOG.md', realpath(getcwd()));
+        $changelog = $this->getChangelogFile($input);
 
         $output->writeln(sprintf(
             '<info>Writing "%s" entry to %s</info>',

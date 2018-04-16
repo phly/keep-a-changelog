@@ -21,6 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class BumpCommand extends Command
 {
+    use GetChangelogFileTrait;
+
     public const BUMP_BUGFIX = 'bugfix';
     public const BUMP_MAJOR = 'major';
     public const BUMP_MINOR = 'minor';
@@ -71,9 +73,7 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $cwd = realpath(getcwd());
-
-        $changelogFile = sprintf('%s/CHANGELOG.md', $cwd);
+        $changelogFile = $this->getChangelogFile($input);
         if (! is_readable($changelogFile)) {
             throw Exception\ChangelogFileNotFoundException::at($changelogFile);
         }

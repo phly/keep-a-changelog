@@ -18,6 +18,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class TaggerCommand extends Command
 {
+    use GetChangelogFileTrait;
+
     private const HELP = <<< 'EOH'
 Create a new git tag for the current repository, using the relevant changelog entry.
 
@@ -65,7 +67,7 @@ EOH;
         $package = $input->getOption('package') ?: basename($cwd);
         $tagName = $input->getOption('tagname') ?: $version;
 
-        $changelogFile = sprintf('%s/CHANGELOG.md', $cwd);
+        $changelogFile = $this->getChangelogFile($input);
         if (! is_readable($changelogFile)) {
             throw Exception\ChangelogFileNotFoundException::at($changelogFile);
         }

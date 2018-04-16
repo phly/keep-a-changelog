@@ -16,6 +16,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EditCommand extends Command
 {
+    use GetChangelogFileTrait;
+
     private const DESCRIPTION = 'Edit the latest changelog entry using the system editor.';
 
     private const HELP = <<< 'EOH'
@@ -36,18 +38,12 @@ EOH;
             InputOption::VALUE_REQUIRED,
             'Alternate editor command to use to edit the changelog.'
         );
-        $this->addOption(
-            'file',
-            '-f',
-            InputOption::VALUE_REQUIRED,
-            'Alternate changelog file to edit.'
-        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $editor = $input->getOption('editor') ?: null;
-        $changelogFile = $input->getOption('file') ?: realpath(getcwd()) . '/CHANGELOG.md';
+        $changelogFile = $this->getChangelogFile($input);
 
         if (! (new Edit())($output, $changelogFile, $editor)) {
             $output->writeln(sprintf(

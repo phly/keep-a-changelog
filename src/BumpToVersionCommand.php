@@ -19,6 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class BumpToVersionCommand extends Command
 {
+    use GetChangelogFileTrait;
+
     private const DESCRIPTION = 'Create a new changelog entry for the specified release version.';
 
     private const HELP = <<< 'EOH'
@@ -39,9 +41,7 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $cwd = realpath(getcwd());
-
-        $changelogFile = sprintf('%s/CHANGELOG.md', $cwd);
+        $changelogFile = $this->getChangelogFile($input);
         if (! is_readable($changelogFile)) {
             throw Exception\ChangelogFileNotFoundException::at($changelogFile);
         }

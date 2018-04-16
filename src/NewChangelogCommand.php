@@ -16,6 +16,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class NewChangelogCommand extends Command
 {
+    use GetChangelogFileTrait;
+
     private const DESCRIPTION = 'Create a new changelog file.';
 
     private const HELP = <<< 'EOH'
@@ -29,12 +31,6 @@ EOH;
         $this->setDescription(self::DESCRIPTION);
         $this->setHelp(self::HELP);
         $this->addOption(
-            'file',
-            '-f',
-            InputOption::VALUE_REQUIRED,
-            'Changelog file to create; if not provided, defaults to CHANGELOG.md.'
-        );
-        $this->addOption(
             'initial-version',
             '-i',
             InputOption::VALUE_REQUIRED,
@@ -44,7 +40,7 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $file = $input->getOption('file') ?: realpath(getcwd()) . '/CHANGELOG.md';
+        $file = $this->getChangelogFile($input);
         $version = $input->getOption('initial-version') ?: '0.1.0';
 
         (new NewChangelog())($file, $version);
