@@ -16,6 +16,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ReadyCommand extends Command
 {
+    use GetChangelogFileTrait;
+
     private const DESCRIPTION = 'In the latest changelog entry, mark the entry ready by setting its release date.';
 
     private const HELP = <<< 'EOH'
@@ -46,7 +48,7 @@ EOH;
             $date
         ));
 
-        $changelogFile = sprintf('%s/CHANGELOG.md', realpath(getcwd()));
+        $changelogFile = $this->getChangelogFile($input);
 
         (new SetDate())($changelogFile, $date);
 

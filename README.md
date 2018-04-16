@@ -32,6 +32,10 @@ You may get a list of commands by running:
 $ ./vendor/bin/keep-a-changelog
 ```
 
+All options allow specifying the option `--file` (or its alias `-f`) to indicate
+an alternate changelog file to create or manipulate; if not present,
+`CHANGELOG.md` in the current directory is assumed.
+
 Currently supported commands include:
 
 - `ready` will set the planned release date for the most recent changelog entry.
