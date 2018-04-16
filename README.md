@@ -52,6 +52,9 @@ Currently supported commands include:
 - `bump:major` will prepend a new changelog entry for a new major
   release, based on the latest release found in the `CHANGELOG.md` file.
 
+- `bump:to-version` will prepend a new changelog entry, using the version
+  specified on the command line.
+
 - `entry:added` will add a new changelog entry to the Added section of the
   current changelog within the `CHANGELOG.md` file.
 
