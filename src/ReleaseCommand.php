@@ -20,6 +20,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ReleaseCommand extends Command
 {
+    use GetChangelogFileTrait;
+
     private const HELP = <<< 'EOH'
 Create a github release using the changelog entry for the specified version.
 
@@ -100,7 +102,7 @@ EOH;
             return 1;
         }
 
-        $changelogFile = sprintf('%s/CHANGELOG.md', $cwd);
+        $changelogFile = $this->getChangelogFile($input);
         if (! is_readable($changelogFile)) {
             throw Exception\ChangelogFileNotFoundException::at($changelogFile);
         }

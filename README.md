@@ -32,6 +32,10 @@ You may get a list of commands by running:
 $ ./vendor/bin/keep-a-changelog
 ```
 
+All options allow specifying the option `--file` (or its alias `-f`) to indicate
+an alternate changelog file to create or manipulate; if not present,
+`CHANGELOG.md` in the current directory is assumed.
+
 Currently supported commands include:
 
 - `ready` will set the planned release date for the most recent changelog entry.
@@ -51,6 +55,9 @@ Currently supported commands include:
 
 - `bump:major` will prepend a new changelog entry for a new major
   release, based on the latest release found in the `CHANGELOG.md` file.
+
+- `bump:to-version` will prepend a new changelog entry, using the version
+  specified on the command line.
 
 - `entry:added` will add a new changelog entry to the Added section of the
   current changelog within the `CHANGELOG.md` file.

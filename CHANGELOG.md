@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.3.0 - TBD
+
+### Added
+
+- [#14](https://github.com/phly/keep-a-changelog/pull/14) adds a new global option, `--file` (or `-f`), to allow specifying
+  an alternate changelog file to create or modify.
+
+- [#12](https://github.com/phly/keep-a-changelog/pull/12) adds a new command, "bump:to-version". This command will add a new changelog
+  entry for the version specified on the command line at the top of the
+  changelog file.
+
+- [#11](https://github.com/phly/keep-a-changelog/pull/11) Adds a new command, "new", for creating a new changelog file. The file
+  will be created in CHANGELOG.md in the current directory unless a --file
+  option is provided. The initial version will be 0.1.0 unless an --initial-version
+  option is provided.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 1.2.1 - 2018-04-15
 
 ### Added

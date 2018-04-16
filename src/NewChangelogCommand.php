@@ -14,16 +14,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ReadyCommand extends Command
+class NewChangelogCommand extends Command
 {
     use GetChangelogFileTrait;
 
-    private const DESCRIPTION = 'In the latest changelog entry, mark the entry ready by setting its release date.';
+    private const DESCRIPTION = 'Create a new changelog file.';
 
     private const HELP = <<< 'EOH'
-In the latest changelog entry, mark the entry ready by setting its release date.
-
-If no --date is specified, the current date in YYYY-MM-DD format will be used.
+Create a new changelog file. If no --file is provided, the assumption is
+CHANGELOG.md in the current directory. If no --initial-version is
+provided, the assumption is 0.1.0.
 EOH;
 
     protected function configure() : void
@@ -31,26 +31,25 @@ EOH;
         $this->setDescription(self::DESCRIPTION);
         $this->setHelp(self::HELP);
         $this->addOption(
-            'date',
-            '-d',
+            'initial-version',
+            '-i',
             InputOption::VALUE_REQUIRED,
-            'Specific date string to use; use this if the date is other than today,'
-            . ' or if you wish to use a different date format.'
+            'Initial version to provide in new changelog file; defaults to 0.1.0.'
         );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $date = $input->getOption('date') ?: date('Y-m-d');
+        $file = $this->getChangelogFile($input);
+        $version = $input->getOption('initial-version') ?: '0.1.0';
+
+        (new NewChangelog())($file, $version);
 
         $output->writeln(sprintf(
-            '<info>Setting release date of most recent changelog to "%s"</info>',
-            $date
+            '<info>Created new changelog in file "%s" using initial version "%s".</info>',
+            $file,
+            $version
         ));
-
-        $changelogFile = $this->getChangelogFile($input);
-
-        (new SetDate())($changelogFile, $date);
 
         return 0;
     }

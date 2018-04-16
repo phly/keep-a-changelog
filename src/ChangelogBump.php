@@ -15,6 +15,34 @@ class ChangelogBump
     private const CHANGELOG_LINE_REGEX = '/^\#\# (?<version>\d+\.\d+\.\d+(?:(?:alpha|beta|rc|dev|a|b)\d+)?) - (?:TBD|\d{4}-\d{2}-\d{2})$/m';
     // @codingStandardsIgnoreEnd
 
+    private const TEMPLATE = <<< 'EOT'
+
+
+## %s - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+
+EOT;
+
     /** @var string */
     private $changelogFile;
 
@@ -68,13 +96,7 @@ class ChangelogBump
      */
     public function updateChangelog(string $version)
     {
-        $changelog = sprintf("\n\n## %s - TBD\n\n", $version)
-            . "### Added\n\n- Nothing.\n\n"
-            . "### Changed\n\n- Nothing.\n\n"
-            . "### Deprecated\n\n- Nothing.\n\n"
-            . "### Removed\n\n- Nothing.\n\n"
-            . "### Fixed\n\n- Nothing.\n\n";
-
+        $changelog = sprintf(self::TEMPLATE, $version);
         $contents = file_get_contents($this->changelogFile);
         $contents = preg_replace(
             "/^(\# Changelog\n\n.*?)(\n\n\#\# )/s",
