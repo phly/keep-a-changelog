@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
+- [#12](https://github.com/phly/keep-a-changelog/pull/12) adds a new command, "bump:to-version". This command will add a new changelog
+  entry for the version specified on the command line at the top of the
+  changelog file.
+
 - [#11](https://github.com/phly/keep-a-changelog/pull/11) Adds a new command, "new", for creating a new changelog file. The file
   will be created in CHANGELOG.md in the current directory unless a --file
   option is provided. The initial version will be 0.1.0 unless an --initial-version
