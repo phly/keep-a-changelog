@@ -24,7 +24,7 @@ class NewChangelogCommand extends Command
 Create a new changelog file. If no --file is provided, the assumption is
 CHANGELOG.md in the current directory. If no --initial-version is
 provided, the assumption is 0.1.0. If the file already exists, you can 
-use --force to override it.
+use --override to override it.
 EOH;
 
     protected function configure() : void
