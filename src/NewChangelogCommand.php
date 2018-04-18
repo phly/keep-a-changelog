@@ -54,7 +54,7 @@ EOH;
         if (file_exists($file) && ! $override) {
             throw Exception\ChangelogExistsException::forFile($file);
         }
-        
+
         (new NewChangelog())($file, $version);
 
         $output->writeln(sprintf(
