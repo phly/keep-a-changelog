@@ -6,7 +6,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Prevents an existing changelog to be overridden by the `new` command. Added an `--override` option to override the file.
+- [#16](https://github.com/phly/keep-a-changelog/pull/16) adds functionality to prevent an existing changelog
+  from being overwritten by the `new` command, and adds an `--overwrite` option
+  to allow overwriting the file.
 
 ### Changed
 
