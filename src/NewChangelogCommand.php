@@ -23,7 +23,8 @@ class NewChangelogCommand extends Command
     private const HELP = <<< 'EOH'
 Create a new changelog file. If no --file is provided, the assumption is
 CHANGELOG.md in the current directory. If no --initial-version is
-provided, the assumption is 0.1.0.
+provided, the assumption is 0.1.0. If the file already exists, you can 
+use --override to override it.
 EOH;
 
     protected function configure() : void
@@ -36,12 +37,23 @@ EOH;
             InputOption::VALUE_REQUIRED,
             'Initial version to provide in new changelog file; defaults to 0.1.0.'
         );
+        $this->addOption(
+            'override',
+            '-o',
+            InputOption::VALUE_NONE,
+            'Overrides the changelog file, if exists'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $file = $this->getChangelogFile($input);
         $version = $input->getOption('initial-version') ?: '0.1.0';
+        $override = $input->getOption('override') ?: false;
+
+        if (file_exists($file) && ! $override) {
+            throw Exception\ChangelogExistsException::forFile($file);
+        }
 
         (new NewChangelog())($file, $version);
 
