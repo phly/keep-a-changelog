@@ -20,9 +20,16 @@ Alternately, install globally, for use with any repository:
 $ composer global require phly/keep-a-changelog
 ```
 
-If you install globally, ensure you add `$HOME/.composer/bin` to your `$PATH`
-environment variable. Once setup this way, you can call `keep-a-changelog`
-instead of `./vendor/bin/keep-a-changelog`.
+If you install globally, ensure you add global composer vendor binaries
+directory to your `$PATH` environment variable. You can get its location with
+following command:
+
+```bash
+$ composer global config bin-dir --absolute
+```
+
+Once setup this way, you can call `keep-a-changelog` instead of
+`./vendor/bin/keep-a-changelog`.
 
 ## Usage
 
