@@ -2,35 +2,13 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.4.0 - TBD
+## 1.4.0 - 2018-04-20
 
 ### Added
 
 - [#16](https://github.com/phly/keep-a-changelog/pull/16) adds functionality to prevent an existing changelog
   from being overwritten by the `new` command, and adds an `--overwrite` option
   to allow overwriting the file.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 1.3.1 - TBD
-
-### Added
-
-- Nothing.
 
 ### Changed
 
