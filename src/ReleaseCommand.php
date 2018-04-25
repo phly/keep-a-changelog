@@ -163,7 +163,7 @@ EOH;
     {
         $token = $input->getOption('token');
         if ($token) {
-            return $token;
+            return trim($token);
         }
 
         $home = getenv('HOME');
@@ -178,7 +178,7 @@ EOH;
             return null;
         }
 
-        return file_get_contents($tokenFile);
+        return trim(file_get_contents($tokenFile));
     }
 
     private function promptToSaveToken(string $token, InputInterface $input, OutputInterface $output) : void
