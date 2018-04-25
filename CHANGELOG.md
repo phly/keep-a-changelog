@@ -44,7 +44,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#21](https://github.com/phly/keep-a-changelog/pull/21) fixes an issue with releasing that occurs when the token file
+  contains any additional whitespace (such as a trailing EOL character), resolving problems
+  with creating a release via the GitHub API.
 
 ## 1.4.2 - 2018-04-25
 
