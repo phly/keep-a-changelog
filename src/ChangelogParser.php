@@ -23,7 +23,7 @@ class ChangelogParser
             throw Exception\ChangelogMissingDateException::forVersion($version);
         }
 
-        $regex .= "\n\n(?P<changelog>.*?)(?=\n\#\# )";
+        $regex .= "\n\n(?P<changelog>.*?)(?=\n\#\# |$)";
         if (! preg_match('/' . $regex . '/s', $changelog, $matches)) {
             throw Exception\InvalidChangelogFormatException::forVersion($version);
         }

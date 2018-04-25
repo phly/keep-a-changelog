@@ -36,7 +36,7 @@ class ChangelogParserTest extends TestCase
     public function testRaisesExceptionIfUnableToIsolateChangelog()
     {
         $this->expectException(Exception\InvalidChangelogFormatException::class);
-        $this->parser->findChangelogForVersion($this->changelog, '0.1.0');
+        $this->parser->findChangelogForVersion(file_get_contents(__DIR__ . '/_files/CHANGELOG-INVALID.md'), '0.1.0');
     }
 
     public function testReturnsDiscoveredChangelogWhenDiscovered()
@@ -66,5 +66,15 @@ EOF;
         $changelog = $this->parser->findChangelogForVersion($this->changelog, '1.1.0');
 
         $this->assertEquals($expected, $changelog);
+    }
+
+    public function testRecognizedSingleVersionChangelog()
+    {
+        $changelog = $this->parser->findChangelogForVersion(
+            file_get_contents(__DIR__ . '/_files/CHANGELOG-SINGLE-VERSION.md'),
+            '0.1.0'
+        );
+
+        $this->assertTrue(is_string($changelog));
     }
 }
