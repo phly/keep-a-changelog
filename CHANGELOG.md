@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 1.4.2 - TBD
+## 1.4.2 - 2018-04-25
 
 ### Added
 
@@ -43,6 +43,9 @@ All notable changes to this project will be documented in this file, in reverse 
 - Nothing.
 
 ### Fixed
+
+- Fixes the exception message emitted when `new` is called and a changelog file already exists to
+  properly mention the `--overwrite`, not the `--override`, option.
 
 - [#20](https://github.com/phly/keep-a-changelog/pull/20) fixes detection of a changelog when only one changelog
   entry is present in the file.
