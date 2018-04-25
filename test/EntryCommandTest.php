@@ -86,7 +86,7 @@ class EntryCommandTest extends TestCase
     public function testPrepareEntryWithPrOptionRaisesExceptionIfPackageOptionIsInvalid()
     {
         $entry = 'This is the entry';
-        $pr = 42;
+        $pr = 1;
         $package = 'not-a-valid-package-name';
 
         $this->input->getArgument('entry')->willReturn($entry);
@@ -99,10 +99,10 @@ class EntryCommandTest extends TestCase
         $this->reflectMethod($command, 'prepareEntry')->invoke($command, $this->input->reveal());
     }
 
-    public function testPrepareEntryReturnsEntryWithPrLinkPrefixedWhenPackageOptionPresentAndValid()
+    public function testPrepareEntryWithPrOptionRaisesExceptionIfLinkIsInvalid()
     {
         $entry = 'This is the entry';
-        $pr = 42;
+        $pr = 9999999999;
         $package = 'phly/keep-a-changelog';
 
         $this->input->getArgument('entry')->willReturn($entry);
@@ -111,7 +111,23 @@ class EntryCommandTest extends TestCase
 
         $command = new EntryCommand('entry:added');
 
-        $expected = '[#42](https://github.com/phly/keep-a-changelog/pull/42) ' . $entry;
+        $this->expectException(Exception\InvalidPullRequestLinkException::class);
+        $this->reflectMethod($command, 'prepareEntry')->invoke($command, $this->input->reveal());
+    }
+
+    public function testPrepareEntryReturnsEntryWithPrLinkPrefixedWhenPackageOptionPresentAndValid()
+    {
+        $entry = 'This is the entry';
+        $pr = 1;
+        $package = 'phly/keep-a-changelog';
+
+        $this->input->getArgument('entry')->willReturn($entry);
+        $this->input->getOption('pr')->willReturn($pr);
+        $this->input->getOption('package')->willReturn($package);
+
+        $command = new EntryCommand('entry:added');
+
+        $expected = '[#1](https://github.com/phly/keep-a-changelog/pull/1) ' . $entry;
 
         $this->assertSame(
             $expected,

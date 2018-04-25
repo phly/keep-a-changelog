@@ -141,7 +141,7 @@ EOH;
                 return $link;
             }
 
-            throw Exception\InvalidPullRequestLinkException::forLink($link);
+            throw Exception\InvalidPullRequestLinkException::forPackage($package, $pr);
         }
 
         $link = $this->generatePullRequestLink($pr, (new ComposerPackage())->getName(realpath(getcwd())));
@@ -210,7 +210,7 @@ EOH;
 
     private function probeLink(string $link) : bool
     {
-        $headers = get_headers($link, 1, stream_context_create(['http' => ['method'=>'HEAD']]));
+        $headers = get_headers($link, 1, stream_context_create(['http' => ['method' => 'HEAD']]));
         $statusLine = explode(' ', $headers[0]);
         $statusCode = (int) $statusLine[1];
 

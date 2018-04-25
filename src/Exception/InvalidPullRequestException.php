@@ -11,21 +11,12 @@ namespace Phly\KeepAChangelog\Exception;
 
 use RuntimeException;
 
-class InvalidPullRequestLinkException extends RuntimeException
+class InvalidPullRequestException extends RuntimeException
 {
-    public static function forPackage(string $package, int $pr) : self
+    public static function for(int $pr) : self
     {
         return new self(sprintf(
-            'The pull request package %s has no PR %d',
-            $package,
-            $pr
-        ));
-    }
-
-    public static function noValidLinks(int $pr) : self
-    {
-        return new self(sprintf(
-            'No valid pull request link could be found for PR %d',
+            'PR %d is not valid',
             $pr
         ));
     }
