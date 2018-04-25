@@ -49,9 +49,9 @@ EOH;
     {
         $file = $this->getChangelogFile($input);
         $version = $input->getOption('initial-version') ?: '0.1.0';
-        $override = $input->getOption('override') ?: false;
+        $overwrite = $input->getOption('overwrite') ?: false;
 
-        if (file_exists($file) && ! $override) {
+        if (file_exists($file) && ! $overwrite) {
             throw Exception\ChangelogExistsException::forFile($file);
         }
 
