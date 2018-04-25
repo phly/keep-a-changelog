@@ -16,7 +16,7 @@ class ChangelogExistsException extends RuntimeException
     public static function forFile(string $file) : self
     {
         return new self(sprintf(
-            'A changelog %s already exists; Use --override to override the changelog.',
+            'A changelog %s already exists; Use --overwrite to replace the changelog.',
             $file
         ));
     }
