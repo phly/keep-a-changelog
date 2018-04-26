@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.4.4 - TBD
+## 1.4.4 - 2018-04-26
 
 ### Added
 
@@ -10,7 +10,12 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#22](https://github.com/phly/keep-a-changelog/pull/22) modifies how PR links are generated in several ways:
+  - If the provided package name does not result in a valid PR link, it raises an excepion.
+  - If the package name discovered in the `composer.json` does not result in a valid PR link, it then
+  - Probes the git remotes to find the first that results in a valid package link.
+  In each case, it performs a `HEAD` request on the generated link to determine if it is
+  valid, following redirects as encountered.
 
 ### Deprecated
 
