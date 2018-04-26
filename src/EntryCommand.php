@@ -134,16 +134,94 @@ EOH;
 
     private function preparePullRequestLink(int $pr, ?string $package) : string
     {
-        $package = $package ?: (new ComposerPackage())->getName(realpath(getcwd()));
+        if (null !== $package) {
+            $link = $this->generatePullRequestLink($pr, $package);
 
+            if (null !== $link) {
+                return $link;
+            }
+
+            throw Exception\InvalidPullRequestLinkException::forPackage($package, $pr);
+        }
+
+        $link = $this->generatePullRequestLink($pr, (new ComposerPackage())->getName(realpath(getcwd())));
+
+        if (null !== $link) {
+            return $link;
+        }
+
+        foreach ($this->getGithubPackageNames() as $package) {
+            $link = $this->generatePullRequestLink($pr, $package);
+
+            if (null !== $link) {
+                return $link;
+            }
+        }
+
+        throw Exception\InvalidPullRequestLinkException::noValidLinks($pr);
+    }
+
+    private function getGithubPackageNames() : array
+    {
+        exec('git remote', $remotes, $return);
+
+        if (0 !== $return) {
+            return [];
+        }
+
+        $packages = [];
+
+        foreach ($remotes as $remote) {
+            $url = [];
+            exec(sprintf('git remote get-url %s', escapeshellarg($remote)), $url, $return);
+
+            if (0 !== $return) {
+                continue;
+            }
+
+            if (0 === preg_match('(github.com[:/](.*?)\.git)', $url[0], $matches)) {
+                continue;
+            }
+
+            $packages[] = $matches[1];
+        }
+
+        return $packages;
+    }
+
+    private function generatePullRequestLink(int $pr, string $package) : ?string
+    {
         if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*/[a-z0-9]+[a-z0-9_-]*$#i', $package)) {
             throw Exception\InvalidPackageNameException::forPackage($package);
         }
 
-        return sprintf(
+        $link = sprintf(
             'https://github.com/%s/pull/%d',
             $package,
             $pr
         );
+
+        if (! $this->probeLink($link)) {
+            return null;
+        }
+
+        return $link;
+    }
+
+    private function probeLink(string $link) : bool
+    {
+        $headers = get_headers($link, 1, stream_context_create(['http' => ['method' => 'HEAD']]));
+        $statusLine = explode(' ', $headers[0]);
+        $statusCode = (int) $statusLine[1];
+
+        if ($statusCode < 300) {
+            return true;
+        }
+
+        if ($statusCode >= 300 && $statusCode <= 399 && array_key_exists('Location', $headers)) {
+            return $this->probeLink($headers['Location']);
+        }
+
+        return false;
     }
 }
