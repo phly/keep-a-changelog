@@ -137,11 +137,11 @@ EOH;
         if (null !== $package) {
             $link = $this->generatePullRequestLink($pr, $package);
 
-            if (null !== $link) {
-                return $link;
+            if (null === $link) {
+                throw Exception\InvalidPullRequestLinkException::forPackage($package, $pr);
             }
 
-            throw Exception\InvalidPullRequestLinkException::forPackage($package, $pr);
+            return $link;
         }
 
         $link = $this->generatePullRequestLink($pr, (new ComposerPackage())->getName(realpath(getcwd())));
@@ -201,11 +201,7 @@ EOH;
             $pr
         );
 
-        if (! $this->probeLink($link)) {
-            return null;
-        }
-
-        return $link;
+        return $this->probeLink($link) ? $link : null;
     }
 
     private function probeLink(string $link) : bool
