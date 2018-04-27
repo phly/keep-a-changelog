@@ -9,8 +9,13 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Provider;
 
+use Github\Client as GitHubClient;
+
 class GitHub implements ProviderInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function createLocalTag(string $tagName, string $package, string $version, string $changelog) : bool
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'KAC');
@@ -22,5 +27,49 @@ class GitHub implements ProviderInterface
         unlink($tempFile);
 
         return 0 === $return;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createRelease(
+        string $package,
+        string $releaseName,
+        string $tagName,
+        string $changelog,
+        string $token
+    ): ?string {
+        [$org, $repo] = explode('/', $package);
+        $client = new GitHubClient();
+        $client->authenticate($token, GitHubClient::AUTH_HTTP_TOKEN);
+        $release = $client->api('repo')->releases()->create(
+            $org,
+            $repo,
+            [
+                'tag_name'   => $tagName,
+                'name'       => $releaseName,
+                'body'       => $changelog,
+                'draft'      => false,
+                'prerelease' => false,
+            ]
+        );
+
+        return $release['html_url'] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRepositoryUrlRegex() : string
+    {
+        return '(github.com[:/](.*?)\.git)';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function generatePullRequestLink(string $package, int $pr): string
+    {
+        return sprintf('https://github.com/%s/pull/%d', $package, $pr);
     }
 }

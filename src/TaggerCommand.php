@@ -61,7 +61,7 @@ EOH;
             'provider',
             null,
             InputOption::VALUE_OPTIONAL,
-            'Repository provider. Options: github, gitlab; defaults to github'
+            'Repository provider. Options: github or gitlab; defaults to github'
         );
     }
 
@@ -87,14 +87,15 @@ EOH;
         $formatter = new ChangelogFormatter();
         $changelog = $formatter->format($changelog);
 
-        if (! $this->getProvider($input)->createLocalTag($tagName, $package, $version, $changelog)) {
+        $provider = $this->getProvider($input);
+        if (! $provider->createLocalTag($tagName, $package, $version, $changelog)) {
             $output->writeln('<error>Error creating tag!</error>');
             $output->writeln('Check the output logs for details');
             return 1;
         }
 
         $output->writeln(sprintf(
-            '<info>Created tag "%s" for package "%s" using the following notes:<info>',
+            '<info>Created tag "%s" for package "%s" using the following notes:</info>',
             $version,
             $package
         ));

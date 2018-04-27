@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use Phly\KeepAChangelog\Provider\GetProviderTrait;
+use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EntryCommand extends Command
 {
-    use GetChangelogFileTrait;
+    use GetChangelogFileTrait, GetProviderTrait;
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the latest changelog in the "%s" section';
 
@@ -36,6 +38,10 @@ EOH;
     /** @var string */
     private $type;
 
+    /**
+     * EntryCommand constructor.
+     * @param string $name
+     */
     public function __construct(string $name)
     {
         if (false === strpos($name, ':')) {
@@ -78,8 +84,19 @@ EOH;
             InputOption::VALUE_REQUIRED,
             'Name of package in organization/repo format (for building link to a pull request)'
         );
+        $this->addOption(
+            'provider',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Repository provider. Options: github or gitlab; defaults to github'
+        );
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $output->writeln(sprintf(
@@ -106,7 +123,8 @@ EOH;
     }
 
     /**
-     * @throws Exception\EmptyEntryException
+     * @param InputInterface $input
+     * @return string
      */
     private function prepareEntry(InputInterface $input) : string
     {
@@ -127,15 +145,21 @@ EOH;
         return sprintf(
             '[#%d](%s) %s',
             (int) $pr,
-            $this->preparePullRequestLink((int) $pr, $input->getOption('package')),
+            $this->preparePullRequestLink((int) $pr, $input->getOption('package'), $this->getProvider($input)),
             $entry
         );
     }
 
-    private function preparePullRequestLink(int $pr, ?string $package) : string
+    /**
+     * @param int $pr
+     * @param null|string $package
+     * @param ProviderInterface $provider
+     * @return string
+     */
+    private function preparePullRequestLink(int $pr, ?string $package, ProviderInterface $provider) : string
     {
         if (null !== $package) {
-            $link = $this->generatePullRequestLink($pr, $package);
+            $link = $this->generatePullRequestLink($pr, $package, $provider);
 
             if (null === $link) {
                 throw Exception\InvalidPullRequestLinkException::forPackage($package, $pr);
@@ -144,14 +168,14 @@ EOH;
             return $link;
         }
 
-        $link = $this->generatePullRequestLink($pr, (new ComposerPackage())->getName(realpath(getcwd())));
+        $link = $this->generatePullRequestLink($pr, (new ComposerPackage())->getName(realpath(getcwd())), $provider);
 
         if (null !== $link) {
             return $link;
         }
 
-        foreach ($this->getGithubPackageNames() as $package) {
-            $link = $this->generatePullRequestLink($pr, $package);
+        foreach ($this->getPackageNames($provider) as $package) {
+            $link = $this->generatePullRequestLink($pr, $package, $provider);
 
             if (null !== $link) {
                 return $link;
@@ -161,7 +185,11 @@ EOH;
         throw Exception\InvalidPullRequestLinkException::noValidLinks($pr);
     }
 
-    private function getGithubPackageNames() : array
+    /**
+     * @param ProviderInterface $provider
+     * @return array
+     */
+    private function getPackageNames(ProviderInterface $provider) : array
     {
         exec('git remote', $remotes, $return);
 
@@ -179,7 +207,7 @@ EOH;
                 continue;
             }
 
-            if (0 === preg_match('(github.com[:/](.*?)\.git)', $url[0], $matches)) {
+            if (0 === preg_match($provider->getRepositoryUrlRegex(), $url[0], $matches)) {
                 continue;
             }
 
@@ -189,21 +217,27 @@ EOH;
         return $packages;
     }
 
-    private function generatePullRequestLink(int $pr, string $package) : ?string
+    /**
+     * @param int $pr
+     * @param string $package
+     * @param ProviderInterface $provider
+     * @return null|string
+     */
+    private function generatePullRequestLink(int $pr, string $package, ProviderInterface $provider) : ?string
     {
         if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*/[a-z0-9]+[a-z0-9_-]*$#i', $package)) {
             throw Exception\InvalidPackageNameException::forPackage($package);
         }
 
-        $link = sprintf(
-            'https://github.com/%s/pull/%d',
-            $package,
-            $pr
-        );
+        $link = $provider->generatePullRequestLink($package, $pr);
 
         return $this->probeLink($link) ? $link : null;
     }
 
+    /**
+     * @param string $link
+     * @return bool
+     */
     private function probeLink(string $link) : bool
     {
         $headers = get_headers($link, 1, stream_context_create(['http' => ['method' => 'HEAD']]));

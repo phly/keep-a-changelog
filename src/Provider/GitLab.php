@@ -9,12 +9,52 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Provider;
 
+use Gitlab\Client as GitLabClient;
+
 class GitLab implements ProviderInterface
 {
+    const PACKAGE_NAME = 'm4tthumphrey/php-gitlab-api';
+
+    /**
+     * @inheritDoc
+     */
     public function createLocalTag(string $tagName, string $package, string $version, string $changelog) : bool
     {
         $command = sprintf('git tag -s -m "%s %s" %s', $package, $version, $tagName);
         system($command, $return);
         return 0 === $return;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createRelease(
+        string $package,
+        string $releaseName,
+        string $tagName,
+        string $changelog,
+        string $token
+    ): ?string {
+        $client = GitLabClient::create('https://gitlab.com');
+        $client->authenticate($token, GitLabClient::AUTH_HTTP_TOKEN);
+        $release = $client->api('repositories')->createRelease($package, $tagName, $changelog);
+
+        return $release['tag_name'] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRepositoryUrlRegex() : string
+    {
+        return '(gitlab.com[:/](.*?)\.git)';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function generatePullRequestLink(string $package, int $pr): string
+    {
+        return sprintf('https://gitlab.com/%s/merge_requests/%d', $package, $pr);
     }
 }
