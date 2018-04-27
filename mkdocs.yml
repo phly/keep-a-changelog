@@ -5,5 +5,5 @@ pages:
     - Introduction: intro.md
 site_name: Component Name Goes Here
 site_description: 'Component Description goes here'
-repo_url: 'https://github.com/phly/keep-a-changelog-tagger'
+repo_url: 'https://github.com/phly/keep-a-changelog'
 copyright: 'Copyright (c) 2018 <a href="http://www.zend.com/">Zend Technologies USA Inc.</a>'

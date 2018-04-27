@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- Renaming repository name from headers and docs.
 
 ### Deprecated
 

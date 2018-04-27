@@ -1,3 +1,3 @@
-# keep-a-changelog-tagger
+# keep-a-changelog
 
 This component provides ...
