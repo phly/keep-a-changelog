@@ -18,6 +18,7 @@
         "symfony/console": "^4.0"
     },
     "require-dev": {
+        "m4tthumphrey/php-gitlab-api": "^9.9",
         "phpunit/phpunit": "^7.0",
         "zendframework/zend-coding-standard": "~1.0.0"
     },

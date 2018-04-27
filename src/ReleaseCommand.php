@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog;
 
 use Github\Client as GitHubClient;
+use Phly\KeepAChangelog\Provider\GetProviderTrait;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ReleaseCommand extends Command
 {
-    use GetChangelogFileTrait;
+    use GetChangelogFileTrait, GetProviderTrait;
 
     private const HELP = <<< 'EOH'
 Create a github release using the changelog entry for the specified version.
