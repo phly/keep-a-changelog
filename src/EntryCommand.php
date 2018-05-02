@@ -19,7 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EntryCommand extends Command
 {
-    use GetChangelogFileTrait, GetProviderTrait;
+    use GetChangelogFileTrait;
+    use GetProviderTrait;
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the latest changelog in the "%s" section';
 
