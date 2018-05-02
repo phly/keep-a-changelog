@@ -6,9 +6,9 @@
         "keepachangelog"
     ],
     "support": {
-        "issues": "https://github.com/phly/keep-a-changelog-tagger/issues",
-        "source": "https://github.com/phly/keep-a-changelog-tagger",
-        "rss": "https://github.com/phly/keep-a-changelog-tagger/releases.atom"
+        "issues": "https://github.com/phly/keep-a-changelog/issues",
+        "source": "https://github.com/phly/keep-a-changelog",
+        "rss": "https://github.com/phly/keep-a-changelog/releases.atom"
     },
     "require": {
         "php": "^7.1",

@@ -4,7 +4,7 @@
          bootstrap="vendor/autoload.php"
          colors="true">
     <testsuites>
-        <testsuite name="keep-a-changelog-tagger">
+        <testsuite name="keep-a-changelog">
             <directory>./test</directory>
         </testsuite>
     </testsuites>
