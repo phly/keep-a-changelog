@@ -7,7 +7,7 @@ Zend Framework offers three support channels:
 - For detailed questions (e.g., those requiring examples) use our
   [forums](https://discourse.zendframework.com/c/questions/components)
 - To report issues, use this repository's
-  [issue tracker](https://github.com/phly/keep-a-changelog-tagger/issues/new)
+  [issue tracker](https://github.com/phly/keep-a-changelog/issues/new)
 
 **DO NOT** use the issue tracker to ask questions; use Slack or the forums for
 that. Questions posed to the issue tracker will be closed.
