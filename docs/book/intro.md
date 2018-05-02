@@ -1,3 +1,0 @@
-# keep-a-changelog
-
-This component provides ...
