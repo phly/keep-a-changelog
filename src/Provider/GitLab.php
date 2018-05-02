@@ -13,8 +13,6 @@ use Gitlab\Client as GitLabClient;
 
 class GitLab implements ProviderInterface
 {
-    const PACKAGE_NAME = 'm4tthumphrey/php-gitlab-api';
-
     /**
      * @inheritDoc
      */
