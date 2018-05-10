@@ -12,13 +12,14 @@ namespace Phly\KeepAChangelog;
 use Phly\KeepAChangelog\Provider\GetProviderTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ReleaseCommand extends Command
 {
+    use ConfigFileTrait;
     use GetChangelogFileTrait;
     use GetProviderTrait;
 
@@ -90,6 +91,12 @@ EOH;
             null,
             InputOption::VALUE_OPTIONAL,
             'Repository provider. Options: github or gitlab; defaults to github'
+        );
+        $this->addOption(
+            'global',
+            '-g',
+            InputOption::VALUE_NONE,
+            'Use the global config file'
         );
     }
 
@@ -171,10 +178,14 @@ EOH;
             return trim($token);
         }
 
-        $home = getenv('HOME');
-        $tokenFile = sprintf('%s/.keep-a-changelog/token', $home);
-        if (! file_exists($tokenFile)) {
-            $output->writeln(sprintf('<error>No token provided, and token file %s not present', $tokenFile));
+        $config = $this->getConfig($input);
+
+        if (empty($config->token())) {
+            $configFile = $this->getConfigFile($input);
+            $output->writeln(sprintf(
+                '<error>No token provided, and could not find it in the config file %s</error>',
+                $configFile)
+            );
             $output->writeln(sprintf(
                 'Please provide the --token option, or create the file %s with your'
                 . ' GitHub personal access token as the sole contents',

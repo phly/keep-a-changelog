@@ -51,5 +51,6 @@ $application->addCommands([
     new ReadyCommand('ready'),
     new ReleaseCommand('release'),
     new TaggerCommand('tag'),
+    new ConfigCommand('config'),
 ]);
 $application->run();
