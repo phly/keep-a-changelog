@@ -184,8 +184,8 @@ EOH;
             $configFile = $this->getConfigFile($input);
             $output->writeln(sprintf(
                 '<error>No token provided, and could not find it in the config file %s</error>',
-                $configFile)
-            );
+                $configFile
+            ));
             $output->writeln(
                 'Please provide the --token option, or create the config file'
                 . ' with the config command'

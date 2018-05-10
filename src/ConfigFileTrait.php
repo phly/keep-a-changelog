@@ -8,6 +8,7 @@
 declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
+
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
