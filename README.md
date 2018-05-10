@@ -52,6 +52,9 @@ The available providers are:
 
 Currently supported commands include:
 
+- `config` will create a local config file. If the --global (-g) option is
+  provided, the config file will be stored globally.
+
 - `ready` will set the planned release date for the most recent changelog entry.
 
 - `tag` allows tagging a release based on the latest version discovered in the

@@ -30,7 +30,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- `config` command adding the token and provider in a global or local file.
 
 ### Changed
 
