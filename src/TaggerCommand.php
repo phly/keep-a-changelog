@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use Phly\KeepAChangelog\Provider\GetProviderTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class TaggerCommand extends Command
 {
-    use GetChangelogFileTrait, GetProviderTrait;
+    use GetChangelogFileTrait;
 
     private const HELP = <<< 'EOH'
 Create a new git tag for the current repository, using the relevant changelog entry.
@@ -57,12 +56,6 @@ EOH;
             InputOption::VALUE_REQUIRED,
             'Alternate git tag name to use when tagging; defaults to <version>'
         );
-        $this->addOption(
-            'provider',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Repository provider. Options: github or gitlab; defaults to github'
-        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
@@ -87,8 +80,7 @@ EOH;
         $formatter = new ChangelogFormatter();
         $changelog = $formatter->format($changelog);
 
-        $provider = $this->getProvider($input);
-        if (! $provider->createLocalTag($tagName, $package, $version, $changelog)) {
+        if (! $this->tagWithChangelog($tagName, $package, $version, $changelog)) {
             $output->writeln('<error>Error creating tag!</error>');
             $output->writeln('Check the output logs for details');
             return 1;
@@ -103,5 +95,18 @@ EOH;
         $output->write($changelog);
 
         return 0;
+    }
+
+    private function tagWithChangelog(string $tagName, string $package, string $version, string $changelog) : bool
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'KAC');
+        file_put_contents($tempFile, sprintf("%s %s\n\n%s", $package, $version, $changelog));
+
+        $command = sprintf('git tag -s -F %s %s', $tempFile, $tagName);
+        system($command, $return);
+
+        unlink($tempFile);
+
+        return 0 === $return;
     }
 }
