@@ -72,10 +72,6 @@ class AddEntry
     /**
      * Locates the location within the changelog where the injection should occur.
      * Also determines if the injection is a replacement or an addition.
-     *
-     * @param array $contents
-     * @param string $type
-     * @return stdClass
      */
     private function locateInjectionIndex(array $contents, string $type) : stdClass
     {
@@ -101,11 +97,6 @@ class AddEntry
 
     /**
      * Injects the new entry at the detected index, replacing the line if required.
-     *
-     * @param array $contents
-     * @param stdClass $action
-     * @param string $entry
-     * @return array
      */
     private function injectEntry(array $contents, stdClass $action, string $entry) : array
     {
@@ -131,10 +122,6 @@ class AddEntry
      *
      * If the string spans multiple lines, it ensures all additional lines are
      * indented two characters.
-     *
-     * @param string $entry
-     * @param bool $withExtraLine
-     * @return string
      */
     private function formatEntry(string $entry, bool $withExtraLine = false) : string
     {

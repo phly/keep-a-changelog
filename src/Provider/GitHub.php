@@ -13,21 +13,6 @@ use Github\Client as GitHubClient;
 
 class GitHub implements ProviderInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public function createLocalTag(string $tagName, string $package, string $version, string $changelog) : bool
-    {
-        $tempFile = tempnam(sys_get_temp_dir(), 'KAC');
-        file_put_contents($tempFile, sprintf("%s %s\n\n%s", $package, $version, $changelog));
-
-        $command = sprintf('git tag -s -F %s %s', $tempFile, $tagName);
-        system($command, $return);
-
-        unlink($tempFile);
-
-        return 0 === $return;
-    }
 
     /**
      * @inheritDoc

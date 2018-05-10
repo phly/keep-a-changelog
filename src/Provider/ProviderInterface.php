@@ -11,14 +11,6 @@ namespace Phly\KeepAChangelog\Provider;
 
 interface ProviderInterface
 {
-    /**
-     * @param string $tagName
-     * @param string $package
-     * @param string $version
-     * @param string $changelog
-     * @return bool
-     */
-    public function createLocalTag(string $tagName, string $package, string $version, string $changelog) : bool;
 
     /**
      * @param string $package

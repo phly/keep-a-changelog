@@ -39,10 +39,6 @@ EOH;
     /** @var string */
     private $type;
 
-    /**
-     * EntryCommand constructor.
-     * @param string $name
-     */
     public function __construct(string $name)
     {
         if (false === strpos($name, ':')) {
@@ -93,11 +89,6 @@ EOH;
         );
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $output->writeln(sprintf(
@@ -123,10 +114,6 @@ EOH;
         return 0;
     }
 
-    /**
-     * @param InputInterface $input
-     * @return string
-     */
     private function prepareEntry(InputInterface $input) : string
     {
         $entry = $input->getArgument('entry');
@@ -151,12 +138,6 @@ EOH;
         );
     }
 
-    /**
-     * @param int $pr
-     * @param null|string $package
-     * @param ProviderInterface $provider
-     * @return string
-     */
     private function preparePullRequestLink(int $pr, ?string $package, ProviderInterface $provider) : string
     {
         if (null !== $package) {
@@ -186,10 +167,6 @@ EOH;
         throw Exception\InvalidPullRequestLinkException::noValidLinks($pr);
     }
 
-    /**
-     * @param ProviderInterface $provider
-     * @return array
-     */
     private function getPackageNames(ProviderInterface $provider) : array
     {
         exec('git remote', $remotes, $return);
@@ -218,12 +195,6 @@ EOH;
         return $packages;
     }
 
-    /**
-     * @param int $pr
-     * @param string $package
-     * @param ProviderInterface $provider
-     * @return null|string
-     */
     private function generatePullRequestLink(int $pr, string $package, ProviderInterface $provider) : ?string
     {
         if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*/[a-z0-9]+[a-z0-9_-]*$#i', $package)) {
@@ -235,10 +206,6 @@ EOH;
         return $this->probeLink($link) ? $link : null;
     }
 
-    /**
-     * @param string $link
-     * @return bool
-     */
     private function probeLink(string $link) : bool
     {
         $headers = get_headers($link, 1, stream_context_create(['http' => ['method' => 'HEAD']]));

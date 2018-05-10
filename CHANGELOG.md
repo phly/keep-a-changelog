@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Tagger, Release and Entry commands to use the specified repository provider.
+- Release and Entry commands to use the specified repository provider.
 
 ### Deprecated
 

@@ -44,7 +44,7 @@ an alternate changelog file to create or manipulate; if not present,
 `CHANGELOG.md` in the current directory is assumed.
 
 You can specify an alternative provider besides GitHub passing the --provider argument
-to commands. Currently only `tag`, `release` and `entry` commands need this option.
+to commands. Currently only `release` and `entry` commands need this option.
 
 The available providers are:
 - GitHub (default)

@@ -13,15 +13,6 @@ use Gitlab\Client as GitLabClient;
 
 class GitLab implements ProviderInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public function createLocalTag(string $tagName, string $package, string $version, string $changelog) : bool
-    {
-        $command = sprintf('git tag -s -m "%s %s" %s', $package, $version, $tagName);
-        system($command, $return);
-        return 0 === $return;
-    }
 
     /**
      * @inheritDoc
