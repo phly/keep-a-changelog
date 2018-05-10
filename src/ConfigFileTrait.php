@@ -15,10 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 trait ConfigFileTrait
 {
-    /**
-     * @param InputInterface $input
-     * @return string
-     */
+
     private function getConfigFile(InputInterface $input) : string
     {
         $useGlobal = $input->getOption('global') ?: false;
@@ -31,10 +28,6 @@ trait ConfigFileTrait
         return sprintf('%s/.keep-a-changelog/config.ini', $home);
     }
 
-    /**
-     * @param InputInterface $input
-     * @return Config
-     */
     private function getConfig(InputInterface $input) : Config
     {
         $configFile = $this->getConfigFile($input);
@@ -51,11 +44,6 @@ trait ConfigFileTrait
         return new Config($ini['token'] ?? '', $ini['provider'] ?? Config::PROVIDER_GITHUB);
     }
 
-    /**
-     * @param string $filename
-     * @param Config $config
-     * @return bool
-     */
     private function saveConfigFile(string $filename, Config $config) : bool
     {
         $data = $config->getArrayCopy();
@@ -64,19 +52,5 @@ trait ConfigFileTrait
             $ini .= "$key = $value" . PHP_EOL;
         }
         return file_put_contents($filename, $ini) !== false;
-    }
-
-    private function migrateToken()
-    {
-        $home = getenv('HOME');
-        $globalFile = sprintf('%s/.keep-a-changelog/config.ini', $home);
-        $tokenFile = sprintf('%s/.keep-a-changelog/token', $home);
-
-        if (! is_readable($globalFile) && is_readable($tokenFile)) {
-            $config = new Config('github', trim(file_get_contents($tokenFile)));
-            $this->saveConfigFile($globalFile, $config);
-        }
-
-        return $globalFile;
     }
 }

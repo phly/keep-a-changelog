@@ -24,37 +24,22 @@ class Config
     /** @var string */
     private $token;
 
-    /**
-     * Config constructor.
-     * @param string $token
-     * @param string $provider
-     */
     public function __construct(string $token = '', string $provider = self::PROVIDER_GITHUB)
     {
         $this->token = $token;
         $this->provider = $provider;
     }
 
-    /**
-     * @return string
-     */
     public function provider(): string
     {
         return $this->provider;
     }
 
-    /**
-     * @return string
-     */
     public function token(): string
     {
         return $this->token;
     }
 
-    /**
-     * @param string $provider
-     * @return Config
-     */
     public function withProvider(string $provider) : self
     {
         $config = clone $this;
@@ -62,10 +47,6 @@ class Config
         return $config;
     }
 
-    /**
-     * @param string $token
-     * @return Config
-     */
     public function withToken(string $token) : self
     {
         $config = clone $this;
@@ -73,9 +54,6 @@ class Config
         return $config;
     }
 
-    /**
-     * @return array
-     */
     public function getArrayCopy() : array
     {
         return [
