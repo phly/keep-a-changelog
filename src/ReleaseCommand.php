@@ -186,15 +186,14 @@ EOH;
                 '<error>No token provided, and could not find it in the config file %s</error>',
                 $configFile)
             );
-            $output->writeln(sprintf(
-                'Please provide the --token option, or create the file %s with your'
-                . ' GitHub personal access token as the sole contents',
-                $tokenFile
-            ));
+            $output->writeln(
+                'Please provide the --token option, or create the config file'
+                . ' with the config command'
+            );
             return null;
         }
 
-        return trim(file_get_contents($tokenFile));
+        return trim($config->token());
     }
 
     private function promptToSaveToken(string $token, InputInterface $input, OutputInterface $output) : void

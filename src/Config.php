@@ -16,7 +16,7 @@ class Config
 
     const PROVIDERS = [
         self::PROVIDER_GITHUB,
-        self::PROVIDER_GITLAB
+//        self::PROVIDER_GITLAB // Will be enabled after PR #24 is accepted
     ];
 
     /** @var string */
