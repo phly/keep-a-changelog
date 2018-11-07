@@ -11,10 +11,10 @@ namespace Phly\KeepAChangelog;
 
 class Config
 {
-    const PROVIDER_GITHUB = 'github';
-    const PROVIDER_GITLAB = 'gitlab';
+    public const PROVIDER_GITHUB = 'github';
+    public const PROVIDER_GITLAB = 'gitlab';
 
-    const PROVIDERS = [
+    public const PROVIDERS = [
         self::PROVIDER_GITHUB,
         self::PROVIDER_GITLAB,
     ];
@@ -28,6 +28,8 @@ class Config
     public function __construct(string $token = '', string $provider = self::PROVIDER_GITHUB)
     {
         $this->token = $token;
+
+        $this->validateProvider($provider);
         $this->provider = $provider;
     }
 
@@ -43,6 +45,7 @@ class Config
 
     public function withProvider(string $provider) : self
     {
+        $this->validateProvider($provider);
         $config = clone $this;
         $config->provider = $provider;
         return $config;
@@ -61,5 +64,15 @@ class Config
             'token'    => $this->token,
             'provider' => $this->provider,
         ];
+    }
+
+    /**
+     * @throws Exception\InvalidProviderException
+     */
+    private function validateProvider(string $provider) : void
+    {
+        if (! in_array($provider, self::PROVIDERS, true)) {
+            throw Exception\InvalidProviderException::forProvider($provider, self::PROVIDERS);
+        }
     }
 }
