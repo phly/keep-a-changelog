@@ -6,11 +6,11 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- GitLab repository provider.
 
 ### Changed
 
-- Nothing.
+- Release and Entry commands to use the specified repository provider.
 
 ### Deprecated
 
