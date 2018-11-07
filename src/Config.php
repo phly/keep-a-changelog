@@ -16,11 +16,12 @@ class Config
 
     const PROVIDERS = [
         self::PROVIDER_GITHUB,
-//        self::PROVIDER_GITLAB // Will be enabled after PR #24 is accepted
+        self::PROVIDER_GITLAB,
     ];
 
     /** @var string */
     private $provider;
+
     /** @var string */
     private $token;
 
@@ -30,12 +31,12 @@ class Config
         $this->provider = $provider;
     }
 
-    public function provider(): string
+    public function provider() : string
     {
         return $this->provider;
     }
 
-    public function token(): string
+    public function token() : string
     {
         return $this->token;
     }

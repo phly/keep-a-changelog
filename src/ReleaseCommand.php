@@ -187,8 +187,7 @@ EOH;
                 $configFile
             ));
             $output->writeln(
-                'Please provide the --token option, or create the config file'
-                . ' with the config command'
+                'Please provide the --token option, or create the config file with the config command'
             );
             return null;
         }
