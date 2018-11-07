@@ -26,12 +26,16 @@ trait GetProviderTrait
 
         $provider = $input->getOption('provider');
 
-        if ($provider === 'gitlab') {
-            $this->provider = new GitLab();
-            return $this->provider;
+        switch ($provider) {
+            case 'gitlab':
+                $this->provider = new GitLab();
+                break;
+            case 'github':
+                // fall-through
+            default:
+                $this->provider = new GitHub();
+                break;
         }
-
-        $this->provider = new GitHub();
 
         return $this->provider;
     }
