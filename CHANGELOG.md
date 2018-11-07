@@ -6,11 +6,13 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- GitLab repository provider.
+- [#24](https://github.com/phly/keep-a-changelog/pull/24) adds a GitLab repository provider.
+  You can specify the new provider via a new `--provider gitlab` option to
+  either the `tag` or `release` commands.
 
 ### Changed
 
-- Release and Entry commands to use the specified repository provider.
+- Nothing.
 
 ### Deprecated
 
