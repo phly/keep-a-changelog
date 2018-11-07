@@ -19,7 +19,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ReleaseCommand extends Command
 {
-    use GetChangelogFileTrait, GetProviderTrait;
+    use GetChangelogFileTrait;
+    use GetProviderTrait;
 
     private const HELP = <<< 'EOH'
 Create a release using the changelog entry for the specified version.
