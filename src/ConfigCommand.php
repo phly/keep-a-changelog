@@ -34,13 +34,13 @@ EOH;
         $this->setHelp(self::HELP);
         $this->addOption(
             'global',
-            '-g',
+            'g',
             InputOption::VALUE_NONE,
             'Save the config file globally'
         );
         $this->addOption(
             'overwrite',
-            '-o',
+            'o',
             InputOption::VALUE_NONE,
             'Overwrite the changelog file, if it exists'
         );

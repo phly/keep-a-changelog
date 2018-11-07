@@ -94,7 +94,7 @@ EOH;
         );
         $this->addOption(
             'global',
-            '-g',
+            'g',
             InputOption::VALUE_NONE,
             'Use the global config file'
         );
