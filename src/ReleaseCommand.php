@@ -9,18 +9,17 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use Phly\KeepAChangelog\Provider\GetProviderTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ReleaseCommand extends Command
 {
     use GetChangelogFileTrait;
-    use GetProviderTrait;
+    use GetConfigValuesTrait;
 
     private const HELP = <<< 'EOH'
 Create a release using the changelog entry for the specified version.
@@ -91,6 +90,12 @@ EOH;
             InputOption::VALUE_OPTIONAL,
             'Repository provider. Options: github or gitlab; defaults to github'
         );
+        $this->addOption(
+            'global',
+            'g',
+            InputOption::VALUE_NONE,
+            'Use the global config file'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
@@ -100,8 +105,10 @@ EOH;
 
         $this->verifyTagExists($tagName);
 
+        $config  = $this->prepareConfig();
         $package = $input->getArgument('package');
-        $token = $this->getToken($input, $output);
+
+        $token = $this->getToken($input, $output, $config);
         if (! $token) {
             return 1;
         }
@@ -141,7 +148,7 @@ EOH;
             $releaseName
         ));
 
-        $provider = $this->getProvider($input);
+        $provider = $this->getProvider($config);
         $release = $provider->createRelease(
             $package,
             $releaseName,
@@ -162,28 +169,6 @@ EOH;
         $output->writeln(sprintf('<info>Created %s<info>', $release));
 
         return 0;
-    }
-
-    private function getToken(InputInterface $input, OutputInterface $output) : ?string
-    {
-        $token = $input->getOption('token');
-        if ($token) {
-            return trim($token);
-        }
-
-        $home = getenv('HOME');
-        $tokenFile = sprintf('%s/.keep-a-changelog/token', $home);
-        if (! file_exists($tokenFile)) {
-            $output->writeln(sprintf('<error>No token provided, and token file %s not present', $tokenFile));
-            $output->writeln(sprintf(
-                'Please provide the --token option, or create the file %s with your'
-                . ' GitHub personal access token as the sole contents',
-                $tokenFile
-            ));
-            return null;
-        }
-
-        return trim(file_get_contents($tokenFile));
     }
 
     private function promptToSaveToken(string $token, InputInterface $input, OutputInterface $output) : void

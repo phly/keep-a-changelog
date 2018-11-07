@@ -2,39 +2,25 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.5.0 - TBD
+## 1.5.0 - 2018-11-07
 
 ### Added
 
-- [#24](https://github.com/phly/keep-a-changelog/pull/24) adds a GitLab repository provider.
-  You can specify the new provider via a new `--provider gitlab` option to
-  either the `tag` or `release` commands.
+- [#24](https://github.com/phly/keep-a-changelog/pull/24) adds a GitLab repository provider.  You can specify the new provider via a
+  new `--provider gitlab` option to either the `tag` or `release` commands.
+
+- [#27](https://github.com/phly/keep-a-changelog/pull/27) adds the ability to create either a local or global config file containing
+  both the preferred/default provider to use, and its associated token. Usage is
+  `keep-a-changelog config`, optionally with a `--global` or `-g` flag. The
+  command will then prompt you for the provider and token.
 
 ### Changed
 
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 1.4.5 - TBD
-
-### Added
-
-- Nothing.
-
-### Changed
-
-- Renaming repository name from headers and docs.
+- [#27](https://github.com/phly/keep-a-changelog/pull/27) modifies each of the `release` and `entry:*` commands to use the
+  appropriate global or local configuration file, if found, to determine the
+  provider and/or token to use; if either of the `--token` or `--provider`
+  options are provided during invocation, those will override the values from
+  configuration.
 
 ### Deprecated
 

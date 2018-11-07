@@ -19,6 +19,7 @@
         "symfony/console": "^4.0"
     },
     "require-dev": {
+        "mikey179/vfsStream": "^1.6",
         "phpunit/phpunit": "^7.0",
         "zendframework/zend-coding-standard": "~1.0.0"
     },
@@ -37,8 +38,8 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.4.x-dev",
-            "dev-develop": "1.5.x-dev"
+            "dev-master": "1.5.x-dev",
+            "dev-develop": "1.6.x-dev"
         }
     },
     "bin": [

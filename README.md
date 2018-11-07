@@ -43,14 +43,20 @@ All options allow specifying the option `--file` (or its alias `-f`) to indicate
 an alternate changelog file to create or manipulate; if not present,
 `CHANGELOG.md` in the current directory is assumed.
 
-You can specify an alternative provider besides GitHub passing the --provider argument
-to commands. Currently only `release` and `entry` commands need this option.
+You can specify an alternative provider besides GitHub passing the `--provider`
+argument to commands. Currently only `release` and `entry` commands need this
+option.
 
 The available providers are:
 - GitHub (default)
 - GitLab
 
 Currently supported commands include:
+
+- `config` will create a config file after prompting you for the preferred
+  provider and its associated token. By default, the file is stored locally as
+  `.keep-a-changelog.ini`; if the `--global` (or `-g`) option is provided, the
+  config file will be stored globally in `$HOME/.keep-a-changelog/config.ini`.
 
 - `ready` will set the planned release date for the most recent changelog entry.
 
