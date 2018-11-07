@@ -9,21 +9,20 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use Github\Client as GitHubClient;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ReleaseCommand extends Command
 {
     use GetChangelogFileTrait;
+    use GetConfigValuesTrait;
 
     private const HELP = <<< 'EOH'
-Create a github release using the changelog entry for the specified version.
+Create a release using the changelog entry for the specified version.
 
 The tool first checks to ensure we have a tag for the given version; if not,
 it raises an error.
@@ -36,11 +35,11 @@ Once extracted, the command pushes the tag to the remote specified, using the
 tagname if provided (as tags and release versions may differ; e.g.,
 "release-2.4.7", "v3.8.1", etc.).
 
-It then attempts to create a release on GitHub, using the provided package name
-and version. To do this, the tool requires that you have created and registered
-a GitHub personal access token. The tool will look in $HOME/.keep-a-changelog/token
-for the value unless one is provided via the --token option. When a token is
-provided via the --token option, the tool will prompt you to ask if you
+It then attempts to create a release on the specified provider, using the provided 
+package name and version. To do this, the tool requires that you have created and 
+registered a personal access token in the provider. The tool will look in 
+$HOME/.keep-a-changelog/token for the value unless one is provided via the --token option. 
+When a token is provided via the --token option, the tool will prompt you to ask if you
 wish to store the token in that location for later use.
 
 When complete, the tool will provide a URL to the created release.
@@ -49,7 +48,7 @@ EOH;
 
     protected function configure() : void
     {
-        $this->setDescription('Create a new GitHub release using the relevant changelog entry.');
+        $this->setDescription('Create a new release using the relevant changelog entry.');
         $this->setHelp(self::HELP);
         $this->addArgument(
             'package',
@@ -65,7 +64,7 @@ EOH;
             'token',
             't',
             InputOption::VALUE_REQUIRED,
-            'GitHub personal access token to use'
+            'Personal access token to use'
         );
         $this->addOption(
             'remote',
@@ -83,21 +82,33 @@ EOH;
             'name',
             null,
             InputOption::VALUE_REQUIRED,
-            'Name of release to create on GitHub; defaults to "<package> <version>"'
+            'Name of release to create; defaults to "<package> <version>"'
+        );
+        $this->addOption(
+            'provider',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Repository provider. Options: github or gitlab; defaults to github'
+        );
+        $this->addOption(
+            'global',
+            'g',
+            InputOption::VALUE_NONE,
+            'Use the global config file'
         );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $cwd = realpath(getcwd());
-
         $version = $input->getArgument('version');
         $tagName = $input->getOption('tagname') ?: $version;
 
         $this->verifyTagExists($tagName);
 
+        $config  = $this->prepareConfig();
         $package = $input->getArgument('package');
-        $token = $this->getToken($input, $output);
+
+        $token = $this->getToken($input, $output, $config);
         if (! $token) {
             return 1;
         }
@@ -137,7 +148,8 @@ EOH;
             $releaseName
         ));
 
-        $release = $this->createRelease(
+        $provider = $this->getProvider($config);
+        $release = $provider->createRelease(
             $package,
             $releaseName,
             $tagName,
@@ -157,28 +169,6 @@ EOH;
         $output->writeln(sprintf('<info>Created %s<info>', $release));
 
         return 0;
-    }
-
-    private function getToken(InputInterface $input, OutputInterface $output) : ?string
-    {
-        $token = $input->getOption('token');
-        if ($token) {
-            return trim($token);
-        }
-
-        $home = getenv('HOME');
-        $tokenFile = sprintf('%s/.keep-a-changelog/token', $home);
-        if (! file_exists($tokenFile)) {
-            $output->writeln(sprintf('<error>No token provided, and token file %s not present', $tokenFile));
-            $output->writeln(sprintf(
-                'Please provide the --token option, or create the file %s with your'
-                . ' GitHub personal access token as the sole contents',
-                $tokenFile
-            ));
-            return null;
-        }
-
-        return trim(file_get_contents($tokenFile));
     }
 
     private function promptToSaveToken(string $token, InputInterface $input, OutputInterface $output) : void
@@ -209,31 +199,6 @@ EOH;
         }
         [$org, $repo] = explode('/', $package, 2);
         return sprintf('%s %s', $repo, $version);
-    }
-
-    private function createRelease(
-        string $package,
-        string $releaseName,
-        string $tagName,
-        string $changelog,
-        string $token
-    ) : ?string {
-        [$org, $repo] = explode('/', $package);
-        $client = new GitHubClient();
-        $client->authenticate($token, GitHubClient::AUTH_HTTP_TOKEN);
-        $release = $client->api('repo')->releases()->create(
-            $org,
-            $repo,
-            [
-                'tag_name'   => $tagName,
-                'name'       => $releaseName,
-                'body'       => $changelog,
-                'draft'      => false,
-                'prerelease' => false,
-            ]
-        );
-
-        return $release['html_url'] ?? null;
     }
 
     private function verifyTagExists($version) : void

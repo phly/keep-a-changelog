@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -88,7 +87,7 @@ EOH;
         }
 
         $output->writeln(sprintf(
-            '<info>Created tag "%s" for package "%s" using the following notes:<info>',
+            '<info>Created tag "%s" for package "%s" using the following notes:</info>',
             $version,
             $package
         ));
