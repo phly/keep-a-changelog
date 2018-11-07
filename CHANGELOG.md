@@ -16,7 +16,11 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#27](https://github.com/phly/keep-a-changelog/pull/27) modifies each of the `release` and `entry:*` commands to use the
+  appropriate global or local configuration file, if found, to determine the
+  provider and/or token to use; if either of the `--token` or `--provider`
+  options are provided during invocation, those will override the values from
+  configuration.
 
 ### Deprecated
 
