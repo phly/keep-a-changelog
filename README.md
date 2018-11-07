@@ -43,6 +43,13 @@ All options allow specifying the option `--file` (or its alias `-f`) to indicate
 an alternate changelog file to create or manipulate; if not present,
 `CHANGELOG.md` in the current directory is assumed.
 
+You can specify an alternative provider besides GitHub passing the --provider argument
+to commands. Currently only `release` and `entry` commands need this option.
+
+The available providers are:
+- GitHub (default)
+- GitLab
+
 Currently supported commands include:
 
 - `ready` will set the planned release date for the most recent changelog entry.
@@ -51,8 +58,8 @@ Currently supported commands include:
   `CHANGELOG.md` file. The tag will contain the changelog entry for that version
   within the commit message.
 
-- `release` will push a tag to GitHub, and then create a release for it, using
-  the changelog entry for the release.
+- `release` will push a tag to a provider (GitHub or GitLab), and then create a
+  release for it, using the changelog entry for the release.
 
 - `bump` and `bump:bugfix` will prepend a new changelog entry for a new bugfix
   release, based on the latest release found in the `CHANGELOG.md` file.

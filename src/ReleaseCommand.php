@@ -9,9 +9,8 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use Github\Client as GitHubClient;
+use Phly\KeepAChangelog\Provider\GetProviderTrait;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,9 +20,10 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 class ReleaseCommand extends Command
 {
     use GetChangelogFileTrait;
+    use GetProviderTrait;
 
     private const HELP = <<< 'EOH'
-Create a github release using the changelog entry for the specified version.
+Create a release using the changelog entry for the specified version.
 
 The tool first checks to ensure we have a tag for the given version; if not,
 it raises an error.
@@ -36,11 +36,11 @@ Once extracted, the command pushes the tag to the remote specified, using the
 tagname if provided (as tags and release versions may differ; e.g.,
 "release-2.4.7", "v3.8.1", etc.).
 
-It then attempts to create a release on GitHub, using the provided package name
-and version. To do this, the tool requires that you have created and registered
-a GitHub personal access token. The tool will look in $HOME/.keep-a-changelog/token
-for the value unless one is provided via the --token option. When a token is
-provided via the --token option, the tool will prompt you to ask if you
+It then attempts to create a release on the specified provider, using the provided 
+package name and version. To do this, the tool requires that you have created and 
+registered a personal access token in the provider. The tool will look in 
+$HOME/.keep-a-changelog/token for the value unless one is provided via the --token option. 
+When a token is provided via the --token option, the tool will prompt you to ask if you
 wish to store the token in that location for later use.
 
 When complete, the tool will provide a URL to the created release.
@@ -49,7 +49,7 @@ EOH;
 
     protected function configure() : void
     {
-        $this->setDescription('Create a new GitHub release using the relevant changelog entry.');
+        $this->setDescription('Create a new release using the relevant changelog entry.');
         $this->setHelp(self::HELP);
         $this->addArgument(
             'package',
@@ -65,7 +65,7 @@ EOH;
             'token',
             't',
             InputOption::VALUE_REQUIRED,
-            'GitHub personal access token to use'
+            'Personal access token to use'
         );
         $this->addOption(
             'remote',
@@ -83,14 +83,18 @@ EOH;
             'name',
             null,
             InputOption::VALUE_REQUIRED,
-            'Name of release to create on GitHub; defaults to "<package> <version>"'
+            'Name of release to create; defaults to "<package> <version>"'
+        );
+        $this->addOption(
+            'provider',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Repository provider. Options: github or gitlab; defaults to github'
         );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $cwd = realpath(getcwd());
-
         $version = $input->getArgument('version');
         $tagName = $input->getOption('tagname') ?: $version;
 
@@ -137,7 +141,8 @@ EOH;
             $releaseName
         ));
 
-        $release = $this->createRelease(
+        $provider = $this->getProvider($input);
+        $release = $provider->createRelease(
             $package,
             $releaseName,
             $tagName,
@@ -209,31 +214,6 @@ EOH;
         }
         [$org, $repo] = explode('/', $package, 2);
         return sprintf('%s %s', $repo, $version);
-    }
-
-    private function createRelease(
-        string $package,
-        string $releaseName,
-        string $tagName,
-        string $changelog,
-        string $token
-    ) : ?string {
-        [$org, $repo] = explode('/', $package);
-        $client = new GitHubClient();
-        $client->authenticate($token, GitHubClient::AUTH_HTTP_TOKEN);
-        $release = $client->api('repo')->releases()->create(
-            $org,
-            $repo,
-            [
-                'tag_name'   => $tagName,
-                'name'       => $releaseName,
-                'body'       => $changelog,
-                'draft'      => false,
-                'prerelease' => false,
-            ]
-        );
-
-        return $release['html_url'] ?? null;
     }
 
     private function verifyTagExists($version) : void

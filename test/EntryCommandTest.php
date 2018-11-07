@@ -88,10 +88,12 @@ class EntryCommandTest extends TestCase
         $entry = 'This is the entry';
         $pr = 1;
         $package = 'not-a-valid-package-name';
+        $provider = '';
 
         $this->input->getArgument('entry')->willReturn($entry);
         $this->input->getOption('pr')->willReturn($pr);
         $this->input->getOption('package')->willReturn($package);
+        $this->input->getOption('provider')->willReturn($provider);
 
         $command = new EntryCommand('entry:added');
 
@@ -104,10 +106,12 @@ class EntryCommandTest extends TestCase
         $entry = 'This is the entry';
         $pr = 9999999999;
         $package = 'phly/keep-a-changelog';
+        $provider = '';
 
         $this->input->getArgument('entry')->willReturn($entry);
         $this->input->getOption('pr')->willReturn($pr);
         $this->input->getOption('package')->willReturn($package);
+        $this->input->getOption('provider')->willReturn($provider);
 
         $command = new EntryCommand('entry:added');
 
@@ -120,14 +124,38 @@ class EntryCommandTest extends TestCase
         $entry = 'This is the entry';
         $pr = 1;
         $package = 'phly/keep-a-changelog';
+        $provider = '';
 
         $this->input->getArgument('entry')->willReturn($entry);
         $this->input->getOption('pr')->willReturn($pr);
         $this->input->getOption('package')->willReturn($package);
+        $this->input->getOption('provider')->willReturn($provider);
 
         $command = new EntryCommand('entry:added');
 
         $expected = '[#1](https://github.com/phly/keep-a-changelog/pull/1) ' . $entry;
+
+        $this->assertSame(
+            $expected,
+            $this->reflectMethod($command, 'prepareEntry')->invoke($command, $this->input->reveal())
+        );
+    }
+
+    public function testPrepareEntryReturnsEntryWithGitLabPrLinkPrefixedWhenPackageOptionPresentAndValid()
+    {
+        $entry = 'This is the entry';
+        $pr = 1;
+        $package = 'phly/keep-a-changelog';
+        $provider = 'gitlab';
+
+        $this->input->getArgument('entry')->willReturn($entry);
+        $this->input->getOption('pr')->willReturn($pr);
+        $this->input->getOption('package')->willReturn($package);
+        $this->input->getOption('provider')->willReturn($provider);
+
+        $command = new EntryCommand('entry:added');
+
+        $expected = '[#1](https://gitlab.com/phly/keep-a-changelog/merge_requests/1) ' . $entry;
 
         $this->assertSame(
             $expected,
