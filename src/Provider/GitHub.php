@@ -13,7 +13,6 @@ use Github\Client as GitHubClient;
 
 class GitHub implements ProviderInterface
 {
-
     /**
      * @inheritDoc
      */
@@ -23,7 +22,7 @@ class GitHub implements ProviderInterface
         string $tagName,
         string $changelog,
         string $token
-    ): ?string {
+    ) : ?string {
         [$org, $repo] = explode('/', $package);
         $client = new GitHubClient();
         $client->authenticate($token, GitHubClient::AUTH_HTTP_TOKEN);
@@ -53,7 +52,7 @@ class GitHub implements ProviderInterface
     /**
      * @inheritDoc
      */
-    public function generatePullRequestLink(string $package, int $pr): string
+    public function generatePullRequestLink(string $package, int $pr) : string
     {
         return sprintf('https://github.com/%s/pull/%d', $package, $pr);
     }
