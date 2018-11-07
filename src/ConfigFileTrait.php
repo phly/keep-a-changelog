@@ -16,42 +16,54 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 trait ConfigFileTrait
 {
-
     private function getConfigFile(InputInterface $input) : string
     {
         $useGlobal = $input->getOption('global') ?: false;
 
-        if (! $useGlobal) {
-            return realpath(getcwd()) . '/.keep-a-changelog.ini';
-        }
-
-        $home = getenv('HOME');
-        return sprintf('%s/.keep-a-changelog/config.ini', $home);
+        return $useGlobal
+            ? sprintf('%s/.keep-a-changelog/config.ini', getenv('HOME'))
+            : realpath(getcwd()) . '/.keep-a-changelog.ini';
     }
 
     private function getConfig(InputInterface $input) : Config
     {
         $configFile = $this->getConfigFile($input);
-        if (! is_readable($configFile)) {
-            $home = getenv('HOME');
-            $tokenFile = sprintf('%s/.keep-a-changelog/token', $home);
-            $token = '';
-            if (is_readable($tokenFile)) {
-                $token = trim(file_get_contents($tokenFile));
-            }
-            return new Config($token);
-        }
-        $ini = parse_ini_file($configFile);
-        return new Config($ini['token'] ?? '', $ini['provider'] ?? Config::PROVIDER_GITHUB);
+        return is_readable($configFile)
+            ? $this->createConfigFromFile($configFile)
+            : $this->createNewConfig();
     }
 
     private function saveConfigFile(string $filename, Config $config) : bool
     {
-        $data = $config->getArrayCopy();
         $ini = '';
-        foreach ($data as $key => $value) {
-            $ini .= "$key = $value" . PHP_EOL;
+        foreach ($config->getArrayCopy() as $key => $value) {
+            $ini .= sprintf('%s = %s%s', $key, $value, PHP_EOL);
         }
         return file_put_contents($filename, $ini) !== false;
+    }
+
+    /**
+     * Create a new Config instance.
+     *
+     * If the config file does not exist, this creates empty configuration,
+     * optionally using an existing tokenfile ($HOME/.keep-a-changelog/token)
+     * if it exists.
+     */
+    private function createNewConfig() : Config
+    {
+        $tokenFile = sprintf('%s/.keep-a-changelog/token', getenv('HOME'));
+        $token = is_readable($tokenFile)
+            ? trim(file_get_contents($tokenFile))
+            : '';
+        return new Config($token);
+    }
+
+    /**
+     * Parses the config file and returns a populated Config instance.
+     */
+    private function createConfigFromFile(string $configFile) : Config
+    {
+        $ini = parse_ini_file($configFile);
+        return new Config($ini['token'] ?? '', $ini['provider'] ?? Config::PROVIDER_GITHUB);
     }
 }
