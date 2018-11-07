@@ -16,7 +16,7 @@ class ConfigFileExistsException extends RuntimeException
     public static function forFile(string $file) : self
     {
         return new self(sprintf(
-            'A config file already exists; Use --overwrite to replace it.',
+            'A config file already exists at %s; Use --overwrite to replace it.',
             $file
         ));
     }

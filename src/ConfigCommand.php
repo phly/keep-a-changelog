@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\HelperInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,6 +28,13 @@ Create a configuration file. If no --global is provided, the assumption is
 a local .keep-a-changelog.ini file in the current directory. If the file 
 already exists, you can use --overwrite to replace it.
 EOH;
+
+    /**
+     * Used for testing, to allow mocking the question helper.
+     *
+     * @var ?HelperInterface
+     */
+    private $questionHelper;
 
     protected function configure() : void
     {
@@ -55,7 +63,7 @@ EOH;
             throw Exception\ConfigFileExistsException::forFile($configFile);
         }
 
-        $helper = $this->getHelper('question');
+        $helper = $this->getQuestionHelper();
         $question = new ChoiceQuestion(
             sprintf('Please select the provider (Default: %s)', Config::PROVIDER_GITHUB),
             Config::PROVIDERS,
@@ -74,5 +82,13 @@ EOH;
         $output->writeln(sprintf('<info>Created config file "%s".</info>', $configFile));
 
         return 0;
+    }
+
+    private function getQuestionHelper() : HelperInterface
+    {
+        if ($this->questionHelper) {
+            return $this->questionHelper;
+        }
+        return $this->getHelper('question');
     }
 }

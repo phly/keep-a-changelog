@@ -16,13 +16,31 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 trait ConfigFileTrait
 {
+    /**
+     * Path where global config is kept.
+     *
+     * This property exists solely for testing. When set, the value will be used
+     * instead of getenv('HOME').
+     */
+    private $globalPath;
+
+    /**
+     * Path where global config is kept.
+     *
+     * This property exists solely for testing. When set, the value will be used
+     * instead of realpath(getcwd())
+     */
+    private $localPath;
+
     private function getConfigFile(InputInterface $input) : string
     {
-        $useGlobal = $input->getOption('global') ?: false;
+        $useGlobal  = $input->getOption('global') ?: false;
+        $globalPath = $this->globalPath ?: getenv('HOME');
+        $localPath  = $this->localPath ?: realpath(getcwd());
 
         return $useGlobal
-            ? sprintf('%s/.keep-a-changelog/config.ini', getenv('HOME'))
-            : realpath(getcwd()) . '/.keep-a-changelog.ini';
+            ? sprintf('%s/.keep-a-changelog/config.ini', $globalPath)
+            : sprintf('%s/.keep-a-changelog.ini', $localPath);
     }
 
     private function getConfig(InputInterface $input) : Config
@@ -51,7 +69,8 @@ trait ConfigFileTrait
      */
     private function createNewConfig() : Config
     {
-        $tokenFile = sprintf('%s/.keep-a-changelog/token', getenv('HOME'));
+        $globalPath = $this->globalPath ?: getenv('HOME');
+        $tokenFile  = sprintf('%s/.keep-a-changelog/token', $globalPath);
         $token = is_readable($tokenFile)
             ? trim(file_get_contents($tokenFile))
             : '';

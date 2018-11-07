@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use Phly\KeepAChangelog\Provider\GetProviderTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,9 +18,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ReleaseCommand extends Command
 {
-    use ConfigFileTrait;
     use GetChangelogFileTrait;
-    use GetProviderTrait;
+    use GetConfigValuesTrait;
 
     private const HELP = <<< 'EOH'
 Create a release using the changelog entry for the specified version.
@@ -107,8 +105,10 @@ EOH;
 
         $this->verifyTagExists($tagName);
 
+        $config  = $this->prepareConfig();
         $package = $input->getArgument('package');
-        $token = $this->getToken($input, $output);
+
+        $token = $this->getToken($input, $output, $config);
         if (! $token) {
             return 1;
         }
@@ -148,7 +148,7 @@ EOH;
             $releaseName
         ));
 
-        $provider = $this->getProvider($input);
+        $provider = $this->getProvider($config);
         $release = $provider->createRelease(
             $package,
             $releaseName,
@@ -169,30 +169,6 @@ EOH;
         $output->writeln(sprintf('<info>Created %s<info>', $release));
 
         return 0;
-    }
-
-    private function getToken(InputInterface $input, OutputInterface $output) : ?string
-    {
-        $token = $input->getOption('token');
-        if ($token) {
-            return trim($token);
-        }
-
-        $config = $this->getConfig($input);
-
-        if (empty($config->token())) {
-            $configFile = $this->getConfigFile($input);
-            $output->writeln(sprintf(
-                '<error>No token provided, and could not find it in the config file %s</error>',
-                $configFile
-            ));
-            $output->writeln(
-                'Please provide the --token option, or create the config file with the config command'
-            );
-            return null;
-        }
-
-        return trim($config->token());
     }
 
     private function promptToSaveToken(string $token, InputInterface $input, OutputInterface $output) : void

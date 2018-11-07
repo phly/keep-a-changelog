@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use Phly\KeepAChangelog\Provider\GetProviderTrait;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class EntryCommand extends Command
 {
     use GetChangelogFileTrait;
-    use GetProviderTrait;
+    use GetConfigValuesTrait;
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the latest changelog in the "%s" section';
 
@@ -130,10 +129,16 @@ EOH;
             throw Exception\InvalidPullRequestException::for($pr);
         }
 
+        $config = $this->prepareConfig($input);
+
         return sprintf(
             '[#%d](%s) %s',
             (int) $pr,
-            $this->preparePullRequestLink((int) $pr, $input->getOption('package'), $this->getProvider($input)),
+            $this->preparePullRequestLink(
+                (int) $pr,
+                $input->getOption('package'),
+                $this->getProvider($config)
+            ),
             $entry
         );
     }
