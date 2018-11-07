@@ -30,28 +30,6 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 1.4.5 - TBD
-
-### Added
-
-- `config` command adding the token and provider in a global or local file.
-
-### Changed
-
-- Renaming repository name from headers and docs.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
 ## 1.4.4 - 2018-04-26
 
 ### Added
