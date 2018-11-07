@@ -25,6 +25,9 @@ class Config
     /** @var string */
     private $token;
 
+    /**
+     * @throws Exception\InvalidProviderException if the $provider is unknown.
+     */
     public function __construct(string $token = '', string $provider = self::PROVIDER_GITHUB)
     {
         $this->token = $token;
@@ -43,6 +46,9 @@ class Config
         return $this->token;
     }
 
+    /**
+     * @throws Exception\InvalidProviderException
+     */
     public function withProvider(string $provider) : self
     {
         $this->validateProvider($provider);
