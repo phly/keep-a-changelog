@@ -109,7 +109,7 @@ EOH;
         $config  = $this->prepareConfig($input);
         $package = $input->getArgument('package');
 
-        $token = $this->getToken($input, $output, $config);
+        $token = $this->getToken($config, $input, $output);
         if (! $token) {
             return 1;
         }
