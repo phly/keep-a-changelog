@@ -44,6 +44,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- [#31](https://github.com/phly/keep-a-changelog/pull/31) fixes a syntax error in the `release` command.
+
 - [#30](https://github.com/phly/keep-a-changelog/pull/30) fixes the `EntryCommand`, adding a missing `global` (`-g`) option.
 
 ## 1.5.0 - 2018-11-07
