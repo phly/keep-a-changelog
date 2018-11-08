@@ -99,7 +99,8 @@ class EntryCommandTest extends TestCase
         $this->input->getOption('pr')->willReturn($pr);
         $this->input->getOption('package')->willReturn($package);
         $this->input->getOption('global')->willReturn(null);
-        $this->input->getOption('token')->willReturn(null);
+        $this->input->hasOption('token')->willReturn(false);
+        $this->input->getOption('token')->shouldNotBeCalled();
         $this->input->getOption('provider')->willReturn($provider);
 
         $command = new EntryCommand('entry:added');
@@ -120,7 +121,8 @@ class EntryCommandTest extends TestCase
         $this->input->getOption('pr')->willReturn($pr);
         $this->input->getOption('package')->willReturn($package);
         $this->input->getOption('global')->willReturn(null);
-        $this->input->getOption('token')->willReturn(null);
+        $this->input->hasOption('token')->willReturn(false);
+        $this->input->getOption('token')->shouldNotBeCalled();
         $this->input->getOption('provider')->willReturn($provider);
 
         $command = new EntryCommand('entry:added');
@@ -141,7 +143,8 @@ class EntryCommandTest extends TestCase
         $this->input->getOption('pr')->willReturn($pr);
         $this->input->getOption('package')->willReturn($package);
         $this->input->getOption('global')->willReturn(null);
-        $this->input->getOption('token')->willReturn(null);
+        $this->input->hasOption('token')->willReturn(false);
+        $this->input->getOption('token')->shouldNotBeCalled();
         $this->input->getOption('provider')->willReturn($provider);
 
         $command = new EntryCommand('entry:added');
@@ -166,7 +169,8 @@ class EntryCommandTest extends TestCase
         $this->input->getOption('pr')->willReturn($pr);
         $this->input->getOption('package')->willReturn($package);
         $this->input->getOption('global')->willReturn(null);
-        $this->input->getOption('token')->willReturn(null);
+        $this->input->hasOption('token')->willReturn(false);
+        $this->input->getOption('token')->shouldNotBeCalled();
         $this->input->getOption('provider')->willReturn($provider);
 
         $command = new EntryCommand('entry:added');

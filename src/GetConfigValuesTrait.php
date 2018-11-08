@@ -31,7 +31,7 @@ trait GetConfigValuesTrait
     ) : Config {
         $config = $this->getConfig($input);
 
-        $token  = $input->getOption($tokenOptionName);
+        $token  = $input->hasOption($tokenOptionName) ? $input->getOption($tokenOptionName) : null;
         $config = $token ? $config->withToken($token) : $config;
 
         $provider = $input->getOption($providerOptionName);

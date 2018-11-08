@@ -38,9 +38,10 @@ tagname if provided (as tags and release versions may differ; e.g.,
 It then attempts to create a release on the specified provider, using the provided 
 package name and version. To do this, the tool requires that you have created and 
 registered a personal access token in the provider. The tool will look in 
-$HOME/.keep-a-changelog/token for the value unless one is provided via the --token option. 
-When a token is provided via the --token option, the tool will prompt you to ask if you
-wish to store the token in that location for later use.
+$HOME/.keep-a-changelog/config.ini or $HOME/.keep-a-changelog/token for the
+value unless one is provided via the --token option.  When a token is provided
+via the --token option, the tool will prompt you to ask if you wish to store
+the token for later use.
 
 When complete, the tool will provide a URL to the created release.
 
