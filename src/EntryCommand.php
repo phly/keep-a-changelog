@@ -86,6 +86,12 @@ EOH;
             InputOption::VALUE_OPTIONAL,
             'Repository provider. Options: github or gitlab; defaults to github'
         );
+        $this->addOption(
+            'global',
+            'g',
+            InputOption::VALUE_NONE,
+            'Use the global config file'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
