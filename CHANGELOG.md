@@ -22,6 +22,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- [#32](https://github.com/phly/keep-a-changelog/pull/32) fixes the order of arguments to the `getToken()` method invoked within `ReleaseCommand`, resolving a syntax error.
+
 - [#31](https://github.com/phly/keep-a-changelog/pull/31) fixes a syntax error in the `release` command.
 
 - [#30](https://github.com/phly/keep-a-changelog/pull/30) fixes the `EntryCommand`, adding a missing `global` (`-g`) option.
