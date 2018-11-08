@@ -106,7 +106,7 @@ EOH;
 
         $this->verifyTagExists($tagName);
 
-        $config  = $this->prepareConfig();
+        $config  = $this->prepareConfig($input);
         $package = $input->getArgument('package');
 
         $token = $this->getToken($input, $output, $config);
