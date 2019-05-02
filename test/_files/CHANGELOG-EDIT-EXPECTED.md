@@ -28,23 +28,23 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- Added a new feature.
 
 ### Changed
 
-- Nothing.
+- Made some changes.
 
 ### Deprecated
 
-- Nothing.
+- Nothing was deprecated.
 
 ### Removed
 
-- Nothing.
+- Nothing was removed.
 
 ### Fixed
 
-- Nothing.
+- Fixed some bugs.
 
 ## 0.1.0 - 2018-03-23
 

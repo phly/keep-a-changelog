@@ -11,14 +11,29 @@ namespace Phly\KeepAChangelog;
 
 class ChangelogParser
 {
-    public function findChangelogForVersion(string $changelog, string $version)
+    public function findReleaseDateForVersion(string $changelog, string $version) : string
     {
         $regex = preg_quote('## ' . $version);
         if (! preg_match('/^' . $regex . '/m', $changelog)) {
             throw Exception\ChangelogNotFoundException::forVersion($version);
         }
 
-        $regex .= ' - \d{4}-\d{2}-\d{2}';
+        $regex .= ' - (?P<date>(\d{4}-\d{2}-\d{2}|TBD))';
+        if (! preg_match('/^' . $regex . '/m', $changelog, $matches)) {
+            throw Exception\ChangelogMissingDateException::forVersion($version);
+        }
+
+        return $matches['date'];
+    }
+
+    public function findChangelogForVersion(string $changelog, string $version) : string
+    {
+        $regex = preg_quote('## ' . $version);
+        if (! preg_match('/^' . $regex . '/m', $changelog)) {
+            throw Exception\ChangelogNotFoundException::forVersion($version);
+        }
+
+        $regex .= ' - (\d{4}-\d{2}-\d{2}|TBD)';
         if (! preg_match('/^' . $regex . '/m', $changelog)) {
             throw Exception\ChangelogMissingDateException::forVersion($version);
         }

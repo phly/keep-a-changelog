@@ -51,6 +51,7 @@ $application->addCommands([
     new NewChangelogCommand('new'),
     new ReadyCommand('ready'),
     new ReleaseCommand('release'),
+    new ShowVersionCommand('show-version'),
     new TaggerCommand('tag'),
 ]);
 $application->run();
