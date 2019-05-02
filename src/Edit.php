@@ -14,12 +14,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Edit
 {
-    /**
-     * @todo Allow pulling a specific changelog entry by version.
-     */
-    public function __invoke(OutputInterface $output, string $filename, ?string $editor) : bool
-    {
-        $changelogData = $this->getChangelogEntry($filename);
+    public function __invoke(
+        OutputInterface $output,
+        string $filename,
+        ?string $editor,
+        ?string $version = null
+    ) : bool {
+        $changelogData = $this->getChangelogEntry($filename, $version);
         if (! $changelogData) {
             $output->writeln(sprintf(
                 '<error>Unable to identify a changelog entry in %s; did you specify the correct file?</error>',
@@ -47,7 +48,10 @@ class Edit
     }
 
     /**
-     * Retrieves the first changelog entry in the file.
+     * Retrieves changelog entry from the file.
+     *
+     * If $version is null, it fetches the first entry; otherwise, it attempts
+     * to fetch the entry associated with the given version.
      *
      * If no changelog entry is found, returns null. Otherwise, returns an
      * anonymous object with the keys:
@@ -56,7 +60,7 @@ class Edit
      * - length, the number of lines in the contents
      * - contents, a string representing the changelog entry found in its entierty
      */
-    private function getChangelogEntry($filename) : ?stdClass
+    private function getChangelogEntry($filename, ?string $version = null) : ?stdClass
     {
         $contents = file($filename);
         if (false === $contents) {
@@ -69,11 +73,18 @@ class Edit
             'length' => 0,
         ];
 
+        $boundaryRegex = '/^## \d+\.\d+\.\d+/';
+
+        $regex = $version
+            ? sprintf('/^## %s/', preg_quote($version))
+            : $boundaryRegex;
+
         foreach ($contents as $index => $line) {
-            if (preg_match('/^## \d+\.\d+\.\d+/', $line)) {
-                if ($data->index) {
-                    break;
-                }
+            if ($data->index && preg_match($boundaryRegex, $line)) {
+                break;
+            }
+
+            if (preg_match($regex, $line)) {
                 $data->contents = $line;
                 $data->index = $index;
                 $data->length = 1;

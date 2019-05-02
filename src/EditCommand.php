@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,6 +33,11 @@ EOH;
     {
         $this->setDescription(self::DESCRIPTION);
         $this->setHelp(self::HELP);
+        $this->addArgument(
+            'version',
+            InputArgument::OPTIONAL,
+            'A specific changelog version to edit.'
+        );
         $this->addOption(
             'editor',
             '-e',
@@ -42,10 +48,11 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $editor = $input->getOption('editor') ?: null;
+        $editor        = $input->getOption('editor') ?: null;
+        $version       = $input->getArgument('version') ?: null;
         $changelogFile = $this->getChangelogFile($input);
 
-        if (! (new Edit())($output, $changelogFile, $editor)) {
+        if (! (new Edit())($output, $changelogFile, $editor, $version)) {
             $output->writeln(sprintf(
                 '<error>Could not edit %s; please check the output for details.</error>',
                 $changelogFile
@@ -53,10 +60,10 @@ EOH;
             return 1;
         }
 
-        $output->writeln(sprintf(
-            '<info>Edited most recent changelog in %s</info>',
-            $changelogFile
-        ));
+        $message = $version
+            ? sprintf('<info>Edited change for version %s in %s</info>', $version, $changelogFile)
+            : sprintf('<info>Edited most recent changelog in %s</info>', $changelogFile);
+        $output->writeln($message);
 
         return 0;
     }
