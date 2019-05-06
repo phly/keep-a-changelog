@@ -14,7 +14,8 @@ use Phly\KeepAChangelog\Exception;
 
 class GitLab implements
     IssueMarkupProvider,
-    ProviderInterface
+    ProviderInterface,
+    ProviderNameProvider
 {
     public function getIssuePrefix() : string
     {
@@ -61,5 +62,15 @@ class GitLab implements
         }
 
         return sprintf('https://gitlab.com/%s/merge_requests/%d', $package, $pr);
+    }
+
+    public function getName() : string
+    {
+        return 'GitLab';
+    }
+
+    public function getDomainName() : string
+    {
+        return 'gitlab.com';
     }
 }

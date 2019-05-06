@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
- * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
+ * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
  * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
  */
 
@@ -72,7 +72,7 @@ EOH;
             'remote',
             'r',
             InputOption::VALUE_REQUIRED,
-            'Git remote to push tag to; defaults to "origin"'
+            'Git remote to push tag to; defaults to first Git remote matching provider and package'
         );
         $this->addOption(
             'tagname',
@@ -122,7 +122,7 @@ EOH;
 
         $output->writeln('<info>Preparing changelog for release</info>');
 
-        $parser = new ChangelogParser();
+        $parser    = new ChangelogParser();
         $changelog = $parser->findChangelogForVersion(
             file_get_contents($changelogFile),
             $version
@@ -131,7 +131,31 @@ EOH;
         $formatter = new ChangelogFormatter();
         $changelog = $formatter->format($changelog);
 
-        $remote = $input->getOption('remote') ?? 'origin';
+        $remotes = $this->fetchGitRemotes();
+        if (! $remotes) {
+            $output->writeln('<error>Cannot determine remote to which to push tag!</error>');
+            $output->writeln(
+                'The command "git remote -v" had a non-zero exit status; verify the command works, and try again.'
+            );
+            return 1;
+        }
+
+        $provider = $this->getProvider($config);
+        $remote   = $input->getOption('remote') ?: $this->lookupRemote($provider, $package, $remotes);
+
+        if (! $remote) {
+            $output->writeln('<error>Cannot determine remote to which to push tag!</error>');
+            $output->writeln(sprintf(
+                '- Do no remotes registered in your repository match the provider in use? ("%s")',
+                $this->getProviderDomain($provider)
+            ));
+            $output->writeln(sprintf(
+                '- Do no remotes registered in your repository match the <package> provided? ("%s")',
+                $package
+            ));
+            return 1;
+        }
+
         $output->writeln(sprintf(
             '<info>Pushing tag %s to %s</info>',
             $version,
@@ -150,7 +174,6 @@ EOH;
             $releaseName
         ));
 
-        $provider = $this->getProvider($config);
         $release = $provider->createRelease(
             $package,
             $releaseName,
@@ -218,5 +241,70 @@ EOH;
         $command = sprintf('git push %s %s', $remote, $version);
         exec($command, $output, $return);
         return 0 === $return;
+    }
+
+    /**
+     * Determine which remote to which to push a tag
+     *
+     * This method uses the provider and package, looping through the remotes
+     * returned by `git remote -v` to match each against remotes configured
+     * for push operations. If the remote matches both the provider domain and
+     * the package name, then it will return the remote name; otherwise, it
+     * returns null, indicating none could be found.
+     */
+    private function lookupRemote(Provider\ProviderInterface $provider, string $package, array $remotes) : ?string
+    {
+        $domain      = $this->getProviderDomain($provider);
+        $domainRegex = '#[/@.]' . preg_quote($domain) . '(:\d+:|:|/)#i';
+
+        foreach ($remotes as $line) {
+            if (! preg_match(
+                '/^(?P<name>\S+)\s+(?P<url>\S+)\s+\((?P<type>[^)]+)\)$/',
+                $line,
+                $matches
+            )) {
+                continue;
+            }
+
+            if (strtolower($matches['type']) !== 'push') {
+                continue;
+            }
+
+            if (! preg_match($domainRegex, $matches['url'])) {
+                continue;
+            }
+
+            if (false === strstr($matches['url'], $package)) {
+                continue;
+            }
+
+            // FOUND!
+            return $matches['name'];
+        }
+
+        return null;
+    }
+
+    /**
+     * @return null|array<string> Array of lines as returned by
+     *     `git remote -v`, or null if an error occurred.
+     */
+    private function fetchGitRemotes() : ?array
+    {
+        $command = 'git remote -v';
+        exec($command, $output, $exitStatus);
+        if ($exitStatus !== 0) {
+            return null;
+        }
+        return $output;
+    }
+
+    private function getProviderDomain(Provider\ProviderInterface $provider) : string
+    {
+        if (! $provider instanceof Provider\ProviderNameProvider) {
+            throw Exception\InvalidProviderException::forIncompleteProvider($provider);
+        }
+
+        return $provider->getDomainName();
     }
 }

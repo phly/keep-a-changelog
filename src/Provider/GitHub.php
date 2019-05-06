@@ -14,7 +14,8 @@ use Phly\KeepAChangelog\Exception;
 
 class GitHub implements
     IssueMarkupProvider,
-    ProviderInterface
+    ProviderInterface,
+    ProviderNameProvider
 {
     public function getIssuePrefix() : string
     {
@@ -72,5 +73,15 @@ class GitHub implements
         }
 
         return sprintf('https://github.com/%s/pull/%d', $package, $pr);
+    }
+
+    public function getName() : string
+    {
+        return 'GitHub';
+    }
+
+    public function getDomainName() : string
+    {
+        return 'github.com';
     }
 }

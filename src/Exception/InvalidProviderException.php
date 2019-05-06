@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Exception;
 
 use InvalidArgumentException;
+use Phly\KeepAChangelog\Provider;
 
 class InvalidProviderException extends InvalidArgumentException
 {
@@ -19,6 +20,17 @@ class InvalidProviderException extends InvalidArgumentException
             'Unknown provider "%s"; must be one of (%s)',
             $provider,
             implode(', ', $allowedProviders)
+        ));
+    }
+
+    public static function forIncompleteProvider(Provider\ProviderInterface $provider) : self
+    {
+        return new self(sprintf(
+            'Provider %s does not implement %s and thus cannot be used to determine where to push tags;'
+            . ' please implement %s',
+            gettype($provider),
+            Provider\ProviderNameProvider::class,
+            Provider\ProviderNameProvider::class
         ));
     }
 }
