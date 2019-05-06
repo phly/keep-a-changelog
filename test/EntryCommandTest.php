@@ -176,7 +176,7 @@ class EntryCommandTest extends TestCase
         $command = new EntryCommand('entry:added');
         $this->injectCommandConfigPaths($command);
 
-        $expected = '[#1](https://gitlab.com/phly/keep-a-changelog/merge_requests/1) ' . $entry;
+        $expected = '[!1](https://gitlab.com/phly/keep-a-changelog/merge_requests/1) ' . $entry;
 
         $this->assertSame(
             $expected,

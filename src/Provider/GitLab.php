@@ -12,8 +12,20 @@ namespace Phly\KeepAChangelog\Provider;
 use Gitlab\Client as GitLabClient;
 use Phly\KeepAChangelog\Exception;
 
-class GitLab implements ProviderInterface
+class GitLab implements
+    IssueMarkupProvider,
+    ProviderInterface
 {
+    public function getIssuePrefix() : string
+    {
+        return '#';
+    }
+
+    public function getPatchPrefix() : string
+    {
+        return '!';
+    }
+
     /**
      * @inheritDoc
      */

@@ -12,8 +12,20 @@ namespace Phly\KeepAChangelog\Provider;
 use Github\Client as GitHubClient;
 use Phly\KeepAChangelog\Exception;
 
-class GitHub implements ProviderInterface
+class GitHub implements
+    IssueMarkupProvider,
+    ProviderInterface
 {
+    public function getIssuePrefix() : string
+    {
+        return '#';
+    }
+
+    public function getPatchPrefix() : string
+    {
+        return '#';
+    }
+
     /**
      * @inheritDoc
      */

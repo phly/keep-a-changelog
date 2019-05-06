@@ -136,24 +136,26 @@ EOH;
             throw Exception\InvalidPullRequestException::for($pr);
         }
 
-        $config = $this->prepareConfig($input);
+        $config   = $this->prepareConfig($input);
+        $provider = $this->getProvider($config);
 
         return sprintf(
-            '[#%d](%s) %s',
+            '[%s%d](%s) %s',
+            $provider instanceof Provider\IssueMarkupProvider ? $provider->getPatchPrefix() : '#',
             (int) $pr,
-            $this->preparePullRequestLink(
+            $this->preparePatchLink(
                 (int) $pr,
                 $input->getOption('package'),
-                $this->getProvider($config)
+                $provider
             ),
             $entry
         );
     }
 
-    private function preparePullRequestLink(int $pr, ?string $package, ProviderInterface $provider) : string
+    private function preparePatchLink(int $pr, ?string $package, ProviderInterface $provider) : string
     {
         if (null !== $package) {
-            $link = $this->generatePullRequestLink($pr, $package, $provider);
+            $link = $this->generatePatchLink($pr, $package, $provider);
 
             if (null === $link) {
                 throw Exception\InvalidPullRequestLinkException::forPackage($package, $pr);
@@ -162,14 +164,14 @@ EOH;
             return $link;
         }
 
-        $link = $this->generatePullRequestLink($pr, (new ComposerPackage())->getName(realpath(getcwd())), $provider);
+        $link = $this->generatePatchLink($pr, (new ComposerPackage())->getName(realpath(getcwd())), $provider);
 
         if (null !== $link) {
             return $link;
         }
 
         foreach ($this->getPackageNames($provider) as $package) {
-            $link = $this->generatePullRequestLink($pr, $package, $provider);
+            $link = $this->generatePatchLink($pr, $package, $provider);
 
             if (null !== $link) {
                 return $link;
@@ -207,7 +209,7 @@ EOH;
         return $packages;
     }
 
-    private function generatePullRequestLink(int $pr, string $package, ProviderInterface $provider) : ?string
+    private function generatePatchLink(int $pr, string $package, ProviderInterface $provider) : ?string
     {
         $link = $provider->generatePullRequestLink($package, $pr);
         return $this->probeLink($link) ? $link : null;
