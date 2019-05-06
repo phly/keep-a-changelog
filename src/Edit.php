@@ -9,11 +9,12 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use stdClass;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Edit
 {
+    use ChangelogEditor;
+
     public function __invoke(
         OutputInterface $output,
         string $filename,
@@ -29,7 +30,7 @@ class Edit
             return false;
         }
 
-        $editor = $editor ?: $this->discoverEditor();
+        $editor   = $editor ?: $this->discoverEditor();
         $tempFile = $this->createTempFileWithContents($changelogData->contents);
 
         $status = $this->spawnEditor($output, $editor, $tempFile);
@@ -42,64 +43,13 @@ class Edit
             return false;
         }
 
-
-        $this->updateChangelogEntry($filename, $tempFile, $changelogData->index, $changelogData->length);
+        $this->updateChangelogEntry(
+            $filename,
+            file_get_contents($tempFile),
+            $changelogData->index,
+            $changelogData->length
+        );
         return true;
-    }
-
-    /**
-     * Retrieves changelog entry from the file.
-     *
-     * If $version is null, it fetches the first entry; otherwise, it attempts
-     * to fetch the entry associated with the given version.
-     *
-     * If no changelog entry is found, returns null. Otherwise, returns an
-     * anonymous object with the keys:
-     *
-     * - index, indicating the line number where the contents began
-     * - length, the number of lines in the contents
-     * - contents, a string representing the changelog entry found in its entierty
-     */
-    private function getChangelogEntry($filename, ?string $version = null) : ?stdClass
-    {
-        $contents = file($filename);
-        if (false === $contents) {
-            throw Exception\ChangelogFileNotFoundException::at($filename);
-        }
-
-        $data = (object) [
-            'contents' => '',
-            'index' => null,
-            'length' => 0,
-        ];
-
-        $boundaryRegex = '/^## \d+\.\d+\.\d+/';
-
-        $regex = $version
-            ? sprintf('/^## %s/', preg_quote($version))
-            : $boundaryRegex;
-
-        foreach ($contents as $index => $line) {
-            if ($data->index && preg_match($boundaryRegex, $line)) {
-                break;
-            }
-
-            if (preg_match($regex, $line)) {
-                $data->contents = $line;
-                $data->index = $index;
-                $data->length = 1;
-                continue;
-            }
-
-            if (! $data->index) {
-                continue;
-            }
-
-            $data->contents .= $line;
-            $data->length += 1;
-        }
-
-        return $data->index !== null ? $data : null;
     }
 
     /**
@@ -146,13 +96,5 @@ class Edit
 
         $process = proc_open($command, $descriptorspec, $pipes);
         return proc_close($process);
-    }
-
-    private function updateChangelogEntry(string $filename, string $tempFile, int $index, int $length)
-    {
-        $contents = file($filename);
-        $replacement = file_get_contents($tempFile);
-        array_splice($contents, $index, $length, $replacement);
-        file_put_contents($filename, implode('', $contents));
     }
 }

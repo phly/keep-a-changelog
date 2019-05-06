@@ -177,12 +177,10 @@ EOH;
 
 
 EOH;
-        $tempFile = tempnam(sys_get_temp_dir(), 'CAK');
-        file_put_contents($tempFile, $expectedContents);
 
         $edit = new Edit();
         $updateChangelogEntry = $this->reflectMethod($edit, 'updateChangelogEntry');
-        $updateChangelogEntry->invoke($edit, $this->tempFile, $tempFile, 4, 22);
+        $updateChangelogEntry->invoke($edit, $this->tempFile, $expectedContents, 4, 22);
 
         $this->assertFileEquals(__DIR__ . '/_files/CHANGELOG-EDIT-EXPECTED.md', $this->tempFile);
     }
