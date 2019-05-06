@@ -6,15 +6,26 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) adds the command `version:list`, which will list all versions and
+  associated release dates from the changelog file.
+
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) adds the command `version:remove <version>`, which will remove the
+  changelog entry for the provided version, if it exists.
+
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) adds the command `version:show <version>`, which will show the full
+  release entry in the changelog for the provided version, along with its
+  release date.
 
 ### Changed
 
-- Nothing.
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) aliases the `edit` command to `version:edit`.
+
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) adds an optional `<version>` argument to the `version:edit` command,
+  allowing users to edit a specific release version entry.
 
 ### Deprecated
 
-- Nothing.
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) deprecates the `edit` command in favor of `version:edit`.
 
 ### Removed
 
@@ -297,28 +308,6 @@ All notable changes to this project will be documented in this file, in reverse 
 - Adds a new command, "ready", which will set the date for the first
   un-dated changelog entry in the CHANGELOG.md. You may also pass the --date or -d option
   to specify an alternate date, or to use a date formate other than YYYY-MM-DD.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 1.1.3 - TBD
-
-### Added
-
-- Nothing.
 
 ### Changed
 
