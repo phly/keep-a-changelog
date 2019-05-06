@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
+- [#44](https://github.com/phly/keep-a-changelog/pull/44) adds the command `bump:patch` as an alias to `bump`/`bump:bugfix`.
+
 - [#33](https://github.com/phly/keep-a-changelog/pull/33) adds support for usage with the symfony/console 3.4 series.
 
 - [#41](https://github.com/phly/keep-a-changelog/pull/41) adds the command `version:list`, which will list all versions and
