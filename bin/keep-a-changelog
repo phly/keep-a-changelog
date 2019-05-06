@@ -38,6 +38,7 @@ $application->getDefinition()
 $application->addCommands([
     new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump'),
     new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump:bugfix'),
+    new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump:patch'),
     new BumpCommand(BumpCommand::BUMP_MINOR, 'bump:minor'),
     new BumpCommand(BumpCommand::BUMP_MAJOR, 'bump:major'),
     new BumpToVersionCommand('bump:to-version'),
