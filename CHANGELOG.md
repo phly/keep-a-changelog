@@ -35,7 +35,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#43](https://github.com/phly/keep-a-changelog/pull/43) fixes the markup used to generate a link to a merge request when using
+  GitLab as your provider. In that scenario, the markup `[!{merge number}]` will
+  now be used instead of `[#{merge number}]`.
 
 ## 1.5.2 - TBD
 
