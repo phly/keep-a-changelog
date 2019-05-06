@@ -132,4 +132,17 @@ EOF;
         $date = $this->parser->findReleaseDateForVersion($this->changelog, '2.0.0');
         $this->assertSame('TBD', $date);
     }
+
+    public function testCanRetrieveInformationOnAllVersions()
+    {
+        $expected = [
+            '2.0.0' => 'TBD',
+            '1.1.0' => '2018-03-23',
+            '0.1.0' => '2018-03-23',
+        ];
+
+        $actual = iterator_to_array($this->parser->findAllVersions(__DIR__ . '/_files/CHANGELOG.md'));
+
+        $this->assertSame($expected, $actual);
+    }
 }
