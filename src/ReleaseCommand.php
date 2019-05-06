@@ -54,7 +54,8 @@ EOH;
         $this->addArgument(
             'package',
             InputArgument::REQUIRED,
-            'Package to release; must be in org/repo format, and match the github repository name'
+            'Package to release; must be in org/repo format, and match the repository name;'
+            . ' allows GitLab subgroup format'
         );
         $this->addArgument(
             'version',
@@ -198,7 +199,8 @@ EOH;
         if ($name) {
             return $name;
         }
-        [$org, $repo] = explode('/', $package, 2);
+        $lastSeparator = strrpos($package, '/');
+        $repo          = substr($package, $lastSeparator + 1);
         return sprintf('%s %s', $repo, $version);
     }
 

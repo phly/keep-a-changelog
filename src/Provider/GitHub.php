@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
- * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
+ * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
  * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
  */
 
@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Provider;
 
 use Github\Client as GitHubClient;
+use Phly\KeepAChangelog\Exception;
 
 class GitHub implements ProviderInterface
 {
@@ -54,6 +55,10 @@ class GitHub implements ProviderInterface
      */
     public function generatePullRequestLink(string $package, int $pr) : string
     {
+        if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*/[a-z0-9]+[a-z0-9_-]*$#i', $package)) {
+            throw Exception\InvalidPackageNameException::forPackage($package);
+        }
+
         return sprintf('https://github.com/%s/pull/%d', $package, $pr);
     }
 }

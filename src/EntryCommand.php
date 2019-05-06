@@ -78,7 +78,8 @@ EOH;
             'package',
             null,
             InputOption::VALUE_REQUIRED,
-            'Name of package in organization/repo format (for building link to a pull request)'
+            'Name of package in organization/repo format (for building link to a pull request);'
+            . ' allows GitLab subgroups format as well'
         );
         $this->addOption(
             'provider',
@@ -208,12 +209,7 @@ EOH;
 
     private function generatePullRequestLink(int $pr, string $package, ProviderInterface $provider) : ?string
     {
-        if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*/[a-z0-9]+[a-z0-9_-]*$#i', $package)) {
-            throw Exception\InvalidPackageNameException::forPackage($package);
-        }
-
         $link = $provider->generatePullRequestLink($package, $pr);
-
         return $this->probeLink($link) ? $link : null;
     }
 
