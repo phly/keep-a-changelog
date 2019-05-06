@@ -29,10 +29,27 @@ By default, the command will edit CHANGELOG.md in the current directory, unless
 a different file is specified via the --file option.
 EOH;
 
+    /** @var bool */
+    private $deprecated;
+
+    public function __construct(string $name = '', bool $deprecated = false)
+    {
+        $this->deprecated = $deprecated;
+        parent::__construct($name);
+    }
+
     protected function configure() : void
     {
-        $this->setDescription(self::DESCRIPTION);
-        $this->setHelp(self::HELP);
+        $description = $this->deprecated
+            ? sprintf('(DEPRECATED) %s', self::DESCRIPTION)
+            : self::DESCRIPTION;
+        $this->setDescription($description);
+
+        $help = $this->deprecated
+            ? sprintf("DEPRECATED; USE version:edit INSTEAD\n\n%s", self::HELP)
+            : self::HELP;
+        $this->setHelp($help);
+
         $this->addArgument(
             'version',
             InputArgument::OPTIONAL,
@@ -48,6 +65,10 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
+        if ($this->deprecated) {
+            $output->writeln('<error>WARNING! This command is deprecated; use version:edit instead!</error>');
+        }
+
         $editor        = $input->getOption('editor') ?: null;
         $version       = $input->getArgument('version') ?: null;
         $changelogFile = $this->getChangelogFile($input);
