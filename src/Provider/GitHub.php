@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Provider;
 
 use Github\Client as GitHubClient;
+use Github\Exception\ExceptionInterface as GithubException;
 use Phly\KeepAChangelog\Exception;
 
 class GitHub implements
@@ -40,6 +41,9 @@ class GitHub implements
         [$org, $repo] = explode('/', $package);
         $client = new GitHubClient();
         $client->authenticate($token, GitHubClient::AUTH_HTTP_TOKEN);
+
+        $this->verifyTag($client, $org, $repo, $tagName);
+
         $release = $client->api('repo')->releases()->create(
             $org,
             $repo,
@@ -83,5 +87,47 @@ class GitHub implements
     public function getDomainName() : string
     {
         return 'github.com';
+    }
+
+    /**
+     * @throws Exception\MissingTagException if unable to verify the tag exists
+     * @throws Exception\MissingTagException if unable to fetch tag data
+     * @throws Exception\MissingTagException if the tag on github is not signed
+     */
+    private function verifyTag(GitHubClient $client, string $org, string $repo, string $tagName) : void
+    {
+        try {
+            $tagRef = $client
+                ->api('gitData')
+                ->references()
+                ->show($org, $repo, 'tags/' . rawurlencode($tagName));
+        } catch (GithubException $e) {
+            throw Exception\MissingTagException::forPackageOnGithub(
+                sprintf('%s/%s', $org, $repo),
+                $tagName,
+                $e
+            );
+        }
+
+        try {
+            $tagData = $client
+                ->api('gitData')
+                ->tags()
+                ->show($org, $repo, $tagRef['object']['sha']);
+        } catch (GithubException $e) {
+            throw Exception\MissingTagException::forTagOnGithub(
+                sprintf('%s/%s', $org, $repo),
+                $tagName,
+                $e
+            );
+        }
+
+        if (! $tagData['verification']['verified']) {
+            throw Exception\MissingTagException::forUnverifiedTagOnGithub(
+                sprintf('%s/%s', $org, $repo),
+                $tagName,
+                $e
+            );
+        }
     }
 }
