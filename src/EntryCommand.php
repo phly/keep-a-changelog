@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
- * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
+ * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
  * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
  */
 
@@ -20,6 +20,7 @@ class EntryCommand extends Command
 {
     use GetChangelogFileTrait;
     use GetConfigValuesTrait;
+    use ProvideCommonOptionsTrait;
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the latest changelog in the "%s" section';
 
@@ -81,24 +82,8 @@ EOH;
             'Name of package in organization/repo format (for building link to a pull request);'
             . ' allows GitLab subgroups format as well'
         );
-        $this->addOption(
-            'provider',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Repository provider. Options: github or gitlab; defaults to github'
-        );
-        $this->addOption(
-            'provider-domain',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Custom domain for use with repository provider; primarily applies to self-hosted gitlab'
-        );
-        $this->addOption(
-            'global',
-            'g',
-            InputOption::VALUE_NONE,
-            'Use the global config file'
-        );
+
+        $this->injectConfigBasedOptions();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int

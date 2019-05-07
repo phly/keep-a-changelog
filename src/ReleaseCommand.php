@@ -21,6 +21,7 @@ class ReleaseCommand extends Command
 {
     use GetChangelogFileTrait;
     use GetConfigValuesTrait;
+    use ProvideCommonOptionsTrait;
 
     private const HELP = <<< 'EOH'
 Create a release using the changelog entry for the specified version.
@@ -87,24 +88,8 @@ EOH;
             InputOption::VALUE_REQUIRED,
             'Name of release to create; defaults to "<package> <version>"'
         );
-        $this->addOption(
-            'provider',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Repository provider. Options: github or gitlab; defaults to github'
-        );
-        $this->addOption(
-            'provider-domain',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Custom domain for use with repository provider; primarily applies to self-hosted gitlab'
-        );
-        $this->addOption(
-            'global',
-            'g',
-            InputOption::VALUE_NONE,
-            'Use the global config file'
-        );
+
+        $this->injectConfigBasedOptions();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
