@@ -321,7 +321,7 @@ EOH;
 
     private function getProviderDomain(Provider\ProviderInterface $provider) : string
     {
-        if (! $provider instanceof Provider\ProviderNameProvider) {
+        if (! $provider instanceof Provider\ProviderNameProviderInterface) {
             throw Exception\InvalidProviderException::forIncompleteProvider($provider);
         }
 

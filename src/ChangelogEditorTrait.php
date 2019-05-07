@@ -11,7 +11,7 @@ namespace Phly\KeepAChangelog;
 
 use stdClass;
 
-trait ChangelogEditor
+trait ChangelogEditorTrait
 {
     /**
      * Retrieves changelog entry from the file.

@@ -72,7 +72,7 @@ class LookupRemoteTest extends TestCase
 
     public function testLookupRemoteReturnsNullIfUnableToMatchRemotesToProviderAndPackage()
     {
-        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProvider {
+        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
             public function createRelease(
                 string $package,
                 string $releaseName,
@@ -100,7 +100,7 @@ class LookupRemoteTest extends TestCase
                 return 'custom.develop';
             }
 
-            public function withDomainName(string $domain) : Provider\ProviderNameProvider
+            public function withDomainName(string $domain) : Provider\ProviderNameProviderInterface
             {
                 // no-op
             }
@@ -126,7 +126,7 @@ class LookupRemoteTest extends TestCase
 
     public function testLookupRemoteReturnsRemoteWhenExactlyOneMatches()
     {
-        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProvider {
+        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
             public function createRelease(
                 string $package,
                 string $releaseName,
@@ -154,7 +154,7 @@ class LookupRemoteTest extends TestCase
                 return 'custom.develop';
             }
 
-            public function withDomainName(string $domain) : Provider\ProviderNameProvider
+            public function withDomainName(string $domain) : Provider\ProviderNameProviderInterface
             {
                 // no-op
             }
@@ -180,7 +180,7 @@ class LookupRemoteTest extends TestCase
 
     public function testLookupRemotePromptsUserWhenMultipleMatchesFound()
     {
-        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProvider {
+        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
             public function createRelease(
                 string $package,
                 string $releaseName,
@@ -208,7 +208,7 @@ class LookupRemoteTest extends TestCase
                 return 'custom.develop';
             }
 
-            public function withDomainName(string $domain) : Provider\ProviderNameProvider
+            public function withDomainName(string $domain) : Provider\ProviderNameProviderInterface
             {
                 // no-op
             }
@@ -267,7 +267,7 @@ class LookupRemoteTest extends TestCase
 
     public function testCanAbortWhenMultipleMatchesFound()
     {
-        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProvider {
+        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
             public function createRelease(
                 string $package,
                 string $releaseName,
@@ -295,7 +295,7 @@ class LookupRemoteTest extends TestCase
                 return 'custom.develop';
             }
 
-            public function withDomainName(string $domain) : Provider\ProviderNameProvider
+            public function withDomainName(string $domain) : Provider\ProviderNameProviderInterface
             {
                 // no-op
             }

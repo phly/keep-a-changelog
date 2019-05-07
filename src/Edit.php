@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Edit
 {
-    use ChangelogEditor;
+    use ChangelogEditorTrait;
 
     public function __invoke(
         OutputInterface $output,

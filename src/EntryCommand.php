@@ -147,7 +147,7 @@ EOH;
 
         return sprintf(
             '[%s%d](%s) %s',
-            $provider instanceof Provider\IssueMarkupProvider ? $provider->getPatchPrefix() : '#',
+            $provider instanceof Provider\IssueMarkupProviderInterface ? $provider->getPatchPrefix() : '#',
             (int) $pr,
             $this->preparePatchLink(
                 (int) $pr,

@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Provider;
 
-interface IssueMarkupProvider
+interface IssueMarkupProviderInterface
 {
     /**
      * Retrieve the prefix to use when generating markup for an issue.

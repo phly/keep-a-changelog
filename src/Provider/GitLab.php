@@ -13,9 +13,9 @@ use Gitlab\Client as GitLabClient;
 use Phly\KeepAChangelog\Exception;
 
 class GitLab implements
-    IssueMarkupProvider,
+    IssueMarkupProviderInterface,
     ProviderInterface,
-    ProviderNameProvider
+    ProviderNameProviderInterface
 {
     /** @var string */
     private $domain = 'gitlab.com';
@@ -77,7 +77,7 @@ class GitLab implements
         return $this->domain;
     }
 
-    public function withDomainName(string $domain) : ProviderNameProvider
+    public function withDomainName(string $domain) : ProviderNameProviderInterface
     {
         $new = clone $this;
         $new->domain = $domain;

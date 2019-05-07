@@ -14,9 +14,9 @@ use Github\Exception\ExceptionInterface as GithubException;
 use Phly\KeepAChangelog\Exception;
 
 class GitHub implements
-    IssueMarkupProvider,
+    IssueMarkupProviderInterface,
     ProviderInterface,
-    ProviderNameProvider
+    ProviderNameProviderInterface
 {
     /** @var string */
     private $domain = 'github.com';
@@ -92,7 +92,7 @@ class GitHub implements
         return $this->domain;
     }
 
-    public function withDomainName(string $domain) : ProviderNameProvider
+    public function withDomainName(string $domain) : ProviderNameProviderInterface
     {
         $new = clone $this;
         $new->domain = $domain;

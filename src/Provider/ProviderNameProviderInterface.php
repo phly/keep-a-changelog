@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Provider;
 
-interface ProviderNameProvider
+interface ProviderNameProviderInterface
 {
     /**
      * Return the name of the provider (e.g. github, gitlab)

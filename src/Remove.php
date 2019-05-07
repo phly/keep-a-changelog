@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Remove
 {
-    use ChangelogEditor;
+    use ChangelogEditorTrait;
 
     public function __invoke(OutputInterface $output, string $filename, string $version) : bool
     {

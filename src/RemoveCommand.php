@@ -19,7 +19,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class RemoveCommand extends Command
 {
-    use ChangelogEditor;
+    use ChangelogEditorTrait;
     use GetChangelogFileTrait;
 
     private const DESCRIPTION = 'Remove a changelog release entry.';

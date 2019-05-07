@@ -29,8 +29,8 @@ class InvalidProviderException extends InvalidArgumentException
             'Provider %s does not implement %s and thus cannot be used to determine where to push tags;'
             . ' please implement %s',
             gettype($provider),
-            Provider\ProviderNameProvider::class,
-            Provider\ProviderNameProvider::class
+            Provider\ProviderNameProviderInterface::class,
+            Provider\ProviderNameProviderInterface::class
         ));
     }
 
