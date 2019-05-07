@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
+- [#46](https://github.com/phly/keep-a-changelog/pull/46) adds the `--provider-domain` option to each of the `entry:*` and `release`
+  commands, and the corresponding `domain` key in `.keep-a-changelog.ini` files.
+  The option can be used to specify a custom domain for your chosen provider; it
+  will be used to determine which git remote to push tags to, to generate links
+  for changelog entries, and to make API calls to the provider.
+
 - [#44](https://github.com/phly/keep-a-changelog/pull/44) adds the command `bump:patch` as an alias to `bump`/`bump:bugfix`.
 
 - [#33](https://github.com/phly/keep-a-changelog/pull/33) adds support for usage with the symfony/console 3.4 series.
