@@ -181,7 +181,7 @@ EOH;
         );
         if (! $release) {
             $output->writeln('<error>Error creating release!</error>');
-            $output->writeln('Check the output logs for details');
+            $output->writeln('Check the output logs for details, or re-run this command with verbosity turned on');
             return 1;
         }
 
