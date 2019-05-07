@@ -99,6 +99,11 @@ class LookupRemoteTest extends TestCase
             {
                 return 'custom.develop';
             }
+
+            public function withDomainName(string $domain) : Provider\ProviderNameProvider
+            {
+                // no-op
+            }
         };
 
         $remote = ($this->getMethod())(
@@ -148,6 +153,11 @@ class LookupRemoteTest extends TestCase
             {
                 return 'custom.develop';
             }
+
+            public function withDomainName(string $domain) : Provider\ProviderNameProvider
+            {
+                // no-op
+            }
         };
 
         $remote = ($this->getMethod())(
@@ -196,6 +206,11 @@ class LookupRemoteTest extends TestCase
             public function getDomainName() : string
             {
                 return 'custom.develop';
+            }
+
+            public function withDomainName(string $domain) : Provider\ProviderNameProvider
+            {
+                // no-op
             }
         };
 
@@ -278,6 +293,11 @@ class LookupRemoteTest extends TestCase
             public function getDomainName() : string
             {
                 return 'custom.develop';
+            }
+
+            public function withDomainName(string $domain) : Provider\ProviderNameProvider
+            {
+                // no-op
             }
         };
 

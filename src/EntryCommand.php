@@ -88,6 +88,12 @@ EOH;
             'Repository provider. Options: github or gitlab; defaults to github'
         );
         $this->addOption(
+            'provider-domain',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Custom domain for use with repository provider; primarily applies to self-hosted gitlab'
+        );
+        $this->addOption(
             'global',
             'g',
             InputOption::VALUE_NONE,

@@ -20,4 +20,9 @@ interface ProviderNameProvider
      * Return the domain name of the provider (e.g., github.com)
      */
     public function getDomainName() : string;
+
+    /**
+     * Create a new instance with the given domain name.
+     */
+    public function withDomainName(string $domain) : self;
 }

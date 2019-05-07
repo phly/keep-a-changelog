@@ -18,6 +18,9 @@ class GitHub implements
     ProviderInterface,
     ProviderNameProvider
 {
+    /** @var string */
+    private $domain = 'github.com';
+
     public function getIssuePrefix() : string
     {
         return '#';
@@ -86,7 +89,14 @@ class GitHub implements
 
     public function getDomainName() : string
     {
-        return 'github.com';
+        return $this->domain;
+    }
+
+    public function withDomainName(string $domain) : ProviderNameProvider
+    {
+        $new = clone $this;
+        $new->domain = $domain;
+        return $new;
     }
 
     /**

@@ -17,6 +17,9 @@ class GitLab implements
     ProviderInterface,
     ProviderNameProvider
 {
+    /** @var string */
+    private $domain = 'gitlab.com';
+
     public function getIssuePrefix() : string
     {
         return '#';
@@ -37,7 +40,7 @@ class GitLab implements
         string $changelog,
         string $token
     ) : ?string {
-        $client = GitLabClient::create('https://gitlab.com');
+        $client = GitLabClient::create('https://' . $this->getDomainName());
         $client->authenticate($token, GitLabClient::AUTH_HTTP_TOKEN);
         $release = $client->api('repositories')->createRelease($package, $tagName, $changelog);
 
@@ -49,7 +52,7 @@ class GitLab implements
      */
     public function getRepositoryUrlRegex() : string
     {
-        return '(gitlab.com[:/](.*?)\.git)';
+        return sprintf('(%s[:/](.*?)\.git)', preg_quote($this->getDomainName()));
     }
 
     /**
@@ -61,7 +64,7 @@ class GitLab implements
             throw Exception\InvalidPackageNameException::forPackage($package);
         }
 
-        return sprintf('https://gitlab.com/%s/merge_requests/%d', $package, $pr);
+        return sprintf('https://%s/%s/merge_requests/%d', $this->getDomainName(), $package, $pr);
     }
 
     public function getName() : string
@@ -71,6 +74,13 @@ class GitLab implements
 
     public function getDomainName() : string
     {
-        return 'gitlab.com';
+        return $this->domain;
+    }
+
+    public function withDomainName(string $domain) : ProviderNameProvider
+    {
+        $new = clone $this;
+        $new->domain = $domain;
+        return $new;
     }
 }

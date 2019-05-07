@@ -83,6 +83,10 @@ trait ConfigFileTrait
     private function createConfigFromFile(string $configFile) : Config
     {
         $ini = parse_ini_file($configFile);
-        return new Config($ini['token'] ?? '', $ini['provider'] ?? Config::PROVIDER_GITHUB);
+        return new Config(
+            $ini['token'] ?? '',
+            $ini['provider'] ?? Config::PROVIDER_GITHUB,
+            $ini['domain'] ?? ''
+        );
     }
 }

@@ -19,6 +19,14 @@ class Config
         self::PROVIDER_GITLAB,
     ];
 
+    private const DEFAULT_DOMAINS = [
+        self::PROVIDER_GITHUB => 'github.com',
+        self::PROVIDER_GITLAB => 'gitlab.com',
+    ];
+
+    /** @var string */
+    private $domain;
+
     /** @var string */
     private $provider;
 
@@ -28,12 +36,24 @@ class Config
     /**
      * @throws Exception\InvalidProviderException if the $provider is unknown.
      */
-    public function __construct(string $token = '', string $provider = self::PROVIDER_GITHUB)
-    {
+    public function __construct(
+        string $token = '',
+        string $provider = self::PROVIDER_GITHUB,
+        string $domain = ''
+    ) {
         $this->token = $token;
 
         $this->validateProvider($provider);
         $this->provider = $provider;
+
+        $domain = $domain ?: self::DEFAULT_DOMAINS[$provider];
+        $this->validateDomain($domain);
+        $this->domain = $domain;
+    }
+
+    public function domain() : string
+    {
+        return $this->domain;
     }
 
     public function provider() : string
@@ -44,6 +64,18 @@ class Config
     public function token() : string
     {
         return $this->token;
+    }
+
+    /**
+     * @throws Exception\InvalidProviderException
+     */
+    public function withDomain(string $domain) : self
+    {
+        $domain = $domain ?: self::DEFAULT_DOMAINS[$this->provider];
+        $this->validateDomain($domain);
+        $config = clone $this;
+        $config->domain = $domain;
+        return $config;
     }
 
     /**
@@ -69,7 +101,18 @@ class Config
         return [
             'token'    => $this->token,
             'provider' => $this->provider,
+            'domain'   => $this->domain,
         ];
+    }
+
+    /**
+     * @throws Exception\InvalidProviderException
+     */
+    private function validateDomain(string $domain) : void
+    {
+        if (! filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+            throw Exception\InvalidProviderException::forInvalidProviderDomain($domain);
+        }
     }
 
     /**
