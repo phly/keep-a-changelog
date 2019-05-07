@@ -37,6 +37,15 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- [#45](https://github.com/phly/keep-a-changelog/pull/45) updates the `GitHub` provider such that it now verifies that a signed
+  commit matching the release has been pushed before attempting to create a
+  release.
+
+- [#45](https://github.com/phly/keep-a-changelog/pull/45) updates the `release` command to no longer hard-code using "origin" as the
+  remote, and to instead lookup the remote based on the provider and package.
+  When multiple remotes match (which should not happen), it will prompt the user
+  to choose one, or abort.
+
 - [#43](https://github.com/phly/keep-a-changelog/pull/43) fixes the markup used to generate a link to a merge request when using
   GitLab as your provider. In that scenario, the markup `[!{merge number}]` will
   now be used instead of `[#{merge number}]`.
