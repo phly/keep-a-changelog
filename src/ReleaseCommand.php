@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ReleaseCommand extends Command
@@ -141,18 +142,15 @@ EOH;
         }
 
         $provider = $this->getProvider($config);
-        $remote   = $input->getOption('remote') ?: $this->lookupRemote($provider, $package, $remotes);
+        $remote   = $input->getOption('remote') ?: $this->lookupRemote(
+            $input,
+            $output,
+            $provider,
+            $package,
+            $remotes
+        );
 
         if (! $remote) {
-            $output->writeln('<error>Cannot determine remote to which to push tag!</error>');
-            $output->writeln(sprintf(
-                '- Do no remotes registered in your repository match the provider in use? ("%s")',
-                $this->getProviderDomain($provider)
-            ));
-            $output->writeln(sprintf(
-                '- Do no remotes registered in your repository match the <package> provided? ("%s")',
-                $package
-            ));
             return 1;
         }
 
@@ -252,10 +250,16 @@ EOH;
      * the package name, then it will return the remote name; otherwise, it
      * returns null, indicating none could be found.
      */
-    private function lookupRemote(Provider\ProviderInterface $provider, string $package, array $remotes) : ?string
-    {
+    private function lookupRemote(
+        InputInterface $input,
+        OutputInterface $output,
+        Provider\ProviderInterface $provider,
+        string $package,
+        array $remotes
+    ) : ?string {
         $domain      = $this->getProviderDomain($provider);
         $domainRegex = '#[/@.]' . preg_quote($domain) . '(:\d+:|:|/)#i';
+        $discovered  = [];
 
         foreach ($remotes as $line) {
             if (! preg_match(
@@ -279,10 +283,19 @@ EOH;
             }
 
             // FOUND!
-            return $matches['name'];
+            $discovered[] = $matches['name'];
         }
 
-        return null;
+        if (0 === count($discovered)) {
+            $this->reportNoRemoteFound($output, $provider, $package);
+            return null;
+        }
+
+        if (1 === count($discovered)) {
+            return array_pop($discovered);
+        }
+
+        return $this->promptForRemote($input, $output, $discovered);
     }
 
     /**
@@ -306,5 +319,41 @@ EOH;
         }
 
         return $provider->getDomainName();
+    }
+
+    private function reportNoRemoteFound(
+        OutputInterface $output,
+        Provider\ProviderInterface $provider,
+        string $package
+    ) : void {
+        $output->writeln('<error>Cannot determine remote to which to push tag!</error>');
+        $output->writeln(sprintf(
+            '- Do no remotes registered in your repository match the provider in use? ("%s")',
+            $this->getProviderDomain($provider)
+        ));
+        $output->writeln(sprintf(
+            '- Do no remotes registered in your repository match the <package> provided? ("%s")',
+            $package
+        ));
+    }
+
+    private function promptForRemote(InputInterface $input, OutputInterface $output, array $remotes) : ?string
+    {
+        $choices = array_merge($remotes, ['abort' => 'Abort release']);
+
+        $helper = $this->getHelper('question');
+        $question = new ChoiceQuestion(
+            'More than one valid remote was found; which one should I use?',
+            $choices
+        );
+
+        $remote = $helper->ask($input, $output, $question);
+
+        if ('Abort release' === $remote) {
+            $output->writeln('<error>Aborted at user request</error>');
+            return null;
+        }
+
+        return $remote;
     }
 }
