@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
- * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
+ * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
  * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
  */
 
@@ -14,12 +14,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ReleaseCommand extends Command
 {
     use GetChangelogFileTrait;
     use GetConfigValuesTrait;
+    use ProvideCommonOptionsTrait;
 
     private const HELP = <<< 'EOH'
 Create a release using the changelog entry for the specified version.
@@ -54,7 +56,8 @@ EOH;
         $this->addArgument(
             'package',
             InputArgument::REQUIRED,
-            'Package to release; must be in org/repo format, and match the github repository name'
+            'Package to release; must be in org/repo format, and match the repository name;'
+            . ' allows GitLab subgroup format'
         );
         $this->addArgument(
             'version',
@@ -71,7 +74,7 @@ EOH;
             'remote',
             'r',
             InputOption::VALUE_REQUIRED,
-            'Git remote to push tag to; defaults to "origin"'
+            'Git remote to push tag to; defaults to first Git remote matching provider and package'
         );
         $this->addOption(
             'tagname',
@@ -85,18 +88,8 @@ EOH;
             InputOption::VALUE_REQUIRED,
             'Name of release to create; defaults to "<package> <version>"'
         );
-        $this->addOption(
-            'provider',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Repository provider. Options: github or gitlab; defaults to github'
-        );
-        $this->addOption(
-            'global',
-            'g',
-            InputOption::VALUE_NONE,
-            'Use the global config file'
-        );
+
+        $this->injectConfigBasedOptions();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
@@ -121,7 +114,7 @@ EOH;
 
         $output->writeln('<info>Preparing changelog for release</info>');
 
-        $parser = new ChangelogParser();
+        $parser    = new ChangelogParser();
         $changelog = $parser->findChangelogForVersion(
             file_get_contents($changelogFile),
             $version
@@ -130,7 +123,29 @@ EOH;
         $formatter = new ChangelogFormatter();
         $changelog = $formatter->format($changelog);
 
-        $remote = $input->getOption('remote') ?? 'origin';
+        $remotes = $this->fetchGitRemotes();
+        if (! $remotes) {
+            $output->writeln('<error>Cannot determine remote to which to push tag!</error>');
+            $output->writeln(
+                'The command "git remote -v" had a non-zero exit status; verify the command works, and try again.'
+            );
+            return 1;
+        }
+
+        $provider = $this->getProvider($config);
+
+        $remote   = $input->getOption('remote') ?: $this->lookupRemote(
+            $input,
+            $output,
+            $provider,
+            $package,
+            $remotes
+        );
+
+        if (! $remote) {
+            return 1;
+        }
+
         $output->writeln(sprintf(
             '<info>Pushing tag %s to %s</info>',
             $version,
@@ -149,7 +164,6 @@ EOH;
             $releaseName
         ));
 
-        $provider = $this->getProvider($config);
         $release = $provider->createRelease(
             $package,
             $releaseName,
@@ -159,7 +173,7 @@ EOH;
         );
         if (! $release) {
             $output->writeln('<error>Error creating release!</error>');
-            $output->writeln('Check the output logs for details');
+            $output->writeln('Check the output logs for details, or re-run this command with verbosity turned on');
             return 1;
         }
 
@@ -198,7 +212,8 @@ EOH;
         if ($name) {
             return $name;
         }
-        [$org, $repo] = explode('/', $package, 2);
+        $lastSeparator = strrpos($package, '/');
+        $repo          = substr($package, $lastSeparator + 1);
         return sprintf('%s %s', $repo, $version);
     }
 
@@ -216,5 +231,121 @@ EOH;
         $command = sprintf('git push %s %s', $remote, $version);
         exec($command, $output, $return);
         return 0 === $return;
+    }
+
+    /**
+     * Determine which remote to which to push a tag
+     *
+     * This method uses the provider and package, looping through the remotes
+     * returned by `git remote -v` to match each against remotes configured
+     * for push operations. If the remote matches both the provider domain and
+     * the package name, then it will return the remote name; otherwise, it
+     * returns null, indicating none could be found.
+     */
+    private function lookupRemote(
+        InputInterface $input,
+        OutputInterface $output,
+        Provider\ProviderInterface $provider,
+        string $package,
+        array $remotes
+    ) : ?string {
+        $domain      = $this->getProviderDomain($provider);
+        $domainRegex = '#[/@.]' . preg_quote($domain) . '(:\d+:|:|/)#i';
+        $discovered  = [];
+
+        foreach ($remotes as $line) {
+            if (! preg_match(
+                '/^(?P<name>\S+)\s+(?P<url>\S+)\s+\((?P<type>[^)]+)\)$/',
+                $line,
+                $matches
+            )) {
+                continue;
+            }
+
+            if (strtolower($matches['type']) !== 'push') {
+                continue;
+            }
+
+            if (! preg_match($domainRegex, $matches['url'])) {
+                continue;
+            }
+
+            if (false === strstr($matches['url'], $package)) {
+                continue;
+            }
+
+            // FOUND!
+            $discovered[] = $matches['name'];
+        }
+
+        if (0 === count($discovered)) {
+            $this->reportNoRemoteFound($output, $provider, $package);
+            return null;
+        }
+
+        if (1 === count($discovered)) {
+            return array_pop($discovered);
+        }
+
+        return $this->promptForRemote($input, $output, $discovered);
+    }
+
+    /**
+     * @return null|array<string> Array of lines as returned by
+     *     `git remote -v`, or null if an error occurred.
+     */
+    private function fetchGitRemotes() : ?array
+    {
+        $command = 'git remote -v';
+        exec($command, $output, $exitStatus);
+        if ($exitStatus !== 0) {
+            return null;
+        }
+        return $output;
+    }
+
+    private function getProviderDomain(Provider\ProviderInterface $provider) : string
+    {
+        if (! $provider instanceof Provider\ProviderNameProviderInterface) {
+            throw Exception\InvalidProviderException::forIncompleteProvider($provider);
+        }
+
+        return $provider->getDomainName();
+    }
+
+    private function reportNoRemoteFound(
+        OutputInterface $output,
+        Provider\ProviderInterface $provider,
+        string $package
+    ) : void {
+        $output->writeln('<error>Cannot determine remote to which to push tag!</error>');
+        $output->writeln(sprintf(
+            '- Do no remotes registered in your repository match the provider in use? ("%s")',
+            $this->getProviderDomain($provider)
+        ));
+        $output->writeln(sprintf(
+            '- Do no remotes registered in your repository match the <package> provided? ("%s")',
+            $package
+        ));
+    }
+
+    private function promptForRemote(InputInterface $input, OutputInterface $output, array $remotes) : ?string
+    {
+        $choices = array_merge($remotes, ['abort' => 'Abort release']);
+
+        $helper = $this->getHelper('question');
+        $question = new ChoiceQuestion(
+            'More than one valid remote was found; which one should I use?',
+            $choices
+        );
+
+        $remote = $helper->ask($input, $output, $question);
+
+        if ('Abort release' === $remote) {
+            $output->writeln('<error>Aborted at user request</error>');
+            return null;
+        }
+
+        return $remote;
     }
 }

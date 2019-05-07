@@ -53,6 +53,10 @@ The available providers are:
 
 Currently supported commands include:
 
+- `new` will create a new changelog file for you; specify `--initial-version` or
+  `-i` if you want to start with a version other than 0.1.0; use `--file` or
+  `-f` to specify a file other than `CHANGELOG.md`.
+
 - `config` will create a config file after prompting you for the preferred
   provider and its associated token. By default, the file is stored locally as
   `.keep-a-changelog.ini`; if the `--global` (or `-g`) option is provided, the
@@ -94,8 +98,16 @@ Currently supported commands include:
 - `entry:fixed` will add a new changelog entry to the Fixed section of the
   current changelog within the `CHANGELOG.md` file.
 
-- `edit` will open the most recent changelog section in the system editor
-  to allow editing the full entry at once.
+- `version:edit` will open the most recent changelog section in the system editor
+  to allow editing the full entry at once. If you provide a `<version>`
+  argument, it will edit that specific version.
+
+- `version:list` will list all versions in the changelog, along with associated
+  release dates.
+
+- `version:remove` will remove the given version's entry from the changelog.
+
+- `version:show` will show the entry associated with the given version.
 
 For a list of required parameters and all options for a command, run:
 

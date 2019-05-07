@@ -2,7 +2,7 @@
 <?php
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
- * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
+ * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
  * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
  */
 
@@ -38,19 +38,24 @@ $application->getDefinition()
 $application->addCommands([
     new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump'),
     new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump:bugfix'),
+    new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump:patch'),
     new BumpCommand(BumpCommand::BUMP_MINOR, 'bump:minor'),
     new BumpCommand(BumpCommand::BUMP_MAJOR, 'bump:major'),
     new BumpToVersionCommand('bump:to-version'),
     new ConfigCommand('config'),
-    new EditCommand('edit'),
+    new EditCommand('edit', $deprecated = true),
+    new EditCommand('version:edit'),
     new EntryCommand('entry:added'),
     new EntryCommand('entry:changed'),
     new EntryCommand('entry:deprecated'),
     new EntryCommand('entry:removed'),
     new EntryCommand('entry:fixed'),
+    new ListVersionsCommand('version:list'),
     new NewChangelogCommand('new'),
     new ReadyCommand('ready'),
     new ReleaseCommand('release'),
+    new RemoveCommand('version:remove'),
+    new ShowVersionCommand('version:show'),
     new TaggerCommand('tag'),
 ]);
 $application->run();

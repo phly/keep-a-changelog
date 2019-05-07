@@ -102,6 +102,7 @@ class EntryCommandTest extends TestCase
         $this->input->hasOption('token')->willReturn(false);
         $this->input->getOption('token')->shouldNotBeCalled();
         $this->input->getOption('provider')->willReturn($provider);
+        $this->input->getOption('provider-domain')->willReturn('');
 
         $command = new EntryCommand('entry:added');
         $this->injectCommandConfigPaths($command);
@@ -124,6 +125,7 @@ class EntryCommandTest extends TestCase
         $this->input->hasOption('token')->willReturn(false);
         $this->input->getOption('token')->shouldNotBeCalled();
         $this->input->getOption('provider')->willReturn($provider);
+        $this->input->getOption('provider-domain')->willReturn('');
 
         $command = new EntryCommand('entry:added');
         $this->injectCommandConfigPaths($command);
@@ -146,6 +148,7 @@ class EntryCommandTest extends TestCase
         $this->input->hasOption('token')->willReturn(false);
         $this->input->getOption('token')->shouldNotBeCalled();
         $this->input->getOption('provider')->willReturn($provider);
+        $this->input->getOption('provider-domain')->willReturn('');
 
         $command = new EntryCommand('entry:added');
         $this->injectCommandConfigPaths($command);
@@ -172,11 +175,12 @@ class EntryCommandTest extends TestCase
         $this->input->hasOption('token')->willReturn(false);
         $this->input->getOption('token')->shouldNotBeCalled();
         $this->input->getOption('provider')->willReturn($provider);
+        $this->input->getOption('provider-domain')->willReturn('');
 
         $command = new EntryCommand('entry:added');
         $this->injectCommandConfigPaths($command);
 
-        $expected = '[#1](https://gitlab.com/phly/keep-a-changelog/merge_requests/1) ' . $entry;
+        $expected = '[!1](https://gitlab.com/phly/keep-a-changelog/merge_requests/1) ' . $entry;
 
         $this->assertSame(
             $expected,

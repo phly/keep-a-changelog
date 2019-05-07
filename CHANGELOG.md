@@ -2,19 +2,40 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.5.2 - TBD
+## 1.6.0 - 2019-05-07
 
 ### Added
 
-- Nothing.
+- [#46](https://github.com/phly/keep-a-changelog/pull/46) adds the `--provider-domain` option to each of the `entry:*` and `release`
+  commands, and the corresponding `domain` key in `.keep-a-changelog.ini` files.
+  The option can be used to specify a custom domain for your chosen provider; it
+  will be used to determine which git remote to push tags to, to generate links
+  for changelog entries, and to make API calls to the provider.
+
+- [#44](https://github.com/phly/keep-a-changelog/pull/44) adds the command `bump:patch` as an alias to `bump`/`bump:bugfix`.
+
+- [#33](https://github.com/phly/keep-a-changelog/pull/33) adds support for usage with the symfony/console 3.4 series.
+
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) adds the command `version:list`, which will list all versions and
+  associated release dates from the changelog file.
+
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) adds the command `version:remove <version>`, which will remove the
+  changelog entry for the provided version, if it exists.
+
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) adds the command `version:show <version>`, which will show the full
+  release entry in the changelog for the provided version, along with its
+  release date.
 
 ### Changed
 
-- Nothing.
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) aliases the `edit` command to `version:edit`.
+
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) adds an optional `<version>` argument to the `version:edit` command,
+  allowing users to edit a specific release version entry.
 
 ### Deprecated
 
-- Nothing.
+- [#41](https://github.com/phly/keep-a-changelog/pull/41) deprecates the `edit` command in favor of `version:edit`.
 
 ### Removed
 
@@ -22,7 +43,18 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#45](https://github.com/phly/keep-a-changelog/pull/45) updates the `GitHub` provider such that it now verifies that a signed
+  commit matching the release has been pushed before attempting to create a
+  release.
+
+- [#45](https://github.com/phly/keep-a-changelog/pull/45) updates the `release` command to no longer hard-code using "origin" as the
+  remote, and to instead lookup the remote based on the provider and package.
+  When multiple remotes match (which should not happen), it will prompt the user
+  to choose one, or abort.
+
+- [#43](https://github.com/phly/keep-a-changelog/pull/43) fixes the markup used to generate a link to a merge request when using
+  GitLab as your provider. In that scenario, the markup `[!{merge number}]` will
+  now be used instead of `[#{merge number}]`.
 
 ## 1.5.1 - 2018-11-08
 
@@ -275,28 +307,6 @@ All notable changes to this project will be documented in this file, in reverse 
 - Adds a new command, "ready", which will set the date for the first
   un-dated changelog entry in the CHANGELOG.md. You may also pass the --date or -d option
   to specify an alternate date, or to use a date formate other than YYYY-MM-DD.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 1.1.3 - TBD
-
-### Added
-
-- Nothing.
 
 ### Changed
 

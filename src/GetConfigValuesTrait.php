@@ -27,7 +27,8 @@ trait GetConfigValuesTrait
     private function prepareConfig(
         InputInterface $input,
         string $tokenOptionName = 'token',
-        string $providerOptionName = 'provider'
+        string $providerOptionName = 'provider',
+        string $providerDomainOptionName = 'provider-domain'
     ) : Config {
         $config = $this->getConfig($input);
 
@@ -37,7 +38,15 @@ trait GetConfigValuesTrait
         $provider = $input->getOption($providerOptionName);
         $config = $provider ? $config->withProvider($provider) : $config;
 
+        $domain = $input->getOption($providerDomainOptionName);
+        $config = $config->withDomain((string) $domain);
+
         return $config;
+    }
+
+    private function getDomain(Config $config) : string
+    {
+        return trim($config->domain());
     }
 
     private function getProvider(Config $config) : Provider\ProviderInterface
@@ -50,10 +59,10 @@ trait GetConfigValuesTrait
 
         switch ($provider) {
             case 'github':
-                $this->provider = new Provider\GitHub();
+                $this->provider = (new Provider\GitHub())->withDomainName($this->getDomain($config));
                 break;
             case 'gitlab':
-                $this->provider = new Provider\GitLab();
+                $this->provider = (new Provider\GitLab())->withDomainName($this->getDomain($config));
                 break;
             default:
                 throw Exception\InvalidProviderException::forProvider($provider);

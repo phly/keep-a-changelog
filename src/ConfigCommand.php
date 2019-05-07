@@ -75,7 +75,10 @@ EOH;
         $question = new Question('Please enter the personal token for the provider (Empty to skip)', '');
         $token = $helper->ask($input, $output, $question);
 
-        $config = new Config($token, $provider);
+        $question = new Question('Please enter the custom domain for the provider, if any (Empty to skip)', '');
+        $domain = $helper->ask($input, $output, $question);
+
+        $config = new Config($token, $provider, $domain);
 
         $this->saveConfigFile($configFile, $config);
 

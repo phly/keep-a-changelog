@@ -32,7 +32,7 @@ class EditTest extends TestCase
         return $r;
     }
 
-    public function getSampleContents() : string
+    public function getVersion2Contents() : string
     {
         return <<< 'EOH'
 ## 2.0.0 - TBD
@@ -61,6 +61,36 @@ class EditTest extends TestCase
 EOH;
     }
 
+    public function getVersion1Contents() : string
+    {
+        return <<< 'EOH'
+## 1.1.0 - 2018-03-23
+
+### Added
+
+- Added a new feature.
+
+### Changed
+
+- Made some changes.
+
+### Deprecated
+
+- Nothing was deprecated.
+
+### Removed
+
+- Nothing was removed.
+
+### Fixed
+
+- Fixed some bugs.
+
+
+EOH;
+    }
+
+
     public function testGetChangelogEntryReturnsNullIfNoChangelogEntryFound()
     {
         $edit = new Edit();
@@ -68,16 +98,30 @@ EOH;
         $this->assertNull($getChangelogEntry->invoke($edit, __DIR__ . '/_files/invalid-composer/composer.json'));
     }
 
-    public function testGetChangelogEntryReturnsExpectedDataWhenChangelogIsDiscovered()
+    public function getChangelogEntryProvider() : iterable
     {
-        $expected = $this->getSampleContents();
+        $changelogFile = __DIR__ . '/_files/CHANGELOG.md';
+        yield 'latest' => [null,    $changelogFile, 4,  22, $this->getVersion2Contents()];
+        yield '1.1.0'  => ['1.1.0', $changelogFile, 26, 22, $this->getVersion1Contents()];
+    }
+
+    /**
+     * @dataProvider getChangelogEntryProvider
+     */
+    public function testGetChangelogEntryReturnsExpectedDataWhenChangelogIsDiscovered(
+        ?string $version,
+        string $changelogFile,
+        int $expectedIndex,
+        int $expectedLength,
+        string $expectedContents
+    ) {
         $edit = new Edit();
         $getChangelogEntry = $this->reflectMethod($edit, 'getChangelogEntry');
-        $data = $getChangelogEntry->invoke($edit, __DIR__ . '/_files/CHANGELOG.md');
+        $data = $getChangelogEntry->invoke($edit, $changelogFile, $version);
 
-        $this->assertEquals(4, $data->index);
-        $this->assertEquals(22, $data->length);
-        $this->assertEquals($expected, $data->contents);
+        $this->assertEquals($expectedIndex, $data->index);
+        $this->assertEquals($expectedLength, $data->length);
+        $this->assertEquals($expectedContents, $data->contents);
     }
 
     public function testUsesSystemEditorIfPresentInEnv()
@@ -133,12 +177,10 @@ EOH;
 
 
 EOH;
-        $tempFile = tempnam(sys_get_temp_dir(), 'CAK');
-        file_put_contents($tempFile, $expectedContents);
 
         $edit = new Edit();
         $updateChangelogEntry = $this->reflectMethod($edit, 'updateChangelogEntry');
-        $updateChangelogEntry->invoke($edit, $this->tempFile, $tempFile, 4, 22);
+        $updateChangelogEntry->invoke($edit, $this->tempFile, $expectedContents, 4, 22);
 
         $this->assertFileEquals(__DIR__ . '/_files/CHANGELOG-EDIT-EXPECTED.md', $this->tempFile);
     }

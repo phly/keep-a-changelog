@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 1.1.0 - 2018-03-23
+## 1.1.0 - not-a-valid-date
 
 ### Added
 

@@ -26,6 +26,7 @@ class BumpCommand extends Command
     public const BUMP_BUGFIX = 'bugfix';
     public const BUMP_MAJOR = 'major';
     public const BUMP_MINOR = 'minor';
+    public const BUMP_PATCH = self::BUMP_BUGFIX;
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the next %s release.';
 

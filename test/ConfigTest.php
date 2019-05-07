@@ -28,23 +28,41 @@ class ConfigTest extends TestCase
         $this->assertSame(Config::PROVIDER_GITHUB, $config->provider());
     }
 
-    public function testConstructorAllowsProvidingBothArguments()
+    public function testConstructorAllowsProvidingProviderArgument()
     {
         $config = new Config('token-value', Config::PROVIDER_GITLAB);
         $this->assertSame('token-value', $config->token());
         $this->assertSame(Config::PROVIDER_GITLAB, $config->provider());
+        $this->assertSame('gitlab.com', $config->domain());
+    }
+
+    public function testConstructorAllowsProvidingProviderAndProviderDomainArguments()
+    {
+        $config = new Config('token-value', Config::PROVIDER_GITLAB, 'gitlab.phly.dev');
+        $this->assertSame('token-value', $config->token());
+        $this->assertSame(Config::PROVIDER_GITLAB, $config->provider());
+        $this->assertSame('gitlab.phly.dev', $config->domain());
         return $config;
     }
 
     /**
-     * @depends testConstructorAllowsProvidingBothArguments
+     * @depends testConstructorAllowsProvidingProviderAndProviderDomainArguments
      */
     public function testGetArrayCopyProvidesSerialization(Config $config)
     {
         $this->assertSame([
-            'token' => $config->token(),
+            'token'    => $config->token(),
             'provider' => $config->provider(),
+            'domain'   => $config->domain(),
         ], $config->getArrayCopy());
+    }
+
+    public function testWithDomainReturnsNewInstanceWithChangedDomain()
+    {
+        $config = new Config();
+        $changed = $config->withDomain('gitlab.phly.dev');
+        $this->assertNotSame($changed, $config);
+        $this->assertSame('gitlab.phly.dev', $changed->domain());
     }
 
     public function testWithTokenReturnsNewInstanceWithChangedToken()
