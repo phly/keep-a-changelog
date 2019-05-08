@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\Exception;
 
 use RuntimeException;
 
+use function sprintf;
+
 class NoMatchingChangelogDiscoveredException extends RuntimeException
 {
     public static function for(string $changelogFile) : self

@@ -12,6 +12,8 @@ namespace Phly\KeepAChangelog\Exception;
 use InvalidArgumentException;
 use Phly\KeepAChangelog\BumpCommand;
 
+use function sprintf;
+
 class InvalidBumpTypeException extends InvalidArgumentException
 {
     public static function forType(string $type) : self

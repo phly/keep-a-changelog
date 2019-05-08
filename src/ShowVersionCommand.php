@@ -14,13 +14,17 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function file_get_contents;
+use function preg_match;
+use function sprintf;
+
 class ShowVersionCommand extends Command
 {
     use GetChangelogFileTrait;
 
     private const DESCRIPTION = 'Show the changelog entry for the given version.';
 
-    private const HELP = <<< 'EOH'
+    private const HELP = <<<'EOH'
 Opens the changelog and displays the entry for the given version.
 EOH;
 
@@ -45,11 +49,11 @@ EOH;
         }
 
         $changelogFile = $this->getChangelogFile($input);
-        $changelogs    = file_get_contents($changelogFile);
-        $parser        = new ChangelogParser();
+        $changelogs = file_get_contents($changelogFile);
+        $parser = new ChangelogParser();
 
-        $releaseDate   = $parser->findReleaseDateForVersion($changelogs, $version);
-        $changelog     = $parser->findChangelogForVersion($changelogs, $version);
+        $releaseDate = $parser->findReleaseDateForVersion($changelogs, $version);
+        $changelog = $parser->findChangelogForVersion($changelogs, $version);
 
         $output->writeln(sprintf(
             '<info>Showing changelog for version %s (released %s):</info>',

@@ -9,9 +9,13 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog;
 
-use PHPUnit\Framework\TestCase;
 use Phly\KeepAChangelog\ChangelogParser;
 use Phly\KeepAChangelog\Exception;
+use PHPUnit\Framework\TestCase;
+
+use function file_get_contents;
+use function is_string;
+use function iterator_to_array;
 
 class ChangelogParserTest extends TestCase
 {
@@ -42,7 +46,7 @@ class ChangelogParserTest extends TestCase
 
     public function testReturnsDiscoveredChangelogWhenDiscovered()
     {
-        $expected = <<< 'EOF'
+        $expected = <<<'EOF'
 ### Added
 
 - Added a new feature.
@@ -71,7 +75,7 @@ EOF;
 
     public function testReturnsDiscoveredChangelogForUnreleasedVersionWhenDiscovered()
     {
-        $expected = <<< 'EOF'
+        $expected = <<<'EOF'
 ### Added
 
 - Nothing.

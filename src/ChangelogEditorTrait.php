@@ -11,6 +11,14 @@ namespace Phly\KeepAChangelog;
 
 use stdClass;
 
+use function array_splice;
+use function file;
+use function file_put_contents;
+use function implode;
+use function preg_match;
+use function preg_quote;
+use function sprintf;
+
 trait ChangelogEditorTrait
 {
     /**
@@ -25,8 +33,10 @@ trait ChangelogEditorTrait
      * - index, indicating the line number where the contents began
      * - length, the number of lines in the contents
      * - contents, a string representing the changelog entry found in its entierty
+     *
+     * @throws Exception\ChangelogFileNotFoundException
      */
-    private function getChangelogEntry($filename, ?string $version = null) : ?stdClass
+    private function getChangelogEntry(string $filename, ?string $version = null) : ?stdClass
     {
         $contents = file($filename);
         if (false === $contents) {

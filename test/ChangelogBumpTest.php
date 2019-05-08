@@ -9,8 +9,14 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog;
 
-use PHPUnit\Framework\TestCase;
 use Phly\KeepAChangelog\ChangelogBump;
+use PHPUnit\Framework\TestCase;
+
+use function file_get_contents;
+use function file_put_contents;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
 
 class ChangelogBumpTest extends TestCase
 {
@@ -102,7 +108,7 @@ class ChangelogBumpTest extends TestCase
 
     public function testUpdateChangelogPrependsNewEntry()
     {
-        $expected = <<< 'EOC'
+        $expected = <<<'EOC'
 # Changelog
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.

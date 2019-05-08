@@ -11,8 +11,15 @@ namespace Phly\KeepAChangelog;
 
 use stdClass;
 
+use function file_exists;
+use function file_get_contents;
+use function json_decode;
+
 class ComposerPackage
 {
+    /**
+     * @throws Exception\PackageNotFoundException
+     */
     public function getName(string $path) : string
     {
         $composer = $this->parsePackage($path);
@@ -24,6 +31,9 @@ class ComposerPackage
         return $composer->name;
     }
 
+    /**
+     * @throws Exception\ComposerNotFoundException
+     */
     private function parsePackage(string $path) : stdClass
     {
         $path .= '/composer.json';

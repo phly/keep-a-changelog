@@ -12,6 +12,9 @@ namespace Phly\KeepAChangelog;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+use function trim;
+
 /**
  * Compose this trait for any command that needs access to the repository provider.
  */
@@ -20,9 +23,9 @@ trait GetConfigValuesTrait
     use ConfigFileTrait;
 
     /**
-     * @var ?ProviderInterface
+     * @var null|ProviderInterface
      */
-    private $provider = null;
+    private $provider;
 
     private function prepareConfig(
         InputInterface $input,
@@ -32,7 +35,7 @@ trait GetConfigValuesTrait
     ) : Config {
         $config = $this->getConfig($input);
 
-        $token  = $input->hasOption($tokenOptionName) ? $input->getOption($tokenOptionName) : null;
+        $token = $input->hasOption($tokenOptionName) ? $input->getOption($tokenOptionName) : null;
         $config = $token ? $config->withToken($token) : $config;
 
         $provider = $input->getOption($providerOptionName);
@@ -49,6 +52,9 @@ trait GetConfigValuesTrait
         return trim($config->domain());
     }
 
+    /**
+     * @throws Exception\InvalidProviderException
+     */
     private function getProvider(Config $config) : Provider\ProviderInterface
     {
         if ($this->provider instanceof Provider\ProviderInterface) {
@@ -66,7 +72,6 @@ trait GetConfigValuesTrait
                 break;
             default:
                 throw Exception\InvalidProviderException::forProvider($provider);
-                break;
         }
 
         return $this->provider;

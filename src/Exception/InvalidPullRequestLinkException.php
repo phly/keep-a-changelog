@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\Exception;
 
 use RuntimeException;
 
+use function sprintf;
+
 class InvalidPullRequestLinkException extends RuntimeException
 {
     public static function forPackage(string $package, int $pr) : self

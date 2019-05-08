@@ -13,6 +13,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function array_keys;
+use function in_array;
+use function is_readable;
+use function sprintf;
+
 /**
  * Bump a changelog version.
  *
@@ -30,7 +35,7 @@ class BumpCommand extends Command
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the next %s release.';
 
-    private const HELP_TEMPLATE = <<< 'EOH'
+    private const HELP_TEMPLATE = <<<'EOH'
 Add a new %1$s release entry to the changelog, based on the latest release.
 
 Parses the CHANGELOG.md file to determine the latest release, and creates
@@ -48,7 +53,10 @@ EOH;
     /** @var string */
     private $type;
 
-    public function __construct(string $type, string $name = null)
+    /**
+     * @throws Exception\InvalidBumpTypeException
+     */
+    public function __construct(string $type, ?string $name = null)
     {
         if (! in_array($type, array_keys($this->bumpMethods), true)) {
             throw Exception\InvalidBumpTypeException::forType($type);
@@ -65,13 +73,15 @@ EOH;
             $this->type
         ));
 
-
         $this->setHelp(sprintf(
             self::HELP_TEMPLATE,
             $this->type
         ));
     }
 
+    /**
+     * @throws Exception\ChangelogFileNotFoundException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $changelogFile = $this->getChangelogFile($input);

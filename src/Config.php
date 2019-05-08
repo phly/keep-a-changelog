@@ -9,6 +9,12 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use function filter_var;
+use function in_array;
+
+use const FILTER_FLAG_HOSTNAME;
+use const FILTER_VALIDATE_DOMAIN;
+
 class Config
 {
     public const PROVIDER_GITHUB = 'github';
@@ -33,9 +39,6 @@ class Config
     /** @var string */
     private $token;
 
-    /**
-     * @throws Exception\InvalidProviderException if the $provider is unknown.
-     */
     public function __construct(
         string $token = '',
         string $provider = self::PROVIDER_GITHUB,
@@ -66,9 +69,6 @@ class Config
         return $this->token;
     }
 
-    /**
-     * @throws Exception\InvalidProviderException
-     */
     public function withDomain(string $domain) : self
     {
         $domain = $domain ?: self::DEFAULT_DOMAINS[$this->provider];
@@ -78,9 +78,6 @@ class Config
         return $config;
     }
 
-    /**
-     * @throws Exception\InvalidProviderException
-     */
     public function withProvider(string $provider) : self
     {
         $this->validateProvider($provider);
@@ -99,9 +96,9 @@ class Config
     public function getArrayCopy() : array
     {
         return [
-            'token'    => $this->token,
+            'token' => $this->token,
             'provider' => $this->provider,
-            'domain'   => $this->domain,
+            'domain' => $this->domain,
         ];
     }
 

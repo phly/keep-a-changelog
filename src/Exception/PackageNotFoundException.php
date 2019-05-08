@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\Exception;
 
 use RuntimeException;
 
+use function sprintf;
+
 class PackageNotFoundException extends RuntimeException
 {
     public static function at(string $path) : self

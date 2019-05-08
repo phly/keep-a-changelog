@@ -13,6 +13,11 @@ use Github\Client as GitHubClient;
 use Github\Exception\ExceptionInterface as GithubException;
 use Phly\KeepAChangelog\Exception;
 
+use function explode;
+use function preg_match;
+use function rawurlencode;
+use function sprintf;
+
 class GitHub implements
     IssueMarkupProviderInterface,
     ProviderInterface,
@@ -31,9 +36,6 @@ class GitHub implements
         return '#';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function createRelease(
         string $package,
         string $releaseName,
@@ -51,10 +53,10 @@ class GitHub implements
             $org,
             $repo,
             [
-                'tag_name'   => $tagName,
-                'name'       => $releaseName,
-                'body'       => $changelog,
-                'draft'      => false,
+                'tag_name' => $tagName,
+                'name' => $releaseName,
+                'body' => $changelog,
+                'draft' => false,
                 'prerelease' => false,
             ]
         );
@@ -62,16 +64,13 @@ class GitHub implements
         return $release['html_url'] ?? null;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getRepositoryUrlRegex() : string
     {
         return '(github.com[:/](.*?)\.git)';
     }
 
     /**
-     * @inheritDoc
+     * @throws Exception\InvalidPackageNameException
      */
     public function generatePullRequestLink(string $package, int $pr) : string
     {

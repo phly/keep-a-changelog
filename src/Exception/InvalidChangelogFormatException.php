@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\Exception;
 
 use RuntimeException;
 
+use function sprintf;
+
 class InvalidChangelogFormatException extends RuntimeException
 {
     public static function forVersion(string $version) : self

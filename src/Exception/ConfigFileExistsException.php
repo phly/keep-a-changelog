@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\Exception;
 
 use RuntimeException;
 
+use function sprintf;
+
 class ConfigFileExistsException extends RuntimeException
 {
     public static function forFile(string $file) : self

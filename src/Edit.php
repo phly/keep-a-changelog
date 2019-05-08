@@ -11,6 +11,21 @@ namespace Phly\KeepAChangelog;
 
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function escapeshellarg;
+use function file_get_contents;
+use function file_put_contents;
+use function getenv;
+use function proc_close;
+use function proc_open;
+use function sprintf;
+use function strpos;
+use function sys_get_temp_dir;
+use function uniqid;
+
+use const STDERR;
+use const STDIN;
+use const STDOUT;
+
 class Edit
 {
     use ChangelogEditorTrait;
@@ -30,7 +45,7 @@ class Edit
             return false;
         }
 
-        $editor   = $editor ?: $this->discoverEditor();
+        $editor = $editor ?: $this->discoverEditor();
         $tempFile = $this->createTempFileWithContents($changelogData->contents);
 
         $status = $this->spawnEditor($output, $editor, $tempFile);

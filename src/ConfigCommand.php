@@ -17,13 +17,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
+use function file_exists;
+use function sprintf;
+
 class ConfigCommand extends Command
 {
     use ConfigFileTrait;
 
     private const DESCRIPTION = 'Create a configuration file locally or globally.';
 
-    private const HELP = <<< 'EOH'
+    private const HELP = <<<'EOH'
 Create a configuration file. If no --global is provided, the assumption is
 a local .keep-a-changelog.ini file in the current directory. If the file 
 already exists, you can use --overwrite to replace it.
@@ -32,7 +35,7 @@ EOH;
     /**
      * Used for testing, to allow mocking the question helper.
      *
-     * @var ?HelperInterface
+     * @var null|HelperInterface
      */
     private $questionHelper;
 
@@ -54,6 +57,9 @@ EOH;
         );
     }
 
+    /**
+     * @throws Exception\ConfigFileExistsException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $overwrite = $input->getOption('overwrite') ?: false;

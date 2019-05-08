@@ -11,6 +11,15 @@ namespace Phly\KeepAChangelog;
 
 use stdClass;
 
+use function array_splice;
+use function file;
+use function file_put_contents;
+use function implode;
+use function in_array;
+use function preg_match;
+use function preg_replace;
+use function sprintf;
+
 /**
  * Add an entry to the latest changelog.
  */

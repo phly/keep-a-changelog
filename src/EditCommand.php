@@ -15,13 +15,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class EditCommand extends Command
 {
     use GetChangelogFileTrait;
 
     private const DESCRIPTION = 'Edit the latest changelog entry using the system editor.';
 
-    private const HELP = <<< 'EOH'
+    private const HELP = <<<'EOH'
 Edit the latest changelog entry using the system editor ($EDITOR), or the
 editor provided via --editor.
 
@@ -69,11 +71,13 @@ EOH;
             $output->writeln('<error>WARNING! This command is deprecated; use version:edit instead!</error>');
         }
 
-        $editor        = $input->getOption('editor') ?: null;
-        $version       = $input->getArgument('version') ?: null;
+        $editor = $input->getOption('editor') ?: null;
+        $version = $input->getArgument('version') ?: null;
         $changelogFile = $this->getChangelogFile($input);
 
+        // @phpcs:disable
         if (! (new Edit())($output, $changelogFile, $editor, $version)) {
+        // @phpcs:enable
             $output->writeln(sprintf(
                 '<error>Could not edit %s; please check the output for details.</error>',
                 $changelogFile

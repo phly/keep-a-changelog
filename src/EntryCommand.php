@@ -16,6 +16,20 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function array_key_exists;
+use function escapeshellarg;
+use function exec;
+use function explode;
+use function get_headers;
+use function getcwd;
+use function in_array;
+use function preg_match;
+use function realpath;
+use function sprintf;
+use function stream_context_create;
+use function strpos;
+use function ucwords;
+
 class EntryCommand extends Command
 {
     use GetChangelogFileTrait;
@@ -24,7 +38,7 @@ class EntryCommand extends Command
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the latest changelog in the "%s" section';
 
-    private const HELP_TEMPLATE = <<< 'EOH'
+    private const HELP_TEMPLATE = <<<'EOH'
 In the latest changelog entry, add the given entry in the section marked
 "%s".
 
@@ -39,6 +53,9 @@ EOH;
     /** @var string */
     private $type;
 
+    /**
+     * @throws Exception\InvalidNoteTypeException
+     */
     public function __construct(string $name)
     {
         if (false === strpos($name, ':')) {
@@ -80,7 +97,7 @@ EOH;
             null,
             InputOption::VALUE_REQUIRED,
             'Name of package in organization/repo format (for building link to a pull request);'
-            . ' allows GitLab subgroups format as well'
+                . ' allows GitLab subgroups format as well'
         );
 
         $this->injectConfigBasedOptions();
@@ -111,6 +128,10 @@ EOH;
         return 0;
     }
 
+    /**
+     * @throws Exception\EmptyEntryException
+     * @throws Exception\InvalidPullRequestException
+     */
     private function prepareEntry(InputInterface $input) : string
     {
         $entry = $input->getArgument('entry');
@@ -127,7 +148,7 @@ EOH;
             throw Exception\InvalidPullRequestException::for($pr);
         }
 
-        $config   = $this->prepareConfig($input);
+        $config = $this->prepareConfig($input);
         $provider = $this->getProvider($config);
 
         return sprintf(
@@ -143,6 +164,9 @@ EOH;
         );
     }
 
+    /**
+     * @throws Exception\InvalidPullRequestLinkException
+     */
     private function preparePatchLink(int $pr, ?string $package, ProviderInterface $provider) : string
     {
         if (null !== $package) {

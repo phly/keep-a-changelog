@@ -14,6 +14,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function is_readable;
+use function sprintf;
+
 /**
  * Add a new changelog entry using the version specified.
  */
@@ -23,7 +26,7 @@ class BumpToVersionCommand extends Command
 
     private const DESCRIPTION = 'Create a new changelog entry for the specified release version.';
 
-    private const HELP = <<< 'EOH'
+    private const HELP = <<<'EOH'
 Add a new release entry to the changelog, based on the latest release specified.
 
 EOH;
@@ -39,6 +42,9 @@ EOH;
         );
     }
 
+    /**
+     * @throws Exception\ChangelogFileNotFoundException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $changelogFile = $this->getChangelogFile($input);

@@ -25,11 +25,11 @@ class LookupRemoteTest extends TestCase
 {
     public function setUp()
     {
-        $this->input  = $this->prophesize(InputInterface::class);
+        $this->input = $this->prophesize(InputInterface::class);
         $this->output = $this->prophesize(OutputInterface::class);
     }
 
-    public function getMethod()
+    public function getMethod() : callable
     {
         $command = new ReleaseCommand();
         $r = new ReflectionMethod($command, 'lookupRemote');
@@ -41,7 +41,7 @@ class LookupRemoteTest extends TestCase
 
     public function testLookupRemoteRaisesExceptionIfProviderCannotProvideName()
     {
-        $provider = new class implements Provider\ProviderInterface {
+        $provider = new class() implements Provider\ProviderInterface {
             public function createRelease(
                 string $package,
                 string $releaseName,
@@ -49,14 +49,17 @@ class LookupRemoteTest extends TestCase
                 string $changelog,
                 string $token
             ) : ?string {
+                return null;
             }
 
             public function getRepositoryUrlRegex() : string
             {
+                return '';
             }
 
             public function generatePullRequestLink(string $package, int $pr) : string
             {
+                return '';
             }
         };
 
@@ -72,7 +75,7 @@ class LookupRemoteTest extends TestCase
 
     public function testLookupRemoteReturnsNullIfUnableToMatchRemotesToProviderAndPackage()
     {
-        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
+        $provider = new class() implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
             public function createRelease(
                 string $package,
                 string $releaseName,
@@ -80,14 +83,17 @@ class LookupRemoteTest extends TestCase
                 string $changelog,
                 string $token
             ) : ?string {
+                return null;
             }
 
             public function getRepositoryUrlRegex() : string
             {
+                return '';
             }
 
             public function generatePullRequestLink(string $package, int $pr) : string
             {
+                return '';
             }
 
             public function getName() : string
@@ -102,7 +108,7 @@ class LookupRemoteTest extends TestCase
 
             public function withDomainName(string $domain) : Provider\ProviderNameProviderInterface
             {
-                // no-op
+                return $this;
             }
         };
 
@@ -126,7 +132,7 @@ class LookupRemoteTest extends TestCase
 
     public function testLookupRemoteReturnsRemoteWhenExactlyOneMatches()
     {
-        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
+        $provider = new class() implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
             public function createRelease(
                 string $package,
                 string $releaseName,
@@ -134,14 +140,17 @@ class LookupRemoteTest extends TestCase
                 string $changelog,
                 string $token
             ) : ?string {
+                return null;
             }
 
             public function getRepositoryUrlRegex() : string
             {
+                return '';
             }
 
             public function generatePullRequestLink(string $package, int $pr) : string
             {
+                return '';
             }
 
             public function getName() : string
@@ -156,7 +165,7 @@ class LookupRemoteTest extends TestCase
 
             public function withDomainName(string $domain) : Provider\ProviderNameProviderInterface
             {
-                // no-op
+                return $this;
             }
         };
 
@@ -180,7 +189,7 @@ class LookupRemoteTest extends TestCase
 
     public function testLookupRemotePromptsUserWhenMultipleMatchesFound()
     {
-        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
+        $provider = new class() implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
             public function createRelease(
                 string $package,
                 string $releaseName,
@@ -188,14 +197,17 @@ class LookupRemoteTest extends TestCase
                 string $changelog,
                 string $token
             ) : ?string {
+                return null;
             }
 
             public function getRepositoryUrlRegex() : string
             {
+                return '';
             }
 
             public function generatePullRequestLink(string $package, int $pr) : string
             {
+                return '';
             }
 
             public function getName() : string
@@ -210,7 +222,7 @@ class LookupRemoteTest extends TestCase
 
             public function withDomainName(string $domain) : Provider\ProviderNameProviderInterface
             {
-                // no-op
+                return $this;
             }
         };
 
@@ -267,7 +279,7 @@ class LookupRemoteTest extends TestCase
 
     public function testCanAbortWhenMultipleMatchesFound()
     {
-        $provider = new class implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
+        $provider = new class() implements Provider\ProviderInterface, Provider\ProviderNameProviderInterface {
             public function createRelease(
                 string $package,
                 string $releaseName,
@@ -275,14 +287,17 @@ class LookupRemoteTest extends TestCase
                 string $changelog,
                 string $token
             ) : ?string {
+                return null;
             }
 
             public function getRepositoryUrlRegex() : string
             {
+                return '';
             }
 
             public function generatePullRequestLink(string $package, int $pr) : string
             {
+                return '';
             }
 
             public function getName() : string
@@ -297,7 +312,7 @@ class LookupRemoteTest extends TestCase
 
             public function withDomainName(string $domain) : Provider\ProviderNameProviderInterface
             {
-                // no-op
+                return $this;
             }
         };
 

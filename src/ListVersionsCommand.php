@@ -13,13 +13,15 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class ListVersionsCommand extends Command
 {
     use GetChangelogFileTrait;
 
     private const DESCRIPTION = 'List all versions represented in the changelog file.';
 
-    private const HELP = <<< 'EOH'
+    private const HELP = <<<'EOH'
 Lists all versions represented in the changelog file, along with associated
 release dates.
 EOH;

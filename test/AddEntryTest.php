@@ -12,10 +12,23 @@ namespace PhlyTest\KeepAChangelog;
 use Phly\KeepAChangelog\AddEntry;
 use Phly\KeepAChangelog\Exception;
 use PHPUnit\Framework\TestCase;
-use Throwable;
+
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function realpath;
+use function restore_error_handler;
+use function set_error_handler;
+use function sprintf;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
+
+use const E_WARNING;
 
 class AddEntryTest extends TestCase
 {
+    /** @var null|string name of temporary file used during testing */
     private $tempFile;
 
     public function tearDown()
@@ -49,7 +62,7 @@ class AddEntryTest extends TestCase
 
     public function expectedResults()
     {
-        // @codingStandardsIgnoreStart
+        // @phpcs:disable
         return [
             'added-initial-entry'      => ['CHANGELOG-INITIAL.md',            'CHANGELOG-ADDED-INITIAL-EXPECTED.md',      AddEntry::TYPE_ADDED,      'New entry'],
             'added-inject-entry'       => ['CHANGELOG-ADDED-INJECT.md',       'CHANGELOG-ADDED-INJECT-EXPECTED.md',       AddEntry::TYPE_ADDED,      'New entry'],
@@ -62,7 +75,7 @@ class AddEntryTest extends TestCase
             'fixed-initial-entry'      => ['CHANGELOG-INITIAL.md',            'CHANGELOG-FIXED-INITIAL-EXPECTED.md',      AddEntry::TYPE_FIXED,      'New entry'],
             'fixed-inject-entry'       => ['CHANGELOG-FIXED-INJECT.md',       'CHANGELOG-FIXED-INJECT-EXPECTED.md',       AddEntry::TYPE_FIXED,      'New entry'],
         ];
-        // @codingStandardsIgnoreEnd
+        // @phpcs:enable
     }
 
     /**
@@ -90,7 +103,7 @@ class AddEntryTest extends TestCase
         $this->tempFile = tempnam(sys_get_temp_dir(), 'KAC');
         file_put_contents($this->tempFile, file_get_contents($initialChangelogFile));
 
-        $entry = <<< 'EOH'
+        $entry = <<<'EOH'
 This is a multiline entry.
 All lines after the first one
 should be indented.

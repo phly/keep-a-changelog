@@ -13,8 +13,21 @@ use Phly\KeepAChangelog\Exception;
 use Phly\KeepAChangelog\SetDate;
 use PHPUnit\Framework\TestCase;
 
+use function date;
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function restore_error_handler;
+use function set_error_handler;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
+
+use const E_WARNING;
+
 class SetDateTest extends TestCase
 {
+    /** @var null|string name of temporary file used during testing */
     private $tempFile;
 
     public function tearDown()

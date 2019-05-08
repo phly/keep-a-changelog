@@ -11,15 +11,27 @@ namespace Phly\KeepAChangelog;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function basename;
+use function file_get_contents;
+use function file_put_contents;
+use function getcwd;
+use function is_readable;
+use function realpath;
+use function sprintf;
+use function sys_get_temp_dir;
+use function system;
+use function tempnam;
+use function unlink;
 
 class TaggerCommand extends Command
 {
     use GetChangelogFileTrait;
 
-    private const HELP = <<< 'EOH'
+    private const HELP = <<<'EOH'
 Create a new git tag for the current repository, using the relevant changelog entry.
 
 Parses the CHANGELOG.md file and extracts the entry matching <version>; if no
@@ -58,6 +70,9 @@ EOH;
         );
     }
 
+    /**
+     * @throws Exception\ChangelogFileNotFoundException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $cwd = realpath(getcwd());

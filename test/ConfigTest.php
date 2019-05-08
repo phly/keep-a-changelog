@@ -36,7 +36,7 @@ class ConfigTest extends TestCase
         $this->assertSame('gitlab.com', $config->domain());
     }
 
-    public function testConstructorAllowsProvidingProviderAndProviderDomainArguments()
+    public function testConstructorAllowsProvidingProviderAndProviderDomainArguments() : Config
     {
         $config = new Config('token-value', Config::PROVIDER_GITLAB, 'gitlab.phly.dev');
         $this->assertSame('token-value', $config->token());
@@ -51,9 +51,9 @@ class ConfigTest extends TestCase
     public function testGetArrayCopyProvidesSerialization(Config $config)
     {
         $this->assertSame([
-            'token'    => $config->token(),
+            'token' => $config->token(),
             'provider' => $config->provider(),
-            'domain'   => $config->domain(),
+            'domain' => $config->domain(),
         ], $config->getArrayCopy());
     }
 

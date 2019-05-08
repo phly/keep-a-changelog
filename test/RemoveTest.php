@@ -14,16 +14,23 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
+
 class RemoveTest extends TestCase
 {
-    /** @var ?string */
+    /** @var null|string */
     private $filename;
 
     public function setUp()
     {
         $this->filename = null;
-        $this->output   = $this->prophesize(OutputInterface::class);
-        $this->remove   = new Remove();
+        $this->output = $this->prophesize(OutputInterface::class);
+        $this->remove = new Remove();
     }
 
     public function tearDown()
@@ -36,9 +43,9 @@ class RemoveTest extends TestCase
         }
     }
 
-    protected function createChangelogFile()
+    protected function createChangelogFile() : string
     {
-        $contents       = file_get_contents(__DIR__ . '/_files/CHANGELOG.md');
+        $contents = file_get_contents(__DIR__ . '/_files/CHANGELOG.md');
         $this->filename = $filename = tempnam(sys_get_temp_dir(), 'CAK');
         file_put_contents($filename, $contents);
         return $filename;
@@ -50,8 +57,8 @@ class RemoveTest extends TestCase
         $this->assertFalse(($this->remove)($this->output->reveal(), $filename, '1.10.0'));
 
         $this->output
-            ->writeln(Argument::containingString('Unable to identify a changelog entry'))
-            ->shouldHaveBeenCalledTimes(1);
+             ->writeln(Argument::containingString('Unable to identify a changelog entry'))
+             ->shouldHaveBeenCalledTimes(1);
     }
 
     public function testCanRemoveValidVersionFromChangelogFile()
@@ -60,10 +67,10 @@ class RemoveTest extends TestCase
         $this->assertTrue(($this->remove)($this->output->reveal(), $filename, '1.1.0'));
 
         $this->output
-            ->writeln(Argument::containingString('Unable to identify a changelog entry'))
-            ->shouldNotHaveBeenCalled();
+             ->writeln(Argument::containingString('Unable to identify a changelog entry'))
+             ->shouldNotHaveBeenCalled();
 
-        $expected = <<< 'EOC'
+        $expected = <<<'EOC'
 # Changelog
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.

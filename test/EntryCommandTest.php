@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog;
 
 use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
 use Phly\KeepAChangelog\AddEntry;
 use Phly\KeepAChangelog\EntryCommand;
 use Phly\KeepAChangelog\Exception;
@@ -19,6 +18,9 @@ use ReflectionMethod;
 use ReflectionProperty;
 use Symfony\Component\Console\Input\InputInterface;
 use TypeError;
+
+use function mkdir;
+use function sprintf;
 
 class EntryCommandTest extends TestCase
 {
@@ -40,12 +42,14 @@ class EntryCommandTest extends TestCase
         new EntryCommand();
     }
 
-    public function nonNamespacedCommandNames()
+    public function nonNamespacedCommandNames() : iterable
     {
+        // @phpcs:disable
         return [
-            'invalid' => ['invalid'],
+            'invalid'               => ['invalid'],
             'known-type-standalone' => [AddEntry::TYPE_ADDED],
         ];
+        // @phpcs:enable
     }
 
     /**
@@ -195,6 +199,9 @@ class EntryCommandTest extends TestCase
         return $r;
     }
 
+    /**
+     * @param mixed $value
+     */
     private function setCommandProperty(EntryCommand $command, string $property, $value) : void
     {
         $r = new ReflectionProperty($command, $property);

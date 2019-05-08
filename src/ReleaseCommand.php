@@ -17,13 +17,33 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
+use function array_merge;
+use function array_pop;
+use function chmod;
+use function count;
+use function dirname;
+use function exec;
+use function file_get_contents;
+use function file_put_contents;
+use function getenv;
+use function is_dir;
+use function is_readable;
+use function mkdir;
+use function preg_match;
+use function preg_quote;
+use function sprintf;
+use function strrpos;
+use function strstr;
+use function strtolower;
+use function substr;
+
 class ReleaseCommand extends Command
 {
     use GetChangelogFileTrait;
     use GetConfigValuesTrait;
     use ProvideCommonOptionsTrait;
 
-    private const HELP = <<< 'EOH'
+    private const HELP = <<<'EOH'
 Create a release using the changelog entry for the specified version.
 
 The tool first checks to ensure we have a tag for the given version; if not,
@@ -57,7 +77,7 @@ EOH;
             'package',
             InputArgument::REQUIRED,
             'Package to release; must be in org/repo format, and match the repository name;'
-            . ' allows GitLab subgroup format'
+                . ' allows GitLab subgroup format'
         );
         $this->addArgument(
             'version',
@@ -92,6 +112,9 @@ EOH;
         $this->injectConfigBasedOptions();
     }
 
+    /**
+     * @throws Exception\ChangelogFileNotFoundException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $version = $input->getArgument('version');
@@ -99,7 +122,7 @@ EOH;
 
         $this->verifyTagExists($tagName);
 
-        $config  = $this->prepareConfig($input);
+        $config = $this->prepareConfig($input);
         $package = $input->getArgument('package');
 
         $token = $this->getToken($config, $input, $output);
@@ -114,7 +137,7 @@ EOH;
 
         $output->writeln('<info>Preparing changelog for release</info>');
 
-        $parser    = new ChangelogParser();
+        $parser = new ChangelogParser();
         $changelog = $parser->findChangelogForVersion(
             file_get_contents($changelogFile),
             $version
@@ -134,7 +157,7 @@ EOH;
 
         $provider = $this->getProvider($config);
 
-        $remote   = $input->getOption('remote') ?: $this->lookupRemote(
+        $remote = $input->getOption('remote') ?: $this->lookupRemote(
             $input,
             $output,
             $provider,
@@ -213,11 +236,14 @@ EOH;
             return $name;
         }
         $lastSeparator = strrpos($package, '/');
-        $repo          = substr($package, $lastSeparator + 1);
+        $repo = substr($package, $lastSeparator + 1);
         return sprintf('%s %s', $repo, $version);
     }
 
-    private function verifyTagExists($version) : void
+    /**
+     * @throws Exception\MissingTagException
+     */
+    private function verifyTagExists(string $version) : void
     {
         $command = sprintf('git show %s', $version);
         exec($command, $output, $return);
@@ -249,9 +275,9 @@ EOH;
         string $package,
         array $remotes
     ) : ?string {
-        $domain      = $this->getProviderDomain($provider);
+        $domain = $this->getProviderDomain($provider);
         $domainRegex = '#[/@.]' . preg_quote($domain) . '(:\d+:|:|/)#i';
-        $discovered  = [];
+        $discovered = [];
 
         foreach ($remotes as $line) {
             if (! preg_match(
@@ -291,7 +317,7 @@ EOH;
     }
 
     /**
-     * @return null|array<string> Array of lines as returned by
+     * @return null|string[] Array of lines as returned by
      *     `git remote -v`, or null if an error occurred.
      */
     private function fetchGitRemotes() : ?array
@@ -304,6 +330,9 @@ EOH;
         return $output;
     }
 
+    /**
+     * @throws Exception\InvalidProviderException
+     */
     private function getProviderDomain(Provider\ProviderInterface $provider) : string
     {
         if (! $provider instanceof Provider\ProviderNameProviderInterface) {

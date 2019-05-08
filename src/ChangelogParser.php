@@ -9,13 +9,20 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use function fclose;
+use function feof;
+use function fgets;
+use function fopen;
+use function preg_match;
+use function preg_quote;
+use function sprintf;
+
 class ChangelogParser
 {
     /**
-     * @param  string $changelogFile Changelog file to parse for versions.
-     * @return iterable<string, string> where keys are the version entries,
-     *     and values are the associated dates (either Y-m-d format, or the
-     *     string 'TBD')
+     * @param string $changelogFile Changelog file to parse for versions.
+     * @return iterable Where keys are the version entries, and values are the
+     *     associated dates (either Y-m-d format, or the string 'TBD')
      */
     public function findAllVersions(string $changelogFile) : iterable
     {
@@ -41,6 +48,10 @@ class ChangelogParser
         fclose($fh);
     }
 
+    /**
+     * @throws Exception\ChangelogNotFoundException
+     * @throws Exception\ChangelogMissingDateException
+     */
     public function findReleaseDateForVersion(string $changelog, string $version) : string
     {
         $regex = preg_quote('## ' . $version);
@@ -56,6 +67,11 @@ class ChangelogParser
         return $matches['date'];
     }
 
+    /**
+     * @throws Exception\ChangelogNotFoundException
+     * @throws Exception\ChangelogMissingDateException
+     * @throws Exception\InvalidChangelogFormatException
+     */
     public function findChangelogForVersion(string $changelog, string $version) : string
     {
         $regex = preg_quote('## ' . $version);

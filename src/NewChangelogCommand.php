@@ -14,13 +14,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function file_exists;
+use function sprintf;
+
 class NewChangelogCommand extends Command
 {
     use GetChangelogFileTrait;
 
     private const DESCRIPTION = 'Create a new changelog file.';
 
-    private const HELP = <<< 'EOH'
+    private const HELP = <<<'EOH'
 Create a new changelog file. If no --file is provided, the assumption is
 CHANGELOG.md in the current directory. If no --initial-version is
 provided, the assumption is 0.1.0. If the file already exists, you can 
@@ -45,6 +48,9 @@ EOH;
         );
     }
 
+    /**
+     * @throws Exception\ChangelogExistsException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $file = $this->getChangelogFile($input);

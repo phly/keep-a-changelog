@@ -14,13 +14,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function date;
+use function sprintf;
+
 class ReadyCommand extends Command
 {
     use GetChangelogFileTrait;
 
     private const DESCRIPTION = 'In the latest changelog entry, mark the entry ready by setting its release date.';
 
-    private const HELP = <<< 'EOH'
+    private const HELP = <<<'EOH'
 In the latest changelog entry, mark the entry ready by setting its release date.
 
 If no --date is specified, the current date in YYYY-MM-DD format will be used.
@@ -35,7 +38,7 @@ EOH;
             '-d',
             InputOption::VALUE_REQUIRED,
             'Specific date string to use; use this if the date is other than today,'
-            . ' or if you wish to use a different date format.'
+                . ' or if you wish to use a different date format.'
         );
     }
 

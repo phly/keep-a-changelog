@@ -9,14 +9,14 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog;
 
-use PHPUnit\Framework\TestCase;
 use Phly\KeepAChangelog\ChangelogFormatter;
+use PHPUnit\Framework\TestCase;
 
 class ChangelogFormatterTest extends TestCase
 {
     public function testFormatsHeadingsForUseWithTags()
     {
-        $changelog = <<< 'EOC'
+        $changelog = <<<'EOC'
 ### Added
 
 - Nothing.
@@ -39,7 +39,7 @@ class ChangelogFormatterTest extends TestCase
 
 EOC;
 
-        $expected = <<< 'EOC'
+        $expected = <<<'EOC'
 Added
 -----
 

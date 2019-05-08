@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\Exception;
 
 use RuntimeException;
 
+use function sprintf;
+
 class ComposerNotFoundException extends RuntimeException
 {
     public static function at(string $path) : self

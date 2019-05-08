@@ -17,6 +17,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
+use function preg_match;
+use function sprintf;
+
 class RemoveCommand extends Command
 {
     use ChangelogEditorTrait;
@@ -24,7 +27,7 @@ class RemoveCommand extends Command
 
     private const DESCRIPTION = 'Remove a changelog release entry.';
 
-    private const HELP = <<< 'EOH'
+    private const HELP = <<<'EOH'
 Remove the given changelog release entry based on the <version> provided.
 The command will provide a preview, and prompt for confirmation before doing
 so (unless using the --force-removal flag).
@@ -57,11 +60,11 @@ EOH;
 
         // Verify we can find the entry in the changelog file
         $changelogFile = $this->getChangelogFile($input);
-        $entry         = $this->getChangelogEntry($changelogFile, $version);
+        $entry = $this->getChangelogEntry($changelogFile, $version);
         if (! $entry) {
             $output->writeln(sprintf(
                 '<error>Could not locate version %s in changelog file %s;'
-                . ' please verify the version and/or changelog file.</error>',
+                    . ' please verify the version and/or changelog file.</error>',
                 $version,
                 $changelogFile
             ));
@@ -77,10 +80,12 @@ EOH;
             }
         }
 
+        // @phpcs:disable
         if (! (new Remove())($output, $changelogFile, $version)) {
+        // @phpcs:enable
             $output->writeln(sprintf(
                 '<error>Could not remove version %s from changelog file %s;'
-                . ' please check the output for details.</error>',
+                    . ' please check the output for details.</error>',
                 $version,
                 $changelogFile
             ));
@@ -117,7 +122,7 @@ EOH;
         $output->writeln('<info>Found the following entry:</info>');
         $output->writeln($entry->contents);
 
-        $helper   = $this->getHelper('question');
+        $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion('Do you really want to delete this entry?', false);
 
         return $helper->ask($input, $output, $question);

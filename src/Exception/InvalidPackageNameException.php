@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\Exception;
 
 use InvalidArgumentException;
 
+use function sprintf;
+
 class InvalidPackageNameException extends InvalidArgumentException
 {
     public static function forPackage(string $package) : self

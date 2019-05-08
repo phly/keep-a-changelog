@@ -11,6 +11,9 @@ namespace Phly\KeepAChangelog;
 
 use Symfony\Component\Console\Input\InputInterface;
 
+use function getcwd;
+use function realpath;
+
 /**
  * Compose this trait for any command that needs access to the changelog file.
  */

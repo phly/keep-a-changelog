@@ -12,6 +12,10 @@ namespace Phly\KeepAChangelog\Provider;
 use Gitlab\Client as GitLabClient;
 use Phly\KeepAChangelog\Exception;
 
+use function preg_match;
+use function preg_quote;
+use function sprintf;
+
 class GitLab implements
     IssueMarkupProviderInterface,
     ProviderInterface,
@@ -30,9 +34,6 @@ class GitLab implements
         return '!';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function createRelease(
         string $package,
         string $releaseName,
@@ -47,16 +48,13 @@ class GitLab implements
         return $release['tag_name'] ?? null;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getRepositoryUrlRegex() : string
     {
         return sprintf('(%s[:/](.*?)\.git)', preg_quote($this->getDomainName()));
     }
 
     /**
-     * @inheritDoc
+     * @throws Exception\InvalidPackageNameException
      */
     public function generatePullRequestLink(string $package, int $pr) : string
     {

@@ -12,6 +12,9 @@ namespace Phly\KeepAChangelog\Exception;
 use InvalidArgumentException;
 use Phly\KeepAChangelog\AddEntry;
 
+use function implode;
+use function sprintf;
+
 class InvalidNoteTypeException extends InvalidArgumentException
 {
     public static function forCommandName(string $command) : self

@@ -12,6 +12,10 @@ namespace Phly\KeepAChangelog\Exception;
 use InvalidArgumentException;
 use Phly\KeepAChangelog\Provider;
 
+use function gettype;
+use function implode;
+use function sprintf;
+
 class InvalidProviderException extends InvalidArgumentException
 {
     public static function forProvider(string $provider, array $allowedProviders) : self
@@ -27,7 +31,7 @@ class InvalidProviderException extends InvalidArgumentException
     {
         return new self(sprintf(
             'Provider %s does not implement %s and thus cannot be used to determine where to push tags;'
-            . ' please implement %s',
+                . ' please implement %s',
             gettype($provider),
             Provider\ProviderNameProviderInterface::class,
             Provider\ProviderNameProviderInterface::class

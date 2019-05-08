@@ -11,6 +11,18 @@ namespace Phly\KeepAChangelog;
 
 use Symfony\Component\Console\Input\InputInterface;
 
+use function file_get_contents;
+use function file_put_contents;
+use function getcwd;
+use function getenv;
+use function is_readable;
+use function parse_ini_file;
+use function realpath;
+use function sprintf;
+use function trim;
+
+use const PHP_EOL;
+
 /**
  * Compose this trait for any command that needs access to the configuration file.
  */
@@ -21,6 +33,8 @@ trait ConfigFileTrait
      *
      * This property exists solely for testing. When set, the value will be used
      * instead of getenv('HOME').
+     *
+     * @var null|string
      */
     private $globalPath;
 
@@ -29,14 +43,16 @@ trait ConfigFileTrait
      *
      * This property exists solely for testing. When set, the value will be used
      * instead of realpath(getcwd())
+     *
+     * @var null|string
      */
     private $localPath;
 
     private function getConfigFile(InputInterface $input) : string
     {
-        $useGlobal  = $input->getOption('global') ?: false;
+        $useGlobal = $input->getOption('global') ?: false;
         $globalPath = $this->globalPath ?: getenv('HOME');
-        $localPath  = $this->localPath ?: realpath(getcwd());
+        $localPath = $this->localPath ?: realpath(getcwd());
 
         return $useGlobal
             ? sprintf('%s/.keep-a-changelog/config.ini', $globalPath)
@@ -76,7 +92,7 @@ trait ConfigFileTrait
     private function createNewConfig() : Config
     {
         $globalPath = $this->globalPath ?: getenv('HOME');
-        $tokenFile  = sprintf('%s/.keep-a-changelog/token', $globalPath);
+        $tokenFile = sprintf('%s/.keep-a-changelog/token', $globalPath);
         $token = is_readable($tokenFile)
             ? trim(file_get_contents($tokenFile))
             : '';

@@ -9,12 +9,15 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use function file_put_contents;
+use function sprintf;
+
 /**
  * Create a new changelog file.
  */
 class NewChangelog
 {
-    private const TEMPLATE = <<< 'EOT'
+    private const TEMPLATE = <<<'EOT'
 # Changelog
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.

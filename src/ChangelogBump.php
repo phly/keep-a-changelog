@@ -9,13 +9,20 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use function explode;
+use function file_get_contents;
+use function file_put_contents;
+use function preg_match;
+use function preg_replace;
+use function sprintf;
+
 class ChangelogBump
 {
-    // @codingStandardsIgnoreStart
+    // @phpcs:disable
     private const CHANGELOG_LINE_REGEX = '/^\#\# (?<version>\d+\.\d+\.\d+(?:(?:alpha|beta|rc|dev|a|b)\d+)?) - (?:TBD|\d{4}-\d{2}-\d{2})$/m';
-    // @codingStandardsIgnoreEnd
+    // @phpcs:enable
 
-    private const TEMPLATE = <<< 'EOT'
+    private const TEMPLATE = <<<'EOT'
 
 
 ## %s - TBD
@@ -91,8 +98,6 @@ EOT;
 
     /**
      * Update the CHANGELOG with the new version information.
-     *
-     * @param string $version
      */
     public function updateChangelog(string $version)
     {
@@ -100,7 +105,7 @@ EOT;
         $contents = file_get_contents($this->changelogFile);
         $contents = preg_replace(
             "/^(\# Changelog\n\n.*?)(\n\n\#\# )/s",
-            '$1' .  $changelog . '## ',
+            '$1' . $changelog . '## ',
             $contents
         );
         file_put_contents($this->changelogFile, $contents);

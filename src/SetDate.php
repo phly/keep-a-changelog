@@ -11,8 +11,19 @@ namespace Phly\KeepAChangelog;
 
 use stdClass;
 
+use function array_splice;
+use function file;
+use function file_put_contents;
+use function implode;
+use function preg_match;
+use function sprintf;
+
 class SetDate
 {
+    /**
+     * @throws Exception\ChangelogFileNotFoundException
+     * @throws Exception\NoMatchingChangelogDiscoveredException
+     */
     public function __invoke(string $changelogFile, string $date) : void
     {
         $contents = file($changelogFile);
@@ -38,9 +49,9 @@ class SetDate
             'linePrefix' => '',
         ];
 
-        // @codingStandardsIgnoreStart
+        // @phpcs:disable
         $regex = '/^(?P<prefix>## \d+\.\d+\.\d+(?:(alpha|beta|rc|dev|patch|pl|a|b|p)\d+)?)\s+-\s+(?:(?!\d{4}-\d{2}-\d{2}).*)/i';
-        // @codingStandardsIgnoreEnd
+        // @phpcs:enable
 
         foreach ($contents as $index => $line) {
             if (! preg_match($regex, $line, $matches)) {

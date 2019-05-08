@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Provider;
 
 use Phly\KeepAChangelog\Exception\InvalidPackageNameException;
-use Phly\KeepAChangelog\Provider\GitLab;
 use PHPUnit\Framework\TestCase;
 
 class GitLabTest extends TestCase
@@ -41,13 +40,13 @@ class GitLabTest extends TestCase
 
     public function validPackageNames() : iterable
     {
-        // @codingStandardsIgnoreStart
+        // @phpcs:disable
         // @phpcs:disable
         yield 'typical'               => ['phly/keep-a-changelog', 42, 'https://gitlab.com/phly/keep-a-changelog/merge_requests/42'];
         yield 'typical-underscore'    => ['phly/keep_a_changelog', 42, 'https://gitlab.com/phly/keep_a_changelog/merge_requests/42'];
         yield 'subgroup'              => ['phly/cli/keep-a-changelog', 42, 'https://gitlab.com/phly/cli/keep-a-changelog/merge_requests/42'];
         // @phpcs:enable
-        // @codingStandardsIgnoreEnd
+        // @phpcs:enable
     }
 
     /**

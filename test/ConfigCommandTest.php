@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog;
 
 use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\Exception;
@@ -24,6 +23,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function mkdir;
+use function sprintf;
+use function unlink;
+
 class ConfigCommandTest extends TestCase
 {
     public function setUp()
@@ -31,7 +37,7 @@ class ConfigCommandTest extends TestCase
         vfsStream::setup('config');
         $rootPath = vfsStream::url('config');
         $this->globalPath = sprintf('%s/global', $rootPath);
-        $this->localPath  = sprintf('%s/local', $rootPath);
+        $this->localPath = sprintf('%s/local', $rootPath);
 
         mkdir($this->globalPath, 0777, true);
         mkdir($this->localPath, 0777, true);
@@ -44,7 +50,7 @@ class ConfigCommandTest extends TestCase
             unlink($globalConfig);
         }
 
-        $localConfig  = sprintf('%s/.keep-a-changelog.ini', $this->localPath);
+        $localConfig = sprintf('%s/.keep-a-changelog.ini', $this->localPath);
         if (file_exists($localConfig)) {
             unlink($localConfig);
         }
@@ -269,6 +275,9 @@ class ConfigCommandTest extends TestCase
         return $r;
     }
 
+    /**
+     * @param mixed $value
+     */
     private function setCommandProperty(ConfigCommand $command, string $property, $value) : void
     {
         $r = new ReflectionProperty($command, $property);

@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog;
 
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class Remove
 {
     use ChangelogEditorTrait;

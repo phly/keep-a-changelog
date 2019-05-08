@@ -12,10 +12,20 @@ namespace PhlyTest\KeepAChangelog;
 use Phly\KeepAChangelog\Edit;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
-use Throwable;
+
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function getenv;
+use function in_array;
+use function putenv;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
 
 class EditTest extends TestCase
 {
+    /** @var null|string name of temporary file used during testing */
     private $tempFile;
 
     public function tearDown()
@@ -34,7 +44,7 @@ class EditTest extends TestCase
 
     public function getVersion2Contents() : string
     {
-        return <<< 'EOH'
+        return <<<'EOH'
 ## 2.0.0 - TBD
 
 ### Added
@@ -63,7 +73,7 @@ EOH;
 
     public function getVersion1Contents() : string
     {
-        return <<< 'EOH'
+        return <<<'EOH'
 ## 1.1.0 - 2018-03-23
 
 ### Added
@@ -90,7 +100,6 @@ EOH;
 EOH;
     }
 
-
     public function testGetChangelogEntryReturnsNullIfNoChangelogEntryFound()
     {
         $edit = new Edit();
@@ -98,15 +107,15 @@ EOH;
         $this->assertNull($getChangelogEntry->invoke($edit, __DIR__ . '/_files/invalid-composer/composer.json'));
     }
 
-    public function getChangelogEntryProvider() : iterable
+    public function changelogEntries() : iterable
     {
         $changelogFile = __DIR__ . '/_files/CHANGELOG.md';
-        yield 'latest' => [null,    $changelogFile, 4,  22, $this->getVersion2Contents()];
+        yield 'latest' => [null, $changelogFile, 4, 22, $this->getVersion2Contents()];
         yield '1.1.0'  => ['1.1.0', $changelogFile, 26, 22, $this->getVersion1Contents()];
     }
 
     /**
-     * @dataProvider getChangelogEntryProvider
+     * @dataProvider changelogEntries
      */
     public function testGetChangelogEntryReturnsExpectedDataWhenChangelogIsDiscovered(
         ?string $version,
@@ -152,7 +161,7 @@ EOH;
         $this->tempFile = tempnam(sys_get_temp_dir(), 'KAC');
         file_put_contents($this->tempFile, file_get_contents(__DIR__ . '/_files/CHANGELOG.md'));
 
-        $expectedContents = <<< 'EOH'
+        $expectedContents = <<<'EOH'
 ## 2.0.0 - 2018-04-14
 
 ### Added

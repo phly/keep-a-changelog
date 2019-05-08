@@ -12,6 +12,8 @@ namespace Phly\KeepAChangelog\Exception;
 use RuntimeException;
 use Throwable;
 
+use function sprintf;
+
 class MissingTagException extends RuntimeException
 {
     public static function forVersion(string $version) : self
@@ -26,7 +28,7 @@ class MissingTagException extends RuntimeException
     {
         return new self(sprintf(
             'When verifying that the tag %s for package %s is present on GitHub,'
-            . ' no corresponding tag was found',
+                . ' no corresponding tag was found',
             $version,
             $package
         ), $e->getCode(), $e);
@@ -36,7 +38,7 @@ class MissingTagException extends RuntimeException
     {
         return new self(sprintf(
             'When verifying that the tag %s for package %s is present on GitHub,'
-            . ' an error occurred fetching tag details: %s',
+                . ' an error occurred fetching tag details: %s',
             $version,
             $package,
             $e->getMessage()
@@ -47,8 +49,8 @@ class MissingTagException extends RuntimeException
     {
         return new self(sprintf(
             'When verifying that the tag %s for package %s is present on GitHub,'
-            . ' the tag found was unsigned. Please recreate the tag using the'
-            . ' -s flag.',
+                . ' the tag found was unsigned. Please recreate the tag using the'
+                . ' -s flag.',
             $version,
             $package
         ));

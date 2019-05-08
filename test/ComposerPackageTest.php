@@ -13,6 +13,8 @@ use Phly\KeepAChangelog\ComposerPackage;
 use Phly\KeepAChangelog\Exception;
 use PHPUnit\Framework\TestCase;
 
+use function realpath;
+
 class ComposerPackageTest extends TestCase
 {
     public function setUp()
