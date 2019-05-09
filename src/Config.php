@@ -89,7 +89,7 @@ class Config
     public function withToken(string $token) : self
     {
         $config = clone $this;
-        $config->token = $token;
+        $config->token = trim($token);
         return $config;
     }
 
