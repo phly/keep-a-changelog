@@ -33,7 +33,7 @@ class ConfigCommandTest extends TestCase
         $this->globalPath = sprintf('%s/global', $rootPath);
         $this->localPath  = sprintf('%s/local', $rootPath);
 
-        mkdir(sprintf('%s/.keep-a-changelog', $this->globalPath), 0777, true);
+        mkdir($this->globalPath, 0777, true);
         mkdir($this->localPath, 0777, true);
     }
 
@@ -70,6 +70,7 @@ class ConfigCommandTest extends TestCase
 
     public function testExecutionRaisesExceptionWhenGlobalFileExistsAndOverwriteNotRequested()
     {
+        mkdir($this->globalPath . '/.keep-a-changelog', 0777, true);
         $configFile = sprintf('%s/.keep-a-changelog/config.ini', $this->globalPath);
         file_put_contents($configFile, 'provider = github');
 
@@ -218,6 +219,7 @@ class ConfigCommandTest extends TestCase
 
     public function testExecutionCanOverwriteGlobalConfigFile()
     {
+        mkdir($this->globalPath . '/.keep-a-changelog', 0777, true);
         $file = sprintf('%s/.keep-a-changelog/config.ini', $this->globalPath);
         file_put_contents($file, "token = original-token\nprovider = github");
 

@@ -30,7 +30,7 @@ class EntryCommandTest extends TestCase
         $rootPath = vfsStream::url('config');
         $this->globalPath  = sprintf('%s/global', $rootPath);
         $this->localPath  = sprintf('%s/local', $rootPath);
-        mkdir($this->globalPath . '/.keep-a-changelog', 0777, true);
+        mkdir($this->globalPath, 0777, true);
         mkdir($this->localPath, 0777, true);
     }
 

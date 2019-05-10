@@ -57,6 +57,12 @@ trait ConfigFileTrait
         foreach ($config->getArrayCopy() as $key => $value) {
             $ini .= sprintf('%s = %s%s', $key, $value, PHP_EOL);
         }
+
+        $dirname = dirname($filename);
+        if (! is_dir($dirname)) {
+            mkdir($dirname, 0777, true);
+        }
+
         return file_put_contents($filename, $ini) !== false;
     }
 
