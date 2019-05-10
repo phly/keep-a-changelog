@@ -72,10 +72,10 @@ EOH;
         $question->setErrorMessage('Provider %s is invalid.');
         $provider = $helper->ask($input, $output, $question);
 
-        $question = new Question('Please enter the personal token for the provider (Empty to skip)', '');
+        $question = new Question('Please enter the personal token for the provider (Empty to skip): ', '');
         $token = $helper->ask($input, $output, $question);
 
-        $question = new Question('Please enter the custom domain for the provider, if any (Empty to skip)', '');
+        $question = new Question('Please enter the custom domain for the provider, if any (Empty to skip): ', '');
         $domain = $helper->ask($input, $output, $question);
 
         $config = new Config($token, $provider, $domain);
