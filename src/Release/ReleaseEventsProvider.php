@@ -19,6 +19,11 @@ class ReleaseEventsProvider implements ListenerProviderInterface
             MarshalConfigurationListener::class,
             ValidateTokenExistsListener::class,
         ],
+        PrepareChangelogEvent::class => [
+            DiscoverChangelogFileListener::class,
+            ParseChangelogListener::class,
+            FormatChangelogListener::class,
+        ],
     ];
 
     public function getListenersForEvent(object $event) : iterable
