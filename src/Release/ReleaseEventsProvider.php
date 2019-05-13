@@ -31,6 +31,10 @@ class ReleaseEventsProvider implements ListenerProviderInterface
             PromptForGitRemoteListener::class,
             PushTagToRemoteListener::class
         ],
+        CreateReleaseEvent::class => [
+            CreateReleaseNameListener::class,
+            CreateReleaseListener::class,
+        ],
     ];
 
     public function getListenersForEvent(object $event) : iterable
