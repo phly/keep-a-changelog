@@ -35,6 +35,11 @@ class ReleaseEventsProvider implements ListenerProviderInterface
             CreateReleaseNameListener::class,
             CreateReleaseListener::class,
         ],
+        SaveTokenEvent::class => [
+            IsTokenOptionPresentListener::class,
+            PromptToSaveTokenListener::class,
+            SaveTokenListener::class,
+        ],
     ];
 
     public function getListenersForEvent(object $event) : iterable
