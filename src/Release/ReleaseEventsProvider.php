@@ -24,6 +24,13 @@ class ReleaseEventsProvider implements ListenerProviderInterface
             ParseChangelogListener::class,
             FormatChangelogListener::class,
         ],
+        PushTagEvent::class => [
+            CheckForRemoteOptionListener::class,
+            DiscoverGitRemotesListener::class,
+            MatchRemotesToPackageAndProviderListener::class,
+            PromptForGitRemoteListener::class,
+            PushTagToRemoteListener::class
+        ],
     ];
 
     public function getListenersForEvent(object $event) : iterable
