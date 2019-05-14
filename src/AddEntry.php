@@ -126,7 +126,7 @@ class AddEntry
     private function formatEntry(string $entry, bool $withExtraLine = false) : string
     {
         $entry = sprintf('- %s', $entry);
-        $entry = preg_replace("/\n(?!\s{2}|$)/s", "\n  ", $entry);
+        $entry = preg_replace("/\n(?!\s{2}|$)/", "\n  ", $entry);
         if ("\n" !== $entry[-1]) {
             // All entries need to end with a new line.
             $entry .= "\n";
