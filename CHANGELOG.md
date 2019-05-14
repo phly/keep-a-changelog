@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#48](https://github.com/phly/keep-a-changelog/pull/48) adds the string `: ` to then end of all question prompts to make them more readable.
 
 ### Deprecated
 
