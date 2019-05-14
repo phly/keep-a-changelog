@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoveTest extends TestCase
 {
-    /** @var ?string */
+    /** @var null|string */
     private $filename;
 
     public function setUp()

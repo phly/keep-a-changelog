@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -20,7 +21,7 @@ trait GetConfigValuesTrait
     use ConfigFileTrait;
 
     /**
-     * @var ?ProviderInterface
+     * @var null|ProviderInterface
      */
     private $provider = null;
 
