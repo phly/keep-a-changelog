@@ -7,9 +7,10 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Provider;
+namespace PhlyTest\KeepAChangelog\Provider;
 
-use Phly\KeepAChangelog\Exception\InvalidPackageNameException;
+use Phly\KeepAChangelog\Provider\GitLab;
+use Phly\KeepAChangelog\Provider\Exception;
 use PHPUnit\Framework\TestCase;
 
 class GitLabTest extends TestCase
@@ -17,6 +18,57 @@ class GitLabTest extends TestCase
     public function setUp()
     {
         $this->gitlab = new GitLab();
+    }
+
+    public function testReportsCannotCreateReleaseByDefault()
+    {
+        $this->assertFalse($this->gitlab->canCreateRelease());
+    }
+
+    public function testReportsGenerateLinksByDefault()
+    {
+        $this->assertFalse($this->gitlab->canGenerateLinks());
+    }
+
+    public function testSettingPackageNameAllowsLinkGenerationButNotReleaseCreation()
+    {
+        $this->gitlab->setPackageName('phly/keep-a-changelog');
+        $this->assertTrue($this->gitlab->canGenerateLinks());
+        $this->assertFalse($this->gitlab->canCreateRelease());
+    }
+
+    public function testSettingPackageNameAndTOkenAllowsLinkGenerationAndReleaseCreation()
+    {
+        $this->gitlab->setPackageName('phly/keep-a-changelog');
+        $this->gitlab->setToken('this-is-a-token');
+        $this->assertTrue($this->gitlab->canGenerateLinks());
+        $this->assertTrue($this->gitlab->canCreateRelease());
+    }
+
+    public function testHasADefaultDomain()
+    {
+        $this->assertSame('gitlab.com', $this->gitlab->domain());
+    }
+
+    public function testDomainIsMutable()
+    {
+        $this->gitlab->setUrl('https://git.custom-domain.com');
+        $this->assertSame('git.custom-domain.com', $this->gitlab->domain());
+    }
+
+    public function invalidUrls() : iterable
+    {
+        yield 'bare-word'   => ['invalid'];
+        yield 'scheme-only' => ['https://'];
+    }
+
+    /**
+     * @dataProvider invalidUrls
+     */
+    public function testSettingUrlRaisesExceptionForInvalidUrl(string $url)
+    {
+        $this->expectException(Exception\InvalidUrlException::class);
+        $this->gitlab->setUrl($url);
     }
 
     public function invalidPackageNames() : iterable
@@ -34,27 +86,58 @@ class GitLabTest extends TestCase
      */
     public function testGeneratePullRequestLinkRaisesExceptionForInvalidPackageNames(string $package)
     {
-        $this->expectException(InvalidPackageNameException::class);
-        $this->gitlab->generatePullRequestLink($package, 1);
+        $this->expectException(Exception\InvalidPackageNameException::class);
+        $this->gitlab->setPackageName($package);
     }
 
-    public function validPackageNames() : iterable
+    public function packageAndPatchLinks() : iterable
     {
         // @phpcs:disable
-        // @phpcs:disable
-        yield 'typical'               => ['phly/keep-a-changelog', 42, 'https://gitlab.com/phly/keep-a-changelog/merge_requests/42'];
-        yield 'typical-underscore'    => ['phly/keep_a_changelog', 42, 'https://gitlab.com/phly/keep_a_changelog/merge_requests/42'];
-        yield 'subgroup'              => ['phly/cli/keep-a-changelog', 42, 'https://gitlab.com/phly/cli/keep-a-changelog/merge_requests/42'];
-        // @phpcs:enable
+        yield 'typical'               => ['phly/keep-a-changelog', 42, '[!42](https://gitlab.com/phly/keep-a-changelog/merge_requests/42)'];
+        yield 'typical-underscore'    => ['phly/keep_a_changelog', 42, '[!42](https://gitlab.com/phly/keep_a_changelog/merge_requests/42)'];
+        yield 'subgroup'              => ['phly/cli/keep-a-changelog', 42, '[!42](https://gitlab.com/phly/cli/keep-a-changelog/merge_requests/42)'];
         // @phpcs:enable
     }
 
     /**
-     * @dataProvider validPackageNames
+     * @dataProvider packageAndPatchLinks
      */
-    public function testGeneratePullRequestLinkCreatesExpectedPackageLinks(string $package, int $pr, string $expected)
+    public function testGeneratePatchLinkCreatesExpectedLink(string $package, int $pr, string $expected)
     {
-        $link = $this->gitlab->generatePullRequestLink($package, $pr);
+        $this->gitlab->setPackageName($package);
+        $link = $this->gitlab->generatePatchLink($pr);
         $this->assertSame($expected, $link);
+    }
+
+    public function packageAndIssueLinks() : iterable
+    {
+        // @phpcs:disable
+        yield 'typical'               => ['phly/keep-a-changelog', 42, '[#42](https://gitlab.com/phly/keep-a-changelog/issues/42)'];
+        yield 'typical-underscore'    => ['phly/keep_a_changelog', 42, '[#42](https://gitlab.com/phly/keep_a_changelog/issues/42)'];
+        yield 'subgroup'              => ['phly/cli/keep-a-changelog', 42, '[#42](https://gitlab.com/phly/cli/keep-a-changelog/issues/42)'];
+        // @phpcs:enable
+    }
+
+    /**
+     * @dataProvider packageAndIssueLinks
+     */
+    public function testGenerateIssueLinkCreatesExpectedLink(string $package, int $issue, string $expected)
+    {
+        $this->gitlab->setPackageName($package);
+        $link = $this->gitlab->generateIssueLink($issue);
+        $this->assertSame($expected, $link);
+    }
+
+    public function testCreateReleaseRaisesExceptionIfPackageIsMissing()
+    {
+        $this->expectException(Exception\MissingPackageNameException::class);
+        $this->gitlab->createRelease('some/package 1.2.3', 'v1.2.3', 'the changelog');
+    }
+
+    public function testCreateReleaseRaisesExceptionIfTokenIsMissing()
+    {
+        $this->gitlab->setPackageName('some/package');
+        $this->expectException(Exception\MissingTokenException::class);
+        $this->gitlab->createRelease('some/package 1.2.3', 'v1.2.3', 'the changelog');
     }
 }

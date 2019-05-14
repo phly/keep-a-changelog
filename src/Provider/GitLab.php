@@ -10,75 +10,118 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Provider;
 
 use Gitlab\Client as GitLabClient;
-use Phly\KeepAChangelog\Exception;
 
-use function preg_match;
-use function preg_quote;
+use function filter_var;
+use function parse_url;
 use function sprintf;
 
-class GitLab implements
-    IssueMarkupProviderInterface,
-    ProviderInterface,
-    ProviderNameProviderInterface
-{
-    /** @var string */
-    private $domain = 'gitlab.com';
+use const FILTER_VALIDATE_URL;
+use const PHP_URL_HOST;
 
-    public function getIssuePrefix() : string
+class GitLab implements ProviderInterface
+{
+    private const DEFAULT_URL = 'https://gitlab.com';
+
+    /**
+     * Use for testing purposes only.
+     *
+     * @internal
+     * @var ?GitLabClient
+     */
+    public $client;
+
+    /** @var ?string */
+    private $package;
+
+    /** @var ?string */
+    private $token;
+
+    /** @var string */
+    private $url = self::DEFAULT_URL;
+
+    public function canCreateRelease() : bool
     {
-        return '#';
+        return null !== $this->token
+            && null !== $this->package;
     }
 
-    public function getPatchPrefix() : string
+    public function canGenerateLinks() : bool
     {
-        return '!';
+        return null !== $this->package;
     }
 
     public function createRelease(
-        string $package,
         string $releaseName,
         string $tagName,
-        string $changelog,
-        string $token
+        string $changelog
     ) : ?string {
-        $client = GitLabClient::create('https://' . $this->getDomainName());
-        $client->authenticate($token, GitLabClient::AUTH_HTTP_TOKEN);
-        $release = $client->api('repositories')->createRelease($package, $tagName, $changelog);
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'release creation');
+        }
+
+        if (! $this->token) {
+            throw Exception\MissingTokenException::for($this);
+        }
+
+        $release = $this->getClient()->api('repositories')
+            ->createRelease($this->package, $tagName, $changelog);
 
         return $release['tag_name'] ?? null;
     }
 
-    public function getRepositoryUrlRegex() : string
+    public function generateIssueLink(int $issueIdentifier) : string
     {
-        return sprintf('(%s[:/](.*?)\.git)', preg_quote($this->getDomainName()));
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'issue link generation');
+        }
+        $url = sprintf('%s/%s/issues/%d', $this->url, $this->package, $issueIdentifier);
+        return sprintf('[#%d](%s)', $issueIdentifier, $url);
     }
 
-    /**
-     * @throws Exception\InvalidPackageNameException
-     */
-    public function generatePullRequestLink(string $package, int $pr) : string
+    public function generatePatchLink(int $patchIdentifier) : string
+    {
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'patch link generation');
+        }
+        $url = sprintf('%s/%s/merge_requests/%d', $this->url, $this->package, $patchIdentifier);
+        return sprintf('[!%d](%s)', $patchIdentifier, $url);
+    }
+
+    public function domain() : string
+    {
+        return parse_url($this->url, PHP_URL_HOST);
+    }
+
+    public function setPackageName(string $package) : void
     {
         if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*(/[a-z0-9]+[a-z0-9_-]*)+$#i', $package)) {
-            throw Exception\InvalidPackageNameException::forPackage($package);
+            throw Exception\InvalidPackageNameException::forPackage($package, $this);
+        }
+        $this->package = $package;
+    }
+
+    public function setToken(string $token) : void
+    {
+        $this->token = $token;
+    }
+
+    public function setUrl(string $url) : void
+    {
+        if (false === filter_var($url, FILTER_VALIDATE_URL)) {
+            throw Exception\InvalidUrlException::forUrl($url, $this);
+        }
+        $this->url = $url;
+    }
+
+    private function getClient() : GitLabClient
+    {
+        if ($this->client instanceof GitLabClient) {
+            return $this->client;
         }
 
-        return sprintf('https://%s/%s/merge_requests/%d', $this->getDomainName(), $package, $pr);
-    }
+        $client = GitLabClient::create($this->url);
+        $client->authenticate($this->token, GitLabClient::AUTH_HTTP_TOKEN);
 
-    public function getName() : string
-    {
-        return 'GitLab';
-    }
-
-    public function getDomainName() : string
-    {
-        return $this->domain;
-    }
-
-    public function withDomainName(string $domain) : ProviderNameProviderInterface
-    {
-        $new = clone $this;
-        $new->domain = $domain;
-        return $new;
+        return $client;
     }
 }
