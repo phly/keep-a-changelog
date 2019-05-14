@@ -66,7 +66,7 @@ trait GetConfigValuesTrait
                 $this->provider = (new Provider\GitLab())->withDomainName($this->getDomain($config));
                 break;
             default:
-                throw Exception\InvalidProviderException::forProvider($provider);
+                throw Exception\InvalidProviderException::forProvider($provider, Config::PROVIDERS);
                 break;
         }
 
