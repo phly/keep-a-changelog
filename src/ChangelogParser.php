@@ -22,7 +22,7 @@ class ChangelogParser
         $fh = fopen($changelogFile, 'r');
         $regex = sprintf(
             '/^%s %s - %s$/i',
-            preg_quote('##'),
+            preg_quote('##', '/'),
             '(?P<version>\d+\.\d+\.\d+(?:(?:alpha|a|beta|b|rc|dev)\d+)?)',
             '(?P<date>(\d{4}-\d{2}-\d{2}|TBD))'
         );
@@ -43,7 +43,7 @@ class ChangelogParser
 
     public function findReleaseDateForVersion(string $changelog, string $version) : string
     {
-        $regex = preg_quote('## ' . $version);
+        $regex = preg_quote('## ' . $version, '/');
         if (! preg_match('/^' . $regex . '/m', $changelog)) {
             throw Exception\ChangelogNotFoundException::forVersion($version);
         }
@@ -58,7 +58,7 @@ class ChangelogParser
 
     public function findChangelogForVersion(string $changelog, string $version) : string
     {
-        $regex = preg_quote('## ' . $version);
+        $regex = preg_quote('## ' . $version, '/');
         if (! preg_match('/^' . $regex . '/m', $changelog)) {
             throw Exception\ChangelogNotFoundException::forVersion($version);
         }

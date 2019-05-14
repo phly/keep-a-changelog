@@ -42,7 +42,7 @@ trait ChangelogEditorTrait
         $boundaryRegex = '/^## \d+\.\d+\.\d+/';
 
         $regex = $version
-            ? sprintf('/^## %s/', preg_quote($version))
+            ? sprintf('/^## %s/', preg_quote($version, '/'))
             : $boundaryRegex;
 
         foreach ($contents as $index => $line) {

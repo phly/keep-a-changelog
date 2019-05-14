@@ -250,7 +250,7 @@ EOH;
         array $remotes
     ) : ?string {
         $domain      = $this->getProviderDomain($provider);
-        $domainRegex = '#[/@.]' . preg_quote($domain) . '(:\d+:|:|/)#i';
+        $domainRegex = '#[/@.]' . preg_quote($domain, '#') . '(:\d+:|:|/)#i';
         $discovered  = [];
 
         foreach ($remotes as $line) {

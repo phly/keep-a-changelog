@@ -67,7 +67,7 @@ class GitHub implements
      */
     public function getRepositoryUrlRegex() : string
     {
-        return '(github.com[:/](.*?)\.git)';
+        return '/(github.com[:/](.*?)\.git)/';
     }
 
     /**

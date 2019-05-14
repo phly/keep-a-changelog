@@ -52,7 +52,7 @@ class GitLab implements
      */
     public function getRepositoryUrlRegex() : string
     {
-        return sprintf('(%s[:/](.*?)\.git)', preg_quote($this->getDomainName()));
+        return sprintf('/(%s[:/](.*?)\.git)/', preg_quote($this->getDomainName(), '/'));
     }
 
     /**
