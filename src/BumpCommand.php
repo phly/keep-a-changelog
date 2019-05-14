@@ -50,7 +50,7 @@ EOH;
 
     public function __construct(string $type, string $name = null)
     {
-        if (! in_array($type, array_keys($this->bumpMethods), true)) {
+        if (! isset($this->bumpMethods[$type])) {
             throw Exception\InvalidBumpTypeException::forType($type);
         }
 
