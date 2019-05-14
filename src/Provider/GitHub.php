@@ -135,8 +135,7 @@ class GitHub implements
         if (! $tagData['verification']['verified']) {
             throw Exception\MissingTagException::forUnverifiedTagOnGithub(
                 sprintf('%s/%s', $org, $repo),
-                $tagName,
-                $e
+                $tagName
             );
         }
     }

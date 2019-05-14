@@ -43,7 +43,7 @@ class MissingTagException extends RuntimeException
         ), $e->getCode(), $e);
     }
 
-    public static function forUnverifiedTagOnGithub(string $package, string $version, Throwable $e) : self
+    public static function forUnverifiedTagOnGithub(string $package, string $version) : self
     {
         return new self(sprintf(
             'When verifying that the tag %s for package %s is present on GitHub,'
@@ -51,6 +51,6 @@ class MissingTagException extends RuntimeException
             . ' -s flag.',
             $version,
             $package
-        ), $e->getCode(), $e);
+        ));
     }
 }
