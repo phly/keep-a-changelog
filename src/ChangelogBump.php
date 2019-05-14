@@ -91,8 +91,6 @@ EOT;
 
     /**
      * Update the CHANGELOG with the new version information.
-     *
-     * @param string $version
      */
     public function updateChangelog(string $version)
     {
