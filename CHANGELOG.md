@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.6.1 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#47](https://github.com/phly/keep-a-changelog/pull/47) fixes a bug during global configuration file creation that occurs when the
+  configuration directory does not exist.
+
 ## 1.6.0 - 2019-05-07
 
 ### Added
