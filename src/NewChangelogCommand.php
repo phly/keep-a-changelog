@@ -51,7 +51,7 @@ EOH;
         $version = $input->getOption('initial-version') ?: '0.1.0';
         $overwrite = $input->getOption('overwrite') ?: false;
 
-        if (file_exists($file) && ! $overwrite) {
+        if (! $overwrite && file_exists($file)) {
             throw Exception\ChangelogExistsException::forFile($file);
         }
 

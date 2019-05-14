@@ -59,7 +59,7 @@ EOH;
         $overwrite = $input->getOption('overwrite') ?: false;
         $configFile = $this->getConfigFile($input);
 
-        if (file_exists($configFile) && ! $overwrite) {
+        if (! $overwrite && file_exists($configFile)) {
             throw Exception\ConfigFileExistsException::forFile($configFile);
         }
 
