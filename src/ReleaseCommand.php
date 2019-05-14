@@ -270,7 +270,7 @@ EOH;
                 continue;
             }
 
-            if (false === strstr($matches['url'], $package)) {
+            if (false === strpos($matches['url'], $package)) {
                 continue;
             }
 
