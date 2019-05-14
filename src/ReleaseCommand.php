@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use Phly\EventDispatcher\EventDispatcher;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -69,6 +71,15 @@ When complete, the tool will provide a URL to the created release.
 
 EOH;
 
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
+
+    public function __construct(string $name = 'release', ?EventDispatcherInterface $dispatcher = null)
+    {
+        $this->dispatcher = $dispatcher ?: new EventDispatcher(new Release\ReleaseEventsProvider());
+        parent::__construct($name);
+    }
+
     protected function configure() : void
     {
         $this->setDescription('Create a new release using the relevant changelog entry.');
@@ -117,264 +128,57 @@ EOH;
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $version = $input->getArgument('version');
-        $tagName = $input->getOption('tagname') ?: $version;
-
-        $this->verifyTagExists($tagName);
-
-        $config = $this->prepareConfig($input);
-        $package = $input->getArgument('package');
-
-        $token = $this->getToken($config, $input, $output);
-        if (! $token) {
+        $validator = $this->dispatcher->dispatch(new Release\ValidateRequirementsEvent($input, $output));
+        if (! $validator->requirementsMet()) {
             return 1;
         }
-
-        $changelogFile = $this->getChangelogFile($input);
-        if (! is_readable($changelogFile)) {
-            throw Exception\ChangelogFileNotFoundException::at($changelogFile);
-        }
+        $version       = $validator->version();
+        $tagName       = $validator->tagName();
+        $config        = $validator->config();
 
         $output->writeln('<info>Preparing changelog for release</info>');
-
-        $parser = new ChangelogParser();
-        $changelog = $parser->findChangelogForVersion(
-            file_get_contents($changelogFile),
-            $version
-        );
-
-        $formatter = new ChangelogFormatter();
-        $changelog = $formatter->format($changelog);
-
-        $remotes = $this->fetchGitRemotes();
-        if (! $remotes) {
-            $output->writeln('<error>Cannot determine remote to which to push tag!</error>');
-            $output->writeln(
-                'The command "git remote -v" had a non-zero exit status; verify the command works, and try again.'
-            );
-            return 1;
-        }
-
-        $provider = $this->getProvider($config);
-
-        $remote = $input->getOption('remote') ?: $this->lookupRemote(
+        $parser = $this->dispatcher->dispatch(new Release\PrepareChangelogEvent(
             $input,
             $output,
-            $provider,
-            $package,
-            $remotes
-        );
+            $version
+        ));
+        if (! $parser->changelogIsReady()) {
+            return 1;
+        }
+        $changelog = $parser->changelog();
 
-        if (! $remote) {
+        $tag = $this->dispatcher->dispatch(new Release\PushTagEvent(
+            $input,
+            $output,
+            $this->getHelper('question'),
+            $config,
+            $tagName
+        ));
+        if (! $tag->wasPushed()) {
             return 1;
         }
 
-        $output->writeln(sprintf(
-            '<info>Pushing tag %s to %s</info>',
+        $release = $this->dispatcher->dispatch(new Release\CreateReleaseEvent(
+            $input,
+            $output,
+            $config->provider(),
             $version,
-            $remote
-        ));
-
-        if (! $this->pushTag($tagName, $remote)) {
-            $output->writeln('<error>Error pushing tag to remote!');
-            $output->writeln('Please check the output for details.');
-            return 1;
-        }
-
-        $releaseName = $this->createReleaseName($input, $package, $version);
-        $output->writeln(sprintf(
-            '<info>Creating release "%s"</info>',
-            $releaseName
-        ));
-
-        $release = $provider->createRelease(
-            $package,
-            $releaseName,
-            $tagName,
             $changelog,
-            $token
-        );
-        if (! $release) {
-            $output->writeln('<error>Error creating release!</error>');
-            $output->writeln('Check the output logs for details, or re-run this command with verbosity turned on');
+            $config->token()
+        ));
+        if (! $release->wasCreated()) {
             return 1;
         }
 
-        if ($input->getOption('token')) {
-            $this->promptToSaveToken($token, $input, $output);
-        }
+        $this->dispatcher->dispatch(new Release\SaveTokenEvent(
+            $input,
+            $output,
+            $this->getHelper('question'),
+            $config->token()
+        ));
 
-        $output->writeln(sprintf('<info>Created %s<info>', $release));
+        $output->writeln(sprintf('<info>Created %s<info>', $release->release()));
 
         return 0;
-    }
-
-    private function promptToSaveToken(string $token, InputInterface $input, OutputInterface $output) : void
-    {
-        $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('Do you want to save this token for future use?', false);
-
-        if (! $helper->ask($input, $output, $question)) {
-            return;
-        }
-
-        $home = getenv('HOME');
-        $tokenFile = sprintf('%s/.keep-a-changelog/token', $home);
-
-        if (! is_dir(dirname($tokenFile))) {
-            mkdir(dirname($tokenFile), 0700, true);
-        }
-
-        file_put_contents($tokenFile, $token);
-        chmod($tokenFile, 0600);
-    }
-
-    private function createReleaseName(InputInterface $input, string $package, string $version) : string
-    {
-        $name = $input->getOption('name');
-        if ($name) {
-            return $name;
-        }
-        $lastSeparator = strrpos($package, '/');
-        $repo = substr($package, $lastSeparator + 1);
-        return sprintf('%s %s', $repo, $version);
-    }
-
-    /**
-     * @throws Exception\MissingTagException
-     */
-    private function verifyTagExists(string $version) : void
-    {
-        $command = sprintf('git show %s', $version);
-        exec($command, $output, $return);
-        if (0 !== $return) {
-            throw Exception\MissingTagException::forVersion($version);
-        }
-    }
-
-    private function pushTag(string $version, string $remote) : bool
-    {
-        $command = sprintf('git push %s %s', $remote, $version);
-        exec($command, $output, $return);
-        return 0 === $return;
-    }
-
-    /**
-     * Determine which remote to which to push a tag
-     *
-     * This method uses the provider and package, looping through the remotes
-     * returned by `git remote -v` to match each against remotes configured
-     * for push operations. If the remote matches both the provider domain and
-     * the package name, then it will return the remote name; otherwise, it
-     * returns null, indicating none could be found.
-     */
-    private function lookupRemote(
-        InputInterface $input,
-        OutputInterface $output,
-        Provider\ProviderInterface $provider,
-        string $package,
-        array $remotes
-    ) : ?string {
-        $domain = $this->getProviderDomain($provider);
-        $domainRegex = '#[/@.]' . preg_quote($domain) . '(:\d+:|:|/)#i';
-        $discovered = [];
-
-        foreach ($remotes as $line) {
-            if (! preg_match(
-                '/^(?P<name>\S+)\s+(?P<url>\S+)\s+\((?P<type>[^)]+)\)$/',
-                $line,
-                $matches
-            )) {
-                continue;
-            }
-
-            if (strtolower($matches['type']) !== 'push') {
-                continue;
-            }
-
-            if (! preg_match($domainRegex, $matches['url'])) {
-                continue;
-            }
-
-            if (false === strstr($matches['url'], $package)) {
-                continue;
-            }
-
-            // FOUND!
-            $discovered[] = $matches['name'];
-        }
-
-        if (0 === count($discovered)) {
-            $this->reportNoRemoteFound($output, $provider, $package);
-            return null;
-        }
-
-        if (1 === count($discovered)) {
-            return array_pop($discovered);
-        }
-
-        return $this->promptForRemote($input, $output, $discovered);
-    }
-
-    /**
-     * @return null|string[] Array of lines as returned by
-     *     `git remote -v`, or null if an error occurred.
-     */
-    private function fetchGitRemotes() : ?array
-    {
-        $command = 'git remote -v';
-        exec($command, $output, $exitStatus);
-        if ($exitStatus !== 0) {
-            return null;
-        }
-        return $output;
-    }
-
-    /**
-     * @throws Exception\InvalidProviderException
-     */
-    private function getProviderDomain(Provider\ProviderInterface $provider) : string
-    {
-        if (! $provider instanceof Provider\ProviderNameProviderInterface) {
-            throw Exception\InvalidProviderException::forIncompleteProvider($provider);
-        }
-
-        return $provider->getDomainName();
-    }
-
-    private function reportNoRemoteFound(
-        OutputInterface $output,
-        Provider\ProviderInterface $provider,
-        string $package
-    ) : void {
-        $output->writeln('<error>Cannot determine remote to which to push tag!</error>');
-        $output->writeln(sprintf(
-            '- Do no remotes registered in your repository match the provider in use? ("%s")',
-            $this->getProviderDomain($provider)
-        ));
-        $output->writeln(sprintf(
-            '- Do no remotes registered in your repository match the <package> provided? ("%s")',
-            $package
-        ));
-    }
-
-    private function promptForRemote(InputInterface $input, OutputInterface $output, array $remotes) : ?string
-    {
-        $choices = array_merge($remotes, ['abort' => 'Abort release']);
-
-        $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion(
-            'More than one valid remote was found; which one should I use?',
-            $choices
-        );
-
-        $remote = $helper->ask($input, $output, $question);
-
-        if ('Abort release' === $remote) {
-            $output->writeln('<error>Aborted at user request</error>');
-            return null;
-        }
-
-        return $remote;
     }
 }
