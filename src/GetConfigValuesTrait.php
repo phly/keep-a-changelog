@@ -23,7 +23,7 @@ trait GetConfigValuesTrait
     /**
      * @var null|ProviderInterface
      */
-    private $provider = null;
+    private $provider;
 
     private function prepareConfig(
         InputInterface $input,
