@@ -26,7 +26,7 @@ trait ChangelogEditorTrait
      * - length, the number of lines in the contents
      * - contents, a string representing the changelog entry found in its entierty
      */
-    private function getChangelogEntry($filename, ?string $version = null) : ?stdClass
+    private function getChangelogEntry(string $filename, ?string $version = null) : ?stdClass
     {
         $contents = file($filename);
         if (false === $contents) {
@@ -68,7 +68,7 @@ trait ChangelogEditorTrait
         return $data->index !== null ? $data : null;
     }
 
-    private function updateChangelogEntry(string $filename, string $replacement, int $index, int $length)
+    private function updateChangelogEntry(string $filename, string $replacement, int $index, int $length) : void
     {
         $contents = file($filename);
         array_splice($contents, $index, $length, $replacement);

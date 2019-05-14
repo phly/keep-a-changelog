@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 trait ProvideCommonOptionsTrait
 {
-    private function injectConfigBasedOptions()
+    private function injectConfigBasedOptions() : void
     {
         $this->addOption(
             'provider',
