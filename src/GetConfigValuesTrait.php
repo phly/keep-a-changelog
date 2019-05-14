@@ -59,10 +59,10 @@ trait GetConfigValuesTrait
         $provider = trim($config->provider());
 
         switch ($provider) {
-            case 'github':
+            case Config::PROVIDER_GITHUB:
                 $this->provider = (new Provider\GitHub())->withDomainName($this->getDomain($config));
                 break;
-            case 'gitlab':
+            case Config::PROVIDER_GITLAB:
                 $this->provider = (new Provider\GitLab())->withDomainName($this->getDomain($config));
                 break;
             default:
