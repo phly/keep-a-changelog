@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.6.1 - TBD
+## 1.6.1 - 2019-05-14
 
 ### Added
 
@@ -21,6 +21,9 @@ All notable changes to this project will be documented in this file, in reverse 
 - Nothing.
 
 ### Fixed
+
+- [#52](https://github.com/phly/keep-a-changelog/pull/52) removes the `Throwable $e` argument to `MissingTagException::forUnverifiedTagOnGithub()`
+  as no `Throwable` was available in the context in which it was called.
 
 - [#47](https://github.com/phly/keep-a-changelog/pull/47) fixes a bug during global configuration file creation that occurs when the
   configuration directory does not exist.
