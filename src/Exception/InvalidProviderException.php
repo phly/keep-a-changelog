@@ -37,7 +37,7 @@ class InvalidProviderException extends InvalidArgumentException
     public static function forInvalidProviderDomain(string $domain) : self
     {
         return new self(sprintf(
-            'Domain "%s" is invalid, and cannot be used to with changelog providers %s',
+            'Domain "%s" is invalid',
             $domain
         ));
     }
