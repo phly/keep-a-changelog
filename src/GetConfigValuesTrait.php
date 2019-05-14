@@ -67,7 +67,6 @@ trait GetConfigValuesTrait
                 break;
             default:
                 throw Exception\InvalidProviderException::forProvider($provider, Config::PROVIDERS);
-                break;
         }
 
         return $this->provider;
