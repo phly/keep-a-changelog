@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\HelperInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,7 +32,7 @@ EOH;
     /**
      * Used for testing, to allow mocking the question helper.
      *
-     * @var ?HelperInterface
+     * @var null|QuestionHelper
      */
     private $questionHelper;
 
@@ -87,7 +87,7 @@ EOH;
         return 0;
     }
 
-    private function getQuestionHelper() : HelperInterface
+    private function getQuestionHelper() : QuestionHelper
     {
         if ($this->questionHelper) {
             return $this->questionHelper;
