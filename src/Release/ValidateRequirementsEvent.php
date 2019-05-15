@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Release;
 
 use Phly\KeepAChangelog\Config;
+use Phly\KeepAChangelog\IOInterface;
 use Phly\KeepAChangelog\IOTrait;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +21,7 @@ use function getenv;
 use function realpath;
 use function sprintf;
 
-class ValidateRequirementsEvent implements StoppableEventInterface
+class ValidateRequirementsEvent implements IOInterface, StoppableEventInterface
 {
     use IOTrait;
 

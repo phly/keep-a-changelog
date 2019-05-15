@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Release;
 
 use Phly\KeepAChangelog\Config;
+use Phly\KeepAChangelog\IOInterface;
 use Phly\KeepAChangelog\IOTrait;
 use Phly\KeepAChangelog\Provider;
 use Psr\EventDispatcher\StoppableEventInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PushTagEvent implements StoppableEventInterface
+class PushTagEvent implements IOInterface, StoppableEventInterface
 {
     use IOTrait;
 

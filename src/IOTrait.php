@@ -15,6 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Classes composing this trait are responsible for populating the input and
  * output properties during instantiation.
+ *
+ * Provides an implementation of IOInterface.
  */
 trait IOTrait
 {

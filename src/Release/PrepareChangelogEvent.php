@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
+use Phly\KeepAChangelog\IOInterface;
 use Phly\KeepAChangelog\IOTrait;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +18,7 @@ use Throwable;
 
 use function sprintf;
 
-class PrepareChangelogEvent implements StoppableEventInterface
+class PrepareChangelogEvent implements IOInterface, StoppableEventInterface
 {
     use IOTrait;
 

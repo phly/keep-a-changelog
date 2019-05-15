@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
+use Phly\KeepAChangelog\IOInterface;
 use Phly\KeepAChangelog\IOTrait;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Phly\KeepAChangelog\Provider\ProviderNameProviderInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
-class CreateReleaseEvent implements StoppableEventInterface
+class CreateReleaseEvent implements IOInterface, StoppableEventInterface
 {
     use IOTrait;
 
