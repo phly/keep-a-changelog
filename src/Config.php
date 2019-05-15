@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
- * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
+ * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
  * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
  */
 
@@ -9,116 +9,94 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use function filter_var;
-use function in_array;
-
-use const FILTER_FLAG_HOSTNAME;
-use const FILTER_VALIDATE_DOMAIN;
-
 class Config
 {
-    public const PROVIDER_GITHUB = 'github';
-    public const PROVIDER_GITLAB = 'gitlab';
-
-    public const PROVIDERS = [
-        self::PROVIDER_GITHUB,
-        self::PROVIDER_GITLAB,
-    ];
-
-    private const DEFAULT_DOMAINS = [
-        self::PROVIDER_GITHUB => 'github.com',
-        self::PROVIDER_GITLAB => 'gitlab.com',
-    ];
-
     /** @var string */
-    private $domain;
+    private $changelogFile = 'CHANGELOG.md';
 
-    /** @var string */
+    /** @var null|string */
+    private $package;
+
+    /** @var null|Provider\ProviderInterface */
     private $provider;
 
-    /** @var string */
-    private $token;
+    /** @var Provider\ProviderList */
+    private $providers;
 
-    public function __construct(
-        string $token = '',
-        string $provider = self::PROVIDER_GITHUB,
-        string $domain = ''
-    ) {
-        $this->token = $token;
+    /** @var null|string */
+    private $remote;
 
-        $this->validateProvider($provider);
-        $this->provider = $provider;
+    /** @var bool */
+    private $promptToSaveToken = true;
 
-        $domain = $domain ?: self::DEFAULT_DOMAINS[$provider];
-        $this->validateDomain($domain);
-        $this->domain = $domain;
+    public function __construct()
+    {
+        $this->providers = new Provider\ProviderList();
+        $this->providers->set('github', new Provider\GitHub());
+        $this->providers->set('gitlab', new Provider\GitLab());
     }
 
-    public function domain() : string
+    public function changelogFile() : string
     {
-        return $this->domain;
+        return $this->changelogFile;
     }
 
-    public function provider() : string
+    public function package() : ?string
     {
+        return $this->package;
+    }
+
+    public function provider() : Provider\ProviderInterface
+    {
+        if (! $this->provider) {
+            return $this->providers->get('github');
+        }
+
         return $this->provider;
     }
 
-    public function token() : string
+    public function providers() : Provider\ProviderList
     {
-        return $this->token;
+        return $this->providers;
     }
 
-    public function withDomain(string $domain) : self
+    public function remote() : ?string
     {
-        $domain = $domain ?: self::DEFAULT_DOMAINS[$this->provider];
-        $this->validateDomain($domain);
-        $config = clone $this;
-        $config->domain = $domain;
-        return $config;
+        return $this->remote;
     }
 
-    public function withProvider(string $provider) : self
+    public function promptToSaveToken() : bool
     {
-        $this->validateProvider($provider);
-        $config = clone $this;
-        $config->provider = $provider;
-        return $config;
+        return $this->promptToSaveToken;
     }
 
-    public function withToken(string $token) : self
+    public function shouldNotPromptToSaveToken() : void
     {
-        $config = clone $this;
-        $config->token = trim($token);
-        return $config;
+        $this->promptToSaveToken = false;
     }
 
-    public function getArrayCopy() : array
+    public function shouldPromptToSaveToken() : void
     {
-        return [
-            'token' => $this->token,
-            'provider' => $this->provider,
-            'domain' => $this->domain,
-        ];
+        $this->promptToSaveToken = true;
     }
 
-    /**
-     * @throws Exception\InvalidProviderException
-     */
-    private function validateDomain(string $domain) : void
+    public function setChangelogFile(string $file) : void
     {
-        if (! filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
-            throw Exception\InvalidProviderException::forInvalidProviderDomain($domain);
-        }
+        $this->changelogFile = $file;
     }
 
-    /**
-     * @throws Exception\InvalidProviderException
-     */
-    private function validateProvider(string $provider) : void
+    public function setPackage(string $package) : void
     {
-        if (! in_array($provider, self::PROVIDERS, true)) {
-            throw Exception\InvalidProviderException::forProvider($provider, self::PROVIDERS);
-        }
+        $this->package = $package;
+    }
+
+    public function setProvider(Provider\ProviderInterface $provider) : void
+    {
+        $this->provider = $provider;
+    }
+
+    public function setRemote(string $remote) : void
+    {
+        $this->remote = $remote;
     }
 }
