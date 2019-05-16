@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Config;
 
 use Phly\EventDispatcher\EventDispatcher;
+use Phly\KeepAChangelog\Config;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 

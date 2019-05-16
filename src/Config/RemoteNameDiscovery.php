@@ -51,7 +51,7 @@ class RemoteNameDiscovery implements IOInterface, StoppableEventInterface
         $this->questionHelper = $questionHelper;
     }
 
-    public function isPropagationStopped()
+    public function isPropagationStopped() : bool
     {
         if ($this->abort) {
             return true;
@@ -88,7 +88,7 @@ class RemoteNameDiscovery implements IOInterface, StoppableEventInterface
 
     public function foundRemote(string $remote) : void
     {
-        $this->config->setPackage($remote);
+        $this->config->setRemote($remote);
         $this->remoteFound = true;
     }
 

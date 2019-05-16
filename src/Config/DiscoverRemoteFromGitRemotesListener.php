@@ -55,7 +55,7 @@ class DiscoverRemoteFromGitRemotesListener
         }
 
         if (1 === count($remotes)) {
-            $event->foundRemote($remote);
+            $event->foundRemote(array_pop($remotes));
             return;
         }
 
@@ -81,7 +81,7 @@ class DiscoverRemoteFromGitRemotesListener
 
         foreach ($output as $line) {
             if (! preg_match(
-                '/^(?P<name>\S+)\s+(?P<url>\S+)\s+\((?P<type>[^)]+)\)$/',
+                '/^(?P<name>.*?)\s+(?P<url>.*?)\s+\((?P<type>.*?)\)$/',
                 $line,
                 $matches
             )) {

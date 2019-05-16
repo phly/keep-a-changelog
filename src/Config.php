@@ -48,7 +48,7 @@ class Config
 
     public function provider() : Provider\ProviderInterface
     {
-        if (! $this->provider) {
+        if (! $this->provider instanceof Provider\ProviderInterface) {
             return $this->providers->get('github');
         }
 

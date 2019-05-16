@@ -13,6 +13,17 @@ use function is_readable;
 
 abstract class AbstractDiscoverPackageFromFileListener
 {
+    /**
+     * Set the directory in which the package resides.
+     *
+     * For testing purposes only. The path set here will be used to locate the
+     * package file.
+     *
+     * @internal
+     * @var null|string
+     */
+    public $packageDir;
+
     abstract protected function getFileName() : string;
 
     public function __invoke(PackageNameDiscovery $event) : void
@@ -29,7 +40,7 @@ abstract class AbstractDiscoverPackageFromFileListener
         }
 
         $package = json_decode(file_get_contents($packageFile));
-        if (! $package->name) {
+        if (! isset($package->name)) {
             return;
         }
 

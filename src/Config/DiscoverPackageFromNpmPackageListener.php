@@ -16,6 +16,7 @@ class DiscoverPackageFromNpmPackageListener extends AbstractDiscoverPackageFromF
 {
     protected function getFileName() : string
     {
-        return realpath(getcwd()) . '/package.json';
+        $path = $this->packageDir ?: realpath(getcwd());
+        return $path . '/package.json';
     }
 }

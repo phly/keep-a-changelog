@@ -43,7 +43,7 @@ class DiscoverPackageFromGitRemoteListener
         }
 
         $regex = sprintf(
-            '#^[/@.]%s(:\d+:|:|/)(?P<package>.*?)\.git$#',
+            '#[/@.]%s(:\d+:|:|/)(?P<package>.*?)\.git$#',
             preg_quote($domain)
         );
 
@@ -67,7 +67,7 @@ class DiscoverPackageFromGitRemoteListener
             return;
         }
 
-        foreach ($output as $remote) {
+        foreach ($remotes as $remote) {
             $output = [];
             $exec(sprintf('git remote get-url %s', escapeshellarg($remote)), $output, $return);
 

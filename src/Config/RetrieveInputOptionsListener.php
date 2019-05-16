@@ -27,15 +27,15 @@ class RetrieveInputOptionsListener
 
         $this->processProviderOptions($input, $config);
 
-        $package = $input->hasOption('package') ? $input->getOption('package') : null;
-        if ($package) {
-            $config->setPackage($package);
-            $config->provider()->setPackage($package);
-        }
-
         $changelogFile = $input->hasOption('changelog') ? $input->getOption('changelog') : null;
         if ($changelogFile) {
             $config->setChangelogFile($changelogFile);
+        }
+
+        $package = $input->hasOption('package') ? $input->getOption('package') : null;
+        if ($package) {
+            $config->setPackage($package);
+            $config->provider()->setPackageName($package);
         }
 
         $remote = $input->hasOption('remote') ? $input->getOption('remote') : null;
@@ -75,12 +75,12 @@ class RetrieveInputOptionsListener
     private function createProviderFromOption(string $class, Config $config)
     {
         if (! class_exists($class)) {
-            throw Exception\InvalidProviderException::forMissingClass($name, $class, '--provider-class input option');
+            throw Exception\InvalidProviderException::forMissingClass($class, '--provider-class input option');
         }
 
         $provider = new $class();
         if (! $provider instanceof ProviderInterface) {
-            throw Exception\InvalidProviderException::forInvalidClass($name, $class, '--provider-class input option');
+            throw Exception\InvalidProviderException::forInvalidClass('--provider-class', $class, '--provider-class input option');
         }
 
         $config->setProvider($provider);
@@ -93,7 +93,7 @@ class RetrieveInputOptionsListener
         if (! $providers->has($name)) {
             throw Exception\InvalidProviderException::forMissingProvider(
                 $name,
-                $providers->listKnownTypes,
+                $providers->listKnownTypes(),
                 '--provider input option'
             );
         }

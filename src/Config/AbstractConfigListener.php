@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Config;
 
+use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use RuntimeException;
 
@@ -100,6 +101,6 @@ abstract class AbstractConfigListener
             );
         }
 
-        $config->setProvider($config->providers->get($defaults['provider']));
+        $config->setProvider($config->providers()->get($defaults['provider']));
     }
 }

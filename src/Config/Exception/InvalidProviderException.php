@@ -15,7 +15,7 @@ use Phly\KeepAChangelog\Provider\ProviderInterface;
 use function implode;
 use function sprintf;
 
-class InvalidProviderException extends InvalidProviderException implements ExceptionInterface
+class InvalidProviderException extends InvalidArgumentException implements ExceptionInterface
 {
     public static function forMissingClassName(string $name, string $configType) : self
     {
@@ -29,7 +29,7 @@ class InvalidProviderException extends InvalidProviderException implements Excep
     public static function forMissingClass(string $name, string $configType) : self
     {
         return new self(sprintf(
-            'Error parsing %s: provider "%s" is missing a "class" setting',
+            'Error parsing %s: cannot autoload the provider "%s"',
             $configType,
             $name
         ));

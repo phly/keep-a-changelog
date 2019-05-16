@@ -32,7 +32,7 @@ $application = new Application('keep-a-changelog', $version);
 
 $application->getDefinition()
     ->addOptions([
-        new InputOption('file', 'f', InputOption::VALUE_REQUIRED, 'The changelog file to create or modify'),
+        new InputOption('changelog', 'c', InputOption::VALUE_REQUIRED, 'The changelog file to create or modify; defaults to CHANGELOG.md'),
     ]);
 
 $application->addCommands([

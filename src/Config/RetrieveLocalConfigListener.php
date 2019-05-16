@@ -56,6 +56,6 @@ class RetrieveLocalConfigListener extends AbstractConfigListener
         }
 
         $config->setPackage($defaults['package']);
-        $config->provider()->setPackage($defaults['package']);
+        $config->provider()->setPackageName($defaults['package']);
     }
 }

@@ -46,12 +46,12 @@ class PackageNameDiscovery implements IOInterface, StoppableEventInterface
 
     public function packageWasFound() : bool
     {
-        return $this->isPropagationStopped;
+        return $this->isPropagationStopped();
     }
 
     public function foundPackage(string $package) : void
     {
-        $this->config->provider()->setPackage($package);
+        $this->config->provider()->setPackageName($package);
         $this->config->setPackage($package);
         $this->packageFound = true;
     }
