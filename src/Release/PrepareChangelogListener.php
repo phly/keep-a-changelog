@@ -9,23 +9,23 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
-class CreateReleaseListener
+class PrepareChangelogListener
 {
     public function __invoke(ReleaseEvent $event) : void
     {
-        $config = $event->config();
+        $output = $event->output();
+        $output->writeln('<info>Preparing changelog for release</info>');
 
-        $release = $event->dispatcher()->dispatch(new PrepareChangelogEvent(
+        $parser = $event->dispatcher()->dispatch(new PrepareChangelogEvent(
             $event->input(),
-            $event->output(),
-            $config->provider(),
-            $event->version(),
-            $event->changelog(),
-            $config->package()
+            $output,
+            $event->version()
         ));
 
-        if (! $release->wasCreated()) {
-            $event->releaseFailed();
+        if (! $parser->changelogIsReady()) {
+            $event->changelogPreparationFailed();
         }
+
+        $event->discoveredChangelog($parser->changelog());
     }
 }

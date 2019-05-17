@@ -26,9 +26,6 @@ class Config
     /** @var null|string */
     private $remote;
 
-    /** @var bool */
-    private $promptToSaveToken = true;
-
     public function __construct()
     {
         $this->providers = new Provider\ProviderList();
@@ -63,21 +60,6 @@ class Config
     public function remote() : ?string
     {
         return $this->remote;
-    }
-
-    public function promptToSaveToken() : bool
-    {
-        return $this->promptToSaveToken;
-    }
-
-    public function shouldNotPromptToSaveToken() : void
-    {
-        $this->promptToSaveToken = false;
-    }
-
-    public function shouldPromptToSaveToken() : void
-    {
-        $this->promptToSaveToken = true;
     }
 
     public function setChangelogFile(string $file) : void

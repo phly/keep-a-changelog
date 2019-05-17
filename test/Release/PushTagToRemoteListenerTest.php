@@ -9,7 +9,8 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Release;
 
-use Phly\KeepAChangelog\Release\PushTagEvent;
+use Phly\KeepAChangelog\Config;
+use Phly\KeepAChangelog\Release\ReleaseEvent;
 use Phly\KeepAChangelog\Release\PushTagToRemoteListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -19,19 +20,20 @@ class PushTagToRemoteListenerTest extends TestCase
 {
     public function setUp()
     {
+        $this->config = new Config();
         $this->output = $this->prophesize(OutputInterface::class);
-        $this->event  = $this->prophesize(PushTagEvent::class);
+        $this->event  = $this->prophesize(ReleaseEvent::class);
+        $this->event->config()->willReturn($this->config);
     }
 
-    public function testNotifesEventPushSucceeded()
+    public function testDoesNothingWithEventIfPushSucceeded()
     {
         $tagName = 'v1.2.3';
         $remote  = 'upstream';
 
         $this->event->tagName()->willReturn($tagName);
-        $this->event->remote()->willReturn($remote);
+        $this->config->setRemote($remote);
         $this->event->output()->will([$this->output, 'reveal']);
-        $this->event->pushSucceeded()->shouldBeCalled();
 
         $exec    = function (string $command, array &$output, int &$exitStatus) use ($tagName, $remote) {
             TestCase::assertSame(sprintf('git push %s %s', $remote, $tagName), $command);
@@ -45,6 +47,7 @@ class PushTagToRemoteListenerTest extends TestCase
         $this->output
             ->writeln(Argument::containingString('Pushing tag v1.2.3 to upstream'))
             ->shouldHaveBeenCalled();
+        $this->event->taggingFailed()->shouldNotHaveBeenCalled();
     }
 
     public function testNotifesEventPushFailed()
@@ -53,9 +56,9 @@ class PushTagToRemoteListenerTest extends TestCase
         $remote  = 'upstream';
 
         $this->event->tagName()->willReturn($tagName);
-        $this->event->remote()->willReturn($remote);
+        $this->config->setRemote($remote);
         $this->event->output()->will([$this->output, 'reveal']);
-        $this->event->pushFailed()->shouldBeCalled();
+        $this->event->taggingFailed()->shouldBeCalled();
 
         $exec    = function (string $command, array &$output, int &$exitStatus) use ($tagName, $remote) {
             TestCase::assertSame(sprintf('git push %s %s', $remote, $tagName), $command);

@@ -26,7 +26,7 @@ class VerifyTagExistsListener
      */
     public $exec = 'exec';
 
-    public function __invoke(ValidateRequirementsEvent $event) : void
+    public function __invoke(ReleaseEvent $event) : void
     {
         $command = sprintf('git show %s', $event->tagName());
         $exec    = $this->exec;

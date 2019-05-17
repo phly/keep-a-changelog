@@ -24,7 +24,6 @@ class ConfigTest extends TestCase
         $this->assertInstanceOf(GitHub::class, $config->provider());
         $this->assertInstanceOf(ProviderList::class, $config->providers());
         $this->assertNull($config->remote());
-        $this->assertTrue($config->promptToSaveToken());
 
         $provider = $config->provider();
         $this->assertFalse($provider->canCreateRelease());
@@ -34,23 +33,6 @@ class ConfigTest extends TestCase
         $this->assertTrue($providers->has('github'));
         $this->assertTrue($providers->has('gitlab'));
         $this->assertSame($provider, $providers->get('github'));
-    }
-
-    public function testShouldNotPromptToSaveTokenDisablesFlag()
-    {
-        $config = new Config();
-        $config->shouldNotPromptToSaveToken();
-        $this->assertFalse($config->promptToSaveToken());
-        return $config;
-    }
-
-    /**
-     * @depends testShouldNotPromptToSaveTokenDisablesFlag
-     */
-    public function testShouldPromptToSaveTokenEnablesFlag(Config $config)
-    {
-        $config->shouldPromptToSaveToken();
-        $this->assertTrue($config->promptToSaveToken());
     }
 
     public function testChangelogFileIsMutable()

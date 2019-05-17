@@ -84,12 +84,6 @@ abstract class AbstractConfigListener
             $config->setRemote($defaults['remote']);
         }
 
-        if (array_key_exists('prompt_to_save_token', $defaults)) {
-            $defaults['prompt_to_save_token']
-                ? $config->shouldPromptToSaveToken()
-                : $config->shouldNotPromptToSaveToken();
-        }
-
         if (! isset($defaults['provider'])) {
             return;
         }

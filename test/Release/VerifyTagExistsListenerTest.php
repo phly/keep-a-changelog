@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
-use Phly\KeepAChangelog\Release\ValidateRequirementsEvent;
+use Phly\KeepAChangelog\Release\ReleaseEvent;
 use Phly\KeepAChangelog\Release\VerifyTagExistsListener;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +17,7 @@ class VerifyTagExistsListenerTest extends TestCase
 {
     public function setUp()
     {
-        $this->event = $this->prophesize(ValidateRequirementsEvent::class);
+        $this->event = $this->prophesize(ReleaseEvent::class);
         $this->event
             ->tagName()
             ->willReturn('v1.2.3');

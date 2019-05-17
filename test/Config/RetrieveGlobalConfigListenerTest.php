@@ -39,7 +39,6 @@ class RetrieveGlobalConfigListenerTest extends TestCase
 
         $this->assertSame('changelog.txt', $this->config->changelogFile());
         $this->assertSame('upstream', $this->config->remote());
-        $this->assertFalse($this->config->promptToSaveToken());
 
         $provider = $this->config->provider();
         $this->assertInstanceOf(Provider\GitLab::class, $provider);

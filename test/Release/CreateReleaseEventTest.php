@@ -11,7 +11,6 @@ namespace PhlyTest\KeepAChangelog\Release;
 
 use Phly\KeepAChangelog\Release\CreateReleaseEvent;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
-use Phly\KeepAChangelog\Provider\ProviderNameProviderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\StoppableEventInterface;
@@ -31,17 +30,15 @@ class CreateReleaseEventTest extends TestCase
     public function createEvent(
         string $package = 'some/package',
         string $version = '1.2.3',
-        string $changelog = 'this is the changelog',
-        string $token = 'this-is-a-token'
+        string $changelog = 'this is the changelog'
     ) : CreateReleaseEvent {
-        $this->input->getArgument('package')->willReturn($package);
         return new CreateReleaseEvent(
             $this->input->reveal(),
             $this->output->reveal(),
             $this->provider->reveal(),
             $version,
             $changelog,
-            $token
+            $package
         );
     }
 
@@ -85,12 +82,6 @@ class CreateReleaseEventTest extends TestCase
     {
         $event = $this->createEvent();
         $this->assertNull($event->release());
-    }
-
-    public function testTokenIsAccessible()
-    {
-        $event = $this->createEvent();
-        $this->assertSame('this-is-a-token', $event->token());
     }
 
     public function testVersionIsAccessible()
@@ -142,7 +133,7 @@ class CreateReleaseEventTest extends TestCase
         $this->assertFalse($event->wasCreated());
     }
 
-    public function testMarkingUnexpectedProviderStopsPropagationWithoutReleaseWorksWithoutProviderName()
+    public function testMarkingUnexpectedProviderStopsPropagationWithoutRelease()
     {
         $event    = $this->createEvent();
         $expected = gettype($this->provider->reveal());
@@ -152,29 +143,9 @@ class CreateReleaseEventTest extends TestCase
             ->shouldBeCalled();
         $this->output
             ->writeln(Argument::containingString(sprintf(
-                'provider "%s"',
+                'Provider of type "%s"',
                 $expected
             )))
-            ->shouldBeCalled();
-
-        $this->assertNull($event->unexpectedProviderResult());
-
-        $this->assertTrue($event->isPropagationStopped());
-        $this->assertFalse($event->wasCreated());
-    }
-
-    public function testMarkingUnexpectedProviderStopsPropagationWithoutReleaseUsesProviderNameWhenAvailable()
-    {
-        $this->provider->willImplement(ProviderNameProviderInterface::class);
-        $this->provider->getName()->willReturn('custom-provider');
-
-        $event = $this->createEvent();
-
-        $this->output
-            ->writeln(Argument::containingString('Error creating release!'))
-            ->shouldBeCalled();
-        $this->output
-            ->writeln(Argument::containingString('provider "custom-provider"'))
             ->shouldBeCalled();
 
         $this->assertNull($event->unexpectedProviderResult());

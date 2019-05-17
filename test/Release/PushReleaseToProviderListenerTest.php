@@ -11,13 +11,13 @@ namespace PhlyTest\KeepAChangelog\Release;
 
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Phly\KeepAChangelog\Release\CreateReleaseEvent;
-use Phly\KeepAChangelog\Release\CreateReleaseListener;
+use Phly\KeepAChangelog\Release\PushReleaseToProviderListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CreateReleaseListenerTest extends TestCase
+class PushReleaseToProviderListenerTest extends TestCase
 {
     public function setUp()
     {
@@ -31,7 +31,6 @@ class CreateReleaseListenerTest extends TestCase
         $this->event->package()->willReturn('some/package');
         $this->event->version()->willReturn('1.2.3');
         $this->event->changelog()->willReturn('this is the changelog');
-        $this->event->token()->willReturn('this-is-the-token');
 
         $this->output
             ->writeln(Argument::containingString('Creating release "some/package 1.2.3"'))
@@ -43,16 +42,14 @@ class CreateReleaseListenerTest extends TestCase
         $e = new RuntimeException();
         $this->provider
              ->createRelease(
-                 'some/package',
                  'some/package 1.2.3',
                  '1.2.3',
-                 'this is the changelog',
-                 'this-is-the-token'
+                 'this is the changelog'
              )
              ->willThrow($e);
         $this->event->errorCreatingRelease($e)->shouldBeCalled();
 
-        $listener = new CreateReleaseListener();
+        $listener = new PushReleaseToProviderListener();
 
         $this->assertNull($listener($this->event->reveal()));
 
@@ -64,16 +61,14 @@ class CreateReleaseListenerTest extends TestCase
     {
         $this->provider
              ->createRelease(
-                 'some/package',
                  'some/package 1.2.3',
                  '1.2.3',
-                 'this is the changelog',
-                 'this-is-the-token'
+                 'this is the changelog'
              )
              ->willReturn(null);
         $this->event->unexpectedProviderResult()->shouldBeCalled();
 
-        $listener = new CreateReleaseListener();
+        $listener = new PushReleaseToProviderListener();
 
         $this->assertNull($listener($this->event->reveal()));
 
@@ -85,16 +80,14 @@ class CreateReleaseListenerTest extends TestCase
     {
         $this->provider
              ->createRelease(
-                 'some/package',
                  'some/package 1.2.3',
                  '1.2.3',
-                 'this is the changelog',
-                 'this-is-the-token'
+                 'this is the changelog'
              )
              ->willReturn('url-to-release');
         $this->event->releaseCreated('url-to-release')->shouldBeCalled();
 
-        $listener = new CreateReleaseListener();
+        $listener = new PushReleaseToProviderListener();
 
         $this->assertNull($listener($this->event->reveal()));
 

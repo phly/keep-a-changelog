@@ -24,8 +24,7 @@ use function realpath;
  * changelog_file = changelog.md
  * provider = custom
  * remote = upstream
- * prompt_to_save_token = false
- * 
+ *
  * [providers]
  * github[class] = Phly\KeepAChangelog\Provider\GitHub
  * github[url] = https://github.mwop.net

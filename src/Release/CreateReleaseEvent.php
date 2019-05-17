@@ -41,9 +41,6 @@ class CreateReleaseEvent implements IOInterface, StoppableEventInterface
     private $releaseName;
 
     /** @var string */
-    private $token;
-
-    /** @var string */
     private $version;
 
     public function __construct(
@@ -52,15 +49,14 @@ class CreateReleaseEvent implements IOInterface, StoppableEventInterface
         ProviderInterface $provider,
         string $version,
         string $changelog,
-        string $token
+        string $package
     ) {
         $this->input     = $input;
         $this->output    = $output;
         $this->provider  = $provider;
         $this->version   = $version;
         $this->changelog = $changelog;
-        $this->token     = $token;
-        $this->package   = $input->getArgument('package');
+        $this->package   = $package;
     }
 
     public function isPropagationStopped() : bool
@@ -96,11 +92,6 @@ class CreateReleaseEvent implements IOInterface, StoppableEventInterface
         return $this->provider;
     }
 
-    public function token() : string
-    {
-        return $this->token;
-    }
-
     public function version() : string
     {
         return $this->version;
@@ -119,6 +110,7 @@ class CreateReleaseEvent implements IOInterface, StoppableEventInterface
     public function releaseCreated(string $release) : void
     {
         $this->release = $release;
+        $this->output()->writeln(sprintf('<info>Created %s<info>', $release));
     }
 
     public function release() : ?string
@@ -147,16 +139,12 @@ class CreateReleaseEvent implements IOInterface, StoppableEventInterface
         $this->error = true;
         $output      = $this->output();
 
-        $provider = $this->provider instanceof ProviderNameProviderInterface
-            ? $this->provider->getName()
-            : gettype($this->provider);
-
         $output->writeln('<error>Error creating release!</error>');
         $output->writeln(sprintf(
-            'The provider "%s" was able to make the API call necessary to create the release,'
+            'Provider of type "%s" was able to make the API call necessary to create the release,'
             . ' but did not get back the expected result.'
             . ' You will need to manually create the release.',
-            $provider
+            gettype($this->provider)
         ));
     }
 }

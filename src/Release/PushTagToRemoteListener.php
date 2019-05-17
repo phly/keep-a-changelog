@@ -26,10 +26,10 @@ class PushTagToRemoteListener
      */
     public $exec = 'exec';
 
-    public function __invoke(PushTagEvent $event) : void
+    public function __invoke(ReleaseEvent $event) : void
     {
         $tagName = $event->tagName();
-        $remote  = $event->remote();
+        $remote  = $event->config()->remote();
 
         $event->output()->writeln(sprintf(
             '<info>Pushing tag %s to %s</info>',
@@ -44,8 +44,9 @@ class PushTagToRemoteListener
 
         $exec($command, $output, $return);
 
-        0 === $return
-            ? $event->pushSucceeded()
-            : $event->pushFailed();
+        if (0 !== $return) {
+            $event->taggingFailed();
+            return;
+        }
     }
 }

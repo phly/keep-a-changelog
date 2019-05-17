@@ -9,18 +9,15 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
-class ValidateTokenExistsListener
+class VerifyProviderCanReleaseListener
 {
-    public function __invoke(ValidateRequirementsEvent $event) : void
+    public function __invoke(ReleaseEvent $event) : void
     {
-        $config = $event->config();
-        if (! $config) {
-            $event->tokenNotFound();
-            return;
-        }
+        $config   = $event->config();
+        $provider = $config->provider();
 
-        if (! $config->token()) {
-            $event->tokenNotFound();
+        if (! $provider->canCreateRelease()) {
+            $event->providerIsIncomplete();
             return;
         }
     }
