@@ -18,7 +18,7 @@ class CreateReleaseListener
         $release = $event->dispatcher()->dispatch(new PrepareChangelogEvent(
             $event->input(),
             $event->output(),
-            $config->provider(),
+            $event->provider(),
             $event->version(),
             $event->changelog(),
             $config->package()

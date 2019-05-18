@@ -35,8 +35,7 @@ class DiscoverRemoteFromGitRemotesListener
 
         $config   = $event->config();
         $provider = $config->provider();
-
-        $domain = $provider->domain();
+        $domain   = $this->getDomainFromProviderUrl($provider->url());
         if (! $domain) {
             // No way to match
             return;
@@ -105,5 +104,14 @@ class DiscoverRemoteFromGitRemotesListener
         }
 
         return $discovered;
+    }
+
+    private function getDomainFromProviderUrl(?string $url) : ?string
+    {
+        if (! $url) {
+            return $url;
+        }
+
+        return parse_url($url, PHP_URL_HOST);
     }
 }

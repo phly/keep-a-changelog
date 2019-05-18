@@ -17,8 +17,11 @@ class Config
     /** @var null|string */
     private $package;
 
-    /** @var null|Provider\ProviderInterface */
+    /** @var null|Provider\ProviderSpec */
     private $provider;
+
+    /** @var string */
+    private $providerName = 'github';
 
     /** @var Provider\ProviderList */
     private $providers;
@@ -28,9 +31,15 @@ class Config
 
     public function __construct()
     {
+        $githubSpec = new Provider\ProviderSpec('github');
+        $githubSpec->setClassName(Provider\GitHub::class);
+
+        $gitlabSpec = new Provider\ProviderSpec('gitlab');
+        $gitlabSpec->setClassName(Provider\GitLab::class);
+
         $this->providers = new Provider\ProviderList();
-        $this->providers->set('github', new Provider\GitHub());
-        $this->providers->set('gitlab', new Provider\GitLab());
+        $this->providers->add($githubSpec);
+        $this->providers->add($gitlabSpec);
     }
 
     public function changelogFile() : string
@@ -43,10 +52,10 @@ class Config
         return $this->package;
     }
 
-    public function provider() : Provider\ProviderInterface
+    public function provider() : Provider\ProviderSpec
     {
-        if (! $this->provider instanceof Provider\ProviderInterface) {
-            return $this->providers->get('github');
+        if (! $this->provider) {
+            return $this->providers->get($this->providerName);
         }
 
         return $this->provider;
@@ -70,11 +79,16 @@ class Config
     public function setPackage(string $package) : void
     {
         $this->package = $package;
+        $this->provider()->setPackage($package);
     }
 
-    public function setProvider(Provider\ProviderInterface $provider) : void
+    public function setProviderName(string $providerName) : void
     {
-        $this->provider = $provider;
+        $this->providerName = $providerName;
+        $this->provider     = $this->providers->get($providerName);
+        if ($this->package) {
+            $this->provider->setPackage($this->package);
+        }
     }
 
     public function setRemote(string $remote) : void

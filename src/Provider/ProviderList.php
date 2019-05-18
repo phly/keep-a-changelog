@@ -12,7 +12,7 @@ namespace Phly\KeepAChangelog\Provider;
 class ProviderList
 {
     /**
-     * @var array<string, ProviderInterface>
+     * @var array<string, ProviderSpec>
      */
     private $providers = [];
 
@@ -21,14 +21,14 @@ class ProviderList
         return isset($this->providers[$name]);
     }
 
-    public function get(string $name) : ?ProviderInterface
+    public function get(string $name) : ?ProviderSpec
     {
         return $this->providers[$name] ?? null;
     }
 
-    public function set(string $name, ProviderInterface $provider) : void
+    public function add(ProviderSpec $provider) : void
     {
-        $this->providers[$name] = $provider;
+        $this->providers[$provider->name()] = $provider;
     }
 
     public function listKnownTypes() : array

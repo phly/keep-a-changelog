@@ -13,12 +13,21 @@ class VerifyProviderCanReleaseListener
 {
     public function __invoke(ReleaseEvent $event) : void
     {
-        $config   = $event->config();
-        $provider = $config->provider();
+        $config       = $event->config();
+        $providerSpec = $config->provider();
+
+        if (! $providerSpec->isComplete()) {
+            $event->providerIsIncomplete();
+            return;
+        }
+
+        $provider = $providerSpec->createProvider();
 
         if (! $provider->canCreateRelease()) {
             $event->providerIsIncomplete();
             return;
         }
+
+        $event->discoveredProvider($provider);
     }
 }

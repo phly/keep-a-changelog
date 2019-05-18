@@ -11,41 +11,77 @@ namespace PhlyTest\KeepAChangelog\Release;
 
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
+use Phly\KeepAChangelog\Provider\ProviderSpec;
 use Phly\KeepAChangelog\Release\ReleaseEvent;
 use Phly\KeepAChangelog\Release\VerifyProviderCanReleaseListener;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 
 class VerifyProviderCanReleaseListenerTest extends TestCase
 {
-    public function testListenerNotifiesEventThatProviderIsIncompleteIfProviderCannotRelease()
+    public function testListenerNotifiesEventThatProviderIsIncompleteIfProviderIsNotComplete()
     {
-        $provider = $this->prophesize(ProviderInterface::class);
-        $provider->canCreateRelease()->willReturn(false);
-        $config = new Config();
-        $config->setProvider($provider->reveal());
+        $providerSpec = $this->prophesize(ProviderSpec::class);
+        $providerSpec->isComplete()->willReturn(false);
+
+        $config = $this->prophesize(Config::class);
+        $config->provider()->will([$providerSpec, 'reveal']);
 
         $event = $this->prophesize(ReleaseEvent::class);
-        $event->config()->willReturn($config);
+        $event->config()->will([$config, 'reveal']);
         $event->providerIsIncomplete()->shouldBeCalled();
 
         $listener = new VerifyProviderCanReleaseListener();
 
         $this->assertNull($listener($event->reveal()));
+
+        $providerSpec->createProvider()->shouldNotHaveBeenCalled();
+        $event->discoveredProvider(Argument::any())->shouldNotHaveBeenCalled();
     }
 
-    public function testListenerDoesNothingWithEventWhenProviderCanRelease()
+    public function testListenerNotifiesEventThatProviderIsIncompleteIfProviderCannotRelease()
     {
         $provider = $this->prophesize(ProviderInterface::class);
-        $provider->canCreateRelease()->willReturn(true);
-        $config = new Config();
-        $config->setProvider($provider->reveal());
+        $provider->canCreateRelease()->willReturn(false);
+
+        $providerSpec = $this->prophesize(ProviderSpec::class);
+        $providerSpec->isComplete()->willReturn(true);
+        $providerSpec->createProvider()->will([$provider, 'reveal']);
+
+        $config = $this->prophesize(Config::class);
+        $config->provider()->will([$providerSpec, 'reveal']);
 
         $event = $this->prophesize(ReleaseEvent::class);
-        $event->config()->willReturn($config);
+        $event->config()->will([$config, 'reveal']);
+        $event->providerIsIncomplete()->shouldBeCalled();
 
         $listener = new VerifyProviderCanReleaseListener();
 
         $this->assertNull($listener($event->reveal()));
+
+        $event->discoveredProvider(Argument::any())->shouldNotHaveBeenCalled();
+    }
+
+    public function testListenerNotifiesEventWithProviderWhenValid()
+    {
+        $provider = $this->prophesize(ProviderInterface::class);
+        $provider->canCreateRelease()->willReturn(true);
+
+        $providerSpec = $this->prophesize(ProviderSpec::class);
+        $providerSpec->isComplete()->willReturn(true);
+        $providerSpec->createProvider()->will([$provider, 'reveal']);
+
+        $config = $this->prophesize(Config::class);
+        $config->provider()->will([$providerSpec, 'reveal']);
+
+        $event = $this->prophesize(ReleaseEvent::class);
+        $event->config()->will([$config, 'reveal']);
+        $event->discoveredProvider(Argument::that([$provider, 'reveal']))->shouldBeCalled();
+
+        $listener = new VerifyProviderCanReleaseListener();
+
+        $this->assertNull($listener($event->reveal()));
+
         $event->providerIsIncomplete()->shouldNotHaveBeenCalled();
     }
 }

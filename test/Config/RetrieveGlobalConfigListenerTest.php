@@ -41,7 +41,8 @@ class RetrieveGlobalConfigListenerTest extends TestCase
         $this->assertSame('upstream', $this->config->remote());
 
         $provider = $this->config->provider();
-        $this->assertInstanceOf(Provider\GitLab::class, $provider);
+        $this->assertInstanceOf(Provider\ProviderSpec::class, $provider);
+        $this->assertSame('gitlab', $provider->name());
 
         $this->assertAttributeSame('this-is-a-gitlab-token', 'token', $provider);
 
@@ -49,8 +50,9 @@ class RetrieveGlobalConfigListenerTest extends TestCase
         $this->assertSame($provider, $providers->get('gitlab'));
 
         $provider  = $providers->get('github');
-        $this->assertInstanceOf(Provider\GitHub::class, $provider);
-        $this->assertSame('github.mwop.net', $provider->domain());
+        $this->assertInstanceOf(Provider\ProviderSpec::class, $provider);
+        $this->assertSame('github', $provider->name());
+        $this->assertAttributeSame('https://github.mwop.net', 'url', $provider);
         $this->assertAttributeSame('this-is-a-github-token', 'token', $provider);
     }
 }

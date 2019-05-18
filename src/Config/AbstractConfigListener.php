@@ -11,6 +11,7 @@ namespace Phly\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
+use Phly\KeepAChangelog\Provider\ProviderSpec;
 use RuntimeException;
 
 use function class_exists;
@@ -21,8 +22,23 @@ use const INI_SCANNER_TYPED;
 
 abstract class AbstractConfigListener
 {
-    /** @var string */
+    /**
+     * String used in error messages to indicate which config file
+     * raised the error.
+     *
+     * @var string
+     */
     protected $configType = 'global config file';
+
+    /**
+     * Flag indicating whether or not to consume provider tokens
+     * defined in the config file. This should only be enabled for
+     * global configuration files, as they are the only ones that
+     * have appropriate user permissions set!
+     * 
+     * @var bool
+     */
+    protected $consumeProviderTokens = true;
 
     abstract protected function getConfigFile() : string;
 
@@ -48,29 +64,25 @@ abstract class AbstractConfigListener
 
     private function processProviders(array $providers, Config $config) : void
     {
+        $providerList = $config->providers();
+
         foreach ($providers as $name => $data) {
-            if (! isset($data['class'])) {
-                throw Exception\InvalidProviderException::forMissingClassName($name, $this->configType);
+            $spec = $providerList->has($name) ? $providerList->get($name) : new ProviderSpec($name);
+
+            if (isset($data['class'])) {
+                $spec->setClassName($data['class']);
             }
 
-            if (! class_exists($data['class'])) {
-                throw Exception\InvalidProviderException::forMissingClass($name, $data['class'], $this->configType);
-            }
-
-            $provider = new $data['class']();
-            if (! $provider instanceof ProviderInterface) {
-                throw Exception\InvalidProviderException::forInvalidClass($name, $data['class'], $this->configType);
-            }
 
             if (isset($data['url'])) {
-                $provider->setUrl($data['url']);
+                $spec->setUrl($data['url']);
             }
 
-            if (isset($data['token'])) {
-                $provider->setToken($data['token']);
+            if ($this->consumeProviderTokens && isset($data['token'])) {
+                $spec->setToken($data['token']);
             }
 
-            $config->providers()->set($name, $provider);
+            $providerList->add($spec);
         }
     }
 
@@ -95,6 +107,6 @@ abstract class AbstractConfigListener
             );
         }
 
-        $config->setProvider($config->providers()->get($defaults['provider']));
+        $config->setProviderName($defaults['provider']);
     }
 }

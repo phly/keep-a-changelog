@@ -37,6 +37,9 @@ class ReleaseEvent implements ConfigurableEventInterface
     /** @var bool */
     private $failed = false;
 
+    /** @var null|ProviderInterface */
+    private $provider;
+
     /** @var string */
     private $tagName;
 
@@ -78,6 +81,11 @@ class ReleaseEvent implements ConfigurableEventInterface
     public function dispatcher() : EventDispatcherInterface
     {
         return $this->dispatcher;
+    }
+
+    public function provider() : ?ProviderInterface
+    {
+        return $this->provider;
     }
 
     public function tagName() : string
@@ -142,6 +150,11 @@ class ReleaseEvent implements ConfigurableEventInterface
             . ' the provider URL and authentication token, respectively,'
             . ' if not specified in the provider instance or configuration files.'
         );
+    }
+
+    public function discoveredProvider(ProviderInterface $provider) : void
+    {
+        $this->provider = $provider;
     }
 
     public function couldNotFindTag() : void

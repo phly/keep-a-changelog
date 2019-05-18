@@ -12,7 +12,7 @@ namespace Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config\DiscoverRemoteFromGitRemotesListener;
 use Phly\KeepAChangelog\Config\RemoteNameDiscovery;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
+use Phly\KeepAChangelog\Provider\ProviderSpec;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -20,7 +20,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
 {
     public function setUp()
     {
-        $this->provider = $this->prophesize(ProviderInterface::class);
+        $this->provider = $this->prophesize(ProviderSpec::class);
         $this->config = $this->prophesize(Config::class);
         $this->config->provider()->will([$this->provider, 'reveal']);
         $this->event = $this->prophesize(RemoteNameDiscovery::class);
@@ -40,13 +40,13 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
         $this->event->foundRemote(Argument::any())->shouldNotHaveBeenCalled();
         $this->event->setRemotes(Argument::any())->shouldNotHaveBeenCalled();
         $this->config->provider()->shouldNotHaveBeenCalled();
-        $this->provider->domain()->shouldNotHaveBeenCalled();
+        $this->provider->url()->shouldNotHaveBeenCalled();
     }
 
-    public function testReturnsEarlyIfProviderHasNoDomain()
+    public function testReturnsEarlyIfProviderHasNoUrl()
     {
         $this->event->remoteWasFound()->willReturn(false);
-        $this->provider->domain()->willReturn('');
+        $this->provider->url()->willReturn('');
 
         $listener = new DiscoverRemoteFromGitRemotesListener();
 
@@ -62,7 +62,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
     public function testReturnsEarlyIfConfigHasNoPackageAssociated()
     {
         $this->event->remoteWasFound()->willReturn(false);
-        $this->provider->domain()->willReturn('git.mwop.net');
+        $this->provider->url()->willReturn('https://git.mwop.net');
         $this->config->package()->willReturn(null);
 
         $listener = new DiscoverRemoteFromGitRemotesListener();
@@ -79,7 +79,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
     public function testReportsNoMatchingGitRemotesFoundIfCommandFails()
     {
         $this->event->remoteWasFound()->willReturn(false);
-        $this->provider->domain()->willReturn('git.mwop.net');
+        $this->provider->url()->willReturn('https://git.mwop.net');
         $this->config->package()->willReturn('some/package');
         $this->event
             ->reportNoMatchingGitRemoteFound(
@@ -104,7 +104,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
     public function testReportsNoMatchingGitRemotesFoundIfNoRemotesMatchDomainAndPackageCombination()
     {
         $this->event->remoteWasFound()->willReturn(false);
-        $this->provider->domain()->willReturn('git.mwop.net');
+        $this->provider->url()->willReturn('https://git.mwop.net');
         $this->config->package()->willReturn('some/package');
         $this->event
             ->reportNoMatchingGitRemoteFound(
@@ -134,7 +134,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
     public function testReportsRemoteFoundIfExactlyOneRemoteMatches()
     {
         $this->event->remoteWasFound()->willReturn(false);
-        $this->provider->domain()->willReturn('git.mwop.net');
+        $this->provider->url()->willReturn('https://git.mwop.net');
         $this->config->package()->willReturn('some/package');
         $this->event
             ->foundRemote('myself')
@@ -160,7 +160,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
     public function testReportsMultipleRemotesFoundIfMoreThanOneRemoteMatches()
     {
         $this->event->remoteWasFound()->willReturn(false);
-        $this->provider->domain()->willReturn('git.mwop.net');
+        $this->provider->url()->willReturn('https://git.mwop.net');
         $this->config->package()->willReturn('some/package');
         $this->event
             ->setRemotes(['upstream', 'myself'])

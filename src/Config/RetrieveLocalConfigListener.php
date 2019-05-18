@@ -38,8 +38,8 @@ use function realpath;
  */
 class RetrieveLocalConfigListener extends AbstractConfigListener
 {
-    /** @var string */
-    protected $configType = 'local config file';
+    protected $configType            = 'local config file';
+    protected $consumeProviderTokens = false;
 
     protected function getConfigFile() : string
     {
@@ -55,6 +55,5 @@ class RetrieveLocalConfigListener extends AbstractConfigListener
         }
 
         $config->setPackage($defaults['package']);
-        $config->provider()->setPackageName($defaults['package']);
     }
 }

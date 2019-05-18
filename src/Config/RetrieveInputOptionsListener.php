@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
+use Phly\KeepAChangelog\Provider\ProviderSpec;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
@@ -35,7 +35,6 @@ class RetrieveInputOptionsListener
         $package = $input->hasOption('package') ? $input->getOption('package') : null;
         if ($package) {
             $config->setPackage($package);
-            $config->provider()->setPackageName($package);
         }
 
         $remote = $input->hasOption('remote') ? $input->getOption('remote') : null;
@@ -59,7 +58,7 @@ class RetrieveInputOptionsListener
         }
     }
 
-    private function getProvider(InputInterface $input, Config $config) : ProviderInterface
+    private function getProvider(InputInterface $input, Config $config) : ProviderSpec
     {
         if ($input->hasOption('provider-class') && $input->getOption('provider-class')) {
             return $this->createProviderFromOption($input->getOption('provider-class'), $config);
@@ -72,22 +71,22 @@ class RetrieveInputOptionsListener
         return $config->provider();
     }
 
-    private function createProviderFromOption(string $class, Config $config)
+    private function createProviderFromOption(string $class, Config $config) : ProviderSpec
     {
         if (! class_exists($class)) {
             throw Exception\InvalidProviderException::forMissingClass($class, '--provider-class input option');
         }
 
-        $provider = new $class();
-        if (! $provider instanceof ProviderInterface) {
-            throw Exception\InvalidProviderException::forInvalidClass('--provider-class', $class, '--provider-class input option');
-        }
+        $spec = new ProviderSpec('--provider-class');
+        $spec->setClassName($class);
 
-        $config->setProvider($provider);
-        return $provider;
+        $config->providers()->add($spec);
+        $config->setProviderName('--provider-class');
+
+        return $spec;
     }
 
-    private function fetchProviderByName(string $name, Config $config) : ProviderInterface
+    private function fetchProviderByName(string $name, Config $config) : ProviderSpec
     {
         $providers = $config->providers();
         if (! $providers->has($name)) {
@@ -98,8 +97,7 @@ class RetrieveInputOptionsListener
             );
         }
 
-        $provider = $providers->get($name);
-        $config->setProvider($provider);
-        return $provider;
+        $config->setProviderName($name);
+        return $config->provider();
     }
 }

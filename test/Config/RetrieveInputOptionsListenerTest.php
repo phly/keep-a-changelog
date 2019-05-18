@@ -41,15 +41,6 @@ class RetrieveInputOptionsListenerTest extends TestCase
         $listener($this->event);
     }
 
-    public function testRaisesExceptionSettingProviderFromProviderClassOptionWhenClassIsNotAProvider()
-    {
-        $this->input->hasOption('provider-class')->willReturn(true);
-        $this->input->getOption('provider-class')->willReturn(RetrieveInputOptionsListener::class);
-        $listener = new RetrieveInputOptionsListener();
-        $this->expectException(InvalidProviderException::class);
-        $listener($this->event);
-    }
-
     public function testRaisesExceptionSettingProviderFromProviderOptionWhenNotInProviderList()
     {
         $this->input->hasOption('provider-class')->willReturn(false);
@@ -75,7 +66,10 @@ class RetrieveInputOptionsListenerTest extends TestCase
 
         $this->assertNull($listener($this->event));
 
-        $this->assertInstanceOf(Provider\GitLab::class, $this->config->provider());
+        $providerSpec = $this->config->provider();
+        $this->assertInstanceOf(Provider\ProviderSpec::class, $providerSpec);
+        $this->assertSame('--provider-class', $providerSpec->name());
+        $this->assertInstanceOf(Provider\GitLab::class, $providerSpec->createProvider());
     }
 
     public function testCanPopulateProviderFromProviderOption()
@@ -100,7 +94,11 @@ class RetrieveInputOptionsListenerTest extends TestCase
 
         $this->assertNull($listener($this->event));
 
-        $provider = $this->config->provider();
+        $providerSpec = $this->config->provider();
+        $this->assertInstanceOf(Provider\ProviderSpec::class, $providerSpec);
+        $this->assertSame('gitlab', $providerSpec->name());
+
+        $provider = $providerSpec->createProvider();
         $this->assertInstanceOf(Provider\GitLab::class, $provider);
         $this->assertSame('git.mwop.net', $provider->domain());
         $this->assertTrue($provider->canCreateRelease()); // indicates both token and package are present

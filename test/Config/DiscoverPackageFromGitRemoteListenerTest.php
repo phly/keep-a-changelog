@@ -12,7 +12,7 @@ namespace PhlyTest\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config\DiscoverPackageFromGitRemoteListener;
 use Phly\KeepAChangelog\Config\PackageNameDiscovery;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
+use Phly\KeepAChangelog\Provider\ProviderSpec;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -20,7 +20,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 {
     public function setUp()
     {
-        $this->provider = $this->prophesize(ProviderInterface::class);
+        $this->provider = $this->prophesize(ProviderSpec::class);
         $this->config   = $this->prophesize(Config::class);
         $this->event    = $this->prophesize(PackageNameDiscovery::class);
     }
@@ -36,9 +36,9 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
         $this->event->foundPackage(Argument::any())->shouldNotHaveBeenCalled();
     }
 
-    public function testReturnsEarlyIfProviderHasNoDomain()
+    public function testReturnsEarlyIfProviderHasNoUrl()
     {
-        $this->provider->domain()->willReturn('');
+        $this->provider->url()->willReturn('');
         $this->config->provider()->will([$this->provider, 'reveal']);
         $this->event->packageWasFound()->willReturn(false);
         $this->event->config()->will([$this->config, 'reveal']);
@@ -51,7 +51,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 
     public function testDoesNotNotifyEventOfAnythingIfNoRemotesFound()
     {
-        $this->provider->domain()->willReturn('git.mwop.net');
+        $this->provider->url()->willReturn('https://git.mwop.net');
         $this->config->provider()->will([$this->provider, 'reveal']);
         $this->event->packageWasFound()->willReturn(false);
         $this->event->config()->will([$this->config, 'reveal']);
@@ -67,7 +67,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 
     public function testDoesNotNotifyEventOfAnythingIfNoRemoteUrlsFound()
     {
-        $this->provider->domain()->willReturn('git.mwop.net');
+        $this->provider->url()->willReturn('https://git.mwop.net');
         $this->config->provider()->will([$this->provider, 'reveal']);
         $this->event->packageWasFound()->willReturn(false);
         $this->event->config()->will([$this->config, 'reveal']);
@@ -88,7 +88,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 
     public function testDoesNotNotifyEventOfAnythingIfNoMatchingRemotesFound()
     {
-        $this->provider->domain()->willReturn('git.mwop.net');
+        $this->provider->url()->willReturn('https://git.mwop.net');
         $this->config->provider()->will([$this->provider, 'reveal']);
         $this->event->packageWasFound()->willReturn(false);
         $this->event->config()->will([$this->config, 'reveal']);
@@ -113,7 +113,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 
     public function testNotifiesEventOfFirstMatchingRemoteFound()
     {
-        $this->provider->domain()->willReturn('git.mwop.net');
+        $this->provider->url()->willReturn('https://git.mwop.net');
         $this->config->provider()->will([$this->provider, 'reveal']);
         $this->event->packageWasFound()->willReturn(false);
         $this->event->config()->will([$this->config, 'reveal']);

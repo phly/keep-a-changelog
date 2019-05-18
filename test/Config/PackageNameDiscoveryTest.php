@@ -56,15 +56,12 @@ class PackageNameDiscoveryTest extends TestCase
         $this->assertTrue($this->event->packageWasFound());
     }
 
-    public function testMarkingPackageFoundSetsPackageInProviderAndConfigAndStopsPropagation()
+    public function testMarkingPackageFoundSetsPackageInConfigAndStopsPropagation()
     {
         $this->event->foundPackage('some/package');
 
         $this->assertTrue($this->event->isPropagationStopped());
         $this->assertTrue($this->event->packageWasFound());
         $this->assertSame('some/package', $this->config->package());
-
-        $provider = $this->config->provider();
-        $this->assertAttributeSame('some/package', 'package', $provider);
     }
 }
