@@ -19,6 +19,20 @@ class ListenerProvider implements ListenerProviderInterface
             Common\IsChangelogReadableListener::class,
             Bump\BumpChangelogVersionListener::class,
         ],
+        Config\ConfigDiscovery::class => [
+            Config\RetrieveGlobalConfigListener::class,
+            Config\RetrieveLocalConfigListener::class,
+            Config\RetrieveInputOptionsListener::class,
+        ],
+        Config\PackageNameDiscovery::class => [
+            Config\DiscoverPackageFromComposerListener::class,
+            Config\DiscoverPackageFromNpmPackageListener::class,
+            Config\DiscoverPackageFromGitRemoteListener::class,
+        ],
+        Config\RemoteNameDiscovery::class => [
+            Config\DiscoverRemoteFromGitRemotesListener::class,
+            Config\PromptForGitRemoteListener::class,
+        ],
         Release\ReleaseEvent::class => [
             Release\ConfigListener::class,
             Release\VerifyTagExistsListener::class,
