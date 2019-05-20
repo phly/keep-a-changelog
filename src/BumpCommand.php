@@ -9,13 +9,14 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use Phly\EventDispatcher\EventDispatcher;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function array_keys;
 use function in_array;
-use function is_readable;
 use function sprintf;
 
 /**
@@ -26,8 +27,6 @@ use function sprintf;
  */
 class BumpCommand extends Command
 {
-    use GetChangelogFileTrait;
-
     public const BUMP_BUGFIX = 'bugfix';
     public const BUMP_MAJOR = 'major';
     public const BUMP_MINOR = 'minor';
@@ -50,19 +49,26 @@ EOH;
         self::BUMP_MINOR => 'bumpMinorVersion',
     ];
 
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
+
     /** @var string */
     private $type;
 
     /**
      * @throws Exception\InvalidBumpTypeException
      */
-    public function __construct(string $type, ?string $name = null)
-    {
+    public function __construct(
+        string $type,
+        ?string $name = null,
+        ?EventDispatcherInterface $dispatcher = null
+    ) {
         if (! in_array($type, array_keys($this->bumpMethods), true)) {
             throw Exception\InvalidBumpTypeException::forType($type);
         }
 
         $this->type = $type;
+        $this->dispatcher = $dispatcher ?: new EventDispatcher(new ListenerProvider());
         parent::__construct($name);
     }
 
@@ -84,23 +90,15 @@ EOH;
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $changelogFile = $this->getChangelogFile($input);
-        if (! is_readable($changelogFile)) {
-            throw Exception\ChangelogFileNotFoundException::at($changelogFile);
-        }
-
-        $method = $this->bumpMethods[$this->type];
-
-        $bumper = new ChangelogBump($changelogFile);
-        $latest = $bumper->findLatestVersion();
-        $version = $bumper->$method($latest);
-        $bumper->updateChangelog($version);
-
-        $output->writeln(sprintf(
-            '<info>Bumped changelog version to %s</info>',
-            $version
-        ));
-
-        return 0;
+        return $this->dispatcher
+            ->dispatch(new Bump\BumpChangelogVersionEvent(
+                $input,
+                $output,
+                $this->dispatcher,
+                $this->bumpMethods[$this->type]
+            ))
+            ->failed()
+            ? 1
+            : 0;
     }
 }

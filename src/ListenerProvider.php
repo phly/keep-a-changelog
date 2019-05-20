@@ -14,6 +14,11 @@ use Psr\EventDispatcher\ListenerProviderInterface;
 class ListenerProvider implements ListenerProviderInterface
 {
     private $listeners = [
+        Bump\BumpChangelogVersionEvent::class => [
+            Config\ConfigListener::class,
+            Common\IsChangelogReadableListener::class,
+            Bump\BumpChangelogVersionListener::class,
+        ],
         Release\ReleaseEvent::class => [
             Release\ConfigListener::class,
             Release\VerifyTagExistsListener::class,
