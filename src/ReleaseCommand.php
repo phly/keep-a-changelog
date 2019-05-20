@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog;
 
 use Phly\KeepAChangelog\Config\CommonConfigOptionsTrait;
-use Phly\EventDispatcher\EventDispatcher;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -49,9 +48,9 @@ EOH;
     /** @var EventDispatcherInterface */
     private $dispatcher;
 
-    public function __construct(string $name = 'release', ?EventDispatcherInterface $dispatcher = null)
+    public function __construct(EventDispatcherInterface $dispatcher, string $name = 'release')
     {
-        $this->dispatcher = $dispatcher ?: new EventDispatcher(new ListenerProvider());
+        $this->dispatcher = $dispatcher;
         parent::__construct($name);
     }
 

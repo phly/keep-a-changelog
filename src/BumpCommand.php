@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use Phly\EventDispatcher\EventDispatcher;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -60,15 +59,15 @@ EOH;
      */
     public function __construct(
         string $type,
-        ?string $name = null,
-        ?EventDispatcherInterface $dispatcher = null
+        EventDispatcherInterface $dispatcher,
+        ?string $name = null
     ) {
         if (! in_array($type, array_keys($this->bumpMethods), true)) {
             throw Exception\InvalidBumpTypeException::forType($type);
         }
 
         $this->type = $type;
-        $this->dispatcher = $dispatcher ?: new EventDispatcher(new ListenerProvider());
+        $this->dispatcher = $dispatcher;
         parent::__construct($name);
     }
 

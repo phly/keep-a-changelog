@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog;
 
 use PackageVersions\Versions;
+use Phly\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -27,6 +28,7 @@ if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
 }
 
 $version = strstr(Versions::getVersion('phly/keep-a-changelog'), '@', true);
+$dispatcher = new EventDispatcher(new ListenerProvider());
 
 $application = new Application('keep-a-changelog', $version);
 
@@ -36,12 +38,12 @@ $application->getDefinition()
     ]);
 
 $application->addCommands([
-    new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump'),
-    new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump:bugfix'),
-    new BumpCommand(BumpCommand::BUMP_BUGFIX, 'bump:patch'),
-    new BumpCommand(BumpCommand::BUMP_MINOR, 'bump:minor'),
-    new BumpCommand(BumpCommand::BUMP_MAJOR, 'bump:major'),
-    new BumpToVersionCommand('bump:to-version'),
+    new BumpCommand(BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump'),
+    new BumpCommand(BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump:bugfix'),
+    new BumpCommand(BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump:patch'),
+    new BumpCommand(BumpCommand::BUMP_MINOR, $dispatcher, 'bump:minor'),
+    new BumpCommand(BumpCommand::BUMP_MAJOR, $dispatcher, 'bump:major'),
+    new BumpToVersionCommand($dispatcher, 'bump:to-version'),
     new ConfigCommand('config'),
     new EditCommand('edit', $deprecated = true),
     new EditCommand('version:edit'),
@@ -53,7 +55,7 @@ $application->addCommands([
     new ListVersionsCommand('version:list'),
     new NewChangelogCommand('new'),
     new ReadyCommand('ready'),
-    new ReleaseCommand('release'),
+    new ReleaseCommand($dispatcher, 'release'),
     new RemoveCommand('version:remove'),
     new ShowVersionCommand('version:show'),
     new TaggerCommand('tag'),

@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use Phly\EventDispatcher\EventDispatcher;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,8 +22,6 @@ use function sprintf;
  */
 class BumpToVersionCommand extends Command
 {
-    use GetChangelogFileTrait;
-
     private const DESCRIPTION = 'Create a new changelog entry for the specified release version.';
 
     private const HELP = <<<'EOH'
@@ -36,10 +33,10 @@ EOH;
     private $dispatcher;
 
     public function __construct(
-        ?string $name = null,
-        ?EventDispatcherInterface $dispatcher = null
+        EventDispatcherInterface $dispatcher = null,
+        ?string $name = null
     ) {
-        $this->dispatcher = $dispatcher ?: new EventDispatcher(new ListenerProvider());
+        $this->dispatcher = $dispatcher;
         parent::__construct($name);
     }
 
