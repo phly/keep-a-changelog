@@ -12,7 +12,7 @@ namespace Phly\KeepAChangelog;
 class Config
 {
     /** @var string */
-    private $changelogFile = 'CHANGELOG.md';
+    private $changelogFile;
 
     /** @var null|string */
     private $package;
@@ -31,6 +31,8 @@ class Config
 
     public function __construct()
     {
+        $this->changelogFile = realpath(getcwd()) . '/CHANGELOG.md';
+
         $githubSpec = new Provider\ProviderSpec('github');
         $githubSpec->setClassName(Provider\GitHub::class);
 

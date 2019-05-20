@@ -14,16 +14,13 @@ use function realpath;
 
 class DiscoverChangelogFileListener
 {
-    public function __invoke(PrepareChangelogEvent $event) : void
+    public function __invoke(ReleaseEvent $event) : void
     {
-        $changelogFile = $event->input()->getOption('file')
-            ?: realpath(getcwd()) . '/CHANGELOG.md';
+        $changelogFile = $event->config()->changelogFile();
 
         if (! is_readable($changelogFile)) {
             $event->changelogFileIsUnreadable($changelogFile);
             return;
         }
-
-        $event->setChangelogFile($changelogFile);
     }
 }

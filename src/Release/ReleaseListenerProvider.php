@@ -15,11 +15,6 @@ use Psr\EventDispatcher\ListenerProviderInterface;
 class ReleaseListenerProvider implements ListenerProviderInterface
 {
     private $listeners = [
-        PrepareChangelogEvent::class => [
-            DiscoverChangelogFileListener::class,
-            ParseChangelogListener::class,
-            FormatChangelogListener::class,
-        ],
         CreateReleaseEvent::class => [
             CreateReleaseNameListener::class,
             PushReleaseToProviderListener::class,
@@ -35,7 +30,9 @@ class ReleaseListenerProvider implements ListenerProviderInterface
             ),
             VerifyTagExistsListener::class,
             VerifyProviderCanReleaseListener::class,
-            PrepareChangelogListener::class,
+            DiscoverChangelogFileListener::class,
+            ParseChangelogListener::class,
+            FormatChangelogListener::class,
             PushTagToRemoteListener::class,
             CreateReleaseListener::class,
         ];

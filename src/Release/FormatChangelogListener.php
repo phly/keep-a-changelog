@@ -13,10 +13,10 @@ use Phly\KeepAChangelog\ChangelogFormatter;
 
 class FormatChangelogListener
 {
-    public function __invoke(PrepareChangelogEvent $event) : void
+    public function __invoke(ReleaseEvent $event) : void
     {
         $formatter = new ChangelogFormatter();
-        $event->setFormattedChangelog(
+        $event->discoveredChangelog(
             $formatter->format($event->changelog())
         );
     }

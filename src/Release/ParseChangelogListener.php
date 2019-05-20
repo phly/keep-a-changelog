@@ -14,16 +14,17 @@ use Phly\KeepAChangelog\Exception;
 
 class ParseChangelogListener
 {
-    public function __invoke(PrepareChangelogEvent $event) : void
+    public function __invoke(ReleaseEvent $event) : void
     {
+        $changelogFile = $event->config()->changelogFile();
         $parser = new ChangelogParser();
         try {
             $changelog = $parser->findChangelogForVersion(
-                file_get_contents($event->changelogFile()),
+                file_get_contents($changelogFile),
                 $event->version()
             );
         } catch (Exception\ExceptionInterface $e) {
-            $event->errorParsingChangelog($e);
+            $event->errorParsingChangelog($changelogFile, $e);
             return;
         }
 

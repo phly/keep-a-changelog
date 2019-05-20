@@ -16,6 +16,7 @@ use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class ReleaseEvent implements ConfigurableEventInterface
 {
@@ -39,6 +40,9 @@ class ReleaseEvent implements ConfigurableEventInterface
 
     /** @var null|ProviderInterface */
     private $provider;
+
+    /** @var null|string */
+    private $rawChangelog;
 
     /** @var string */
     private $tagName;
@@ -70,7 +74,15 @@ class ReleaseEvent implements ConfigurableEventInterface
 
     public function changelog() : ?string
     {
-        return $this->changelog;
+        if ($this->changelog) {
+            return $this->changelog;
+        }
+
+        if ($this->rawChangelog) {
+            return $this->rawChangelog;
+        }
+
+        return null;
     }
 
     public function config() : ?Config
@@ -101,6 +113,35 @@ class ReleaseEvent implements ConfigurableEventInterface
     public function missingConfiguration() : bool
     {
         return null === $this->config;
+    }
+
+    public function changelogFileIsUnreadable(string $changelogFile) : void
+    {
+        $this->failed = true;
+        $this->output()->writeln(sprintf(
+            '<error>Changelog file "%s" is unreadable.</error>',
+            $changelogFile
+        ));
+    }
+
+    public function errorParsingChangelog(string $changelogFile, Throwable $e) : void
+    {
+        $this->failed = true;
+        $output = $this->output();
+        $output->writeln(sprintf(
+            '<error>An error occurred parsing the changelog file "%s" for the release "%s":</error>',
+            $changelogFile,
+            $this->version
+        ));
+        $output->writeln($e->getMessage());
+    }
+
+    public function setRawChangelog(string $changelog) : void
+    {
+        if ($this->changelog) {
+            return;
+        }
+        $this->rawChangelog = $changelog;
     }
 
     public function discoveredChangelog(string $changelog) : void
@@ -164,11 +205,6 @@ class ReleaseEvent implements ConfigurableEventInterface
             '<error>No tag matching the name "%s" was found!</error>',
             $this->tagName
         ));
-    }
-
-    public function changelogPreparationFailed() : void
-    {
-        $this->failed = true;
     }
 
     public function taggingFailed() : void

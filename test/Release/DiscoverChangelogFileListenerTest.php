@@ -9,47 +9,41 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Release;
 
+use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Release\DiscoverChangelogFileListener;
-use Phly\KeepAChangelog\Release\PrepareChangelogEvent;
+use Phly\KeepAChangelog\Release\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Input\InputInterface;
+use Prophecy\Argument;
 
 class DiscoverChangelogFileListenerTest extends TestCase
 {
     public function setUp()
     {
-        $this->input  = $this->prophesize(InputInterface::class);
-        $this->event  = $this->prophesize(PrepareChangelogEvent::class);
+        $this->config = $this->prophesize(Config::class);
+        $this->event  = $this->prophesize(ReleaseEvent::class);
 
-        $this->event->input()->will([$this->input, 'reveal']);
+        $this->event->config()->will([$this->config, 'reveal']);
     }
 
-    public function testSetsEventChangelogFileUsingProjectChangelogWhenNoOptionPresent()
+    public function testDoesNothingIfConfiguredChangelogFileIsReadable()
     {
-        $expected = realpath(getcwd()) . '/CHANGELOG.md';
+        $changelogFile = realpath(__DIR__ . '/../_files') . '/CHANGELOG.md';
+        $this->config->changelogFile()->willReturn($changelogFile);
+
         $listener = new DiscoverChangelogFileListener();
-        $this->input->getOption('file')->willReturn(null);
-        $this->event->setChangelogFile($expected)->shouldBeCalled();
 
         $this->assertNull($listener($this->event->reveal()));
-    }
 
-    public function testSetsEventChangelogFileUsingProvidedOptionWhenReadable()
-    {
-        $expected = realpath(__DIR__ . '/../_files') . '/CHANGELOG.md';
-        $listener = new DiscoverChangelogFileListener();
-        $this->input->getOption('file')->willReturn($expected);
-        $this->event->setChangelogFile($expected)->shouldBeCalled();
-
-        $this->assertNull($listener($this->event->reveal()));
+        $this->event->changelogFileIsUnreadable(Argument::any())->shouldNotHaveBeenCalled();
     }
 
     public function testTellsEventChangelogFileIsUnreadableIfProvidedFileIsNotReadable()
     {
         $expected = realpath(__DIR__) . '/CHANGELOG.md';
-        $listener = new DiscoverChangelogFileListener();
-        $this->input->getOption('file')->willReturn($expected);
+        $this->config->changelogFile()->willReturn($expected);
         $this->event->changelogFileIsUnreadable($expected)->shouldBeCalled();
+
+        $listener = new DiscoverChangelogFileListener();
 
         $this->assertNull($listener($this->event->reveal()));
     }

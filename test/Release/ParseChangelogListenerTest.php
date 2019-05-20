@@ -9,9 +9,10 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Release;
 
+use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Exception\ExceptionInterface;
 use Phly\KeepAChangelog\Release\ParseChangelogListener;
-use Phly\KeepAChangelog\Release\PrepareChangelogEvent;
+use Phly\KeepAChangelog\Release\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -19,7 +20,9 @@ class ParseChangelogListenerTest extends TestCase
 {
     public function setUp()
     {
-        $this->event = $this->prophesize(PrepareChangelogEvent::class);
+        $this->config = $this->prophesize(Config::class);
+        $this->event  = $this->prophesize(ReleaseEvent::class);
+        $this->event->config()->will([$this->config, 'reveal']);
     }
 
     public function testListenerSetsRawChangelogWhenChangelogFileParsed()
@@ -49,7 +52,7 @@ class ParseChangelogListenerTest extends TestCase
 EOC;
         $listener = new ParseChangelogListener();
 
-        $this->event->changelogFile()->willReturn($changelogFile);
+        $this->config->changelogFile()->willReturn($changelogFile);
         $this->event->version()->willReturn('1.1.0');
         $this->event->setRawChangelog($expected)->shouldBeCalled();
 
@@ -61,10 +64,11 @@ EOC;
         $changelogFile = realpath(__DIR__ . '/../_files') . '/CHANGELOG.md';
         $listener = new ParseChangelogListener();
 
-        $this->event->changelogFile()->willReturn($changelogFile);
+        $this->config->changelogFile()->willReturn($changelogFile);
         $this->event->version()->willReturn('1.0.1');
         $this->event
             ->errorParsingChangelog(
+                $changelogFile,
                 Argument::type(ExceptionInterface::class)
             )
             ->shouldBeCalled();

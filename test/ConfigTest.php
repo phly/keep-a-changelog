@@ -15,12 +15,15 @@ use Phly\KeepAChangelog\Provider\ProviderList;
 use Phly\KeepAChangelog\Provider\ProviderSpec;
 use PHPUnit\Framework\TestCase;
 
+use function getcwd;
+use function realpath;
+
 class ConfigTest extends TestCase
 {
     public function testBareInstanceHasExpectedDefaults()
     {
         $config = new Config();
-        $this->assertSame('CHANGELOG.md', $config->changelogFile());
+        $this->assertSame(realpath(getcwd()) . '/CHANGELOG.md', $config->changelogFile());
         $this->assertNull($config->package());
         $this->assertInstanceOf(ProviderSpec::class, $config->provider());
         $this->assertInstanceOf(ProviderList::class, $config->providers());

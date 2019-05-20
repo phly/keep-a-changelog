@@ -14,6 +14,7 @@ use Phly\KeepAChangelog\Release\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -92,9 +93,52 @@ class ReleaseEventTest extends TestCase
         $this->assertTrue($this->event->isPropagationStopped());
     }
 
-    public function testEventHasNoChangelogComposedInitially()
+    public function testEventHasNoChangelogComposedInitially() : ReleaseEvent
     {
         $this->assertNull($this->event->changelog());
+        return $this->event;
+    }
+
+    /**
+     * @depends testEventHasNoChangelogComposedInitially
+     */
+    public function testSettingRawChangelogPopulatesChangelog(ReleaseEvent $event) : ReleaseEvent
+    {
+        $changelog = 'this is the raw changelog';
+        $event->setRawChangelog($changelog);
+        $this->assertSame($changelog, $event->changelog());
+        return $event;
+    }
+
+    /**
+     * @depends testSettingRawChangelogPopulatesChangelog
+     */
+    public function testMarkingChangelogDiscoveredOverridesRawChangelog(ReleaseEvent $event)
+    {
+        $changelog = 'this is the formatted changelog';
+        $event->discoveredChangelog($changelog);
+        $this->assertSame($changelog, $event->changelog());
+    }
+
+    public function testIndicatingChangelogFileIsUnreadableStopsPropagationWithError()
+    {
+        $this->output->writeln(Argument::containingString('unreadable'))->shouldBeCalled();
+        $this->assertNull($this->event->changelogFileIsUnreadable('changelog.txt'));
+        $this->assertTrue($this->event->isPropagationStopped());
+        $this->assertTrue($this->event->failed());
+    }
+
+    public function testIndicatingErrorParsingChangelogStopsPropagationWithError()
+    {
+        $message = 'this is an error message';
+        $error   = new RuntimeException($message);
+        $this->output->writeln(Argument::containingString('parsing'))->shouldBeCalled();
+        $this->output->writeln(Argument::containingString($message))->shouldBeCalled();
+
+        $this->assertNull($this->event->errorParsingChangelog('changelog.txt', $error));
+
+        $this->assertTrue($this->event->isPropagationStopped());
+        $this->assertTrue($this->event->failed());
     }
 
     public function testIndicatingChangelogDiscoveredPopulatesChangelogWithoutStoppingPropagation()
@@ -105,12 +149,6 @@ class ReleaseEventTest extends TestCase
 
         $this->assertSame($changelog, $this->event->changelog());
         $this->assertFalse($this->event->isPropagationStopped());
-    }
-
-    public function testIndicatingChangelogPreparationFailedStopsEvent()
-    {
-        $this->event->changelogPreparationFailed();
-        $this->assertTrue($this->event->isPropagationStopped());
     }
 
     public function testIndicatingProviderIsCompleteStopsPropagationWithFailure()
