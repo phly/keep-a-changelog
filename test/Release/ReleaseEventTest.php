@@ -181,9 +181,27 @@ class ReleaseEventTest extends TestCase
         $this->assertTrue($this->event->failed());
     }
 
-    public function testIndicatingReleaseFailedStopsPropagationWithFailure()
+    public function testIndicatingErrorCreatingReleaseStopsPropagationWithFailure()
     {
-        $this->event->releaseFailed();
+        $message = 'this is an error message';
+        $error   = new RuntimeException($message);
+        $this->output->writeln(Argument::containingString('creating release'))->shouldBeCalled();
+        $this->output->writeln(Argument::containingString('error was caught'))->shouldBeCalled();
+        $this->output->writeln(Argument::containingString($message))->shouldBeCalled();
+
+        $this->assertNull($this->event->errorCreatingRelease($error));
+
+        $this->assertTrue($this->event->isPropagationStopped());
+        $this->assertTrue($this->event->failed());
+    }
+
+    public function testIndicatingUnexpectedProviderResultWhenCreatingReleaseStopsPropagationWithFailure()
+    {
+        $this->output->writeln(Argument::containingString('creating release'))->shouldBeCalled();
+        $this->output->writeln(Argument::containingString('API call'))->shouldBeCalled();
+
+        $this->assertNull($this->event->unexpectedProviderResult());
+
         $this->assertTrue($this->event->isPropagationStopped());
         $this->assertTrue($this->event->failed());
     }

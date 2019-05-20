@@ -9,8 +9,9 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Release;
 
-use Phly\KeepAChangelog\Release\CreateReleaseEvent;
+use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Release\CreateReleaseNameListener;
+use Phly\KeepAChangelog\Release\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
 
@@ -18,9 +19,11 @@ class CreateReleaseNameListenerTest extends TestCase
 {
     public function setUp()
     {
-        $this->input = $this->prophesize(InputInterface::class);
-        $this->event = $this->prophesize(CreateReleaseEvent::class);
+        $this->input  = $this->prophesize(InputInterface::class);
+        $this->config = $this->prophesize(Config::class);
+        $this->event  = $this->prophesize(ReleaseEvent::class);
         $this->event->input()->will([$this->input, 'reveal']);
+        $this->event->config()->will([$this->config, 'reveal']);
     }
 
     public function testSetsReleaseNameFromInputOptionWhenPresent()
@@ -32,14 +35,14 @@ class CreateReleaseNameListenerTest extends TestCase
 
         $this->assertNull($listener($this->event->reveal()));
 
-        $this->event->package()->shouldNotHaveBeenCalled();
+        $this->config->package()->shouldNotHaveBeenCalled();
         $this->event->version()->shouldNotHaveBeenCalled();
     }
 
     public function testSetsReleaseNameBasedOnPackageAndVersionWhenNoInputOptionPresent()
     {
         $this->input->getOption('name')->willReturn(null);
-        $this->event->package()->willReturn('some/package');
+        $this->config->package()->willReturn('some/package');
         $this->event->version()->willReturn('1.2.3');
         $this->event->setReleaseName('package 1.2.3')->shouldBeCalled();
 

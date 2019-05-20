@@ -44,6 +44,9 @@ class ReleaseEvent implements ConfigurableEventInterface
     /** @var null|string */
     private $rawChangelog;
 
+    /** @var null|string */
+    private $releaseName;
+
     /** @var string */
     private $tagName;
 
@@ -100,6 +103,11 @@ class ReleaseEvent implements ConfigurableEventInterface
         return $this->provider;
     }
 
+    public function releaseName() : ?string
+    {
+        return $this->releaseName;
+    }
+
     public function tagName() : string
     {
         return $this->tagName;
@@ -113,6 +121,34 @@ class ReleaseEvent implements ConfigurableEventInterface
     public function missingConfiguration() : bool
     {
         return null === $this->config;
+    }
+
+    public function discoveredConfiguration(Config $config) : void
+    {
+        $this->config = $config;
+    }
+
+    public function setRawChangelog(string $changelog) : void
+    {
+        if ($this->changelog) {
+            return;
+        }
+        $this->rawChangelog = $changelog;
+    }
+
+    public function discoveredChangelog(string $changelog) : void
+    {
+        $this->changelog = $changelog;
+    }
+
+    public function setReleaseName(string $releaseName) : void
+    {
+        $this->releaseName = $releaseName;
+    }
+
+    public function releaseCreated(string $release) : void
+    {
+        $this->output()->writeln(sprintf('<info>Created %s<info>', $release));
     }
 
     public function changelogFileIsUnreadable(string $changelogFile) : void
@@ -134,24 +170,6 @@ class ReleaseEvent implements ConfigurableEventInterface
             $this->version
         ));
         $output->writeln($e->getMessage());
-    }
-
-    public function setRawChangelog(string $changelog) : void
-    {
-        if ($this->changelog) {
-            return;
-        }
-        $this->rawChangelog = $changelog;
-    }
-
-    public function discoveredChangelog(string $changelog) : void
-    {
-        $this->changelog = $changelog;
-    }
-
-    public function discoveredConfiguration(Config $config) : void
-    {
-        $this->config = $config;
     }
 
     public function configurationIncomplete() : void
@@ -215,8 +233,33 @@ class ReleaseEvent implements ConfigurableEventInterface
         $output->writeln('Please check the output for details.');
     }
 
-    public function releaseFailed() : void
+    public function errorCreatingRelease(Throwable $e) : void
     {
         $this->failed = true;
+        $output       = $this->output();
+
+        $output->writeln('<error>Error creating release!</error>');
+        $output->writeln('The following error was caught when attempting to create the release:');
+        $output->writeln(sprintf(
+            "[%s: %d] %s\n%s",
+            gettype($e),
+            $e->getCode(),
+            $e->getMessage(),
+            $e->getTraceAsString()
+        ));
+    }
+
+    public function unexpectedProviderResult() : void
+    {
+        $this->failed = true;
+        $output       = $this->output();
+
+        $output->writeln('<error>Error creating release!</error>');
+        $output->writeln(sprintf(
+            'Provider of type "%s" was able to make the API call necessary to create the release,'
+            . ' but did not get back the expected result.'
+            . ' You will need to manually create the release.',
+            gettype($this->provider)
+        ));
     }
 }

@@ -13,7 +13,7 @@ use Throwable;
 
 class PushReleaseToProviderListener
 {
-    public function __invoke(CreateReleaseEvent $event) : void
+    public function __invoke(ReleaseEvent $event) : void
     {
         $releaseName = $event->releaseName();
         $provider    = $event->provider();

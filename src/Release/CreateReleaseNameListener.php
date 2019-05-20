@@ -11,7 +11,7 @@ namespace Phly\KeepAChangelog\Release;
 
 class CreateReleaseNameListener
 {
-    public function __invoke(CreateReleaseEvent $event) : void
+    public function __invoke(ReleaseEvent $event) : void
     {
         $name = $event->input()->getOption('name');
         if ($name) {
@@ -19,7 +19,7 @@ class CreateReleaseNameListener
             return;
         }
 
-        $package = $event->package();
+        $package = $event->config()->package();
         $version = $event->version();
         $lastSeparator = strrpos($package, '/');
         $repo = substr($package, $lastSeparator + 1);

@@ -51,7 +51,7 @@ EOH;
 
     public function __construct(string $name = 'release', ?EventDispatcherInterface $dispatcher = null)
     {
-        $this->dispatcher = $dispatcher ?: new EventDispatcher(new Release\ReleaseListenerProvider());
+        $this->dispatcher = $dispatcher ?: new EventDispatcher(new ListenerProvider());
         parent::__construct($name);
     }
 

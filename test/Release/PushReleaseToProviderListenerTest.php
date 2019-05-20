@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\Release;
 
 use Phly\KeepAChangelog\Provider\ProviderInterface;
-use Phly\KeepAChangelog\Release\CreateReleaseEvent;
 use Phly\KeepAChangelog\Release\PushReleaseToProviderListener;
+use Phly\KeepAChangelog\Release\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use RuntimeException;
@@ -22,13 +22,12 @@ class PushReleaseToProviderListenerTest extends TestCase
     public function setUp()
     {
         $this->output   = $this->prophesize(OutputInterface::class);
-        $this->event    = $this->prophesize(CreateReleaseEvent::class);
+        $this->event    = $this->prophesize(ReleaseEvent::class);
         $this->provider = $this->prophesize(ProviderInterface::class);
 
         $this->event->releaseName()->willReturn('some/package 1.2.3');
         $this->event->provider()->will([$this->provider, 'reveal']);
         $this->event->output()->will([$this->output, 'reveal']);
-        $this->event->package()->willReturn('some/package');
         $this->event->version()->willReturn('1.2.3');
         $this->event->changelog()->willReturn('this is the changelog');
 
