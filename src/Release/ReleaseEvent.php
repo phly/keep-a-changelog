@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
+use Phly\KeepAChangelog\Common\ChangelogFileIsUnreadableTrait;
 use Phly\KeepAChangelog\Common\IOTrait;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config\ConfigurableEventInterface;
@@ -20,6 +21,7 @@ use Throwable;
 
 class ReleaseEvent implements ConfigurableEventInterface
 {
+    use ChangelogFileIsUnreadableTrait;
     use IOTrait;
 
     /**
@@ -149,15 +151,6 @@ class ReleaseEvent implements ConfigurableEventInterface
     public function releaseCreated(string $release) : void
     {
         $this->output()->writeln(sprintf('<info>Created %s<info>', $release));
-    }
-
-    public function changelogFileIsUnreadable(string $changelogFile) : void
-    {
-        $this->failed = true;
-        $this->output()->writeln(sprintf(
-            '<error>Changelog file "%s" is unreadable.</error>',
-            $changelogFile
-        ));
     }
 
     public function errorParsingChangelog(string $changelogFile, Throwable $e) : void
