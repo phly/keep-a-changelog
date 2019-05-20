@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
+use Phly\KeepAChangelog\Common\IOTrait;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config\ConfigurableEventInterface;
-use Phly\KeepAChangelog\IOTrait;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;

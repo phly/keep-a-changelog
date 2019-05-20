@@ -9,14 +9,21 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Config;
 
+use Phly\KeepAChangelog\Common\IOInterface;
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\IOInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
 interface ConfigurableEventInterface extends
     IOInterface,
     StoppableEventInterface
 {
+    /**
+     * Notify the event that the changelog file is unreadable.
+     *
+     * This method should cause propagation to stop.
+     */
+    public function changelogFileIsUnreadable(string $changelogFile) : void;
+
     /**
      * Notify the event that one or more required configuration
      * items/input options were missing.

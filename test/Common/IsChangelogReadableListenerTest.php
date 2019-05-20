@@ -7,15 +7,15 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog\Release;
+namespace PhlyTest\KeepAChangelog\Common;
 
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Release\DiscoverChangelogFileListener;
+use Phly\KeepAChangelog\Common\IsChangelogReadableListener;
 use Phly\KeepAChangelog\Release\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
-class DiscoverChangelogFileListenerTest extends TestCase
+class IsChangelogReadableListenerTest extends TestCase
 {
     public function setUp()
     {
@@ -30,7 +30,7 @@ class DiscoverChangelogFileListenerTest extends TestCase
         $changelogFile = realpath(__DIR__ . '/../_files') . '/CHANGELOG.md';
         $this->config->changelogFile()->willReturn($changelogFile);
 
-        $listener = new DiscoverChangelogFileListener();
+        $listener = new IsChangelogReadableListener();
 
         $this->assertNull($listener($this->event->reveal()));
 
@@ -43,7 +43,7 @@ class DiscoverChangelogFileListenerTest extends TestCase
         $this->config->changelogFile()->willReturn($expected);
         $this->event->changelogFileIsUnreadable($expected)->shouldBeCalled();
 
-        $listener = new DiscoverChangelogFileListener();
+        $listener = new IsChangelogReadableListener();
 
         $this->assertNull($listener($this->event->reveal()));
     }

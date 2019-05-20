@@ -7,14 +7,14 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Release;
+namespace Phly\KeepAChangelog\Common;
+namespace Phly\KeepAChangelog\Config\ConfigurableEventInterface;
 
-use function getcwd;
-use function realpath;
+use function is_readable;
 
-class DiscoverChangelogFileListener
+class IsChangelogReadableListener
 {
-    public function __invoke(ReleaseEvent $event) : void
+    public function __invoke(ConfigurableEventInterface $event) : void
     {
         $changelogFile = $event->config()->changelogFile();
 

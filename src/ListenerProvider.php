@@ -18,7 +18,7 @@ class ListenerProvider implements ListenerProviderInterface
             Release\ConfigListener::class,
             Release\VerifyTagExistsListener::class,
             Release\VerifyProviderCanReleaseListener::class,
-            Release\DiscoverChangelogFileListener::class,
+            Common\IsChangelogReadableListener::class,
             Release\ParseChangelogListener::class,
             Release\FormatChangelogListener::class,
             Release\PushTagToRemoteListener::class,
