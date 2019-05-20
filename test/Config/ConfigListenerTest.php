@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Config;
 
+use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config\ConfigDiscovery;
 use Phly\KeepAChangelog\Config\ConfigListener;
-use Phly\KeepAChangelog\Config\ConfigurableEventInterface;
 use Phly\KeepAChangelog\Config\PackageNameDiscovery;
 use Phly\KeepAChangelog\Config\RemoteNameDiscovery;
 use PHPUnit\Framework\TestCase;
@@ -32,9 +32,10 @@ class ConfigListenerTest extends TestCase
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->input      = $this->prophesize(InputInterface::class)->reveal();
         $this->output     = $this->prophesize(OutputInterface::class);
-        $this->event      = $this->prophesize(ConfigurableEventInterface::class);
+        $this->event      = $this->prophesize(EventInterface::class);
         $this->event->input()->willReturn($this->input);
         $this->event->output()->will([$this->output, 'reveal']);
+        $this->event->dispatcher()->will([$this->dispatcher, 'reveal']);
     }
 
     public function createListener(
@@ -43,8 +44,7 @@ class ConfigListenerTest extends TestCase
     ) : ConfigListener {
         return new ConfigListener(
             $requiresPackageName,
-            $requiresRemoteName,
-            $this->dispatcher->reveal()
+            $requiresRemoteName
         );
     }
 

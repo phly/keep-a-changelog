@@ -17,14 +17,16 @@ use Symfony\Component\Console\Output\OutputInterface;
  * output properties during instantiation.
  *
  * Provides an implementation of IOInterface.
+ *
+ * Properties are marked protected to allow abstract classes to compose this trait.
  */
 trait IOTrait
 {
     /** @var InputInterface */
-    private $input;
+    protected $input;
 
     /** @var OutputInterface */
-    private $output;
+    protected $output;
 
     public function input() : InputInterface
     {

@@ -9,36 +9,22 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
-use Phly\KeepAChangelog\Common\ChangelogFileIsUnreadableTrait;
-use Phly\KeepAChangelog\Common\IOTrait;
+use Phly\KeepAChangelog\Common\AbstractEvent;
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Config\ConfigurableEventInterface;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
-class ReleaseEvent implements ConfigurableEventInterface
+class ReleaseEvent extends AbstractEvent
 {
-    use ChangelogFileIsUnreadableTrait;
-    use IOTrait;
-
     /**
      * The changelog entry associated with the version being released.
      *
      * @var null|string
      */
     private $changelog;
-
-    /** @var null|Config */
-    private $config;
-
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
-
-    /** @var bool */
-    private $failed = false;
 
     /** @var null|ProviderInterface */
     private $provider;
@@ -72,11 +58,6 @@ class ReleaseEvent implements ConfigurableEventInterface
         return $this->failed;
     }
 
-    public function failed() : bool
-    {
-        return $this->failed;
-    }
-
     public function changelog() : ?string
     {
         if ($this->changelog) {
@@ -88,16 +69,6 @@ class ReleaseEvent implements ConfigurableEventInterface
         }
 
         return null;
-    }
-
-    public function config() : ?Config
-    {
-        return $this->config;
-    }
-
-    public function dispatcher() : EventDispatcherInterface
-    {
-        return $this->dispatcher;
     }
 
     public function provider() : ?ProviderInterface
@@ -118,16 +89,6 @@ class ReleaseEvent implements ConfigurableEventInterface
     public function version() : string
     {
         return $this->version;
-    }
-
-    public function missingConfiguration() : bool
-    {
-        return null === $this->config;
-    }
-
-    public function discoveredConfiguration(Config $config) : void
-    {
-        $this->config = $config;
     }
 
     public function setRawChangelog(string $changelog) : void
@@ -163,11 +124,6 @@ class ReleaseEvent implements ConfigurableEventInterface
             $this->version
         ));
         $output->writeln($e->getMessage());
-    }
-
-    public function configurationIncomplete() : void
-    {
-        $this->failed = true;
     }
 
     public function providerIsIncomplete() : void

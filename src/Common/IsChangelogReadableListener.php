@@ -8,13 +8,12 @@
 declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Common;
-namespace Phly\KeepAChangelog\Config\ConfigurableEventInterface;
 
 use function is_readable;
 
 class IsChangelogReadableListener
 {
-    public function __invoke(ConfigurableEventInterface $event) : void
+    public function __invoke(EventInterface $event) : void
     {
         $changelogFile = $event->config()->changelogFile();
 

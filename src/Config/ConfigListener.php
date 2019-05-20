@@ -9,16 +9,13 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Config;
 
-use Phly\EventDispatcher\EventDispatcher;
+use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 
 class ConfigListener
 {
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
-
     /** @var boolean */
     private $requiresPackageName;
 
@@ -27,20 +24,18 @@ class ConfigListener
 
     public function __construct(
         bool $requiresPackageName = false,
-        bool $requiresRemoteName = false,
-        ?EventDispatcherInterface $dispatcher = null
+        bool $requiresRemoteName = false
     ) {
         $this->requiresPackageName = $requiresPackageName;
         $this->requiresRemoteName  = $requiresRemoteName;
-        $this->dispatcher          = $dispatcher ?: new EventDispatcher(new ConfigListenerProvider());
     }
 
-    public function __invoke(ConfigurableEventInterface $event) : void
+    public function __invoke(EventInterface $event) : void
     {
         $input  = $event->input();
         $output = $event->output();
 
-        $configDiscovery = $this->dispatcher->dispatch(
+        $configDiscovery = $event->dispatcher()->dispatch(
             new ConfigDiscovery($input, $output)
         );
 
@@ -59,7 +54,7 @@ class ConfigListener
         $event->discoveredConfiguration($config);
     }
 
-    private function packageCheck(ConfigurableEventInterface $event, Config $config) : bool
+    private function packageCheck(EventInterface $event, Config $config) : bool
     {
         if (! $this->requiresPackageName) {
             return true;
@@ -72,7 +67,7 @@ class ConfigListener
         $input  = $event->input();
         $output = $event->output();
 
-        if ($this->dispatcher
+        if ($event->dispatcher()
             ->dispatch(new PackageNameDiscovery($input, $output, $config))
             ->packageWasFound()
         ) {
@@ -87,7 +82,7 @@ class ConfigListener
         return false;
     }
 
-    private function remoteCheck(ConfigurableEventInterface $event, Config $config) : bool
+    private function remoteCheck(EventInterface $event, Config $config) : bool
     {
         if (! $this->requiresRemoteName) {
             return true;
@@ -100,7 +95,7 @@ class ConfigListener
         $input  = $event->input();
         $output = $event->output();
 
-        if ($this->dispatcher
+        if ($event->dispatcher()
             ->dispatch(new RemoteNameDiscovery($input, $output, $config, new QuestionHelper()))
             ->remoteWasFound()
         ) {

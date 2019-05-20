@@ -7,16 +7,24 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Config;
+namespace Phly\KeepAChangelog\Common;
 
 use Phly\KeepAChangelog\Common\IOInterface;
 use Phly\KeepAChangelog\Config;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
-interface ConfigurableEventInterface extends
+interface EventInterface extends
     IOInterface,
     StoppableEventInterface
 {
+    /**
+     * Indicate whether the event failed.
+     *
+     * Generally speaking, this should return true if propagation has been stopped.
+     */
+    public function failed() : bool;
+
     /**
      * Notify the event that the changelog file is unreadable.
      *
@@ -37,7 +45,20 @@ interface ConfigurableEventInterface extends
      */
     public function missingConfiguration() : bool;
 
+    /**
+     * Update the event with the discovered configuration instance.
+     */
     public function discoveredConfiguration(Config $config) : void;
 
+    /**
+     * Return the configuration instance, if available.
+     */
     public function config() : ?Config;
+
+    /**
+     * Configurable events should be passed the event dispatcher, so that the
+     * configuration listener can dispatch its internal events in order to
+     * aggregate configuration.
+     */
+    public function dispatcher() : EventDispatcherInterface;
 }
