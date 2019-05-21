@@ -52,6 +52,12 @@ class ListenerProvider implements ListenerProviderInterface
             Remove\PromptForConfirmationListener::class,
             Remove\RemoveChangelogEntryListener::class,
         ],
+        ShowVersion\ShowVersionEvent::class => [
+            Config\ConfigListener::class,
+            Common\ValidateVersionListener::class,
+            Common\IsChangelogReadableListener::class,
+            ShowVersion\ShowVersionListener::class,
+        ],
     ];
 
     public function getListenersForEvent(object $event) : iterable
