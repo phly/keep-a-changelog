@@ -51,7 +51,7 @@ $application->addCommands([
     new EntryCommand('entry:deprecated'),
     new EntryCommand('entry:removed'),
     new EntryCommand('entry:fixed'),
-    new ListVersionsCommand('version:list'),
+    new ListVersionsCommand($dispatcher, 'version:list'),
     new NewChangelogCommand('new'),
     new ReadyCommand('ready'),
     new ReleaseCommand($dispatcher, 'release'),

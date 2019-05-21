@@ -41,6 +41,11 @@ class ListenerProvider implements ListenerProviderInterface
             Edit\DiscoverEditorListener::class,
             Edit\EditChangelogEntryListener::class,
         ],
+        ListVersions\ListVersionsEvent::class => [
+            Config\ConfigListener::class,
+            Common\IsChangelogReadableListener::class,
+            ListVersions\ListVersionsListener::class,
+        ],
         Release\ReleaseEvent::class => [
             Release\ConfigListener::class,
             Release\VerifyTagExistsListener::class,
