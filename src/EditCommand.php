@@ -9,18 +9,15 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function sprintf;
-
 class EditCommand extends Command
 {
-    use GetChangelogFileTrait;
-
     private const DESCRIPTION = 'Edit the latest changelog entry using the system editor.';
 
     private const HELP = <<<'EOH'
@@ -31,32 +28,26 @@ By default, the command will edit CHANGELOG.md in the current directory, unless
 a different file is specified via the --file option.
 EOH;
 
-    /** @var bool */
-    private $deprecated;
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
 
-    public function __construct(string $name = '', bool $deprecated = false)
+    public function __construct(EventDispatcherInterface $dispatcher, ?string $name = null)
     {
-        $this->deprecated = $deprecated;
+        $this->dispatcher = $dispatcher;
         parent::__construct($name);
     }
 
     protected function configure() : void
     {
-        $description = $this->deprecated
-            ? sprintf('(DEPRECATED) %s', self::DESCRIPTION)
-            : self::DESCRIPTION;
-        $this->setDescription($description);
-
-        $help = $this->deprecated
-            ? sprintf("DEPRECATED; USE version:edit INSTEAD\n\n%s", self::HELP)
-            : self::HELP;
-        $this->setHelp($help);
+        $this->setDescription(self::DESCRIPTION);
+        $this->setHelp(self::HELP);
 
         $this->addArgument(
             'version',
             InputArgument::OPTIONAL,
             'A specific changelog version to edit.'
         );
+
         $this->addOption(
             'editor',
             '-e',
@@ -67,29 +58,15 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        if ($this->deprecated) {
-            $output->writeln('<error>WARNING! This command is deprecated; use version:edit instead!</error>');
-        }
-
-        $editor = $input->getOption('editor') ?: null;
-        $version = $input->getArgument('version') ?: null;
-        $changelogFile = $this->getChangelogFile($input);
-
-        // @phpcs:disable
-        if (! (new Edit())($output, $changelogFile, $editor, $version)) {
-        // @phpcs:enable
-            $output->writeln(sprintf(
-                '<error>Could not edit %s; please check the output for details.</error>',
-                $changelogFile
-            ));
-            return 1;
-        }
-
-        $message = $version
-            ? sprintf('<info>Edited change for version %s in %s</info>', $version, $changelogFile)
-            : sprintf('<info>Edited most recent changelog in %s</info>', $changelogFile);
-        $output->writeln($message);
-
-        return 0;
+        return $this->dispatcher
+            ->dispatch(new Edit\EditChangelogEntryEvent(
+                $input,
+                $output,
+                $input->getArgument('version') ?: null,
+                $input->getOption('editor') ?: null
+            ))
+            ->failed()
+            ? 1
+            : 0;
     }
 }

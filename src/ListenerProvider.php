@@ -33,6 +33,14 @@ class ListenerProvider implements ListenerProviderInterface
             Config\DiscoverRemoteFromGitRemotesListener::class,
             Config\PromptForGitRemoteListener::class,
         ],
+        Edit\EditChangelogEntryEvent::class => [
+            Config\ConfigListener::class,
+            Common\IsChangelogReadableListener::class,
+            Edit\ValidateVersionListener::class,
+            Common\DiscoverChangelogEntryListener::class,
+            Edit\DiscoverEditorListener::class,
+            Edit\EditChangelogEntryListener::class,
+        ],
         Release\ReleaseEvent::class => [
             Release\ConfigListener::class,
             Release\VerifyTagExistsListener::class,
