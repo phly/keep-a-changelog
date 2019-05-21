@@ -56,7 +56,7 @@ $application->addCommands([
     new NewChangelogCommand('new'),
     new ReadyCommand('ready'),
     new ReleaseCommand($dispatcher, 'release'),
-    new RemoveCommand('version:remove'),
+    new RemoveCommand($dispatcher, 'version:remove'),
     new ShowVersionCommand('version:show'),
     new TaggerCommand('tag'),
 ]);

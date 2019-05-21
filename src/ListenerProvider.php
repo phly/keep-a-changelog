@@ -44,6 +44,14 @@ class ListenerProvider implements ListenerProviderInterface
             Release\CreateReleaseNameListener::class,
             Release\PushReleaseToProviderListener::class,
         ],
+        Remove\RemoveChangelogEntryEvent::class => [
+            Config\ConfigListener::class,
+            Common\ValidateVersionListener::class,
+            Common\IsChangelogReadableListener::class,
+            Common\DiscoverChangelogEntryListener::class,
+            Remove\PromptForConfirmationListener::class,
+            Remove\RemoveChangelogEntryListener::class,
+        ],
     ];
 
     public function getListenersForEvent(object $event) : iterable
