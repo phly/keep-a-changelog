@@ -9,18 +9,14 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function file_exists;
-use function sprintf;
-
 class NewChangelogCommand extends Command
 {
-    use GetChangelogFileTrait;
-
     private const DESCRIPTION = 'Create a new changelog file.';
 
     private const HELP = <<<'EOH'
@@ -29,6 +25,15 @@ CHANGELOG.md in the current directory. If no --initial-version is
 provided, the assumption is 0.1.0. If the file already exists, you can 
 use --overwrite to replace it.
 EOH;
+
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
+
+    public function __construct(EventDispatcherInterface $dispatcher, ?string $name = null)
+    {
+        $this->dispatcher = $dispatcher;
+        parent::__construct($name);
+    }
 
     protected function configure() : void
     {
@@ -48,27 +53,17 @@ EOH;
         );
     }
 
-    /**
-     * @throws Exception\ChangelogExistsException
-     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $file = $this->getChangelogFile($input);
-        $version = $input->getOption('initial-version') ?: '0.1.0';
-        $overwrite = $input->getOption('overwrite') ?: false;
-
-        if (file_exists($file) && ! $overwrite) {
-            throw Exception\ChangelogExistsException::forFile($file);
-        }
-
-        (new NewChangelog())($file, $version);
-
-        $output->writeln(sprintf(
-            '<info>Created new changelog in file "%s" using initial version "%s".</info>',
-            $file,
-            $version
-        ));
-
-        return 0;
+        return $this->dispatcher
+            ->dispatch(new NewChangelog\CreateNewChangelogEvent(
+                $input,
+                $output,
+                $input->getOption('initial-version') ?: '0.1.0',
+                $input->getOption('overwrite') ?: false
+            ))
+            ->failed()
+            ? 1
+            : 0;
     }
 }

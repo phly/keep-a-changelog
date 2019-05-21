@@ -7,15 +7,13 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\NewChangelog;
 
+use function file_exists;
 use function file_put_contents;
 use function sprintf;
 
-/**
- * Create a new changelog file.
- */
-class NewChangelog
+class CreateNewChangelogListener
 {
     private const TEMPLATE = <<<'EOT'
 # Changelog
@@ -46,9 +44,19 @@ All notable changes to this project will be documented in this file, in reverse 
 
 EOT;
 
-    public function __invoke(string $file, string $version) : void
+    public function __invoke(CreateNewChangelogEvent $event) : void
     {
-        $contents = sprintf(self::TEMPLATE, $version);
-        file_put_contents($file, $contents);
+        $changelogFile = $event->changelogFile();
+        if (file_exists($changelogFile) && ! $event->overwrite()) {
+            $event->changelogExists($changelogFile);
+            return;
+        }
+
+        file_put_contents(
+            $changelogFile,
+            sprintf(self::TEMPLATE, $event->version())
+        );
+
+        $event->createdChangelog();
     }
 }

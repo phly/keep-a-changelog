@@ -52,7 +52,7 @@ $application->addCommands([
     new EntryCommand('entry:removed'),
     new EntryCommand('entry:fixed'),
     new ListVersionsCommand($dispatcher, 'version:list'),
-    new NewChangelogCommand('new'),
+    new NewChangelogCommand($dispatcher, 'new'),
     new ReadyCommand($dispatcher, 'ready'),
     new ReleaseCommand($dispatcher, 'release'),
     new RemoveCommand($dispatcher, 'version:remove'),
