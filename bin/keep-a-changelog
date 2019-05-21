@@ -53,7 +53,7 @@ $application->addCommands([
     new EntryCommand('entry:fixed'),
     new ListVersionsCommand($dispatcher, 'version:list'),
     new NewChangelogCommand('new'),
-    new ReadyCommand('ready'),
+    new ReadyCommand($dispatcher, 'ready'),
     new ReleaseCommand($dispatcher, 'release'),
     new RemoveCommand($dispatcher, 'version:remove'),
     new ShowVersionCommand($dispatcher, 'version:show'),

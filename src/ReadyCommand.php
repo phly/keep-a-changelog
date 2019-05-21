@@ -9,18 +9,16 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function date;
-use function sprintf;
 
 class ReadyCommand extends Command
 {
-    use GetChangelogFileTrait;
-
     private const DESCRIPTION = 'In the latest changelog entry, mark the entry ready by setting its release date.';
 
     private const HELP = <<<'EOH'
@@ -28,6 +26,15 @@ In the latest changelog entry, mark the entry ready by setting its release date.
 
 If no --date is specified, the current date in YYYY-MM-DD format will be used.
 EOH;
+
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
+
+    public function __construct(EventDispatcherInterface $dispatcher, ?string $name = null)
+    {
+        $this->dispatcher = $dispatcher;
+        parent::__construct($name);
+    }
 
     protected function configure() : void
     {
@@ -44,17 +51,14 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $date = $input->getOption('date') ?: date('Y-m-d');
-
-        $output->writeln(sprintf(
-            '<info>Setting release date of most recent changelog to "%s"</info>',
-            $date
-        ));
-
-        $changelogFile = $this->getChangelogFile($input);
-
-        (new SetDate())($changelogFile, $date);
-
-        return 0;
+        return $this->dispatcher
+            ->dispatch(new Ready\ReadyLatestChangelogEvent(
+                $input,
+                $output,
+                $input->getOption('date') ?: date('Y-m-d')
+            ))
+            ->failed()
+            ? 1
+            : 0;
     }
 }
