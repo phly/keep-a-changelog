@@ -10,31 +10,20 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog;
 
 use Phly\KeepAChangelog\Provider\ProviderInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function array_key_exists;
-use function escapeshellarg;
-use function exec;
 use function explode;
-use function get_headers;
-use function getcwd;
 use function in_array;
-use function preg_match;
-use function realpath;
-use function sprintf;
-use function stream_context_create;
-use function strpos;
 use function ucwords;
 
 class EntryCommand extends Command
 {
-    use GetChangelogFileTrait;
-    use GetConfigValuesTrait;
-    use ProvideCommonOptionsTrait;
+    use Config\CommonConfigOptionsTrait;
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the latest changelog in the "%s" section';
 
@@ -50,20 +39,25 @@ to the given pull request. If no --package option is present, we will
 attempt to determine the package name from the composer.json file.
 EOH;
 
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
+
     /** @var string */
     private $type;
 
     /**
      * @throws Exception\InvalidNoteTypeException
      */
-    public function __construct(string $name)
+    public function __construct(EventDispatcherInterface $dispatcher, string $name)
     {
+        $this->dispatcher = $dispatcher;
+
         if (false === strpos($name, ':')) {
             throw Exception\InvalidNoteTypeException::forCommandName($name);
         }
 
         [$initial, $type] = explode(':', $name, 2);
-        if (! in_array($type, AddEntry::TYPES, true)) {
+        if (! in_array($type, Entry\EntryTypes::TYPES, true)) {
             throw Exception\InvalidNoteTypeException::forCommandName($name);
         }
 
@@ -92,158 +86,23 @@ EOH;
             InputOption::VALUE_REQUIRED,
             'Pull request number to associate with entry'
         );
-        $this->addOption(
-            'package',
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Name of package in organization/repo format (for building link to a pull request);'
-                . ' allows GitLab subgroups format as well'
-        );
 
-        $this->injectConfigBasedOptions();
+        $this->injectPackageOption($this);
+        $this->injectProviderOptions($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $output->writeln(sprintf(
-            '<info>Preparing entry for %s section</info>',
-            ucwords($this->type)
-        ));
-
-        $entry = $this->prepareEntry($input);
-        $changelog = $this->getChangelogFile($input);
-
-        $output->writeln(sprintf(
-            '<info>Writing "%s" entry to %s</info>',
-            ucwords($this->type),
-            $changelog
-        ));
-
-        (new AddEntry())(
-            $this->type,
-            $changelog,
-            $entry
-        );
-
-        return 0;
-    }
-
-    /**
-     * @throws Exception\EmptyEntryException
-     * @throws Exception\InvalidPullRequestException
-     */
-    private function prepareEntry(InputInterface $input) : string
-    {
-        $entry = $input->getArgument('entry');
-        if (empty($entry)) {
-            throw Exception\EmptyEntryException::create();
-        }
-
-        $pr = $input->getOption('pr');
-        if (! $pr) {
-            return $entry;
-        }
-
-        if (! preg_match('/^[1-9]\d*$/', (string) $pr)) {
-            throw Exception\InvalidPullRequestException::for($pr);
-        }
-
-        $config = $this->prepareConfig($input);
-        $provider = $this->getProvider($config);
-
-        return sprintf(
-            '[%s%d](%s) %s',
-            $provider instanceof Provider\IssueMarkupProviderInterface ? $provider->getPatchPrefix() : '#',
-            (int) $pr,
-            $this->preparePatchLink(
-                (int) $pr,
-                $input->getOption('package'),
-                $provider
-            ),
-            $entry
-        );
-    }
-
-    /**
-     * @throws Exception\InvalidPullRequestLinkException
-     */
-    private function preparePatchLink(int $pr, ?string $package, ProviderInterface $provider) : string
-    {
-        if (null !== $package) {
-            $link = $this->generatePatchLink($pr, $package, $provider);
-
-            if (null === $link) {
-                throw Exception\InvalidPullRequestLinkException::forPackage($package, $pr);
-            }
-
-            return $link;
-        }
-
-        $link = $this->generatePatchLink($pr, (new ComposerPackage())->getName(realpath(getcwd())), $provider);
-
-        if (null !== $link) {
-            return $link;
-        }
-
-        foreach ($this->getPackageNames($provider) as $package) {
-            $link = $this->generatePatchLink($pr, $package, $provider);
-
-            if (null !== $link) {
-                return $link;
-            }
-        }
-
-        throw Exception\InvalidPullRequestLinkException::noValidLinks($pr);
-    }
-
-    private function getPackageNames(ProviderInterface $provider) : array
-    {
-        exec('git remote', $remotes, $return);
-
-        if (0 !== $return) {
-            return [];
-        }
-
-        $packages = [];
-
-        foreach ($remotes as $remote) {
-            $url = [];
-            exec(sprintf('git remote get-url %s', escapeshellarg($remote)), $url, $return);
-
-            if (0 !== $return) {
-                continue;
-            }
-
-            if (0 === preg_match($provider->getRepositoryUrlRegex(), $url[0], $matches)) {
-                continue;
-            }
-
-            $packages[] = $matches[1];
-        }
-
-        return $packages;
-    }
-
-    private function generatePatchLink(int $pr, string $package, ProviderInterface $provider) : ?string
-    {
-        $link = $provider->generatePullRequestLink($package, $pr);
-        return $this->probeLink($link) ? $link : null;
-    }
-
-    private function probeLink(string $link) : bool
-    {
-        $headers = get_headers($link, 1, stream_context_create(['http' => ['method' => 'HEAD']]));
-        $statusLine = explode(' ', $headers[0]);
-        $statusCode = (int) $statusLine[1];
-
-        if ($statusCode < 300) {
-            return true;
-        }
-
-        if ($statusCode >= 300 && $statusCode <= 399 && array_key_exists('Location', $headers)) {
-            return $this->probeLink($headers['Location']);
-        }
-
-        return false;
+        return $this->dispatcher
+            ->dispatch(new Entry\AddChangelogEntryEvent(
+                $input,
+                $output,
+                $this->type,
+                $input->getArgument('entry'),
+                $input->getOption('pr')
+            ))
+            ->failed()
+            ? 1
+            : 0;
     }
 }

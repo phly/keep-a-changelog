@@ -17,10 +17,10 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 class ConfigListener
 {
     /** @var boolean */
-    private $requiresPackageName;
+    protected $requiresPackageName;
 
     /** @var boolean */
-    private $requiresRemoteName;
+    protected $requiresRemoteName;
 
     public function __construct(
         bool $requiresPackageName = false,

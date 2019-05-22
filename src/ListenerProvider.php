@@ -41,6 +41,13 @@ class ListenerProvider implements ListenerProviderInterface
             Edit\DiscoverEditorListener::class,
             Edit\EditChangelogEntryListener::class,
         ],
+        Entry\AddChangelogEntryEvent::class => [
+            Entry\ConfigListener::class,
+            Common\IsChangelogReadableListener::class,
+            Entry\IsEntryArgumentEmptyListener::class,
+            Entry\PrependPatchLinkListener::class,
+            Entry\AddChangelogEntryListener::class,
+        ],
         ListVersions\ListVersionsEvent::class => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,

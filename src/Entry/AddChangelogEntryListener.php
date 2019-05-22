@@ -1,15 +1,13 @@
 <?php
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
- * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
+ * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
  * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
  */
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
-
-use stdClass;
+namespace Phly\KeepAChangelog\Entry;
 
 use function array_splice;
 use function file;
@@ -20,74 +18,46 @@ use function preg_match;
 use function preg_replace;
 use function sprintf;
 
-/**
- * Add an entry to the latest changelog.
- */
-class AddEntry
+class AddChangelogEntryListener
 {
-    public const TYPE_ADDED = 'added';
-    public const TYPE_CHANGED = 'changed';
-    public const TYPE_DEPRECATED = 'deprecated';
-    public const TYPE_REMOVED = 'removed';
-    public const TYPE_FIXED = 'fixed';
+    public const APPEND_NEWLINE = true;
 
-    public const TYPES = [
-        self::TYPE_ADDED,
-        self::TYPE_CHANGED,
-        self::TYPE_DEPRECATED,
-        self::TYPE_REMOVED,
-        self::TYPE_FIXED,
-    ];
-
-    private const ACTION_INJECT = 'inject';
-    private const ACTION_REPLACE = 'replace';
-    private const ACTION_NOT_FOUND = 'not-found';
-    private const APPEND_NEWLINE = true;
-
-    /**
-     * Add an entry to the latest changelog.
-     *
-     * Finds the section of the latest changelog version corresponding to $type
-     * and injects $entry to the top of that section, writing the changes to
-     * the $changelogFile when done.
-     *
-     * @throws Exception\InvalidEntryTypeException
-     * @throws Exception\ChangelogFileNotFoundException
-     */
-    public function __invoke(string $type, string $changelogFile, string $entry) : void
+    public function __invoke(AddChangelogEntryEvent $event) : void
     {
-        if (! in_array($type, self::TYPES, true)) {
-            throw Exception\InvalidEntryTypeException::forType($type);
+        $entryType = $event->entryType();
+        if (! in_array($entryType, EntryTypes::TYPES, true)) {
+            $event->typeIsInvalid();
+            return;
         }
 
-        $contents = file($changelogFile);
-        if (false === $contents) {
-            throw Exception\ChangelogFileNotFoundException::at($changelogFile);
+        $changelogFile  = $event->changelogFile();
+        $contents       = file($changelogFile);
+        $injectionIndex = $this->locateInjectionIndex($contents, $entryType);
+
+        if ($injectionIndex->type === InjectionIndex::ACTION_NOT_FOUND) {
+            $event->matchingEntryTypeNotFound();
+            return;
         }
 
         file_put_contents(
             $changelogFile,
-            implode(
-                '',
-                $this->injectEntry(
-                    $contents,
-                    $this->locateInjectionIndex($contents, $type),
-                    $entry
-                )
-            )
+            implode('', $this->injectEntry(
+                $contents,
+                $injectionIndex,
+                $event->entry()
+            ))
         );
+
+        $event->addedChangelogEntry();
     }
 
     /**
      * Locates the location within the changelog where the injection should occur.
      * Also determines if the injection is a replacement or an addition.
      */
-    private function locateInjectionIndex(array $contents, string $type) : stdClass
+    private function locateInjectionIndex(array $contents, string $type) : InjectionIndex
     {
-        $action = (object) [
-            'index' => null,
-            'type' => self::ACTION_NOT_FOUND,
-        ];
+        $action = new InjectionIndex();
 
         foreach ($contents as $index => $line) {
             if (! preg_match('/^### ' . $type . '/i', $line)) {
@@ -96,8 +66,8 @@ class AddEntry
 
             $action->index = $index + 2;
             $action->type = preg_match('/^- Nothing/', $contents[$action->index])
-                ? self::ACTION_REPLACE
-                : self::ACTION_INJECT;
+                ? InjectionIndex::ACTION_REPLACE
+                : InjectionIndex::ACTION_INJECT;
             break;
         }
 
@@ -107,13 +77,13 @@ class AddEntry
     /**
      * Injects the new entry at the detected index, replacing the line if required.
      */
-    private function injectEntry(array $contents, stdClass $action, string $entry) : array
+    private function injectEntry(array $contents, InjectionIndex $action, string $entry) : array
     {
         switch ($action->type) {
-            case self::ACTION_REPLACE:
+            case InjectionIndex::ACTION_REPLACE:
                 array_splice($contents, $action->index, 1, $this->formatEntry($entry));
                 break;
-            case self::ACTION_INJECT:
+            case InjectionIndex::ACTION_INJECT:
                 array_splice($contents, $action->index, 0, $this->formatEntry($entry, self::APPEND_NEWLINE));
                 break;
             default:
