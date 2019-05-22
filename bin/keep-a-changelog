@@ -57,6 +57,6 @@ $application->addCommands([
     new ReleaseCommand($dispatcher, 'release'),
     new RemoveCommand($dispatcher, 'version:remove'),
     new ShowVersionCommand($dispatcher, 'version:show'),
-    new TaggerCommand('tag'),
+    new TaggerCommand($dispatcher, 'tag'),
 ]);
 $application->run();

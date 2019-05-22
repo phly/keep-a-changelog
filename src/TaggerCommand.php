@@ -9,27 +9,16 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function basename;
-use function file_get_contents;
-use function file_put_contents;
-use function getcwd;
-use function is_readable;
-use function realpath;
-use function sprintf;
-use function sys_get_temp_dir;
-use function system;
-use function tempnam;
-use function unlink;
-
 class TaggerCommand extends Command
 {
-    use GetChangelogFileTrait;
+    use Config\CommonConfigOptionsTrait;
 
     private const HELP = <<<'EOH'
 Create a new git tag for the current repository, using the relevant changelog entry.
@@ -51,77 +40,42 @@ tool.
 
 EOH;
 
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
+
+    public function __construct(EventDispatcherInterface $dispatcher, ?string $name = null)
+    {
+        $this->dispatcher = $dispatcher;
+        parent::__construct($name);
+    }
+
     protected function configure() : void
     {
         $this->setDescription('Create a new tag, using the relevant changelog entry.');
         $this->setHelp(self::HELP);
         $this->addArgument('version', InputArgument::REQUIRED, 'Version to tag');
         $this->addOption(
-            'package',
-            'p',
-            InputOption::VALUE_REQUIRED,
-            'Package name; defaults to name of working directory'
-        );
-        $this->addOption(
             'tagname',
             'a',
             InputOption::VALUE_REQUIRED,
             'Alternate git tag name to use when tagging; defaults to <version>'
         );
+
+        $this->injectPackageOption($this);
     }
 
-    /**
-     * @throws Exception\ChangelogFileNotFoundException
-     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $cwd = realpath(getcwd());
-
         $version = $input->getArgument('version');
-        $package = $input->getOption('package') ?: basename($cwd);
-        $tagName = $input->getOption('tagname') ?: $version;
-
-        $changelogFile = $this->getChangelogFile($input);
-        if (! is_readable($changelogFile)) {
-            throw Exception\ChangelogFileNotFoundException::at($changelogFile);
-        }
-
-        $parser = new ChangelogParser();
-        $changelog = $parser->findChangelogForVersion(
-            file_get_contents($changelogFile),
-            $version
-        );
-
-        $formatter = new ChangelogFormatter();
-        $changelog = $formatter->format($changelog);
-
-        if (! $this->tagWithChangelog($tagName, $package, $version, $changelog)) {
-            $output->writeln('<error>Error creating tag!</error>');
-            $output->writeln('Check the output logs for details');
-            return 1;
-        }
-
-        $output->writeln(sprintf(
-            '<info>Created tag "%s" for package "%s" using the following notes:</info>',
-            $version,
-            $package
-        ));
-
-        $output->write($changelog);
-
-        return 0;
-    }
-
-    private function tagWithChangelog(string $tagName, string $package, string $version, string $changelog) : bool
-    {
-        $tempFile = tempnam(sys_get_temp_dir(), 'KAC');
-        file_put_contents($tempFile, sprintf("%s %s\n\n%s", $package, $version, $changelog));
-
-        $command = sprintf('git tag -s -F %s %s', $tempFile, $tagName);
-        system($command, $return);
-
-        unlink($tempFile);
-
-        return 0 === $return;
+        return $this->dispatcher
+            ->dispatch(new Tag\TagReleaseEvent(
+                $input,
+                $output,
+                $version,
+                $input->getOption('tagname') ?: $version
+            ))
+            ->failed()
+            ? 1
+            : 0;
     }
 }

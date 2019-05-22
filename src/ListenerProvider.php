@@ -88,6 +88,14 @@ class ListenerProvider implements ListenerProviderInterface
             Common\IsChangelogReadableListener::class,
             ShowVersion\ShowVersionListener::class,
         ],
+        Tag\TagReleaseEvent::class => [
+            Tag\ConfigListener::class,
+            Common\ValidateVersionListener::class,
+            Common\IsChangelogReadableListener::class,
+            Common\ParseChangelogListener::class,
+            Common\FormatChangelogListener::class,
+            Tag\TagReleaseListener::class,
+        ],
     ];
 
     public function getListenersForEvent(object $event) : iterable
