@@ -23,9 +23,13 @@ class ConfigCreateCommand extends Command
 Allows you to create and seed a configuration file.
 
 If --local is provided, it will create local configuration in
-./.keep-a-changelog.ini. If --global is provided, it will create global
-configuration in $XDG_CONFIG_HOME/keep-a-changelog.ini. If both are
-provided, both files will be created.
+./.keep-a-changelog.ini.
+   
+If --global is provided, it will create global configuration in
+$XDG_CONFIG_HOME/keep-a-changelog.ini.
+
+If --changelog is provided, that file will be used to seed the changelog_file
+configuration setting.
 EOH;
 
     /** @var EventDispatcherInterface */
