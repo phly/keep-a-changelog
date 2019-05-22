@@ -7,14 +7,14 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Release;
+namespace Phly\KeepAChangelog\Common;
 
 use Phly\KeepAChangelog\ChangelogParser;
 use Phly\KeepAChangelog\Exception;
 
 class ParseChangelogListener
 {
-    public function __invoke(ReleaseEvent $event) : void
+    public function __invoke(ChangelogAwareEventInterface $event) : void
     {
         $changelogFile = $event->config()->changelogFile();
         $parser = new ChangelogParser();
@@ -28,6 +28,6 @@ class ParseChangelogListener
             return;
         }
 
-        $event->setRawChangelog($changelog);
+        $event->updateChangelog($changelog);
     }
 }

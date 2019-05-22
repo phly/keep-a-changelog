@@ -102,21 +102,10 @@ class ReleaseEventTest extends TestCase
     /**
      * @depends testEventHasNoChangelogComposedInitially
      */
-    public function testSettingRawChangelogPopulatesChangelog(ReleaseEvent $event) : ReleaseEvent
+    public function testUpdatingChangelogPopulatesChangelog(ReleaseEvent $event)
     {
-        $changelog = 'this is the raw changelog';
-        $event->setRawChangelog($changelog);
-        $this->assertSame($changelog, $event->changelog());
-        return $event;
-    }
-
-    /**
-     * @depends testSettingRawChangelogPopulatesChangelog
-     */
-    public function testMarkingChangelogDiscoveredOverridesRawChangelog(ReleaseEvent $event)
-    {
-        $changelog = 'this is the formatted changelog';
-        $event->discoveredChangelog($changelog);
+        $changelog = 'this is the changelog';
+        $event->updateChangelog($changelog);
         $this->assertSame($changelog, $event->changelog());
     }
 
@@ -139,16 +128,6 @@ class ReleaseEventTest extends TestCase
 
         $this->assertTrue($this->event->isPropagationStopped());
         $this->assertTrue($this->event->failed());
-    }
-
-    public function testIndicatingChangelogDiscoveredPopulatesChangelogWithoutStoppingPropagation()
-    {
-        $changelog = 'this is the changelog';
-
-        $this->event->discoveredChangelog($changelog);
-
-        $this->assertSame($changelog, $this->event->changelog());
-        $this->assertFalse($this->event->isPropagationStopped());
     }
 
     public function testIndicatingProviderIsCompleteStopsPropagationWithFailure()

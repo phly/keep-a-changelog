@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Release;
 
 use Phly\KeepAChangelog\Common\AbstractEvent;
+use Phly\KeepAChangelog\Common\ChangelogAwareEventInterface;
+use Phly\KeepAChangelog\Common\ChangelogProviderTrait;
+use Phly\KeepAChangelog\Common\VersionValidationTrait;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -17,29 +20,19 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
-class ReleaseEvent extends AbstractEvent
+class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
 {
-    /**
-     * The changelog entry associated with the version being released.
-     *
-     * @var null|string
-     */
-    private $changelog;
+    use ChangelogProviderTrait;
+    use VersionValidationTrait;
 
     /** @var null|ProviderInterface */
     private $provider;
-
-    /** @var null|string */
-    private $rawChangelog;
 
     /** @var null|string */
     private $releaseName;
 
     /** @var string */
     private $tagName;
-
-    /** @var string */
-    private $version;
 
     public function __construct(
         InputInterface $input,
@@ -58,19 +51,6 @@ class ReleaseEvent extends AbstractEvent
         return $this->failed;
     }
 
-    public function changelog() : ?string
-    {
-        if ($this->changelog) {
-            return $this->changelog;
-        }
-
-        if ($this->rawChangelog) {
-            return $this->rawChangelog;
-        }
-
-        return null;
-    }
-
     public function provider() : ?ProviderInterface
     {
         return $this->provider;
@@ -86,24 +66,6 @@ class ReleaseEvent extends AbstractEvent
         return $this->tagName;
     }
 
-    public function version() : string
-    {
-        return $this->version;
-    }
-
-    public function setRawChangelog(string $changelog) : void
-    {
-        if ($this->changelog) {
-            return;
-        }
-        $this->rawChangelog = $changelog;
-    }
-
-    public function discoveredChangelog(string $changelog) : void
-    {
-        $this->changelog = $changelog;
-    }
-
     public function setReleaseName(string $releaseName) : void
     {
         $this->releaseName = $releaseName;
@@ -112,18 +74,6 @@ class ReleaseEvent extends AbstractEvent
     public function releaseCreated(string $release) : void
     {
         $this->output()->writeln(sprintf('<info>Created %s<info>', $release));
-    }
-
-    public function errorParsingChangelog(string $changelogFile, Throwable $e) : void
-    {
-        $this->failed = true;
-        $output = $this->output();
-        $output->writeln(sprintf(
-            '<error>An error occurred parsing the changelog file "%s" for the release "%s":</error>',
-            $changelogFile,
-            $this->version
-        ));
-        $output->writeln($e->getMessage());
     }
 
     public function providerIsIncomplete() : void

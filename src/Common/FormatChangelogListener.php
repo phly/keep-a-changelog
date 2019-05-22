@@ -7,16 +7,16 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Release;
+namespace Phly\KeepAChangelog\Common;
 
 use Phly\KeepAChangelog\ChangelogFormatter;
 
 class FormatChangelogListener
 {
-    public function __invoke(ReleaseEvent $event) : void
+    public function __invoke(ChangelogAwareEventInterface $event) : void
     {
         $formatter = new ChangelogFormatter();
-        $event->discoveredChangelog(
+        $event->updateChangelog(
             $formatter->format($event->changelog())
         );
     }

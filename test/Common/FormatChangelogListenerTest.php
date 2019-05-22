@@ -7,18 +7,18 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog\Release;
+namespace PhlyTest\KeepAChangelog\Common;
 
 use Phly\KeepAChangelog\ChangelogFormatter;
-use Phly\KeepAChangelog\Release\FormatChangelogListener;
-use Phly\KeepAChangelog\Release\ReleaseEvent;
+use Phly\KeepAChangelog\Common\ChangelogAwareEventInterface;
+use Phly\KeepAChangelog\Common\FormatChangelogListener;
 use PHPUnit\Framework\TestCase;
 
 class FormatChangelogListenerTest extends TestCase
 {
     public function testListenerFormatsProvidedChangelogAndPushesItToTheEvent()
     {
-        $event = $this->prophesize(ReleaseEvent::class);
+        $event = $this->prophesize(ChangelogAwareEventInterface::class);
         $changelog = <<< 'EOC'
 ### Added
 
@@ -70,7 +70,7 @@ Fixed
 
 EOC;
         $event->changelog()->willReturn($changelog);
-        $event->discoveredChangelog($expected)->shouldBeCalled();
+        $event->updateChangelog($expected)->shouldBeCalled();
 
         $listener = new FormatChangelogListener();
 
