@@ -45,6 +45,7 @@ $application->addCommands([
     new BumpCommand(BumpCommand::BUMP_MAJOR, $dispatcher, 'bump:major'),
     new BumpToVersionCommand($dispatcher, 'bump:to-version'),
     new ConfigCommand('config'),
+    new ConfigShowCommand($dispatcher, 'config:show'),
     new EditCommand($dispatcher, 'version:edit'),
     new EntryCommand($dispatcher, 'entry:added'),
     new EntryCommand($dispatcher, 'entry:changed'),

@@ -19,6 +19,11 @@ class ListenerProvider implements ListenerProviderInterface
             Common\IsChangelogReadableListener::class,
             Bump\BumpChangelogVersionListener::class,
         ],
+        ConfigCommand\ShowConfigEvent::class => [
+            ConfigCommand\ShowGlobalConfigListener::class,
+            ConfigCommand\ShowLocalConfigListener::class,
+            ConfigCommand\ShowMergedConfigListener::class,
+        ],
         Config\ConfigDiscovery::class => [
             Config\RetrieveGlobalConfigListener::class,
             Config\RetrieveLocalConfigListener::class,

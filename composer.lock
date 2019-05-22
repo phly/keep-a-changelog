@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5e53c9eda05ce5d271561de8792b4fb6",
+    "content-hash": "de31c4e986f8209869c53b4011e87fa6",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -375,6 +375,39 @@
                 "gitlab"
             ],
             "time": "2019-04-15T07:38:13+00:00"
+        },
+        {
+            "name": "matomo/ini",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matomo-org/component-ini.git",
+                "reference": "ac25c899aefdbaca7e00a86367af24bd72aa1b4d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matomo-org/component-ini/zipball/ac25c899aefdbaca7e00a86367af24bd72aa1b4d",
+                "reference": "ac25c899aefdbaca7e00a86367af24bd72aa1b4d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "athletic/athletic": "0.1.*",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Matomo\\Ini\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "time": "2018-02-14T18:57:44+00:00"
         },
         {
             "name": "ocramius/package-versions",
