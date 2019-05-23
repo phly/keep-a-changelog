@@ -122,7 +122,7 @@ class ListenerProvider implements ListenerProviderInterface
 
     public function getListenersForEvent(object $event) : iterable
     {
-        $type = gettype($event);
+        $type = get_class($event);
         if (! isset($this->listeners[$type])) {
             return [];
         }
