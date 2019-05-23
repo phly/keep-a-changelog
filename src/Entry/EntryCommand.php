@@ -7,8 +7,10 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Entry;
 
+use Phly\KeepAChangelog\Config\CommonConfigOptionsTrait;
+use Phly\KeepAChangelog\Exception;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
@@ -23,7 +25,7 @@ use function ucwords;
 
 class EntryCommand extends Command
 {
-    use Config\CommonConfigOptionsTrait;
+    use CommonConfigOptionsTrait;
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the latest changelog in the "%s" section';
 
@@ -57,7 +59,7 @@ EOH;
         }
 
         [$initial, $type] = explode(':', $name, 2);
-        if (! in_array($type, Entry\EntryTypes::TYPES, true)) {
+        if (! in_array($type, EntryTypes::TYPES, true)) {
             throw Exception\InvalidNoteTypeException::forCommandName($name);
         }
 
@@ -100,7 +102,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new Entry\AddChangelogEntryEvent(
+            ->dispatch(new AddChangelogEntryEvent(
                 $input,
                 $output,
                 $this->type,
