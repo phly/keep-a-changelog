@@ -42,6 +42,9 @@ EOT;
 
         if (false === $success) {
             $event->creationFailed($configFile);
+            return;
         }
+
+        $event->createdConfigFile($config);
     }
 }

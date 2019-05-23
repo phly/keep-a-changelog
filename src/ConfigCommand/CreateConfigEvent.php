@@ -80,6 +80,11 @@ class CreateConfigEvent implements
         ));
     }
 
+    public function createdConfigFile(string $configFile) : void
+    {
+        $this->output->writeln(sprintf('<info>Created %s</info>', $configFile));
+    }
+
     public function creationFailed(string $filename) : void
     {
         $this->failed = true;
