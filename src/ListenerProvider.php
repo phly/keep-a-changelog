@@ -19,6 +19,16 @@ class ListenerProvider implements ListenerProviderInterface
             Common\IsChangelogReadableListener::class,
             Bump\BumpChangelogVersionListener::class,
         ],
+        Changelog\CreateNewChangelogEvent::class => [
+            Config\ConfigListener::class,
+            Common\ValidateVersionListener::class,
+            Changelog\CreateNewChangelogListener::class,
+        ],
+        Changelog\ReadyLatestChangelogEvent::class => [
+            Config\ConfigListener::class,
+            Common\IsChangelogReadableListener::class,
+            Changelog\SetDateForChangelogReleaseListener::class,
+        ],
         ConfigCommand\CreateConfigEvent::class => [
             ConfigCommand\CreateGlobalConfigListener::class,
             ConfigCommand\CreateLocalConfigListener::class,
@@ -53,14 +63,6 @@ class ListenerProvider implements ListenerProviderInterface
             Config\DiscoverRemoteFromGitRemotesListener::class,
             Config\PromptForGitRemoteListener::class,
         ],
-        Version\EditChangelogVersionEvent::class => [
-            Config\ConfigListener::class,
-            Common\IsChangelogReadableListener::class,
-            Version\ValidateVersionToEditListener::class,
-            Common\DiscoverChangelogEntryListener::class,
-            Common\DiscoverEditorListener::class,
-            Version\EditChangelogVersionListener::class,
-        ],
         Entry\AddChangelogEntryEvent::class => [
             Entry\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
@@ -69,21 +71,6 @@ class ListenerProvider implements ListenerProviderInterface
             Entry\PrependIssueLinkListener::class,
             Entry\PrependPatchLinkListener::class,
             Entry\AddChangelogEntryListener::class,
-        ],
-        Version\ListVersionsEvent::class => [
-            Config\ConfigListener::class,
-            Common\IsChangelogReadableListener::class,
-            Version\ListVersionsListener::class,
-        ],
-        Changelog\CreateNewChangelogEvent::class => [
-            Config\ConfigListener::class,
-            Common\ValidateVersionListener::class,
-            Changelog\CreateNewChangelogListener::class,
-        ],
-        Changelog\ReadyLatestChangelogEvent::class => [
-            Config\ConfigListener::class,
-            Common\IsChangelogReadableListener::class,
-            Changelog\SetDateForChangelogReleaseListener::class,
         ],
         Release\ReleaseEvent::class => [
             Release\ConfigListener::class,
@@ -95,6 +82,27 @@ class ListenerProvider implements ListenerProviderInterface
             Release\PushTagToRemoteListener::class,
             Release\CreateReleaseNameListener::class,
             Release\PushReleaseToProviderListener::class,
+        ],
+        Tag\TagReleaseEvent::class => [
+            Tag\ConfigListener::class,
+            Common\ValidateVersionListener::class,
+            Common\IsChangelogReadableListener::class,
+            Common\ParseChangelogListener::class,
+            Common\FormatChangelogListener::class,
+            Tag\TagReleaseListener::class,
+        ],
+        Version\EditChangelogVersionEvent::class => [
+            Config\ConfigListener::class,
+            Common\IsChangelogReadableListener::class,
+            Version\ValidateVersionToEditListener::class,
+            Common\DiscoverChangelogEntryListener::class,
+            Common\DiscoverEditorListener::class,
+            Version\EditChangelogVersionListener::class,
+        ],
+        Version\ListVersionsEvent::class => [
+            Config\ConfigListener::class,
+            Common\IsChangelogReadableListener::class,
+            Version\ListVersionsListener::class,
         ],
         Version\RemoveChangelogVersionEvent::class => [
             Config\ConfigListener::class,
@@ -109,14 +117,6 @@ class ListenerProvider implements ListenerProviderInterface
             Common\ValidateVersionListener::class,
             Common\IsChangelogReadableListener::class,
             Version\ShowVersionListener::class,
-        ],
-        Tag\TagReleaseEvent::class => [
-            Tag\ConfigListener::class,
-            Common\ValidateVersionListener::class,
-            Common\IsChangelogReadableListener::class,
-            Common\ParseChangelogListener::class,
-            Common\FormatChangelogListener::class,
-            Tag\TagReleaseListener::class,
         ],
     ];
 
