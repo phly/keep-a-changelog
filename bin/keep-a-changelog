@@ -53,7 +53,7 @@ $application->addCommands([
     new EntryCommand($dispatcher, 'entry:deprecated'),
     new EntryCommand($dispatcher, 'entry:removed'),
     new EntryCommand($dispatcher, 'entry:fixed'),
-    new NewChangelogCommand($dispatcher, 'new'),
+    new Changelog\NewCommand($dispatcher, 'changelog:new'),
     new ReadyCommand($dispatcher, 'ready'),
     new ReleaseCommand($dispatcher, 'release'),
     new TaggerCommand($dispatcher, 'tag'),

@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\NewChangelog;
+namespace Phly\KeepAChangelog\Changelog;
 
 use function file_exists;
 use function file_put_contents;

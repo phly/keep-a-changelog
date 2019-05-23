@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Changelog;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class NewChangelogCommand extends Command
+class NewCommand extends Command
 {
     private const DESCRIPTION = 'Create a new changelog file.';
 
@@ -56,7 +56,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new NewChangelog\CreateNewChangelogEvent(
+            ->dispatch(new CreateNewChangelogEvent(
                 $input,
                 $output,
                 $input->getOption('initial-version') ?: '0.1.0',

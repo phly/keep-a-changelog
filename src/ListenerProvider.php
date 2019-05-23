@@ -75,10 +75,10 @@ class ListenerProvider implements ListenerProviderInterface
             Common\IsChangelogReadableListener::class,
             Version\ListVersionsListener::class,
         ],
-        NewChangelog\CreateNewChangelogEvent::class => [
+        Changelog\CreateNewChangelogEvent::class => [
             Config\ConfigListener::class,
             Common\ValidateVersionListener::class,
-            NewChangelog\CreateNewChangelogListener::class,
+            Changelog\CreateNewChangelogListener::class,
         ],
         Ready\ReadyLatestChangelogEvent::class => [
             Config\ConfigListener::class,
