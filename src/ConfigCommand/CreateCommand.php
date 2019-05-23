@@ -66,7 +66,8 @@ EOH;
                 $input,
                 $output,
                 $input->getOption('local') ?: false,
-                $input->getOption('global') ?: false
+                $input->getOption('global') ?: false,
+                $input->getOption('changelog') ?: null
             ))
             ->failed()
             ? 1
