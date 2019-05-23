@@ -52,7 +52,7 @@ class ListenerProvider implements ListenerProviderInterface
             Common\IsChangelogReadableListener::class,
             Edit\ValidateVersionListener::class,
             Common\DiscoverChangelogEntryListener::class,
-            Edit\DiscoverEditorListener::class,
+            Common\DiscoverEditorListener::class,
             Edit\EditChangelogEntryListener::class,
         ],
         Entry\AddChangelogEntryEvent::class => [

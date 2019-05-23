@@ -7,14 +7,14 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Edit;
+namespace Phly\KeepAChangelog\Common;
 
 use function getenv;
 use function strpos;
 
 class DiscoverEditorListener
 {
-    public function __invoke(EditChangelogEntryEvent $event) : void
+    public function __invoke(EditorAwareEventInterface $event) : void
     {
         if ($event->editor()) {
             // Passed as an argument; nothing to do
