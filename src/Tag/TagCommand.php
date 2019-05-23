@@ -7,8 +7,9 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Tag;
 
+use Phly\KeepAChangelog\Config\CommonConfigOptionsTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,9 +17,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class TaggerCommand extends Command
+class TagCommand extends Command
 {
-    use Config\CommonConfigOptionsTrait;
+    use CommonConfigOptionsTrait;
 
     private const HELP = <<<'EOH'
 Create a new git tag for the current repository, using the relevant changelog entry.
@@ -68,7 +69,7 @@ EOH;
     {
         $version = $input->getArgument('version');
         return $this->dispatcher
-            ->dispatch(new Tag\TagReleaseEvent(
+            ->dispatch(new TagReleaseEvent(
                 $input,
                 $output,
                 $version,
