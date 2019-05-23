@@ -56,7 +56,7 @@ class ListenerProvider implements ListenerProviderInterface
         Edit\EditChangelogEntryEvent::class => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
-            Edit\ValidateVersionListener::class,
+            Edit\ValidateVersionToEditListener::class,
             Common\DiscoverChangelogEntryListener::class,
             Common\DiscoverEditorListener::class,
             Edit\EditChangelogEntryListener::class,
