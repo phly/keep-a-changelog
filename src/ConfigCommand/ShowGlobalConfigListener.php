@@ -10,10 +10,12 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\ConfigCommand;
 
 use Matomo\Ini;
+use Phly\KeepAChangelog\Common\IniReadWriteTrait;
 use Phly\KeepAChangelog\Config\LocateGlobalConfigTrait;
 
 class ShowGlobalConfigListener
 {
+    use IniReadWriteTrait;
     use LocateGlobalConfigTrait;
     use MaskProviderTokensTrait;
 
@@ -38,7 +40,7 @@ class ShowGlobalConfigListener
 
     private function filterConfiguration(string $configFile) : string
     {
-        $config = (new Ini\IniReader())->readFile($configFile);
-        return (new Ini\IniWriter())->writeToString($this->maskProviderTokens($config));
+        $config = $this->readIniFile($configFile);
+        return $this->arrayToIniString($this->maskProviderTokens($config));
     }
 }
