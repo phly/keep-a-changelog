@@ -96,13 +96,13 @@ class ListenerProvider implements ListenerProviderInterface
             Release\CreateReleaseNameListener::class,
             Release\PushReleaseToProviderListener::class,
         ],
-        Remove\RemoveChangelogEntryEvent::class => [
+        Version\RemoveChangelogVersionEvent::class => [
             Config\ConfigListener::class,
             Common\ValidateVersionListener::class,
             Common\IsChangelogReadableListener::class,
             Common\DiscoverChangelogEntryListener::class,
-            Remove\PromptForRemovalConfirmationListener::class,
-            Remove\RemoveChangelogEntryListener::class,
+            Version\PromptForRemovalConfirmationListener::class,
+            Version\RemoveChangelogVersionListener::class,
         ],
         ShowVersion\ShowVersionEvent::class => [
             Config\ConfigListener::class,

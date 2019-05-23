@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Version;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
@@ -18,12 +18,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoveCommand extends Command
 {
-    private const DESCRIPTION = 'Remove a changelog release entry.';
+    private const DESCRIPTION = 'Remove a changelog release version and its entries.';
 
     private const HELP = <<<'EOH'
-Remove the given changelog release entry based on the <version> provided.
-The command will provide a preview, and prompt for confirmation before doing
-so (unless using the --force-removal flag).
+Remove the given changelog release version and its entries based on the
+<version> provided.  The command will provide a preview, and prompt for
+confirmation before doing so (unless using the --force-removal flag).
 EOH;
 
     /** @var EventDispatcherInterface */
@@ -55,7 +55,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new Remove\RemoveChangelogEntryEvent(
+            ->dispatch(new RemoveChangelogVersionEvent(
                 $input,
                 $output,
                 $input->getArgument('version')

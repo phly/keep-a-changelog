@@ -7,19 +7,19 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Remove;
+namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\ChangelogEditor;
 
-class RemoveChangelogEntryListener
+class RemoveChangelogVersionListener
 {
-    public function __invoke(RemoveChangelogEntryEvent $event) : void
+    public function __invoke(RemoveChangelogVersionEvent $event) : void
     {
         $changelog = $event->changelogFile();
         $entry     = $event->changelogEntry();
 
         (new ChangelogEditor())->update($changelog, '', $entry);
 
-        $event->entryRemoved();
+        $event->versionRemoved();
     }
 }

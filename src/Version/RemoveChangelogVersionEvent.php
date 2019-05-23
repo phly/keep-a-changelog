@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Remove;
+namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Common\AbstractEvent;
 use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function sprintf;
 
-class RemoveChangelogEntryEvent extends AbstractEvent implements
+class RemoveChangelogVersionEvent extends AbstractEvent implements
     ChangelogEntryAwareEventInterface,
     VersionAwareEventInterface
 {
@@ -50,7 +50,7 @@ class RemoveChangelogEntryEvent extends AbstractEvent implements
         $this->output->writeln('<info>Aborting at user request</info>');
     }
 
-    public function entryRemoved()
+    public function versionRemoved()
     {
         $this->output->writeln(sprintf(
             '<info>Removed changelog version %s from file %s.</info>',
