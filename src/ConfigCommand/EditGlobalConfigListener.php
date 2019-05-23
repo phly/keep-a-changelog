@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\ConfigCommand;
 
-namespace Phly\KeepAChangelog\Common\LocateGlobalConfigTrait;
+use Phly\KeepAChangelog\Config\LocateGlobalConfigTrait;
 
 class EditGlobalConfigListener extends AbstractEditConfigListener
 {
