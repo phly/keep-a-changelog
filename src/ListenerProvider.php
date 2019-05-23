@@ -23,6 +23,11 @@ class ListenerProvider implements ListenerProviderInterface
             ConfigCommand\CreateGlobalConfigListener::class,
             ConfigCommand\CreateLocalConfigListener::class,
         ],
+        ConfigCommand\RemoveConfigEvent::class => [
+            ConfigCommand\VerifyRemoveOptionsListener::class,
+            ConfigCommand\RemoveLocalConfigListener::class,
+            ConfigCommand\RemoveGlobalConfigListener::class,
+        ],
         ConfigCommand\ShowConfigEvent::class => [
             ConfigCommand\ShowGlobalConfigListener::class,
             ConfigCommand\ShowLocalConfigListener::class,
