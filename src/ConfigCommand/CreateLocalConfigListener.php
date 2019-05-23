@@ -45,6 +45,6 @@ EOT;
             return;
         }
 
-        $event->createdConfigFile($config);
+        $event->createdConfigFile($configFile);
     }
 }
