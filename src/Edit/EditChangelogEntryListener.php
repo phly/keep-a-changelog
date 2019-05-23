@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Edit;
 
 use Phly\KeepAChangelog\ChangelogEditor;
+use Phly\KeepAChangelog\Common\Editor;
 
 use function file_get_contents;
 use function file_put_contents;
@@ -25,7 +26,7 @@ class EditChangelogEntryListener
     {
         $changelogEntry = $event->changelogEntry();
 
-        $status = $this->spawnEditor(
+        $status = (new Editor())->spawnEditor(
             $event->output(),
             $event->editor(),
             $this->createTempFileWithContents(
@@ -57,19 +58,5 @@ class EditChangelogEntryListener
         $path     = sprintf('%s/%s', sys_get_temp_dir(), $filename);
         file_put_contents($path, $contents);
         return $path;
-    }
-
-    /**
-     * Spawn an editor to edit the given filename.
-     */
-    public function spawnEditor(OutputInterface $output, string $editor, string $filename) : int
-    {
-        $descriptorspec = [STDIN, STDOUT, STDERR];
-        $command        = sprintf('%s %s', $editor, escapeshellarg($filename));
-
-        $output->writeln(sprintf('<info>Executing "%s"</info>', $command));
-
-        $process = proc_open($command, $descriptorspec, $pipes);
-        return proc_close($process);
     }
 }
