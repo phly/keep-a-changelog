@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Edit;
 
 use Phly\KeepAChangelog\Common\AbstractEvent;
+use Phly\KeepAChangelog\Common\EditorAwareEventInterface;
+use Phly\KeepAChangelog\Common\EditorProviderTrait;
 use Phly\KeepAChangelog\Common\VersionAwareEventInterface;
 use Phly\KeepAChangelog\Common\VersionValidationTrait;
 use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
@@ -21,13 +23,12 @@ use function sprintf;
 
 class EditChangelogEntryEvent extends AbstractEvent implements
     ChangelogEntryAwareEventInterface,
+    EditorAwareEventInterface,
     VersionAwareEventInterface
 {
     use ChangelogEntryDiscoverTrait;
+    use EditorProviderTrait;
     use VersionValidationTrait;
-
-    /** @var null|string */
-    private $editor;
 
     public function __construct(
         InputInterface $input,
@@ -44,16 +45,6 @@ class EditChangelogEntryEvent extends AbstractEvent implements
     public function isPropagationStopped() : bool
     {
         return $this->failed;
-    }
-
-    public function editor() : ?string
-    {
-        return $this->editor;
-    }
-
-    public function discoverEditor(string $editor) : void
-    {
-        $this->editor = $editor;
     }
 
     public function editorFailed() : void
