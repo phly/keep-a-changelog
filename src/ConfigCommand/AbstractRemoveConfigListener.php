@@ -39,9 +39,9 @@ abstract class AbstractRemoveConfigListener
         ));
 
         $helper   = new QuestionHelper();
-        $question = new ConfirmationQuestion('Do you really want to delete this file?', false);
+        $question = new ConfirmationQuestion('Do you really want to delete this file? ', false);
 
-        if (! $helper->ask($input, $output, $question)) {
+        if (! $helper->ask($event->input(), $output, $question)) {
             $event->abort($configFile);
             return;
         }
