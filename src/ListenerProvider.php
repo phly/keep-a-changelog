@@ -104,11 +104,11 @@ class ListenerProvider implements ListenerProviderInterface
             Version\PromptForRemovalConfirmationListener::class,
             Version\RemoveChangelogVersionListener::class,
         ],
-        ShowVersion\ShowVersionEvent::class => [
+        Version\ShowEvent::class => [
             Config\ConfigListener::class,
             Common\ValidateVersionListener::class,
             Common\IsChangelogReadableListener::class,
-            ShowVersion\ShowVersionListener::class,
+            Version\ShowVersionListener::class,
         ],
         Tag\TagReleaseEvent::class => [
             Tag\ConfigListener::class,

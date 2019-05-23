@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Version;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ShowVersionCommand extends Command
+class ShowCommand extends Command
 {
     private const DESCRIPTION = 'Show the changelog entry for the given version.';
 
@@ -46,7 +46,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new ShowVersion\ShowVersionEvent(
+            ->dispatch(new ShowVersionEvent(
                 $input,
                 $output,
                 $input->getArgument('version')

@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\ShowVersion;
+namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\ChangelogParser;
 use Phly\KeepAChangelog\Exception;
