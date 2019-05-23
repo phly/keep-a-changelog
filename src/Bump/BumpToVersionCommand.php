@@ -7,15 +7,13 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Bump;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use function sprintf;
 
 /**
  * Add a new changelog entry using the version specified.
@@ -57,7 +55,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new Bump\BumpChangelogVersionEvent(
+            ->dispatch(new BumpChangelogVersionEvent(
                 $input,
                 $output,
                 $this->dispatcher,

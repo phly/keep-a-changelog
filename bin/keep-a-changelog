@@ -38,12 +38,12 @@ $application->getDefinition()
     ]);
 
 $application->addCommands([
-    new BumpCommand(BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump'),
-    new BumpCommand(BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump:bugfix'),
-    new BumpCommand(BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump:patch'),
-    new BumpCommand(BumpCommand::BUMP_MINOR, $dispatcher, 'bump:minor'),
-    new BumpCommand(BumpCommand::BUMP_MAJOR, $dispatcher, 'bump:major'),
-    new BumpToVersionCommand($dispatcher, 'bump:to-version'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump:bugfix'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump:patch'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_MINOR, $dispatcher, 'bump:minor'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_MAJOR, $dispatcher, 'bump:major'),
+    new Bump\BumpToVersionCommand($dispatcher, 'bump:to-version'),
     new ConfigCommand\CreateCommand($dispatcher, 'config:create'),
     new ConfigCommand\EditCommand($dispatcher, 'config:edit'),
     new ConfigCommand\RemoveCommand($dispatcher, 'config:remove'),

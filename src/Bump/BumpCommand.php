@@ -7,8 +7,9 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Bump;
 
+use Phly\KeepAChangelog\Exception;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -90,7 +91,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new Bump\BumpChangelogVersionEvent(
+            ->dispatch(new BumpChangelogVersionEvent(
                 $input,
                 $output,
                 $this->dispatcher,
