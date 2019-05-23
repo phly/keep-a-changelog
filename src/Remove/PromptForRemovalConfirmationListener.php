@@ -12,7 +12,7 @@ namespace Phly\KeepAChangelog\Remove;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class PromptForConfirmationListener
+class PromptForRemovalConfirmationListener
 {
     public function __invoke(RemoveChangelogEntryEvent $event) : void
     {

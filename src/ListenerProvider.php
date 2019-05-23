@@ -101,7 +101,7 @@ class ListenerProvider implements ListenerProviderInterface
             Common\ValidateVersionListener::class,
             Common\IsChangelogReadableListener::class,
             Common\DiscoverChangelogEntryListener::class,
-            Remove\PromptForConfirmationListener::class,
+            Remove\PromptForRemovalConfirmationListener::class,
             Remove\RemoveChangelogEntryListener::class,
         ],
         ShowVersion\ShowVersionEvent::class => [
