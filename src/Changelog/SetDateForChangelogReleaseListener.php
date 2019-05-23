@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Ready;
+namespace Phly\KeepAChangelog\Changelog;
 
 use Phly\KeepAChangelog\ChangelogEditor;
 
@@ -16,7 +16,7 @@ use function implode;
 use function preg_match;
 use function sprintf;
 
-class SetDateInChangelogEntryListener
+class SetDateForChangelogReleaseListener
 {
     public function __invoke(ReadyLatestChangelogEvent $event) : void
     {

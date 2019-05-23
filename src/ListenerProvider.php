@@ -80,10 +80,10 @@ class ListenerProvider implements ListenerProviderInterface
             Common\ValidateVersionListener::class,
             Changelog\CreateNewChangelogListener::class,
         ],
-        Ready\ReadyLatestChangelogEvent::class => [
+        Changelog\ReadyLatestChangelogEvent::class => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
-            Ready\SetDateInChangelogEntryListener::class,
+            Changelog\SetDateForChangelogReleaseListener::class,
         ],
         Release\ReleaseEvent::class => [
             Release\ConfigListener::class,

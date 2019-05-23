@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Ready;
+namespace Phly\KeepAChangelog\Changelog;
 
 use Phly\KeepAChangelog\Common\AbstractEvent;
 use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;

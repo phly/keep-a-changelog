@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Changelog;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
@@ -19,10 +19,11 @@ use function date;
 
 class ReadyCommand extends Command
 {
-    private const DESCRIPTION = 'In the latest changelog entry, mark the entry ready by setting its release date.';
+    private const DESCRIPTION = 'In the latest changelog release entry, mark the entry ready by setting its release date.';
 
     private const HELP = <<<'EOH'
-In the latest changelog entry, mark the entry ready by setting its release date.
+In the latest changelog release entry, mark the entry ready by setting its
+release date.
 
 If no --date is specified, the current date in YYYY-MM-DD format will be used.
 EOH;
@@ -52,7 +53,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new Ready\ReadyLatestChangelogEvent(
+            ->dispatch(new ReadyLatestChangelogEvent(
                 $input,
                 $output,
                 $input->getOption('date') ?: date('Y-m-d')

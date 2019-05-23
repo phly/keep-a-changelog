@@ -54,7 +54,7 @@ $application->addCommands([
     new EntryCommand($dispatcher, 'entry:removed'),
     new EntryCommand($dispatcher, 'entry:fixed'),
     new Changelog\NewCommand($dispatcher, 'changelog:new'),
-    new ReadyCommand($dispatcher, 'ready'),
+    new Changelog\ReadyCommand($dispatcher, 'changelog:ready'),
     new ReleaseCommand($dispatcher, 'release'),
     new TaggerCommand($dispatcher, 'tag'),
     new Version\EditCommand($dispatcher, 'version:edit'),
