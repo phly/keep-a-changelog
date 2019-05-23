@@ -7,12 +7,12 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Edit;
+namespace Phly\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Common\ValidateVersionListener as BaseListener;
+use Phly\KeepAChangelog\Common\ValidateVersionListener;
 use Phly\KeepAChangelog\Common\VersionAwareEventInterface;
 
-class ValidateVersionToEditListener
+class ValidateVersionToEditListener extends ValidateVersionListener
 {
     public function __invoke(VersionAwareEventInterface $event) : void
     {

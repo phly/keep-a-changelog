@@ -48,7 +48,7 @@ $application->addCommands([
     new ConfigEditCommand($dispatcher, 'config:edit'),
     new ConfigRemoveCommand($dispatcher, 'config:remove'),
     new ConfigShowCommand($dispatcher, 'config:show'),
-    new EditCommand($dispatcher, 'version:edit'),
+    new Version\EditCommand($dispatcher, 'version:edit'),
     new EntryCommand($dispatcher, 'entry:added'),
     new EntryCommand($dispatcher, 'entry:changed'),
     new EntryCommand($dispatcher, 'entry:deprecated'),

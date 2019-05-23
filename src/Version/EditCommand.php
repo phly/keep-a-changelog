@@ -7,8 +7,9 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Version;
 
+use Phly\KeepAChangelog\Common\CommonOptionsTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EditCommand extends Command
 {
-    use Common\CommonOptionsTrait;
+    use CommonOptionsTrait;
 
     private const DESCRIPTION = 'Edit the latest changelog entry using the system editor.';
 
@@ -56,7 +57,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new Edit\EditChangelogEntryEvent(
+            ->dispatch(new EditChangelogVersionEvent(
                 $input,
                 $output,
                 $input->getArgument('version') ?: null,

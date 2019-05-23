@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Edit;
+namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Common\AbstractEvent;
 use Phly\KeepAChangelog\Common\EditorAwareEventInterface;
@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function sprintf;
 
-class EditChangelogEntryEvent extends AbstractEvent implements
+class EditChangelogVersionEvent extends AbstractEvent implements
     ChangelogEntryAwareEventInterface,
     EditorAwareEventInterface,
     VersionAwareEventInterface

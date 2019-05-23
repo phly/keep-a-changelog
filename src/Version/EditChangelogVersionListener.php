@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Edit;
+namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\ChangelogEditor;
 use Phly\KeepAChangelog\Common\Editor;
@@ -20,9 +20,9 @@ use function sprintf;
 use function sys_get_temp_dir;
 use function uniqid;
 
-class EditChangelogEntryListener
+class EditChangelogVersionListener
 {
-    public function __invoke(EditChangelogEntryEvent $event) : void
+    public function __invoke(EditChangelogVersionEvent $event) : void
     {
         $changelogEntry = $event->changelogEntry();
 
