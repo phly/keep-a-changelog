@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\ListVersions;
+namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Common\AbstractEvent;
 use Symfony\Component\Console\Input\InputInterface;

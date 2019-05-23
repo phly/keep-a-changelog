@@ -70,10 +70,10 @@ class ListenerProvider implements ListenerProviderInterface
             Entry\PrependPatchLinkListener::class,
             Entry\AddChangelogEntryListener::class,
         ],
-        ListVersions\ListVersionsEvent::class => [
+        Version\ListVersionsEvent::class => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
-            ListVersions\ListVersionsListener::class,
+            Version\ListVersionsListener::class,
         ],
         NewChangelog\CreateNewChangelogEvent::class => [
             Config\ConfigListener::class,

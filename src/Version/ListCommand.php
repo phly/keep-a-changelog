@@ -7,14 +7,14 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Version;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ListVersionsCommand extends Command
+class ListCommand extends Command
 {
     private const DESCRIPTION = 'List all versions represented in the changelog file.';
 
@@ -41,7 +41,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new ListVersions\ListVersionsEvent($input, $output))
+            ->dispatch(new ListVersionsEvent($input, $output))
             ->failed()
             ? 1
             : 0;
