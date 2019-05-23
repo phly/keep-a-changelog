@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Release;
 
 use Phly\KeepAChangelog\Config\CommonConfigOptionsTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -87,7 +87,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new Release\ReleaseEvent($input, $output, $this->dispatcher))
+            ->dispatch(new ReleaseEvent($input, $output, $this->dispatcher))
             ->failed()
             ? 1
             : 0;
