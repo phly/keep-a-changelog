@@ -19,6 +19,8 @@ class CreateConfigEvent implements
     IOInterface,
     StoppableEventInterface
 {
+    use IOTrait;
+
     /** @var null|string */
     private $customChangelog;
 
