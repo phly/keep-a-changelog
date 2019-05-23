@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\ChangelogEditor;
+use Phly\KeepAChangelog\Common\ChangelogEditor;
 
 class RemoveChangelogVersionListener
 {

@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog;
+namespace PhlyTest\KeepAChangelog\Common;
 
-use Phly\KeepAChangelog\ChangelogFormatter;
+use Phly\KeepAChangelog\Common\ChangelogFormatter;
 use PHPUnit\Framework\TestCase;
 
 class ChangelogFormatterTest extends TestCase

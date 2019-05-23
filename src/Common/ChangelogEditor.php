@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Common;
 
 use function array_splice;
 use function file;
@@ -16,7 +16,7 @@ use function implode;
 
 class ChangelogEditor
 {
-    public function update(string $filename, string $replacement, Common\ChangelogEntry $entry) : void
+    public function update(string $filename, string $replacement, ChangelogEntry $entry) : void
     {
         $contents = file($filename);
         array_splice($contents, $entry->index, $entry->length, $replacement);

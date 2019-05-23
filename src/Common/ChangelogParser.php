@@ -7,7 +7,9 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Common;
+
+use Phly\KeepAChangelog\Exception;
 
 use function fclose;
 use function feof;

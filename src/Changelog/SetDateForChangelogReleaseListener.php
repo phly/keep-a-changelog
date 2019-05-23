@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Changelog;
 
-use Phly\KeepAChangelog\ChangelogEditor;
+use Phly\KeepAChangelog\Common\ChangelogEditor;
 
 use function explode;
 use function implode;

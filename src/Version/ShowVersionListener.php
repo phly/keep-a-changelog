@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\ChangelogParser;
+use Phly\KeepAChangelog\Common\ChangelogParser;
 use Phly\KeepAChangelog\Exception;
 
 use function file_get_contents;

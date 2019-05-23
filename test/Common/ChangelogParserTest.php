@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog;
+namespace PhlyTest\KeepAChangelog\Common;
 
-use Phly\KeepAChangelog\ChangelogParser;
+use Phly\KeepAChangelog\Common\ChangelogParser;
 use Phly\KeepAChangelog\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -21,7 +21,7 @@ class ChangelogParserTest extends TestCase
 {
     public function setUp()
     {
-        $this->changelog = file_get_contents(__DIR__ . '/_files/CHANGELOG.md');
+        $this->changelog = file_get_contents(__DIR__ . '/../_files/CHANGELOG.md');
         $this->parser = new ChangelogParser();
     }
 
@@ -33,7 +33,7 @@ class ChangelogParserTest extends TestCase
 
     public function testRaisesExceptionIfMatchingEntryFoundButInvalidDateFormatSet()
     {
-        $changelogWithInvalidReleaseDate = file_get_contents(__DIR__ . '/_files/CHANGELOG-INVALID-DATE.md');
+        $changelogWithInvalidReleaseDate = file_get_contents(__DIR__ . '/../_files/CHANGELOG-INVALID-DATE.md');
         $this->expectException(Exception\ChangelogMissingDateException::class);
         $this->parser->findChangelogForVersion($changelogWithInvalidReleaseDate, '1.1.0');
     }
@@ -41,7 +41,7 @@ class ChangelogParserTest extends TestCase
     public function testRaisesExceptionIfUnableToIsolateChangelog()
     {
         $this->expectException(Exception\InvalidChangelogFormatException::class);
-        $this->parser->findChangelogForVersion(file_get_contents(__DIR__ . '/_files/CHANGELOG-INVALID.md'), '0.1.0');
+        $this->parser->findChangelogForVersion(file_get_contents(__DIR__ . '/../_files/CHANGELOG-INVALID.md'), '0.1.0');
     }
 
     public function testReturnsDiscoveredChangelogWhenDiscovered()
@@ -105,7 +105,7 @@ EOF;
     public function testRecognizedSingleVersionChangelog()
     {
         $changelog = $this->parser->findChangelogForVersion(
-            file_get_contents(__DIR__ . '/_files/CHANGELOG-SINGLE-VERSION.md'),
+            file_get_contents(__DIR__ . '/../_files/CHANGELOG-SINGLE-VERSION.md'),
             '0.1.0'
         );
 
@@ -120,7 +120,7 @@ EOF;
 
     public function testRetrievingDateRaisesExceptionIfMatchingEntryFoundButInvalidDateFormatPresent()
     {
-        $changelogWithInvalidReleaseDate = file_get_contents(__DIR__ . '/_files/CHANGELOG-INVALID-DATE.md');
+        $changelogWithInvalidReleaseDate = file_get_contents(__DIR__ . '/../_files/CHANGELOG-INVALID-DATE.md');
         $this->expectException(Exception\ChangelogMissingDateException::class);
         $this->parser->findReleaseDateForVersion($changelogWithInvalidReleaseDate, '1.1.0');
     }
@@ -145,7 +145,7 @@ EOF;
             '0.1.0' => '2018-03-23',
         ];
 
-        $actual = iterator_to_array($this->parser->findAllVersions(__DIR__ . '/_files/CHANGELOG.md'));
+        $actual = iterator_to_array($this->parser->findAllVersions(__DIR__ . '/../_files/CHANGELOG.md'));
 
         $this->assertSame($expected, $actual);
     }

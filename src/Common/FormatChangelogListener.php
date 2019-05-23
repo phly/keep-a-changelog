@@ -9,8 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Common;
 
-use Phly\KeepAChangelog\ChangelogFormatter;
-
 class FormatChangelogListener
 {
     public function __invoke(ChangelogAwareEventInterface $event) : void

@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Common;
 
-use Phly\KeepAChangelog\ChangelogParser;
 use Phly\KeepAChangelog\Exception;
 
 class ParseChangelogListener

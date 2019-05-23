@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\Common;
 
 use function preg_replace_callback;
 use function sprintf;
