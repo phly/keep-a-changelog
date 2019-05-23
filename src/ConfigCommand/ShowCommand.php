@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog;
+namespace Phly\KeepAChangelog\ConfigCommand;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
@@ -15,15 +15,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ConfigRemoveCommand extends Command
+class ShowCommand extends Command
 {
-    private const DESCRIPTION = 'Remove a configuration file or files.';
+    private const DESCRIPTION = 'Show existing configuration.';
 
     private const HELP = <<<'EOH'
-Allows you to remove one or both of the global and local configuration files
-($XDG_CONFIG_HOME/keep-a-changelog.ini and ./.keep-a-changelog.ini,
-respectively). The command will prompt for confirmation before removing any
-files.
+Shows existing configuration. If --local is provided, it will show local
+configuration. If --global is provided, it will show global configuration.
+If both are provided, or no arguments are provided, it will show merged
+configuration.
+
+In all cases, it will NOT display provider token values; instead, it will
+simply display if a token is present for a given provider.
 EOH;
 
     /** @var EventDispatcherInterface */
@@ -43,20 +46,20 @@ EOH;
             'global',
             'g',
             InputOption::VALUE_NONE,
-            'Edit the global configuration file ($XDG_CONFIG_HOME/keep-a-changelog.ini)'
+            'Show configuration from the global configuration file ($XDG_CONFIG_HOME/keep-a-changelog.ini)'
         );
         $this->addOption(
             'local',
             'l',
             InputOption::VALUE_NONE,
-            'Edit the local configuration file (./.keep-a-changelog.ini)'
+            'Show configuration from the local configuration file (./.keep-a-changelog.ini)'
         );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new ConfigCommand\RemoveConfigEvent(
+            ->dispatch(new ShowConfigEvent(
                 $input,
                 $output,
                 $input->getOption('local') ?: false,
