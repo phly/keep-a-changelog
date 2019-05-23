@@ -22,6 +22,9 @@ class AddChangelogEntryEvent extends AbstractEvent
     private $entryType;
 
     /** @var null|int */
+    private $issueNumber;
+
+    /** @var null|int */
     private $patchNumber;
 
     public function __construct(
@@ -29,13 +32,15 @@ class AddChangelogEntryEvent extends AbstractEvent
         OutputInterface $output,
         string $entryType,
         string $entry,
-        ?int $patchNumber
+        ?int $patchNumber,
+        ?int $issueNumber
     ) {
-        $this->input  = $input;
-        $this->output = $output;
-        $this->entryType = $entryType;
-        $this->entry  = $entry;
+        $this->input       = $input;
+        $this->output      = $output;
+        $this->entryType   = $entryType;
+        $this->entry       = $entry;
         $this->patchNumber = $patchNumber;
+        $this->issueNumber = $issueNumber;
     }
 
     public function isPropagationStopped() : bool
@@ -51,6 +56,11 @@ class AddChangelogEntryEvent extends AbstractEvent
     public function entryType() : string
     {
         return $this->entryType;
+    }
+
+    public function issueNumber() : ?int
+    {
+        return $this->issueNumber;
     }
 
     public function patchNumber() : ?int
@@ -80,6 +90,16 @@ class AddChangelogEntryEvent extends AbstractEvent
         );
     }
 
+    public function issueNumberIsInvalid(int $issueNumber) : void
+    {
+        $this->failed = true;
+        $this->output->writeln(sprintf(
+            '<error>The --issue argument (%d) is invalid</error>',
+            $issueNumber
+        ));
+        $this->output->writeln('The value must be numeric, and start with a digit between 1 and 9');
+    }
+
     public function patchNumberIsInvalid(int $patchNumber) : void
     {
         $this->failed = true;
@@ -93,8 +113,19 @@ class AddChangelogEntryEvent extends AbstractEvent
     public function providerCannotGenerateLinks() : void
     {
         $this->failed = true;
-        $this->output->writeln('<error>Cannot generate link to provided patch</error>');
+        $this->output->writeln('<error>Cannot generate link to patch or issue</error>');
         $this->output->writeln('In most cases, this is due to a missing package argument.');
+    }
+
+    public function issueLinkIsInvalid(string $link) : void
+    {
+        $this->failed = true;
+        $this->output->writeln('<error>Generated issue link is invalid</error>');
+        $this->output->writeln(sprintf(
+            'The issue identifier provided resulted in the link %s,'
+            . ' which does not resolve to a valid location.',
+            $link
+        ));
     }
 
     public function patchLinkIsInvalid(string $link) : void

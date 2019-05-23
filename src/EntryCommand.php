@@ -84,7 +84,13 @@ EOH;
             'pr',
             null,
             InputOption::VALUE_REQUIRED,
-            'Pull request number to associate with entry'
+            'Patch/Merge request identifier to associate with entry; prepends a link to the entry'
+        );
+        $this->addOption(
+            'issue',
+            'i',
+            InputOption::VALUE_REQUIRED,
+            'Issue identifier to associate with entry; prepends a link to the entry'
         );
 
         $this->injectPackageOption($this);
@@ -99,7 +105,8 @@ EOH;
                 $output,
                 $this->type,
                 $input->getArgument('entry'),
-                $input->getOption('pr')
+                $input->getOption('pr'),
+                $input->getOption('issue')
             ))
             ->failed()
             ? 1

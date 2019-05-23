@@ -9,25 +9,27 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Entry;
 
-class PrependPatchLinkListener extends AbstractPrependLinkListener
+use Phly\KeepAChangelog\Provider\ProviderInterface;
+
+class PrependIssueLinkListener extends AbstractPrependLinkListener
 {
     public function getIdentifier(AddChangelogEntryEvent $event) : ?int
     {
-        return $event->patchNumber();
+        return $event->issueNumber();
     }
 
     public function generateLink(ProviderInterface $provider, int $identifier) : string
     {
-        return $provider->generatePatchLink($identifier);
+        return $provider->generateIssueLink($identifier);
     }
 
     public function reportInvalidIdentifier(AddChangelogEntryEvent $event, int $identifier) : void
     {
-        $event->patchNumberIsInvalid($identifier);
+        $event->issueNumberIsInvalid($identifier);
     }
 
     public function reportInvalidLink(AddChangelogEntryEvent $event, string $link) : void
     {
-        $event->patchLinkIsInvalid($link);
+        $event->issueLinkIsInvalid($link);
     }
 }
