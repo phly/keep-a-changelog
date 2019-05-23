@@ -17,6 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigEditCommand extends Command
 {
+    use Common\CommonOptionsTrait;
+
     private const DESCRIPTION = 'Edit a configuration file.';
 
     private const HELP = <<<'EOH'
@@ -53,12 +55,7 @@ EOH;
             'Edit the local configuration file (./.keep-a-changelog.ini)'
         );
 
-        $this->addOption(
-            'editor',
-            '-e',
-            InputOption::VALUE_REQUIRED,
-            'Alternate editor command to use to edit the configuration file.'
-        );
+        $this->injectEditorOption($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int

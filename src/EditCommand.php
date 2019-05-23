@@ -18,6 +18,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EditCommand extends Command
 {
+    use Common\CommonOptionsTrait;
+
     private const DESCRIPTION = 'Edit the latest changelog entry using the system editor.';
 
     private const HELP = <<<'EOH'
@@ -48,12 +50,7 @@ EOH;
             'A specific changelog version to edit.'
         );
 
-        $this->addOption(
-            'editor',
-            '-e',
-            InputOption::VALUE_REQUIRED,
-            'Alternate editor command to use to edit the changelog.'
-        );
+        $this->injectEditorOption($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
