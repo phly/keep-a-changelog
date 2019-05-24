@@ -43,7 +43,7 @@ class ShowVersionEvent extends AbstractEvent implements VersionAwareEventInterfa
         $this->output->writeln(sprintf(
             '<error>Unable to find changelog for version %s in file %s</error>',
             $this->version,
-            $this->changelogFile
+            $this->config()->changelogFile()
         ));
     }
 
@@ -53,7 +53,7 @@ class ShowVersionEvent extends AbstractEvent implements VersionAwareEventInterfa
         $this->output->writeln(sprintf(
             '<error>Changelog for version %s in file %s does not have a valid date associated</error>',
             $this->version,
-            $this->changelogFile
+            $this->config()->changelogFile()
         ));
     }
 
@@ -63,7 +63,7 @@ class ShowVersionEvent extends AbstractEvent implements VersionAwareEventInterfa
         $this->output->writeln(sprintf(
             '<error>Changelog for version %s in file %s is malformed</error>',
             $this->version,
-            $this->changelogFile
+            $this->config()->changelogFile()
         ));
     }
 }

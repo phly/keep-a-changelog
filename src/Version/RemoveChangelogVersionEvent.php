@@ -58,7 +58,7 @@ class RemoveChangelogVersionEvent extends AbstractEvent implements
         $this->output->writeln(sprintf(
             '<info>Removed changelog version %s from file %s.</info>',
             $this->version,
-            $this->changelogFile
+            $this->config()->changelogFile()
         ));
     }
 }

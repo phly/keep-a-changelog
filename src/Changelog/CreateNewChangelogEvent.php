@@ -52,7 +52,7 @@ class CreateNewChangelogEvent extends AbstractEvent implements VersionAwareEvent
         $this->failed = true;
         $this->output->writeln(sprintf(
             '<error>Cannot create changelog file "%s"; file exists.</error>',
-            $this->changelogFile
+            $this->config()->changelogFile()
         ));
         $this->output->writeln('If you want to overwrite the file, use the --overwrite|-o option');
     }
@@ -61,7 +61,7 @@ class CreateNewChangelogEvent extends AbstractEvent implements VersionAwareEvent
     {
         $this->output->writeln(sprintf(
             '<info>Created new changelog in file "%s" using initial version "%s".</info>',
-            $this->changelogFile,
+            $this->config()->changelogFile(),
             $this->version
         ));
     }

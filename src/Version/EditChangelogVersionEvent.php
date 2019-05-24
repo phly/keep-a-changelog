@@ -55,15 +55,22 @@ class EditChangelogVersionEvent extends AbstractEvent implements
         $this->failed = true;
         $this->output->writeln(sprintf(
             '<error>Could not edit %s; please check the output for details.</error>',
-            $this->changelogFile
+            $this->config()->changelogFile()
         ));
     }
 
     public function editComplete() : void
     {
         $message = $this->version
-            ? sprintf('<info>Edited change for version %s in %s</info>', $this->version, $this->changelogFile)
-            : sprintf('<info>Edited most recent changelog in %s</info>', $this->changelogFile);
+            ? sprintf(
+                '<info>Edited change for version %s in %s</info>',
+                $this->version,
+                $this->config()->changelogFile()
+            )
+            : sprintf(
+                '<info>Edited most recent changelog in %s</info>',
+                $this->config()->changelogFile()
+            );
         $this->output->writeln($message);
     }
 }

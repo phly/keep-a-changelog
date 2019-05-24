@@ -27,7 +27,7 @@ trait ChangelogEntryDiscoveryTrait
             '<error>Could not locate version %s in changelog file %s;'
                 . ' please verify the version and/or changelog file.</error>',
             $this->version ?: '"latest"',
-            $this->changelogFile
+            $changelogFile
         ));
     }
 
