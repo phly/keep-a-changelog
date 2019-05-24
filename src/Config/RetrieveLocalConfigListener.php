@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Config;
 
+use Phly\KeepAChangelog\Config;
+
 use function getcwd;
 use function realpath;
 
