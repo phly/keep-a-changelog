@@ -20,10 +20,10 @@ class NewCommand extends Command
     private const DESCRIPTION = 'Create a new changelog file.';
 
     private const HELP = <<<'EOH'
-Create a new changelog file. If no --file is provided, the assumption is
-CHANGELOG.md in the current directory. If no --initial-version is
-provided, the assumption is 0.1.0. If the file already exists, you can 
-use --overwrite to replace it.
+Create a new changelog file. If no --changelog option is provided, the
+assumption is CHANGELOG.md in the current directory. If no
+--initial-version is provided, the assumption is 0.1.0. If the file already
+exists, you can use --overwrite to replace it.
 EOH;
 
     /** @var EventDispatcherInterface */
