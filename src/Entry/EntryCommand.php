@@ -105,6 +105,7 @@ EOH;
             ->dispatch(new AddChangelogEntryEvent(
                 $input,
                 $output,
+                $this->dispatcher,
                 $this->type,
                 $input->getArgument('entry'),
                 $input->getOption('pr'),

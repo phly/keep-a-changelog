@@ -14,6 +14,7 @@ use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
 use Phly\KeepAChangelog\Common\ChangelogEntryDiscoverTrait;
 use Phly\KeepAChangelog\Common\VersionAwareEventInterface;
 use Phly\KeepAChangelog\Common\VersionValidationTrait;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -32,11 +33,13 @@ class RemoveChangelogVersionEvent extends AbstractEvent implements
     public function __construct(
         InputInterface $input,
         OutputInterface $output,
+        EventDispatcherInterface $dispatcher,
         string $version
     ) {
-        $this->input   = $input;
-        $this->output  = $output;
-        $this->version = $version;
+        $this->input      = $input;
+        $this->output     = $output;
+        $this->dispatcher = $dispatcher;
+        $this->version    = $version;
     }
 
     public function isPropagationStopped() : bool

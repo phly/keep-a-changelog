@@ -13,6 +13,7 @@ use Phly\KeepAChangelog\Common\AbstractEvent;
 use Phly\KeepAChangelog\Common\ChangelogAwareEventInterface;
 use Phly\KeepAChangelog\Common\ChangelogProviderTrait;
 use Phly\KeepAChangelog\Common\VersionValidationTrait;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -27,11 +28,13 @@ class TagReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterf
     public function __construct(
         InputInterface $input,
         OutputInterface $output,
+        EventDispatcherInterface $dispatcher,
         string $version,
         string $tagName
     ) {
         $this->input   = $input;
         $this->output  = $output;
+        $this->dispatcher  = $dispatcher;
         $this->version = $version;
         $this->tagName = $tagName;
     }

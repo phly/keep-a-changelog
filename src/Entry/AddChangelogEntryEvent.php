@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Entry;
 
 use Phly\KeepAChangelog\Common\AbstractEvent;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -30,6 +31,7 @@ class AddChangelogEntryEvent extends AbstractEvent
     public function __construct(
         InputInterface $input,
         OutputInterface $output,
+        EventDispatcherInterface $dispatcher,
         string $entryType,
         string $entry,
         ?int $patchNumber,
@@ -37,6 +39,7 @@ class AddChangelogEntryEvent extends AbstractEvent
     ) {
         $this->input       = $input;
         $this->output      = $output;
+        $this->dispatcher  = $dispatcher;
         $this->entryType   = $entryType;
         $this->entry       = $entry;
         $this->patchNumber = $patchNumber;

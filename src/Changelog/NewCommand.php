@@ -59,6 +59,7 @@ EOH;
             ->dispatch(new CreateNewChangelogEvent(
                 $input,
                 $output,
+                $this->dispatcher,
                 $input->getOption('initial-version') ?: '0.1.0',
                 $input->getOption('overwrite') ?: false
             ))

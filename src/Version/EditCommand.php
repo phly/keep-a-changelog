@@ -60,6 +60,7 @@ EOH;
             ->dispatch(new EditChangelogVersionEvent(
                 $input,
                 $output,
+                $this->dispatcher,
                 $input->getArgument('version') ?: null,
                 $input->getOption('editor') ?: null
             ))

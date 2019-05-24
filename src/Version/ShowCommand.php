@@ -49,6 +49,7 @@ EOH;
             ->dispatch(new ShowVersionEvent(
                 $input,
                 $output,
+                $this->dispatcher,
                 $input->getArgument('version')
             ))
             ->failed()

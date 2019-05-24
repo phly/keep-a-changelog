@@ -41,7 +41,7 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new ListVersionsEvent($input, $output))
+            ->dispatch(new ListVersionsEvent($input, $output, $this->dispatcher))
             ->failed()
             ? 1
             : 0;

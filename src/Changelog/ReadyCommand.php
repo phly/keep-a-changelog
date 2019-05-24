@@ -56,6 +56,7 @@ EOH;
             ->dispatch(new ReadyLatestChangelogEvent(
                 $input,
                 $output,
+                $this->dispatcher,
                 $input->getOption('date') ?: date('Y-m-d')
             ))
             ->failed()

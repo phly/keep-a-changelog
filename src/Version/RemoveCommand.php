@@ -58,6 +58,7 @@ EOH;
             ->dispatch(new RemoveChangelogVersionEvent(
                 $input,
                 $output,
+                $this->dispatcher,
                 $input->getArgument('version')
             ))
             ->failed()

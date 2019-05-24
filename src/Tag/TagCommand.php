@@ -72,6 +72,7 @@ EOH;
             ->dispatch(new TagReleaseEvent(
                 $input,
                 $output,
+                $this->dispatcher,
                 $version,
                 $input->getOption('tagname') ?: $version
             ))
