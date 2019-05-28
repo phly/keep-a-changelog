@@ -12,6 +12,7 @@ namespace Phly\KeepAChangelog\Changelog;
 use Phly\KeepAChangelog\Common\AbstractEvent;
 use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
 use Phly\KeepAChangelog\Common\ChangelogEntryDiscoveryTrait;
+use Phly\KeepAChangelog\Common\VersionValidationTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,6 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ReadyLatestChangelogEvent extends AbstractEvent implements ChangelogEntryAwareEventInterface
 {
     use ChangelogEntryDiscoveryTrait;
+    use VersionValidationTrait;
 
     /** @var string */
     private $releaseDate;
@@ -58,7 +60,7 @@ class ReadyLatestChangelogEvent extends AbstractEvent implements ChangelogEntryA
 
     public function changelogReady() : void
     {
-        $output->writeln(sprintf(
+        $this->output->writeln(sprintf(
             '<info>Set release date of most recent changelog to "%s"</info>',
             $this->releaseDate
         ));

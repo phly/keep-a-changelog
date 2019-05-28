@@ -27,6 +27,7 @@ class ListenerProvider implements ListenerProviderInterface
         Changelog\ReadyLatestChangelogEvent::class => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
+            Common\DiscoverChangelogEntryListener::class,
             Changelog\SetDateForChangelogReleaseListener::class,
         ],
         ConfigCommand\CreateConfigEvent::class => [

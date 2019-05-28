@@ -32,10 +32,9 @@ class SetDateForChangelogReleaseListener
         $lines[0] = $versionLine;
 
         (new ChangelogEditor())->update(
-            $event->changelogFile(),
+            $event->config()->changelogFile(),
             implode("\n", $lines),
-            $entry->index,
-            $entry->length,
+            $entry
         );
 
         $event->changelogReady();
@@ -52,7 +51,7 @@ class SetDateForChangelogReleaseListener
         }
 
         return sprintf(
-            "%s - %s\n",
+            "%s - %s",
             $matches['prefix'],
             $date
         );
