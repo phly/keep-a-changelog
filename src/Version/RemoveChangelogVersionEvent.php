@@ -11,8 +11,7 @@ namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Common\AbstractEvent;
 use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
-use Phly\KeepAChangelog\Common\ChangelogEntryDiscoverTrait;
-use Phly\KeepAChangelog\Common\VersionAwareEventInterface;
+use Phly\KeepAChangelog\Common\ChangelogEntryDiscoveryTrait;
 use Phly\KeepAChangelog\Common\VersionValidationTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,10 +20,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function sprintf;
 
 class RemoveChangelogVersionEvent extends AbstractEvent implements
-    ChangelogEntryAwareEventInterface,
-    VersionAwareEventInterface
+    ChangelogEntryAwareEventInterface
 {
-    use ChangelogEntryDiscoverTrait;
+    use ChangelogEntryDiscoveryTrait;
     use VersionValidationTrait;
 
     /** @var bool */

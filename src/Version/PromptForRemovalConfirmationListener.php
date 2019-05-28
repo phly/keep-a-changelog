@@ -29,7 +29,7 @@ class PromptForRemovalConfirmationListener
         $output->writeln($entry->contents);
 
         $helper   = new QuestionHelper();
-        $question = new ConfirmationQuestion('Do you really want to delete this version?', false);
+        $question = new ConfirmationQuestion('Do you really want to delete this version ([y]es/[n]o)? ', false);
 
         if (! $helper->ask($input, $output, $question)) {
             $event->abort();

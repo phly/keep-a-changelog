@@ -15,7 +15,7 @@ class RemoveChangelogVersionListener
 {
     public function __invoke(RemoveChangelogVersionEvent $event) : void
     {
-        $changelog = $event->changelogFile();
+        $changelog = $event->config()->changelogFile();
         $entry     = $event->changelogEntry();
 
         (new ChangelogEditor())->update($changelog, '', $entry);
