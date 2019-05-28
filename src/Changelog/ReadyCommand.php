@@ -48,6 +48,19 @@ EOH;
             'Specific date string to use; use this if the date is other than today,'
                 . ' or if you wish to use a different date format.'
         );
+        $this->addOption(
+            'date',
+            '-d',
+            InputOption::VALUE_REQUIRED,
+            'Specific date string to use; use this if the date is other than today,'
+                . ' or if you wish to use a different date format.'
+        );
+        $this->addOption(
+            'release-version',
+            'r',
+            InputOption::VALUE_REQUIRED,
+            'A specific changelog version to ready for release.'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
@@ -57,7 +70,8 @@ EOH;
                 $input,
                 $output,
                 $this->dispatcher,
-                $input->getOption('date') ?: date('Y-m-d')
+                $input->getOption('date') ?: date('Y-m-d'),
+                $input->getOption('release-version') ?: null
             ))
             ->failed()
             ? 1

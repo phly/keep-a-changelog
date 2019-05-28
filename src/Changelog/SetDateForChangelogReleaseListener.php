@@ -25,7 +25,7 @@ class SetDateForChangelogReleaseListener
         $versionLine = $lines[0];
 
         if (null === ($versionLine = $this->injectDate($versionLine, $event->releaseDate()))) {
-            $event->malformedReleaseLine();
+            $event->malformedReleaseLine($lines[0]);
             return;
         }
 

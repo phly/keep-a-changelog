@@ -29,12 +29,14 @@ class ReadyLatestChangelogEvent extends AbstractEvent implements ChangelogEntryA
         InputInterface $input,
         OutputInterface $output,
         EventDispatcherInterface $dispatcher,
-        string $releaseDate
+        string $releaseDate,
+        ?string $version = null
     ) {
         $this->input       = $input;
         $this->output      = $output;
         $this->dispatcher  = $dispatcher;
         $this->releaseDate = $releaseDate;
+        $this->version     = $version;
     }
 
     public function isPropagationStopped() : bool
@@ -47,7 +49,7 @@ class ReadyLatestChangelogEvent extends AbstractEvent implements ChangelogEntryA
         return $this->releaseDate;
     }
 
-    public function malformedReleaseLine() : void
+    public function malformedReleaseLine(string $versionLine) : void
     {
         $this->failed = true;
         $this->output->writeln(
@@ -56,12 +58,19 @@ class ReadyLatestChangelogEvent extends AbstractEvent implements ChangelogEntryA
         $this->output->writeln('Must be in the following format (minus initial indentation):');
         $this->output->writeln('  ## <version> - TBD');
         $this->output->writeln('where <version> follows semantic versioning rules.');
+        $this->output->writeln('');
+        $this->output->writeln('Discovered:');
+        $this->output->writeln(sprintf('  %s', $versionLine));
     }
 
     public function changelogReady() : void
     {
+        $versionString = $this->version
+            ? sprintf('changelog version %s', $this->version)
+            : 'most recent changelog';
         $this->output->writeln(sprintf(
-            '<info>Set release date of most recent changelog to "%s"</info>',
+            '<info>Set release date of %s to "%s"</info>',
+            $versionString,
             $this->releaseDate
         ));
     }
