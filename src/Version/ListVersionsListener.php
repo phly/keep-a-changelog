@@ -20,8 +20,13 @@ class ListVersionsListener
         $output = $event->output();
 
         $output->writeln('<info>Found the following versions:</info>');
-        foreach ((new ChangelogParser())->findAllVersions($event->changelogFile()) as $version => $date) {
-            $output->writeln(sprintf('- %s (release date: %s)', $version, $date));
+        foreach ((new ChangelogParser())->findAllVersions($event->config()->changelogFile()) as $version => $date) {
+            $output->writeln(sprintf(
+                '- %s%s(release date: %s)',
+                $version,
+                str_repeat("\t", strlen($version) < 8 ? 2 : 1),
+                $date
+            ));
         }
     }
 }
