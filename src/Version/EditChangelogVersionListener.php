@@ -25,13 +25,14 @@ class EditChangelogVersionListener
     public function __invoke(EditChangelogVersionEvent $event) : void
     {
         $changelogEntry = $event->changelogEntry();
+        $tempFile       = $this->createTempFileWithContents(
+            $changelogEntry->contents
+        );
 
         $status = (new Editor())->spawnEditor(
             $event->output(),
             $event->editor(),
-            $this->createTempFileWithContents(
-                $changelogEntry->contents
-            )
+            $tempFile
         );
 
         if (0 !== $status) {
@@ -40,10 +41,9 @@ class EditChangelogVersionListener
         }
 
         (new ChangelogEditor())->update(
-            $event->changelogFile(),
+            $event->config()->changelogFile(),
             file_get_contents($tempFile),
-            $changelogEvent->index,
-            $changelogEvent->length
+            $changelogEntry
         );
 
         $event->editComplete();
