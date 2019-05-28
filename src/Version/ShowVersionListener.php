@@ -20,7 +20,7 @@ class ShowVersionListener
     public function __invoke(ShowVersionEvent $event) : void
     {
         $version    = $event->version();
-        $changelogs = file_get_contents($event->changelogFile());
+        $changelogs = file_get_contents($event->config()->changelogFile());
         $parser     = new ChangelogParser();
 
         try {
