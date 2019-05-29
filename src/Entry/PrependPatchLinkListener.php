@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Entry;
 
+use Phly\KeepAChangelog\Provider\ProviderInterface;
+
 class PrependPatchLinkListener extends AbstractPrependLinkListener
 {
     public function getIdentifier(AddChangelogEntryEvent $event) : ?int

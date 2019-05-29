@@ -101,6 +101,9 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
+        $patch = $input->getOption('pr') ?: null;
+        $issue = $input->getOption('issue') ?: null;
+
         return $this->dispatcher
             ->dispatch(new AddChangelogEntryEvent(
                 $input,
@@ -108,8 +111,8 @@ EOH;
                 $this->dispatcher,
                 $this->type,
                 $input->getArgument('entry'),
-                $input->getOption('pr'),
-                $input->getOption('issue')
+                null === $patch ? null : (int) $patch,
+                null === $issue ? null : (int) $issue
             ))
             ->failed()
             ? 1

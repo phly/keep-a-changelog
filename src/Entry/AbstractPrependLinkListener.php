@@ -23,7 +23,7 @@ abstract class AbstractPrependLinkListener
 
     public function __invoke(AddChangelogEntryEvent $event) : void
     {
-        $identfier = $this->getIdentifier($event);
+        $identifier = $this->getIdentifier($event);
         if (! $identifier) {
             // Nothing to prepend
             return;
@@ -34,7 +34,7 @@ abstract class AbstractPrependLinkListener
             return;
         }
 
-        $provider = $event->config()->provider();
+        $provider = $event->config()->provider()->createProvider();
         if (! $provider->canGenerateLinks()) {
             $event->providerCannotGenerateLinks();
             return;

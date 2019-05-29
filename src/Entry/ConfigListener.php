@@ -16,7 +16,9 @@ class ConfigListener extends BaseListener
 {
     public function __invoke(EventInterface $event) : void
     {
-        if ($this->input()->getOption('pr')) {
+        if ($event->input()->getOption('pr')
+            || $event->input()->getOption('issue')
+        ) {
             $this->requiresPackageName = true;
         }
         parent::__invoke($event);
