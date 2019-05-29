@@ -30,7 +30,7 @@ class AddChangelogEntryListener
             return;
         }
 
-        $changelogFile  = $event->changelogFile();
+        $changelogFile  = $event->config()->changelogFile();
         $contents       = file($changelogFile);
         $injectionIndex = $this->locateInjectionIndex($contents, $entryType);
 
@@ -48,7 +48,7 @@ class AddChangelogEntryListener
             ))
         );
 
-        $event->addedChangelogEntry();
+        $event->addedChangelogEntry($changelogFile, $entryType);
     }
 
     /**

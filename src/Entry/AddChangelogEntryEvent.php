@@ -76,12 +76,12 @@ class AddChangelogEntryEvent extends AbstractEvent
         $this->entry = $entry;
     }
 
-    public function addedChangelogEntry() : void
+    public function addedChangelogEntry(string $changelogFile, string $entryType) : void
     {
         $this->output->writeln(sprintf(
             '<info>Wrote "%s" entry to %s</info>',
-            ucwords($this->entryType),
-            $this->changelogFile
+            ucwords($entryType),
+            $changelogFile
         ));
     }
 
