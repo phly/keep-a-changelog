@@ -39,6 +39,11 @@ class TagReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterf
         $this->tagName = $tagName;
     }
 
+    public function isPropagationStopped() : bool
+    {
+        return $this->failed;
+    }
+
     public function package() : ?string
     {
         return $this->config()->package();
