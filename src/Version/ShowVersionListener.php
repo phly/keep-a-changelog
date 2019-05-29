@@ -19,33 +19,7 @@ class ShowVersionListener
 {
     public function __invoke(ShowVersionEvent $event) : void
     {
-        $version    = $event->version();
-        $changelogs = file_get_contents($event->config()->changelogFile());
-        $parser     = new ChangelogParser();
-
-        try {
-            $releaseDate = $parser->findReleaseDateForVersion($changelogs, $version);
-            $changelog   = $parser->findChangelogForVersion($changelogs, $version);
-        } catch (Exception\ChangelogNotFoundException $e) {
-            $event->changelogVersionNotFound();
-            return;
-        } catch (Exception\ChangelogMissingDateException $e) {
-            $event->changelogMissingDate();
-            return;
-        } catch (Exception\InvalidChangelogFormatException $e) {
-            $event->changelogMalformed();
-            return;
-        }
-
-        $output = $event->output();
-
-        $output->writeln(sprintf(
-            '<info>Showing changelog for version %s (released %s):</info>',
-            $version,
-            $releaseDate
-        ));
-        $output->writeln('');
-        $output->write($changelog);
-        $output->writeln('');
+        $changelogEntry = $event->changelogEntry();
+        $event->output()->writeln($changelogEntry->contents);
     }
 }

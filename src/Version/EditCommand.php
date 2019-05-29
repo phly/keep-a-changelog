@@ -48,7 +48,7 @@ EOH;
         $this->addArgument(
             'version',
             InputArgument::OPTIONAL,
-            'A specific changelog version to edit.'
+            'A specific changelog version to edit; defaults to latest.'
         );
 
         $this->injectEditorOption($this);

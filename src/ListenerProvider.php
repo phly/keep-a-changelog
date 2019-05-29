@@ -95,7 +95,7 @@ class ListenerProvider implements ListenerProviderInterface
         Version\EditChangelogVersionEvent::class => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
-            Version\ValidateVersionToEditListener::class,
+            Version\ValidateVersionToUseListener::class,
             Common\DiscoverChangelogEntryListener::class,
             Common\DiscoverEditorListener::class,
             Version\EditChangelogVersionListener::class,
@@ -115,8 +115,9 @@ class ListenerProvider implements ListenerProviderInterface
         ],
         Version\ShowVersionEvent::class => [
             Config\ConfigListener::class,
-            Common\ValidateVersionListener::class,
             Common\IsChangelogReadableListener::class,
+            Version\ValidateVersionToUseListener::class,
+            Common\DiscoverChangelogEntryListener::class,
             Version\ShowVersionListener::class,
         ],
     ];

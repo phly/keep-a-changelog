@@ -38,8 +38,8 @@ EOH;
         $this->setHelp(self::HELP);
         $this->addArgument(
             'version',
-            InputArgument::REQUIRED,
-            'Which version do you wish to display?'
+            InputArgument::OPTIONAL,
+            'Which version do you wish to display? (Defaults to latest)'
         );
     }
 
@@ -50,7 +50,7 @@ EOH;
                 $input,
                 $output,
                 $this->dispatcher,
-                $input->getArgument('version')
+                $input->getArgument('version') ?: null
             ))
             ->failed()
             ? 1
