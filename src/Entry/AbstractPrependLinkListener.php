@@ -55,7 +55,7 @@ abstract class AbstractPrependLinkListener
 
     protected function extractUrlFromLink(string $link) : string
     {
-        if (! preg_match('#\[(?P<url>.*?)\]$#', $link, $matches)) {
+        if (! preg_match('#\((?P<url>.*?)\)$#', $link, $matches)) {
             return '';
         }
 
