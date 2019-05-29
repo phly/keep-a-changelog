@@ -37,7 +37,7 @@ class ShowConfigEvent extends AbstractEvent
         $this->output     = $output;
         $this->showLocal  = $showLocal;
         $this->showGlobal = $showGlobal;
-        $this->showMerged = ($showLocal && $showMerged) || ! ($showGlobal || $showMerged);
+        $this->showMerged = ($showLocal && $showGlobal) || ! ($showGlobal || $showLocal);
     }
 
     public function isPropagationStopped() : bool
