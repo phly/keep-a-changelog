@@ -16,6 +16,7 @@ use Phly\KeepAChangelog\Config\LocateGlobalConfigTrait;
 class ShowMergedConfigListener
 {
     use ArrayMergeRecursiveTrait;
+    use IniReadWriteTrait;
     use LocateGlobalConfigTrait;
     use MaskProviderTokensTrait;
 
@@ -31,7 +32,7 @@ class ShowMergedConfigListener
             return;
         }
 
-        $config = (new Ini\IniReader())->readFile($configFile);
+        $config = $this->readIniFile($configFile);
 
         $configFile = sprintf('%s/.keep-a-changelog.ini', getcwd());
         if (! is_readable($configFile)) {
