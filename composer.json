@@ -31,7 +31,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Phly\\KeepAChangelogTest\\": "test/"
+            "PhlyTest\\KeepAChangelog\\": "test/"
         }
     },
     "config": {
