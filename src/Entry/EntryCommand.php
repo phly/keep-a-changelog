@@ -83,6 +83,12 @@ EOH;
             'Entry to add to the changelog'
         );
         $this->addOption(
+            'release-version',
+            'r',
+            InputOption::VALUE_REQUIRED,
+            'A specific changelog version to which to add the entry; defaults to latest.'
+        );
+        $this->addOption(
             'pr',
             null,
             InputOption::VALUE_REQUIRED,
@@ -111,6 +117,7 @@ EOH;
                 $this->dispatcher,
                 $this->type,
                 $input->getArgument('entry'),
+                $input->getOption('release-version') ?: '',
                 null === $patch ? null : (int) $patch,
                 null === $issue ? null : (int) $issue
             ))

@@ -10,12 +10,18 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Entry;
 
 use Phly\KeepAChangelog\Common\AbstractEvent;
+use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
+use Phly\KeepAChangelog\Common\ChangelogEntryDiscoveryTrait;
+use Phly\KeepAChangelog\Common\VersionValidationTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AddChangelogEntryEvent extends AbstractEvent
+class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwareEventInterface
 {
+    use ChangelogEntryDiscoveryTrait;
+    use VersionValidationTrait;
+
     /** @var string */
     private $entry;
 
@@ -34,6 +40,7 @@ class AddChangelogEntryEvent extends AbstractEvent
         EventDispatcherInterface $dispatcher,
         string $entryType,
         string $entry,
+        ?string $version,
         ?int $patchNumber,
         ?int $issueNumber
     ) {
@@ -42,6 +49,7 @@ class AddChangelogEntryEvent extends AbstractEvent
         $this->dispatcher  = $dispatcher;
         $this->entryType   = $entryType;
         $this->entry       = $entry;
+        $this->version     = $version;
         $this->patchNumber = $patchNumber;
         $this->issueNumber = $issueNumber;
     }
