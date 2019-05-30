@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Exception;
 
 use InvalidArgumentException;
-use Phly\KeepAChangelog\AddEntry;
+use Phly\KeepAChangelog\Entry\EntryTypes;
 
 use function implode;
 use function sprintf;
@@ -22,7 +22,7 @@ class InvalidNoteTypeException extends InvalidArgumentException implements Excep
         return new self(sprintf(
             'Invalid command name "%s"; must be of form "namespace:type", where type is in [%s]',
             $command,
-            implode(', ', AddEntry::TYPES)
+            implode(', ', EntryTypes::TYPES)
         ));
     }
 }
