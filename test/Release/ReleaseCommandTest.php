@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog;
+namespace PhlyTest\KeepAChangelog\Release;
 
 use Phly\KeepAChangelog\Release\ReleaseEvent;
-use Phly\KeepAChangelog\ReleaseCommand;
+use Phly\KeepAChangelog\Release\ReleaseCommand;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\EventDispatcherInterface;
