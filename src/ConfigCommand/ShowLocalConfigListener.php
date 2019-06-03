@@ -9,24 +9,39 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\ConfigCommand;
 
-class ShowLocalConfigListener
+class ShowLocalConfigListener extends AbstractShowConfigListener
 {
-    public function __invoke(ShowConfigEvent $event) : void
+    public function shouldShowConfig(ShowConfigEvent $event) : bool
     {
-        if (! $event->showLocal() || $event->showMerged()) {
-            return;
-        }
+        return $event->showLocal() && ! $event->showMerged();
+    }
 
-        $configFile = sprintf('%s/.keep-a-changelog.ini', getcwd());
-        if (! is_readable($configFile)) {
-            $event->configIsNotReadable($configFile, 'local');
-            return;
-        }
+    public function getConfigFile() : string
+    {
+        return sprintf('%s/.keep-a-changelog.ini', $this->configRoot ?: getcwd());
+    }
 
+    public function getConfigType() : string
+    {
+        return 'local';
+    }
+
+    public function displayConfig(ShowConfigEvent $event, string $configFile) : void
+    {
         $event->displayConfig(
             file_get_contents($configFile),
-            'global',
+            'local',
             $configFile
         );
     }
+
+    /**
+     * Set a specific directory in which to look for the local config file.
+     *
+     * For testing purposes only.
+     *
+     * @internal
+     * @var null|string
+     */
+    public $configRoot;
 }

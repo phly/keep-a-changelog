@@ -13,24 +13,29 @@ use Matomo\Ini;
 use Phly\KeepAChangelog\Common\IniReadWriteTrait;
 use Phly\KeepAChangelog\Config\LocateGlobalConfigTrait;
 
-class ShowGlobalConfigListener
+class ShowGlobalConfigListener extends AbstractShowConfigListener
 {
     use IniReadWriteTrait;
     use LocateGlobalConfigTrait;
     use MaskProviderTokensTrait;
 
-    public function __invoke(ShowConfigEvent $event) : void
+    public function shouldShowConfig(ShowConfigEvent $event) : bool
     {
-        if (! $event->showGlobal() || $event->showMerged()) {
-            return;
-        }
+        return $event->showGlobal() && ! $event->showMerged();
+    }
 
-        $configFile = sprintf('%s/keep-a-changelog.ini', $this->getConfigRoot());
-        if (! is_readable($configFile)) {
-            $event->configIsNotReadable($configFile, 'global');
-            return;
-        }
+    public function getConfigFile() : string
+    {
+        return sprintf('%s/keep-a-changelog.ini', $this->getConfigRoot());
+    }
 
+    public function getConfigType() : string
+    {
+        return 'global';
+    }
+
+    public function displayConfig(ShowConfigEvent $event, string $configFile) : void
+    {
         $event->displayConfig(
             $this->filterConfiguration($configFile),
             'global',
