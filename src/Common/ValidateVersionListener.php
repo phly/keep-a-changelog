@@ -14,7 +14,7 @@ class ValidateVersionListener
     public function __invoke(VersionAwareEventInterface $event) : void
     {
         $version = $event->version() ?: '';
-        if (! preg_match('/^\d+\.\d+\.\d+((?:alpha|a|beta|b|rc|dev)\d+)?$/i', $version)) {
+        if (! preg_match('/^\d+\.\d+\.\d+((?:alpha|a|beta|b|rc|dev|patch|pl|p)\d+)?$/i', $version)) {
             $event->versionIsInvalid($version);
             return;
         }
