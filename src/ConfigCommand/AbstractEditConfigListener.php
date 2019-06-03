@@ -30,7 +30,7 @@ abstract class AbstractEditConfigListener
             return;
         }
 
-        $status = (new Editor())->spawnEditor(
+        $status = $this->getEditor()->spawnEditor(
             $event->output(),
             $event->editor(),
             $configFile
@@ -43,4 +43,22 @@ abstract class AbstractEditConfigListener
 
         $event->editComplete($configFile);
     }
+
+    protected function getEditor() : Editor
+    {
+        if ($this->editor instanceof Editor) {
+            return $this->editor;
+        }
+
+        return new Editor();
+    }
+
+    /**
+     * Provide an Editor instance to use.
+     *
+     * For testing purposes only.
+     *
+     * @var Editor
+     */
+    public $editor;
 }

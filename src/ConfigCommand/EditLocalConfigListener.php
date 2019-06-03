@@ -18,6 +18,16 @@ class EditLocalConfigListener extends AbstractEditConfigListener
 
     public function getConfigFile() : string
     {
-        return sprintf('%s/.keep-a-changelog.ini', getcwd());
+        return sprintf('%s/.keep-a-changelog.ini', $this->configRoot ?: getcwd());
     }
+
+    /**
+     * Set a specific directory in which to look for the local config file.
+     *
+     * For testing purposes only.
+     *
+     * @internal
+     * @var null|string
+     */
+    public $configRoot;
 }
