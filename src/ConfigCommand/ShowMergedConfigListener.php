@@ -26,27 +26,35 @@ class ShowMergedConfigListener
             return;
         }
 
-        $configFile = sprintf('%s/keep-a-changelog.ini', $this->getConfigRoot());
-        if (! is_readable($configFile)) {
-            $event->configIsNotReadable($configFile, 'global');
+        $globalConfigFile = sprintf('%s/keep-a-changelog.ini', $this->getConfigRoot());
+        if (! is_readable($globalConfigFile)) {
+            $event->configIsNotReadable($globalConfigFile, 'global');
             return;
         }
 
-        $config = $this->readIniFile($configFile);
-
-        $configFile = sprintf('%s/.keep-a-changelog.ini', getcwd());
-        if (! is_readable($configFile)) {
-            $event->configIsNotReadable($configFile, 'global');
+        $localConfigFile = sprintf('%s/.keep-a-changelog.ini', $this->localConfigRoot ?: getcwd());
+        if (! is_readable($localConfigFile)) {
+            $event->configIsNotReadable($localConfigFile, 'local');
             return;
         }
 
         $config = $this->arrayMergeRecursive(
-            $config,
-            $this->readIniFile($configFile)
+            $this->readIniFile($globalConfigFile),
+            $this->readIniFile($localConfigFile)
         );
 
         $event->displayMergedConfig(
             $this->arrayToIniString($this->maskProviderTokens($config))
         );
     }
+
+    /**
+     * Set a specific directory in which to look for the local config file.
+     *
+     * For testing purposes only.
+     *
+     * @internal
+     * @var null|string
+     */
+    public $localConfigRoot;
 }
