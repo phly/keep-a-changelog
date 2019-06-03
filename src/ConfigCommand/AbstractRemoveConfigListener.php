@@ -38,19 +38,47 @@ abstract class AbstractRemoveConfigListener
             $configFile
         ));
 
-        $helper   = new QuestionHelper();
         $question = new ConfirmationQuestion('Do you really want to delete this file? ', false);
 
-        if (! $helper->ask($event->input(), $output, $question)) {
+        if (! $this->getQuestionHelper()->ask($event->input(), $output, $question)) {
             $event->abort($configFile);
             return;
         }
 
-        if (false === unlink($configFile)) {
+        if (false === ($this->unlink)($configFile)) {
             $event->errorRemovingConfig($configFile);
             return;
         }
 
         $event->deletedConfigFile($configFile);
     }
+
+    public function getQuestionHelper() : QuestionHelper
+    {
+        if ($this->questionHelper instanceof QuestionHelper) {
+            return $this->questionHelper;
+        }
+        return new QuestionHelper();
+    }
+
+    /**
+     * Provide a QuestionHelper instance for use in prompting the user for
+     * confirmation.
+     *
+     * For testing purposes only.
+     *
+     * @internal
+     * @var null|QuestionHelper
+     */
+    public $questionHelper;
+
+    /**
+     * Provide a callable for removing a configuration file.
+     *
+     * For testing purposes only.
+     *
+     * @internal
+     * @var callable
+     */
+    public $unlink = 'unlink';
 }
