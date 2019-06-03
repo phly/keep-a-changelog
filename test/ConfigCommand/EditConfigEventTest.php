@@ -83,6 +83,7 @@ class EditConfigEventTest extends TestCase
 
         $this->assertTrue($event->editLocal());
         $this->assertTrue($event->editGlobal());
+        $this->assertNull($event->editor());
         return $event;
     }
 

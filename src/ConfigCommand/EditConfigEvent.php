@@ -38,12 +38,14 @@ class EditConfigEvent implements
         InputInterface $input,
         OutputInterface $output,
         bool $editLocal,
-        bool $editGlobal
+        bool $editGlobal,
+        ?string $editor = null
     ) {
         $this->input      = $input;
         $this->output     = $output;
         $this->editLocal  = $editLocal;
         $this->editGlobal = $editGlobal;
+        $this->editor     = $editor;
     }
 
     public function isPropagationStopped() : bool
