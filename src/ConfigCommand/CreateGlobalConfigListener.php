@@ -11,7 +11,7 @@ namespace Phly\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\Config\LocateGlobalConfigTrait;
 
-class CreateGlobalConfigListener
+class CreateGlobalConfigListener extends AbstractCreateConfigListener
 {
     use LocateGlobalConfigTrait;
 
@@ -29,29 +29,18 @@ gitlab[token] = token-should-be-provided-here
 
 EOT;
 
-    public function __invoke(CreateConfigEvent $event) : void
+    public function configCreateRequested(CreateConfigEvent $event) : bool
     {
-        if (! $event->createGlobal()) {
-            return;
-        }
+        return $event->createGlobal();
+    }
 
-        $configFile = sprintf('%s/keep-a-changelog.ini', $this->getConfigRoot());
+    public function getConfigFileName() : string
+    {
+        return sprintf('%s/keep-a-changelog.ini', $this->getConfigRoot());
+    }
 
-        if (file_exists($configFile)) {
-            $event->fileExists($configFile);
-            return;
-        }
-
-        $success = file_put_contents($configFile, sprintf(
-            self::TEMPLATE,
-            $event->customChangelog() ?: 'CHANGELOG.md'
-        ));
-
-        if (false === $success) {
-            $event->creationFailed($configFile);
-            return;
-        }
-
-        $event->createdConfigFile($configFile);
+    public function getConfigTemplate() : string
+    {
+        return self::TEMPLATE;
     }
 }

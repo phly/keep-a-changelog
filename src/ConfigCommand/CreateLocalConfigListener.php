@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\ConfigCommand;
 
-class CreateLocalConfigListener
+class CreateLocalConfigListener extends AbstractCreateConfigListener
 {
     private const TEMPLATE = <<< 'EOT'
 [defaults]
@@ -22,29 +22,29 @@ github[class] = Phly\KeepAChangelog\Provider\GitHub
 gitlab[class] = Phly\KeepAChangelog\Provider\GitLab
 
 EOT;
-    public function __invoke(CreateConfigEvent $event) : void
+
+    public function configCreateRequested(CreateConfigEvent $event) : bool
     {
-        if (! $event->createLocal()) {
-            return;
-        }
-
-        $configFile = sprintf('%s/.keep-a-changelog.ini', getcwd());
-
-        if (file_exists($configFile)) {
-            $event->fileExists($configFile);
-            return;
-        }
-
-        $success = file_put_contents($configFile, sprintf(
-            self::TEMPLATE,
-            $event->customChangelog() ?: 'CHANGELOG.md'
-        ));
-
-        if (false === $success) {
-            $event->creationFailed($configFile);
-            return;
-        }
-
-        $event->createdConfigFile($configFile);
+        return $event->createLocal();
     }
+
+    public function getConfigFileName() : string
+    {
+        return sprintf('%s/.keep-a-changelog.ini', $this->configRoot ?: getcwd());
+    }
+
+    public function getConfigTemplate() : string
+    {
+        return self::TEMPLATE;
+    }
+
+    /**
+     * Set a specific directory in which to look for the local config file.
+     *
+     * For testing purposes only.
+     *
+     * @internal
+     * @var null|string
+     */
+    public $configRoot;
 }
