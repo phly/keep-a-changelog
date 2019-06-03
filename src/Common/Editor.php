@@ -28,7 +28,28 @@ class Editor
 
         $output->writeln(sprintf('<info>Executing "%s"</info>', $command));
 
-        $process = proc_open($command, $descriptorspec, $pipes);
-        return proc_close($process);
+        $pipes   = [];
+        $process = ($this->procOpen)($command, $descriptorspec, $pipes);
+        return ($this->procClose)($process);
     }
+
+    /**
+     * Specify a callback for opening a new process.
+     *
+     * For testing purposes only.
+     *
+     * @internal
+     * @var callable
+     */
+    public $procOpen = 'proc_open';
+
+    /**
+     * Specify a callback for closing an open process.
+     *
+     * For testing purposes only.
+     *
+     * @internal
+     * @var callable
+     */
+    public $procClose = 'proc_close';
 }
