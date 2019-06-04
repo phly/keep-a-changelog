@@ -19,10 +19,11 @@ use function date;
 
 class ReadyCommand extends Command
 {
-    private const DESCRIPTION = 'In the latest changelog release entry, mark the entry ready by setting its release date.';
+    private const DESCRIPTION = 'Mark a changelog version ready for release by setting its release date.';
 
     private const HELP = <<<'EOH'
-In the latest changelog release entry, mark the entry ready by setting its
+In the latest changelog release entry, or the one specified via the
+[--release-version|-r] option, mark the entry ready by setting its
 release date.
 
 If no --date is specified, the current date in YYYY-MM-DD format will be used.
