@@ -28,12 +28,29 @@ class PromptForRemovalConfirmationListener
         $output->writeln('<info>Found the following entry:</info>');
         $output->writeln($entry->contents);
 
-        $helper   = new QuestionHelper();
         $question = new ConfirmationQuestion('Do you really want to delete this version ([y]es/[n]o)? ', false);
 
-        if (! $helper->ask($input, $output, $question)) {
+        if (! $this->getQuestionHelper()->ask($input, $output, $question)) {
             $event->abort();
             return;
         }
     }
+
+    private function getQuestionHelper() : QuestionHelper
+    {
+        if ($this->questionHelper instanceof QuestionHelper) {
+            return $this->questionHelper;
+        }
+        return new QuestionHelper();
+    }
+
+    /**
+     * Provide an alternative question helper for use in prompting.
+     *
+     * For testing purposes only.
+     *
+     * @internal
+     * @var null|QuestionHelper
+     */
+    public $questionHelper;
 }
