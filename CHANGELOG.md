@@ -60,8 +60,8 @@ All notable changes to this project will be documented in this file, in reverse 
   `$HOME/.keep-a-changelog/config.ini` to the new configuration file (you can use
   `keep-a-changelog config:edit --global` to edit the new file).
 
-- When calling `release` or the various `entry:*` commands, package names can
-  now be autodiscovered via one of:
+- When calling `version:release` or the various `entry:*` commands, package
+  names can now be autodiscovered via one of:
 
   - The local configuration file.
   - A [Composer](https://getcomposer.org) `composer.json` file (via the `name` key).
@@ -80,9 +80,9 @@ All notable changes to this project will be documented in this file, in reverse 
 - The `--file|-f` global option for specifying a changelog file is now
   `--changelog|-c`.
 
-- The `release` command now makes the `<package>` argument a `--package` option.
+- The `version:release` command now makes the `<package>` argument a `--package` option.
 
-- The `release` command now allows releasing any version; this can be useful
+- The `version:release` command now allows releasing any version; this can be useful
   when creating historical releases.
 
 - The internals were completely rewritten. If you were extending or consuming
@@ -104,6 +104,8 @@ All notable changes to this project will be documented in this file, in reverse 
 - Removes the `new` command; use `changelog:new` instead.
 
 - Removes the `ready` command; use `changelog:ready` instead.
+
+- Removes the `release` command; use `version:release` instead.
 
 - Removes the `tag` command; use `version:tag` instead.
 

@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog\Release;
+namespace PhlyTest\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Provider\ProviderInterface;
-use Phly\KeepAChangelog\Release\PushReleaseToProviderListener;
-use Phly\KeepAChangelog\Release\ReleaseEvent;
+use Phly\KeepAChangelog\Version\PushReleaseToProviderListener;
+use Phly\KeepAChangelog\Version\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use RuntimeException;

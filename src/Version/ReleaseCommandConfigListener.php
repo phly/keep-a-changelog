@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Release;
+namespace Phly\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Config\ConfigListener as BaseConfigListener;
+use Phly\KeepAChangelog\Config\ConfigListener;
 
 /**
  * Marshal configuration for the ReleaseEvent
@@ -17,7 +17,7 @@ use Phly\KeepAChangelog\Config\ConfigListener as BaseConfigListener;
  * Overrides the parent constructor to hardcode the flags for requiring the
  * package name and remote name.
  */
-class ConfigListener extends BaseConfigListener
+class ReleaseCommandConfigListener extends ConfigListener
 {
     public function __construct()
     {

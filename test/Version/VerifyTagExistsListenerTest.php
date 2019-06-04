@@ -7,8 +7,10 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Release;
+namespace PhlyTest\KeepAChangelog\Version;
 
+use Phly\KeepAChangelog\Version\ReleaseEvent;
+use Phly\KeepAChangelog\Version\VerifyTagExistsListener;
 use PHPUnit\Framework\TestCase;
 
 class VerifyTagExistsListenerTest extends TestCase

@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Release;
+namespace Phly\KeepAChangelog\Version;
 
 use function sprintf;
 

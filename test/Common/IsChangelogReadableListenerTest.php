@@ -11,7 +11,7 @@ namespace PhlyTest\KeepAChangelog\Common;
 
 use Phly\KeepAChangelog\Common\IsChangelogReadableListener;
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Release\ReleaseEvent;
+use Phly\KeepAChangelog\Version\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 

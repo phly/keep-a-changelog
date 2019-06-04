@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog\Release;
+namespace PhlyTest\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Release\PushTagToRemoteListener;
-use Phly\KeepAChangelog\Release\ReleaseEvent;
+use Phly\KeepAChangelog\Version\PushTagToRemoteListener;
+use Phly\KeepAChangelog\Version\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Output\OutputInterface;
