@@ -41,7 +41,7 @@ class InjectionIndex
                 throw new UnexpectedValueException(sprintf(
                     'The property "%s" does not exist for class "%s"',
                     $name,
-                    gettype($this)
+                    __CLASS__
                 ));
         }
     }
@@ -50,30 +50,32 @@ class InjectionIndex
     {
         switch ($name) {
             case 'index':
-                if (! is_int($value)) {
-                    throw new TypeError(sprintf(
-                        'Property %s expects an integer; received %s',
-                        $name,
-                        gettype($value)
-                    ));
-                }
-                $this->$name = $value;
+                $this->setIndex($value);
                 break;
             case 'type':
-                if (! in_array($value, self::ACTIONS, true)) {
-                    throw new TypeError(sprintf(
-                        'Property %s expects one of the constants ACTION_INJECT, ACTION_REPLACE, or ACTION_NOT_FOUND',
-                        $name
-                    ));
-                }
-                $this->$name = $value;
+                $this->setType($value);
                 break;
             default:
                 throw new UnexpectedValueException(sprintf(
                     'The property "%s" does not exist for class "%s"',
                     $name,
-                    gettype($this)
+                    __CLASS__
                 ));
         }
+    }
+
+    private function setIndex(int $value) : void
+    {
+        $this->index = $value;
+    }
+
+    private function setType(string $value) : void
+    {
+        if (! in_array($value, self::ACTIONS, true)) {
+            throw new TypeError(
+                'Property type expects one of the constants ACTION_INJECT, ACTION_REPLACE, or ACTION_NOT_FOUND'
+            );
+        }
+        $this->type = $value;
     }
 }
