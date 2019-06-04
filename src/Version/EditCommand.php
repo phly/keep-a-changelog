@@ -21,11 +21,13 @@ class EditCommand extends Command
 {
     use CommonOptionsTrait;
 
-    private const DESCRIPTION = 'Edit the latest changelog entry using the system editor.';
+    private const DESCRIPTION = 'Edit a changelog entry using the system editor.';
 
     private const HELP = <<<'EOH'
-Edit the latest changelog entry using the system editor ($EDITOR), or the
+Edit a changelog entry using the system editor ($EDITOR), or the
 editor provided via --editor.
+
+If no <version> is provided, assumes the most recent changelog should be used.
 
 By default, the command will edit CHANGELOG.md in the current directory, unless
 a different file is specified via the --file option.
