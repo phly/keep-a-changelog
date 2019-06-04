@@ -39,78 +39,251 @@ You may get a list of commands by running:
 $ ./vendor/bin/keep-a-changelog
 ```
 
-All options allow specifying the option `--file` (or its alias `-f`) to indicate
-an alternate changelog file to create or manipulate; if not present,
-`CHANGELOG.md` in the current directory is assumed.
+From there, you can get help for individual commands using:
 
-You can specify an alternative provider besides GitHub passing the `--provider`
-argument to commands. Currently only `release` and `entry` commands need this
-option.
+```bash
+$ ./vendor/bin/keep-a-changelog help <command>
+```
 
-The available providers are:
-- GitHub (default)
-- GitLab
+## Configuration Files
 
-Currently supported commands include:
+The tool can use a combination of globally available (to the user) configuration
+files, local to the project configuration files, or input options.
 
-- `new` will create a new changelog file for you; specify `--initial-version` or
-  `-i` if you want to start with a version other than 0.1.0; use `--file` or
-  `-f` to specify a file other than `CHANGELOG.md`.
+User configuration files are kept in `$XDG_CONFIG_HOME/keep-a-changelog.ini`,
+which is generally `$HOME/.config/keep-a-changelog.ini`.
 
-- `config` will create a config file after prompting you for the preferred
-  provider and its associated token. By default, the file is stored locally as
-  `.keep-a-changelog.ini`; if the `--global` (or `-g`) option is provided, the
-  config file will be stored globally in `$HOME/.keep-a-changelog/config.ini`.
+Local project configuration files are kept in `./.keep-a-changelog.ini`,
+relative to where you run the command.
 
-- `ready` will set the planned release date for the most recent changelog entry.
+These files can be created using the following:
 
-- `tag` allows tagging a release based on the latest version discovered in the
-  `CHANGELOG.md` file. The tag will contain the changelog entry for that version
-  within the commit message.
+```bash
+$ keep-a-changelog config:create [--global|-g] [--local|-l]
+```
 
-- `release` will push a tag to a provider (GitHub or GitLab), and then create a
-  release for it, using the changelog entry for the release.
+If both flags are provided, both files will be created.
 
-- `bump` and `bump:bugfix` will prepend a new changelog entry for a new bugfix
-  release, based on the latest release found in the `CHANGELOG.md` file.
+Configuration files are in [INI file format](https://en.wikipedia.org/wiki/INI_file),
+and support the following sections and keys:
 
-- `bump:minor` will prepend a new changelog entry for a new minor
-  release, based on the latest release found in the `CHANGELOG.md` file.
+```dosini
+[defaults]
 
-- `bump:major` will prepend a new changelog entry for a new major
-  release, based on the latest release found in the `CHANGELOG.md` file.
+; Global config: Default changelog file to use.
+; Local config: Specific changelog file to use for this project.
+changelog_file = CHANGELOG.md
 
-- `bump:to-version` will prepend a new changelog entry, using the version
-  specified on the command line.
+; Global config: Default provider to use.
+; Local config: Specific provider to use for this project.
+provider = github
 
-- `entry:added` will add a new changelog entry to the Added section of the
-  current changelog within the `CHANGELOG.md` file.
+; Global config: default Git remote to push tags to.
+; Local config: specificc Git remote to push tags to for this project.
+remote = origin
 
-- `entry:changed` will add a new changelog entry to the Changed section of the
-  current changelog within the `CHANGELOG.md` file.
+[providers]
+github[class] = Phly\KeepAChangelog\Provider\GitHub
+github[token] =
+gitlab[class] = Phly\KeepAChangelog\Provider\GitLab
+gitlab[token] =
+```
 
-- `entry:deprecated` will add a new changelog entry to the Deprecated section of
-  the current changelog within the `CHANGELOG.md` file.
+Providers are covered in a [later section](#providers).
 
-- `entry:removed` will add a new changelog entry to the Removed section of the
-  current changelog within the `CHANGELOG.md` file.
+Local configuration files support additional keys in the `[defaults`] section:
 
-- `entry:fixed` will add a new changelog entry to the Fixed section of the
-  current changelog within the `CHANGELOG.md` file.
+```dosini
+; local .keep-a-changelog.ini file
+[defaults]
 
-- `version:edit` will open the most recent changelog section in the system editor
-  to allow editing the full entry at once. If you provide a `<version>`
-  argument, it will edit that specific version.
+; Specify the package name (used for naming and pushing releases, and generating
+; issue and patch links:
+package = package/name
+```
 
-- `version:list` will list all versions in the changelog, along with associated
-  release dates.
+Local configuration **MUST NOT** contain provider tokens. Any tokens discovered
+in a local configuration file _will be ignored_.
 
-- `version:remove` will remove the given version's entry from the changelog.
+> Local configuration files are meant to be checked in to a project, and are
+> thus generally insecure for the purpose of storing API tokens. User
+> configuration is generally restricted to reading by the user only, making it a
+> more sound location to store this sensitive information.
 
-- `version:show` will show the entry associated with the given version.
+## Providers
+
+Providers refer to the location where you push releases and create issues and
+patches; this is generally speaking the _shared repository_ for your project.
+
+For the purpose of this tooling, providers need to be able to generate both
+issue and patch links, and create releases. All providers thus implement the
+following interface:
+
+```php
+namespace Phly\KeepAChangelog\Provider;
+
+interface ProviderInterface
+{
+    /**
+     * Consumers can use this to test if the provider has everything it needs
+     * to create a new release, thus avoiding exceptions.
+     */
+    public function canCreateRelease() : bool;
+
+    /**
+     * Consumers can use this to test if the provider has everything it needs
+     * to generate a patch link, thus avoiding exceptions.
+     */
+    public function canGenerateLinks() : bool;
+
+    /**
+     * @return string URL to the created release.
+     * @throws Exception\MissingPackageNameException
+     * @throws Exception\MissingTokenException
+     */
+    public function createRelease(
+        string $releaseName,
+        string $tagName,
+        string $changelog
+    ) : ?string;
+
+    /**
+     * This method should generate the full markdown link to an issue.
+     *
+     * As an example of something it could generate:
+     *
+     * <code>
+     * [#17](https://github.com/not-an-org/not-a-repo/issues/17)
+     * </code>
+     *
+     * @throws Exception\MissingPackageNameException
+     */
+    public function generateIssueLink(int $issueIdentifier) : string;
+
+    /**
+     * This method should generate the full markdown link to a patch.
+     *
+     * As an example of something it could generate:
+     *
+     * <code>
+     * [#17](https://github.com/not-an-org/not-a-repo/pull/17)
+     * </code>
+     *
+     * @throws Exception\MissingPackageNameException
+     */
+    public function generatePatchLink(int $patchIdentifier) : string;
+
+    /**
+     * Set the package name to use in links and when creating the release name.
+     */
+    public function setPackageName(string $package) : void;
+
+    /**
+     * Set the authentication token to use for API calls to the provider.
+     */
+    public function setToken(string $token) : void;
+
+    /**
+     * Set the base URL to use for API calls to the provider.
+     *
+     * Generally, this should only be the scheme + authority.
+     */
+    public function setUrl(string $url) : void;
+}
+```
+
+### Preparing your provider for use
+
+In order to use a custom provider, you will need to ensure it is autoloadable.
+That can be accomplished in one of two ways.
+
+If you are installing `phly/keep-a-changelog` directly within your project, the
+provider only needs to be autoloadable within your project. That can be
+accomplished by ensuring the class is developed as an autoloadable class
+directly in the project, or by installing it via a Composer package as a sibling
+to the keep-a-changelog dependency.
+
+If you are installing 'phly/keep-a-changelog' globally, you will need to install
+a package with your custom provider globally as well.
+
+### Configuring your provider
+
+Once you have ensured your provider is autoloadable, you will need to tell the
+tool about it. This is done in your configuration files.
+
+Provider configuration is done in the `[providers]` section of your
+configuration file, and each has the following structure:
+
+```dosini
+[providers]
+; Required:
+<name>[class] = Fully\Qualified\Provider\ClassName
+
+; Optional; only if your provider supports alternate URL endpoints
+; for creating releases:
+<name>[url] = base-url-for-api-calls
+
+; Optional, and only in global configuration; authorization token to
+; use when making API calls.
+<name>[token] = api-authorization-token
+```
+
+Where `<name>` is a unique shorthand name for the provider. This `<name>` can
+then be used later:
+
+- To specify the default provider to use, or the provider specific to your
+  project.
+- When specifying a `--provider` input option while invoking a command.
+
+### Input options
+
+For commands that require a provider, the following input options are exposed:
+
+- `--provider`, to specify a provider short name to use for the current
+  invocation.
+- `--provider-class`, to specify a specific `ProviderInterface` implementation
+  to use for the current invocation.
+- `--provider-url`, to specify a custom base API URL to use for the current
+  invocation.
+- `--provider-token`, to specify an authorization token to use for the current
+  invocation.
+
+### Default providers
+
+The default providers available are:
+- github (default)
+- gitlab
+
+## Supported commands
+
+- `release`: create a new release on your given provider, using the relevant
+  changelog entry. This command also pushes the related tag.
+- `tag`: Create a new tag, using the relevant changelog entry. Creates signed
+  tags.
+- `bump`, `bump:bugfix`, and `bump:patch`: Create a new changelog entry for the
+  next bugfix release.
+- `bump:minor`: Create a new changelog entry for the next minor release.
+- `bump:major`: Create a new changelog entry for the next major release.
+- `bump:to-version`: Create a new changelog entry for a user-specified version.
+- `changelog:new`: Create a new changelog file.
+- `changelog:ready`: Mark a changelog version ready for release by setting its
+  date.
+- `config:create`: Create one or more configuration files.
+- `config:edit`: Edit a configuration file.
+- `config:remove`: Remove a configuration file.
+- `config:show`: Show one or more configuration files.
+- `entry:added`: Create a changelog entry in the "Added" section.
+- `entry:changed`: Create a changelog entry in the "Changed" section.
+- `entry:deprecated`: Create a changelog entry in the "Deprecated" section.
+- `entry:removed`: Create a changelog entry in the "Removed" section.
+- `entry:fixed`: Create a changelog entry in the "Fixed" section.
+- `version:edit`: Edit a full changelog version and its entries.
+- `version:list`: List all changelog versions currently in the file.
+- `version:remove`: Remove the given changelog version and its entries.
+- `version:show`: Show the given changelog version and its entries.
 
 For a list of required parameters and all options for a command, run:
 
 ```bash
-$ ./vendor/bin/keep-a-changelog help <command>
+$ keep-a-changelog help <command>
 ```
