@@ -58,7 +58,7 @@ class TagReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterf
     {
         $this->output->writeln(sprintf(
             '<info>Created tag "%s" for package "%s" using the following notes:</info>',
-            $this->version,
+            $this->tagName,
             $this->package()
         ));
 
