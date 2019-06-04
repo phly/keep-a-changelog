@@ -103,7 +103,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Removes the `new` command; use `changelog:new` instead.
 
-- Removes the `ready` command; use `changelog:ready` instead.
+- Removes the `ready` command; use `version:ready` instead.
 
 - Removes the `release` command; use `version:release` instead.
 

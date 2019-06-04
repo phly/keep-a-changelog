@@ -27,12 +27,6 @@ class ListenerProvider implements ListenerProviderInterface
             Common\ValidateVersionListener::class,
             Changelog\CreateNewChangelogListener::class,
         ],
-        Changelog\ReadyLatestChangelogEvent::class => [
-            Config\ConfigListener::class,
-            Common\IsChangelogReadableListener::class,
-            Common\DiscoverChangelogEntryListener::class,
-            Changelog\SetDateForChangelogReleaseListener::class,
-        ],
         ConfigCommand\CreateConfigEvent::class     => [
             ConfigCommand\CreateGlobalConfigListener::class,
             ConfigCommand\CreateLocalConfigListener::class,
@@ -89,6 +83,12 @@ class ListenerProvider implements ListenerProviderInterface
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
             Version\ListVersionsListener::class,
+        ],
+        Version\ReadyLatestChangelogEvent::class   => [
+            Config\ConfigListener::class,
+            Common\IsChangelogReadableListener::class,
+            Common\DiscoverChangelogEntryListener::class,
+            Version\SetDateForChangelogReleaseListener::class,
         ],
         Version\ReleaseEvent::class                => [
             Version\ReleaseCommandConfigListener::class,

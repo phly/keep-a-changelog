@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog\Changelog;
+namespace PhlyTest\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Changelog\ReadyCommand;
-use Phly\KeepAChangelog\Changelog\ReadyLatestChangelogEvent;
+use Phly\KeepAChangelog\Version\ReadyCommand;
+use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;

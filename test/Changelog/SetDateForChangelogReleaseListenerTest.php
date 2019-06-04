@@ -7,13 +7,13 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog\Changelog;
+namespace PhlyTest\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Changelog\ReadyLatestChangelogEvent;
-use Phly\KeepAChangelog\Changelog\SetDateForChangelogReleaseListener;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
 use Phly\KeepAChangelog\Common\ChangelogParser;
 use Phly\KeepAChangelog\Config;
+use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
+use Phly\KeepAChangelog\Version\SetDateForChangelogReleaseListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 

@@ -283,8 +283,6 @@ The default providers available are:
 - `bump:major`: Create a new changelog entry for the next major release.
 - `bump:to-version`: Create a new changelog entry for a user-specified version.
 - `changelog:new`: Create a new changelog file.
-- `changelog:ready`: Mark a changelog version ready for release by setting its
-  date.
 - `config:create`: Create one or more configuration files.
 - `config:edit`: Edit a configuration file.
 - `config:remove`: Remove a configuration file.
@@ -296,6 +294,7 @@ The default providers available are:
 - `entry:fixed`: Create a changelog entry in the "Fixed" section.
 - `version:edit`: Edit a full changelog version and its entries.
 - `version:list`: List all changelog versions currently in the file.
+- `version:ready`: Mark a changelog version ready for release by setting its date.
 - `version:release`: create a new release on your given provider, using the
   relevant changelog entry. This command also pushes the related tag.
 - `version:remove`: Remove the given changelog version and its entries.
