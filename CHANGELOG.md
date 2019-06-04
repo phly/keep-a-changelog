@@ -70,7 +70,7 @@ All notable changes to this project will be documented in this file, in reverse 
   This means you likely no longer need to specify the package name when pushing
   a release via the tooling.
 
-- When calling `tag`, git remote names can now be specified via one of:
+- When calling `version:tag`, git remote names can now be specified via one of:
 
   - The global configuration file.
   - The local configuration file.
@@ -104,6 +104,8 @@ All notable changes to this project will be documented in this file, in reverse 
 - Removes the `new` command; use `changelog:new` instead.
 
 - Removes the `ready` command; use `changelog:ready` instead.
+
+- Removes the `tag` command; use `version:tag` instead.
 
 ### Fixed
 

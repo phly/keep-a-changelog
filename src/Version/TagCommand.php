@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Tag;
+namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Config\CommonConfigOptionsTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;

@@ -88,14 +88,6 @@ class ListenerProvider implements ListenerProviderInterface
             Release\CreateReleaseNameListener::class,
             Release\PushReleaseToProviderListener::class,
         ],
-        Tag\TagReleaseEvent::class                 => [
-            Tag\ConfigListener::class,
-            Common\ValidateVersionListener::class,
-            Common\IsChangelogReadableListener::class,
-            Common\ParseChangelogListener::class,
-            Common\FormatChangelogListener::class,
-            Tag\TagReleaseListener::class,
-        ],
         Version\EditChangelogVersionEvent::class   => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
@@ -123,6 +115,14 @@ class ListenerProvider implements ListenerProviderInterface
             Version\ValidateVersionToUseListener::class,
             Common\DiscoverChangelogEntryListener::class,
             Version\ShowVersionListener::class,
+        ],
+        Version\TagReleaseEvent::class             => [
+            Version\TagCommandConfigListener::class,
+            Common\ValidateVersionListener::class,
+            Common\IsChangelogReadableListener::class,
+            Common\ParseChangelogListener::class,
+            Common\FormatChangelogListener::class,
+            Version\TagReleaseListener::class,
         ],
     ];
 

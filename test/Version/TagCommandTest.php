@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog\Tag;
+namespace PhlyTest\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Tag\TagCommand;
-use Phly\KeepAChangelog\Tag\TagReleaseEvent;
+use Phly\KeepAChangelog\Version\TagCommand;
+use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;

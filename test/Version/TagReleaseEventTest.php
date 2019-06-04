@@ -7,12 +7,12 @@
 
 declare(strict_types=1);
 
-namespace PhlyTest\KeepAChangelog\Tag;
+namespace PhlyTest\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Common\ChangelogAwareEventInterface;
 use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Tag\TagReleaseEvent;
+use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\EventDispatcherInterface;

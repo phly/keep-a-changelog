@@ -279,8 +279,6 @@ The default providers available are:
 
 - `release`: create a new release on your given provider, using the relevant
   changelog entry. This command also pushes the related tag.
-- `tag`: Create a new tag, using the relevant changelog entry. Creates signed
-  tags.
 - `bump`, `bump:bugfix`, and `bump:patch`: Create a new changelog entry for the
   next bugfix release.
 - `bump:minor`: Create a new changelog entry for the next minor release.
@@ -302,6 +300,8 @@ The default providers available are:
 - `version:list`: List all changelog versions currently in the file.
 - `version:remove`: Remove the given changelog version and its entries.
 - `version:show`: Show the given changelog version and its entries.
+- `version:tag`: Create a new tag, using the relevant changelog entry. Creates
+  signed tags.
 
 For a list of required parameters and all options for a command, run:
 

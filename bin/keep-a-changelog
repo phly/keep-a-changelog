@@ -55,10 +55,10 @@ $application->addCommands([
     new Changelog\NewCommand($dispatcher, 'changelog:new'),
     new Changelog\ReadyCommand($dispatcher, 'changelog:ready'),
     new Release\ReleaseCommand($dispatcher, 'release'),
-    new Tag\TagCommand($dispatcher, 'tag'),
     new Version\EditCommand($dispatcher, 'version:edit'),
     new Version\ListCommand($dispatcher, 'version:list'),
     new Version\RemoveCommand($dispatcher, 'version:remove'),
     new Version\ShowCommand($dispatcher, 'version:show'),
+    new Version\TagCommand($dispatcher, 'version:tag'),
 ]);
 $application->run();
