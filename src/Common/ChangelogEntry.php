@@ -9,8 +9,9 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Common;
 
-use TypeError;
 use UnexpectedValueException;
+
+use function sprintf;
 
 class ChangelogEntry
 {
@@ -18,63 +19,62 @@ class ChangelogEntry
     private $contents = '';
 
     /** @var null|int */
-    private $index = null;
+    private $index;
 
     /** @var int */
     private $length = 0;
 
     public function __get(string $name)
     {
-        if (! property_exists($this, $name)) {
-            throw new UnexpectedValueException(sprintf(
-                'The property "%s" does not exist for class "%s"',
-                $name,
-                gettype($this)
-            ));
+        switch ($name) {
+            case 'contents':
+                return $this->contents;
+            case 'index':
+                return $this->index;
+            case 'length':
+                return $this->length;
+            default:
+                throw new UnexpectedValueException(sprintf(
+                    'The property "%s" does not exist for class "%s"',
+                    $name,
+                    static::class
+                ));
         }
-
-        return $this->$name;
     }
 
     public function __set(string $name, $value)
     {
         switch ($name) {
             case 'contents':
-                if (! is_string($value)) {
-                    throw new TypeError(sprintf(
-                        'Property %s expects a string; received %s',
-                        $name,
-                        gettype($value)
-                    ));
-                }
-                $this->$name = $value;
+                $this->setContents($value);
                 break;
             case 'index':
-                if (null !== $value && ! is_int($value)) {
-                    throw new TypeError(sprintf(
-                        'Property %s expects an integer or null value; received %s',
-                        $name,
-                        gettype($value)
-                    ));
-                }
-                $this->$name = $value;
+                $this->setIndex($value);
                 break;
             case 'length':
-                if (! is_int($value)) {
-                    throw new TypeError(sprintf(
-                        'Property %s expects an integer; received %s',
-                        $name,
-                        gettype($value)
-                    ));
-                }
-                $this->$name = $value;
+                $this->setLength($value);
                 break;
             default:
                 throw new UnexpectedValueException(sprintf(
                     'The property "%s" does not exist for class "%s"',
                     $name,
-                    gettype($this)
+                    static::class
                 ));
         }
+    }
+
+    private function setContents(string $value) : void
+    {
+        $this->contents = $value;
+    }
+
+    private function setIndex(?int $value) : void
+    {
+        $this->index = $value;
+    }
+
+    private function setLength(int $value) : void
+    {
+        $this->length = $value;
     }
 }

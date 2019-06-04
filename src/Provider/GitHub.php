@@ -14,17 +14,15 @@ use Github\Exception\ExceptionInterface as GithubException;
 
 use function explode;
 use function filter_var;
-use function parse_url;
+use function preg_match;
 use function rawurlencode;
 use function sprintf;
 
 use const FILTER_VALIDATE_URL;
-use const PHP_URL_HOST;
 
 class GitHub implements ProviderInterface
 {
-    private const DEFAULT_DOMAIN = 'github.com';
-    private const DEFAULT_URL = 'https://api.github.com';
+    private const DEFAULT_URL    = 'https://api.github.com';
 
     /**
      * Use for testing purposes only.
@@ -76,10 +74,10 @@ class GitHub implements ProviderInterface
             $org,
             $repo,
             [
-                'tag_name' => $tagName,
-                'name' => $releaseName,
-                'body' => $changelog,
-                'draft' => false,
+                'tag_name'   => $tagName,
+                'name'       => $releaseName,
+                'body'       => $changelog,
+                'draft'      => false,
                 'prerelease' => $this->isVersionPrelease($tagName),
             ]
         );
