@@ -115,14 +115,6 @@ class GitHub implements ProviderInterface
         return sprintf('[#%d](%s)', $patchIdentifier, $url);
     }
 
-    public function domain() : string
-    {
-        if ($this->url === self::DEFAULT_URL) {
-            return self::DEFAULT_DOMAIN;
-        }
-        return parse_url($this->url, PHP_URL_HOST);
-    }
-
     public function setPackageName(string $package) : void
     {
         if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*/[a-z0-9]+[a-z0-9_-]*$#i', $package)) {

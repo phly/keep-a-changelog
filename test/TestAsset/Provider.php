@@ -14,9 +14,6 @@ use Phly\KeepAChangelog\Provider\ProviderInterface;
 class Provider implements ProviderInterface
 {
     /** @param null|string */
-    public $domain;
-
-    /** @param null|string */
     public $package;
 
     /** @param null|string */
@@ -53,11 +50,6 @@ class Provider implements ProviderInterface
         return '';
     }
 
-    public function domain() : string
-    {
-        return (string) $this->domain;
-    }
-
     public function setPackageName(string $package) : void
     {
         $this->package = $package;
@@ -70,6 +62,6 @@ class Provider implements ProviderInterface
 
     public function setUrl(string $url) : void
     {
-        $this->url = $this->domain = $url;
+        $this->url = $url;
     }
 }

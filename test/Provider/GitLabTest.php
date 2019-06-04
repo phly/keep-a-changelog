@@ -45,17 +45,6 @@ class GitLabTest extends TestCase
         $this->assertTrue($this->gitlab->canCreateRelease());
     }
 
-    public function testHasADefaultDomain()
-    {
-        $this->assertSame('gitlab.com', $this->gitlab->domain());
-    }
-
-    public function testDomainIsMutable()
-    {
-        $this->gitlab->setUrl('https://git.custom-domain.com');
-        $this->assertSame('git.custom-domain.com', $this->gitlab->domain());
-    }
-
     public function invalidUrls() : iterable
     {
         yield 'bare-word'   => ['invalid'];

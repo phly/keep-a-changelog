@@ -45,17 +45,6 @@ class GitHubTest extends TestCase
         $this->assertTrue($this->github->canCreateRelease());
     }
 
-    public function testHasADefaultDomain()
-    {
-        $this->assertSame('github.com', $this->github->domain());
-    }
-
-    public function testDomainIsMutable()
-    {
-        $this->github->setUrl('https://git.custom-domain.com');
-        $this->assertSame('git.custom-domain.com', $this->github->domain());
-    }
-
     public function invalidUrls() : iterable
     {
         yield 'bare-word'   => ['invalid'];

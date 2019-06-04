@@ -46,7 +46,6 @@ class ProviderSpecTest extends TestCase
         $this->assertNull($provider->package);
         $this->assertNull($provider->token);
         $this->assertNull($provider->url);
-        $this->assertSame('', $provider->domain());
     }
 
     public function testSetsPackageInCreatedProviderWhenPresentInSpec()
@@ -61,7 +60,6 @@ class ProviderSpecTest extends TestCase
         $this->assertSame('some/package', $provider->package);
         $this->assertNull($provider->token);
         $this->assertNull($provider->url);
-        $this->assertSame('', $provider->domain());
     }
 
     public function testSetsTokenInCreatedProviderWhenPresentInSpec()
@@ -76,7 +74,6 @@ class ProviderSpecTest extends TestCase
         $this->assertNull($provider->package);
         $this->assertSame('some-token', $provider->token);
         $this->assertNull($provider->url);
-        $this->assertSame('', $provider->domain());
     }
 
     public function testSetsUrlInCreatedProviderWhenPresentInSpec()
@@ -91,6 +88,5 @@ class ProviderSpecTest extends TestCase
         $this->assertNull($provider->package);
         $this->assertNull($provider->token);
         $this->assertSame('https://mwop.net', $provider->url);
-        $this->assertSame('https://mwop.net', $provider->domain());
     }
 }

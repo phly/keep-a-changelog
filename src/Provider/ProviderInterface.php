@@ -60,10 +60,8 @@ interface ProviderInterface
     public function generatePatchLink(int $patchIdentifier) : string;
 
     /**
-     * Returns just the domain portion of the URL associated with the provider.
+     * Set the package name to use in links and when creating the release name.
      */
-    public function domain() : string;
-
     public function setPackageName(string $package) : void;
 
     /**

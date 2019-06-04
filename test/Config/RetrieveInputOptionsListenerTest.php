@@ -100,7 +100,6 @@ class RetrieveInputOptionsListenerTest extends TestCase
 
         $provider = $providerSpec->createProvider();
         $this->assertInstanceOf(Provider\GitLab::class, $provider);
-        $this->assertSame('git.mwop.net', $provider->domain());
         $this->assertTrue($provider->canCreateRelease()); // indicates both token and package are present
     }
 
