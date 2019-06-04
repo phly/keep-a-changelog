@@ -28,7 +28,7 @@ class RemoteNameDiscoveryTest extends TestCase
             $this->input,
             $this->output->reveal(),
             $this->config,
-            $this->helper,
+            $this->helper
         );
     }
 
