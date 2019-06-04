@@ -68,6 +68,10 @@ abstract class AbstractPrependLinkListener
             return false;
         }
 
+        if (is_bool($this->probeLinkStatus)) {
+            return $this->probeLinkStatus;
+        }
+
         $headers = get_headers(
             $link,
             1,
@@ -89,4 +93,17 @@ abstract class AbstractPrependLinkListener
 
         return false;
     }
+
+    /**
+     * Hard-code status for probeLink operations.
+     *
+     * For testing purposes only.
+     *
+     * - null: proceed with normal operation
+     * - true|false return this value
+     *
+     * @internal
+     * @var null|bool
+     */
+    public $probeLinkStatus;
 }
