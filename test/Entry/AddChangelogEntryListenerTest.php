@@ -15,14 +15,12 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
 use Phly\KeepAChangelog\Entry\AddChangelogEntryListener;
 use Phly\KeepAChangelog\Entry\EntryTypes;
-use Phly\KeepAChangelog\Entry\InjectionIndex;
-use Phly\KeepAChangelog\Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
 class AddChangelogEntryListenerTest extends TestCase
 {
-    private const CHANGELOG_INITIAL_ENTRY = <<< 'EOC'
+    private const CHANGELOG_INITIAL_ENTRY = <<<'EOC'
 ## 1.2.3 - TBD
 
 ### Added
@@ -47,7 +45,7 @@ class AddChangelogEntryListenerTest extends TestCase
 
 EOC;
 
-    private const CHANGELOG_WITH_ENTRIES = <<< 'EOC'
+    private const CHANGELOG_WITH_ENTRIES = <<<'EOC'
 ## 1.2.3 - TBD
 
 ### Added
@@ -101,7 +99,7 @@ EOC;
 
     public function testNotifiesEventWhenMatchingEntryTypeNotPresent()
     {
-        $this->entry->contents = <<< 'EOC'
+        $this->entry->contents = <<<'EOC'
 ## 2.0.0 - 2019-05-30
 
 ### Changed
@@ -185,7 +183,7 @@ EOC;
         $this->event->entry()->willReturn($entry);
         $this->event->addedChangelogEntry('CHANGELOG.md', $section)->shouldBeCalled();
 
-        $listener = new AddChangelogEntryListener();
+        $listener         = new AddChangelogEntryListener();
         $listener->editor = $this->editor->reveal();
 
         $this->assertNull($listener($this->event->reveal()));
@@ -203,8 +201,8 @@ should be indented.
 EOH;
 
         $this->entry->contents = self::CHANGELOG_INITIAL_ENTRY;
-        $this->entry->index = 4;
-        $this->entry->length = 22;
+        $this->entry->index    = 4;
+        $this->entry->length   = 22;
 
         $this->config->changelogFile()->willReturn('CHANGELOG.md');
 
@@ -226,7 +224,7 @@ EOH;
         $this->event->entry()->willReturn($entry);
         $this->event->addedChangelogEntry('CHANGELOG.md', EntryTypes::TYPE_ADDED)->shouldBeCalled();
 
-        $listener = new AddChangelogEntryListener();
+        $listener         = new AddChangelogEntryListener();
         $listener->editor = $this->editor->reveal();
 
         $this->assertNull($listener($this->event->reveal()));

@@ -55,14 +55,14 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new RemoveChangelogVersionEvent(
-                $input,
-                $output,
-                $this->dispatcher,
-                $input->getArgument('version')
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new RemoveChangelogVersionEvent(
+                    $input,
+                    $output,
+                    $this->dispatcher,
+                    $input->getArgument('version')
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

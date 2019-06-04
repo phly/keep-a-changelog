@@ -28,9 +28,9 @@ use function sprintf;
 class BumpCommand extends Command
 {
     public const BUMP_BUGFIX = 'bugfix';
-    public const BUMP_MAJOR = 'major';
-    public const BUMP_MINOR = 'minor';
-    public const BUMP_PATCH = self::BUMP_BUGFIX;
+    public const BUMP_MAJOR  = 'major';
+    public const BUMP_MINOR  = 'minor';
+    public const BUMP_PATCH  = self::BUMP_BUGFIX;
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the next %s release.';
 
@@ -45,8 +45,8 @@ EOH;
     /** @var string[] */
     private $bumpMethods = [
         self::BUMP_BUGFIX => 'bumpBugfixVersion',
-        self::BUMP_MAJOR => 'bumpMajorVersion',
-        self::BUMP_MINOR => 'bumpMinorVersion',
+        self::BUMP_MAJOR  => 'bumpMajorVersion',
+        self::BUMP_MINOR  => 'bumpMinorVersion',
     ];
 
     /** @var EventDispatcherInterface */
@@ -67,7 +67,7 @@ EOH;
             throw Exception\InvalidBumpTypeException::forType($type);
         }
 
-        $this->type = $type;
+        $this->type       = $type;
         $this->dispatcher = $dispatcher;
         parent::__construct($name);
     }
@@ -91,14 +91,14 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new BumpChangelogVersionEvent(
-                $input,
-                $output,
-                $this->dispatcher,
-                $this->bumpMethods[$this->type]
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new BumpChangelogVersionEvent(
+                    $input,
+                    $output,
+                    $this->dispatcher,
+                    $this->bumpMethods[$this->type]
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

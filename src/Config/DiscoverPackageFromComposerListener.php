@@ -17,6 +17,6 @@ class DiscoverPackageFromComposerListener extends AbstractDiscoverPackageFromFil
     protected function getFileName() : string
     {
         $path = $this->packageDir ?: realpath(getcwd());
-        return  $path . '/composer.json';
+        return $path . '/composer.json';
     }
 }

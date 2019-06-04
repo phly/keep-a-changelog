@@ -12,6 +12,8 @@ namespace Phly\KeepAChangelog\Common;
 use Phly\KeepAChangelog\Config;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+use function sprintf;
+
 abstract class AbstractEvent implements EventInterface
 {
     use IOTrait;

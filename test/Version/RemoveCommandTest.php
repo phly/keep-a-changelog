@@ -9,14 +9,12 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Version;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Phly\KeepAChangelog\Version\RemoveChangelogVersionEvent;
 use Phly\KeepAChangelog\Version\RemoveCommand;
-use Phly\KeepAChangelog\Exception;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use ReflectionMethod;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

@@ -20,7 +20,6 @@ interface ChangelogAwareEventInterface extends
      */
     public function changelog() : ?string;
 
-
     /**
      * Update the contents for the changelog for the requested version.
      */

@@ -17,6 +17,8 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class RemoteNameDiscovery implements IOInterface, StoppableEventInterface
 {
     use IOTrait;
@@ -100,7 +102,7 @@ class RemoteNameDiscovery implements IOInterface, StoppableEventInterface
     public function reportNoMatchingGitRemoteFound(string $domain, string $package) : void
     {
         $this->gitRemoteResolutionFailed = true;
-        $output = $this->output();
+        $output                          = $this->output();
 
         $output->writeln('<error>Cannot determine git remote!</error>');
         $output->writeln(sprintf(

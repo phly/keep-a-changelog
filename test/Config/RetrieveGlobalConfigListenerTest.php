@@ -10,10 +10,10 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Config\ConfigDiscovery;
-use Phly\KeepAChangelog\Config\RetrieveGlobalConfigListener;
 use Phly\KeepAChangelog\Provider;
 use PHPUnit\Framework\TestCase;
+
+use function realpath;
 
 class RetrieveGlobalConfigListenerTest extends TestCase
 {
@@ -26,7 +26,7 @@ class RetrieveGlobalConfigListenerTest extends TestCase
 
     public function createListener() : RetrieveGlobalConfigListener
     {
-        $listener = new RetrieveGlobalConfigListener();
+        $listener             = new RetrieveGlobalConfigListener();
         $listener->configRoot = realpath(__DIR__ . '/../_files/config');
         return $listener;
     }
@@ -49,7 +49,7 @@ class RetrieveGlobalConfigListenerTest extends TestCase
         $providers = $this->config->providers();
         $this->assertSame($provider, $providers->get('gitlab'));
 
-        $provider  = $providers->get('github');
+        $provider = $providers->get('github');
         $this->assertInstanceOf(Provider\ProviderSpec::class, $provider);
         $this->assertSame('github', $provider->name());
         $this->assertAttributeSame('https://github.mwop.net', 'url', $provider);

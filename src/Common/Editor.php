@@ -13,8 +13,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function escapeshellarg;
 use function sprintf;
-use function proc_close;
-use function proc_open;
+
+use const STDERR;
+use const STDIN;
+use const STDOUT;
 
 class Editor
 {

@@ -9,14 +9,18 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Changelog;
 
-use Phly\KeepAChangelog\Changelog\ReadyLatestChangelogEvent;
 use Phly\KeepAChangelog\Changelog\ReadyCommand;
+use Phly\KeepAChangelog\Changelog\ReadyLatestChangelogEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function array_merge;
+use function date;
+use function sprintf;
 
 class ReadyCommandTest extends TestCase
 {

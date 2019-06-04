@@ -42,7 +42,7 @@ class PromptForRemovalConfirmationListenerTest extends TestCase
         $this->event->abort()->will(function () {
         });
 
-        $this->listener = new PromptForRemovalConfirmationListener();
+        $this->listener                 = new PromptForRemovalConfirmationListener();
         $this->listener->questionHelper = $this->helper->reveal();
     }
 
@@ -62,12 +62,12 @@ class PromptForRemovalConfirmationListenerTest extends TestCase
     public function testListenerAbortsEventOnUserRequest()
     {
         $this->helper
-             ->ask(
-                 Argument::that([$this->input, 'reveal']),
-                 Argument::that([$this->output, 'reveal']),
-                 Argument::type(ConfirmationQuestion::class)
-             )
-             ->willReturn(false);
+            ->ask(
+                Argument::that([$this->input, 'reveal']),
+                Argument::that([$this->output, 'reveal']),
+                Argument::type(ConfirmationQuestion::class)
+            )
+            ->willReturn(false);
 
         $this->assertNull(($this->listener)($this->event->reveal()));
 
@@ -80,12 +80,12 @@ class PromptForRemovalConfirmationListenerTest extends TestCase
     public function testListenerDoesNotNotifyEventIfUserDoesNotAbort()
     {
         $this->helper
-             ->ask(
-                 Argument::that([$this->input, 'reveal']),
-                 Argument::that([$this->output, 'reveal']),
-                 Argument::type(ConfirmationQuestion::class)
-             )
-             ->willReturn(true);
+            ->ask(
+                Argument::that([$this->input, 'reveal']),
+                Argument::that([$this->output, 'reveal']),
+                Argument::type(ConfirmationQuestion::class)
+            )
+            ->willReturn(true);
 
         $this->assertNull(($this->listener)($this->event->reveal()));
 

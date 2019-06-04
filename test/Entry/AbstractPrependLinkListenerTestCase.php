@@ -18,6 +18,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
+use function sprintf;
+
 abstract class AbstractPrependLinkListenerTestCase extends TestCase
 {
     /** @var Config|ObjectProphecy */
@@ -167,7 +169,7 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
         $this->generateLinkRequested($this->provider);
         $this->reportInvalidLinkRequested($event);
 
-        $listener = $this->getListener();
+        $listener                  = $this->getListener();
         $listener->probeLinkStatus = false;
 
         $this->assertNull($listener($event->reveal()));
@@ -184,7 +186,7 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
         $this->identifierRequested($event);
         $this->generateLinkRequested($this->provider);
 
-        $listener = $this->getListener();
+        $listener                  = $this->getListener();
         $listener->probeLinkStatus = true;
 
         $this->assertNull($listener($event->reveal()));

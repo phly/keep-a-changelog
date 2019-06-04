@@ -13,6 +13,12 @@ use Phly\KeepAChangelog\ConfigCommand\AbstractRemoveConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\RemoveLocalConfigListener;
 use Prophecy\Prophecy\ObjectProphecy;
 
+use function file_exists;
+use function sprintf;
+use function sys_get_temp_dir;
+use function touch;
+use function unlink;
+
 class RemoveLocalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
 {
     /** @var null|string */
@@ -20,11 +26,11 @@ class RemoveLocalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
 
     public function getListener() : AbstractRemoveConfigListener
     {
-        $configRoot = sys_get_temp_dir();
+        $configRoot     = sys_get_temp_dir();
         $this->tempFile = sprintf('%s/.keep-a-changelog.ini', $configRoot);
         touch($this->tempFile);
 
-        $listener = new RemoveLocalConfigListener();
+        $listener             = new RemoveLocalConfigListener();
         $listener->configRoot = $configRoot;
 
         return $listener;
@@ -32,10 +38,10 @@ class RemoveLocalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
 
     public function getListenerWithFileNotFound() : AbstractRemoveConfigListener
     {
-        $configRoot = sys_get_temp_dir();
+        $configRoot     = sys_get_temp_dir();
         $this->tempFile = sprintf('%s/.keep-a-changelog.ini', $configRoot);
 
-        $listener = new RemoveLocalConfigListener();
+        $listener             = new RemoveLocalConfigListener();
         $listener->configRoot = $configRoot;
 
         return $listener;
@@ -43,7 +49,7 @@ class RemoveLocalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
 
     public function getListenerWithUnlinkableFile() : AbstractRemoveConfigListener
     {
-        $configRoot = sys_get_temp_dir();
+        $configRoot     = sys_get_temp_dir();
         $this->tempFile = sprintf('%s/.keep-a-changelog.ini', $configRoot);
         touch($this->tempFile);
 
@@ -51,9 +57,9 @@ class RemoveLocalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
             return false;
         };
 
-        $listener = new RemoveLocalConfigListener();
+        $listener             = new RemoveLocalConfigListener();
         $listener->configRoot = $configRoot;
-        $listener->unlink = $unlink;
+        $listener->unlink     = $unlink;
 
         return $listener;
     }

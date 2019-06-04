@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Common;
 
-use Phly\KeepAChangelog\Common\ChangelogFormatter;
 use Phly\KeepAChangelog\Common\ChangelogAwareEventInterface;
 use Phly\KeepAChangelog\Common\FormatChangelogListener;
 use PHPUnit\Framework\TestCase;
@@ -18,8 +17,8 @@ class FormatChangelogListenerTest extends TestCase
 {
     public function testListenerFormatsProvidedChangelogAndPushesItToTheEvent()
     {
-        $event = $this->prophesize(ChangelogAwareEventInterface::class);
-        $changelog = <<< 'EOC'
+        $event     = $this->prophesize(ChangelogAwareEventInterface::class);
+        $changelog = <<<'EOC'
 ### Added
 
 - Added a new feature.
@@ -42,7 +41,7 @@ class FormatChangelogListenerTest extends TestCase
 
 EOC;
 
-        $expected = <<< 'EOC'
+        $expected = <<<'EOC'
 Added
 -----
 

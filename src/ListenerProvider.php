@@ -11,15 +11,18 @@ namespace Phly\KeepAChangelog;
 
 use Psr\EventDispatcher\ListenerProviderInterface;
 
+use function get_class;
+use function is_object;
+
 class ListenerProvider implements ListenerProviderInterface
 {
     private $listeners = [
-        Bump\BumpChangelogVersionEvent::class => [
+        Bump\BumpChangelogVersionEvent::class      => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
             Bump\BumpChangelogVersionListener::class,
         ],
-        Changelog\CreateNewChangelogEvent::class => [
+        Changelog\CreateNewChangelogEvent::class   => [
             Config\ConfigListener::class,
             Common\ValidateVersionListener::class,
             Changelog\CreateNewChangelogListener::class,
@@ -30,41 +33,41 @@ class ListenerProvider implements ListenerProviderInterface
             Common\DiscoverChangelogEntryListener::class,
             Changelog\SetDateForChangelogReleaseListener::class,
         ],
-        ConfigCommand\CreateConfigEvent::class => [
+        ConfigCommand\CreateConfigEvent::class     => [
             ConfigCommand\CreateGlobalConfigListener::class,
             ConfigCommand\CreateLocalConfigListener::class,
         ],
-        ConfigCommand\EditConfigEvent::class => [
+        ConfigCommand\EditConfigEvent::class       => [
             ConfigCommand\VerifyEditOptionsListener::class,
             Common\DiscoverEditorListener::class,
             ConfigCommand\EditGlobalConfigListener::class,
             ConfigCommand\EditLocalConfigListener::class,
         ],
-        ConfigCommand\RemoveConfigEvent::class => [
+        ConfigCommand\RemoveConfigEvent::class     => [
             ConfigCommand\VerifyRemoveOptionsListener::class,
             ConfigCommand\RemoveLocalConfigListener::class,
             ConfigCommand\RemoveGlobalConfigListener::class,
         ],
-        ConfigCommand\ShowConfigEvent::class => [
+        ConfigCommand\ShowConfigEvent::class       => [
             ConfigCommand\ShowGlobalConfigListener::class,
             ConfigCommand\ShowLocalConfigListener::class,
             ConfigCommand\ShowMergedConfigListener::class,
         ],
-        Config\ConfigDiscovery::class => [
+        Config\ConfigDiscovery::class              => [
             Config\RetrieveGlobalConfigListener::class,
             Config\RetrieveLocalConfigListener::class,
             Config\RetrieveInputOptionsListener::class,
         ],
-        Config\PackageNameDiscovery::class => [
+        Config\PackageNameDiscovery::class         => [
             Config\DiscoverPackageFromComposerListener::class,
             Config\DiscoverPackageFromNpmPackageListener::class,
             Config\DiscoverPackageFromGitRemoteListener::class,
         ],
-        Config\RemoteNameDiscovery::class => [
+        Config\RemoteNameDiscovery::class          => [
             Config\DiscoverRemoteFromGitRemotesListener::class,
             Config\PromptForGitRemoteListener::class,
         ],
-        Entry\AddChangelogEntryEvent::class => [
+        Entry\AddChangelogEntryEvent::class        => [
             Entry\ConfigListener::class,
             Entry\IsEntryArgumentEmptyListener::class,
             Common\IsChangelogReadableListener::class,
@@ -74,7 +77,7 @@ class ListenerProvider implements ListenerProviderInterface
             Entry\PrependPatchLinkListener::class,
             Entry\AddChangelogEntryListener::class,
         ],
-        Release\ReleaseEvent::class => [
+        Release\ReleaseEvent::class                => [
             Release\ConfigListener::class,
             Release\VerifyTagExistsListener::class,
             Release\VerifyProviderCanReleaseListener::class,
@@ -85,7 +88,7 @@ class ListenerProvider implements ListenerProviderInterface
             Release\CreateReleaseNameListener::class,
             Release\PushReleaseToProviderListener::class,
         ],
-        Tag\TagReleaseEvent::class => [
+        Tag\TagReleaseEvent::class                 => [
             Tag\ConfigListener::class,
             Common\ValidateVersionListener::class,
             Common\IsChangelogReadableListener::class,
@@ -93,7 +96,7 @@ class ListenerProvider implements ListenerProviderInterface
             Common\FormatChangelogListener::class,
             Tag\TagReleaseListener::class,
         ],
-        Version\EditChangelogVersionEvent::class => [
+        Version\EditChangelogVersionEvent::class   => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
             Version\ValidateVersionToUseListener::class,
@@ -101,7 +104,7 @@ class ListenerProvider implements ListenerProviderInterface
             Common\DiscoverEditorListener::class,
             Version\EditChangelogVersionListener::class,
         ],
-        Version\ListVersionsEvent::class => [
+        Version\ListVersionsEvent::class           => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
             Version\ListVersionsListener::class,
@@ -114,7 +117,7 @@ class ListenerProvider implements ListenerProviderInterface
             Version\PromptForRemovalConfirmationListener::class,
             Version\RemoveChangelogVersionListener::class,
         ],
-        Version\ShowVersionEvent::class => [
+        Version\ShowVersionEvent::class            => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
             Version\ValidateVersionToUseListener::class,

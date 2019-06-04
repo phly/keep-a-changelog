@@ -13,6 +13,13 @@ use Phly\KeepAChangelog\Common\ChangelogEditor;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
 use PHPUnit\Framework\TestCase;
 
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
+
 class ChangelogEditorTest extends TestCase
 {
     /** @var null|string */
@@ -45,10 +52,10 @@ class ChangelogEditorTest extends TestCase
     {
         $changelog = $this->createChangelog();
 
-        $entry = new ChangelogEntry();
-        $entry->index = 26;
-        $entry->length = 22;
-        $entry->contents = <<< 'EOC'
+        $entry           = new ChangelogEntry();
+        $entry->index    = 26;
+        $entry->length   = 22;
+        $entry->contents = <<<'EOC'
 ## 1.1.0 - 2018-03-23
 
 ### Added

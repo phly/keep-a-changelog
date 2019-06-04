@@ -48,8 +48,8 @@ class RemoveCommandTest extends TestCase
         $this->input->getOption('local')->willReturn(true);
         $this->input->getOption('global')->willReturn(true);
 
-        $input      = $this->input->reveal();
-        $output     = $this->output->reveal();
+        $input  = $this->input->reveal();
+        $output = $this->output->reveal();
 
         $this->dispatcher
             ->dispatch(Argument::that(function ($event) use ($input, $output) {

@@ -46,14 +46,14 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new ShowVersionEvent(
-                $input,
-                $output,
-                $this->dispatcher,
-                $input->getArgument('version') ?: null
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new ShowVersionEvent(
+                    $input,
+                    $output,
+                    $this->dispatcher,
+                    $input->getArgument('version') ?: null
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

@@ -69,15 +69,15 @@ EOH;
     {
         $version = $input->getArgument('version');
         return $this->dispatcher
-            ->dispatch(new TagReleaseEvent(
-                $input,
-                $output,
-                $this->dispatcher,
-                $version,
-                $input->getOption('tagname') ?: $version
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new TagReleaseEvent(
+                    $input,
+                    $output,
+                    $this->dispatcher,
+                    $version,
+                    $input->getOption('tagname') ?: $version
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

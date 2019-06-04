@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Provider;
 
+use function array_keys;
+
 class ProviderList
 {
-    /**
-     * @var array<string, ProviderSpec>
-     */
+    /** @var array<string, ProviderSpec> */
     private $providers = [];
 
     public function has(string $name) : bool

@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\Common\Editor;
 
+use function file_exists;
+
 abstract class AbstractEditConfigListener
 {
     abstract public function configEditRequested(EditConfigEvent $event) : bool;

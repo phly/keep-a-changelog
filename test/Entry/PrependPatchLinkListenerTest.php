@@ -14,6 +14,8 @@ use Phly\KeepAChangelog\Entry\PrependPatchLinkListener;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
+use function sprintf;
+
 class PrependPatchLinkListenerTest extends AbstractPrependLinkListenerTestCase
 {
     public function getListener() : AbstractPrependLinkListener

@@ -16,6 +16,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class ListVersionsListenerTest extends TestCase
 {
     public function testEmitsAllVersionsFoundWithCorrespondingDates()

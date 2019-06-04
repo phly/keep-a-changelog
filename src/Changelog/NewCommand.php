@@ -56,15 +56,15 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new CreateNewChangelogEvent(
-                $input,
-                $output,
-                $this->dispatcher,
-                $input->getOption('initial-version') ?: '0.1.0',
-                $input->getOption('overwrite') ?: false
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new CreateNewChangelogEvent(
+                    $input,
+                    $output,
+                    $this->dispatcher,
+                    $input->getOption('initial-version') ?: '0.1.0',
+                    $input->getOption('overwrite') ?: false
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

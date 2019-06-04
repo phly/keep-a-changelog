@@ -22,7 +22,7 @@ use const FILTER_VALIDATE_URL;
 
 class GitHub implements ProviderInterface
 {
-    private const DEFAULT_URL    = 'https://api.github.com';
+    private const DEFAULT_URL = 'https://api.github.com';
 
     /**
      * Use for testing purposes only.

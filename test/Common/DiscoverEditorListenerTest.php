@@ -14,6 +14,10 @@ use Phly\KeepAChangelog\Common\EditorAwareEventInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
+use function getenv;
+use function putenv;
+use function sprintf;
+
 class DiscoverEditorListenerTest extends TestCase
 {
     /** @var null|string */

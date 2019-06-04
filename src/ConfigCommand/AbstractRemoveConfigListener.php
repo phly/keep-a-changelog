@@ -12,6 +12,9 @@ namespace Phly\KeepAChangelog\ConfigCommand;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
+use function file_exists;
+use function sprintf;
+
 abstract class AbstractRemoveConfigListener
 {
     abstract public function configRemovalRequested(RemoveConfigEvent $event) : bool;

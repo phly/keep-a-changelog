@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Provider;
 
+use function class_exists;
+use function class_implements;
+use function in_array;
+
 class ProviderSpec
 {
     /** @var null|string */

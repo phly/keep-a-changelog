@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\Release;
 
 use Throwable;
 
+use function sprintf;
+
 class PushReleaseToProviderListener
 {
     public function __invoke(ReleaseEvent $event) : void

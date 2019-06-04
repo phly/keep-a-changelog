@@ -11,6 +11,14 @@ namespace Phly\KeepAChangelog\Entry;
 
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 
+use function array_key_exists;
+use function explode;
+use function get_headers;
+use function is_bool;
+use function preg_match;
+use function sprintf;
+use function stream_context_create;
+
 abstract class AbstractPrependLinkListener
 {
     abstract public function getIdentifier(AddChangelogEntryEvent $event) : ?int;
@@ -72,7 +80,7 @@ abstract class AbstractPrependLinkListener
             return $this->probeLinkStatus;
         }
 
-        $headers = get_headers(
+        $headers    = get_headers(
             $link,
             1,
             stream_context_create(['http' => ['method' => 'HEAD']])

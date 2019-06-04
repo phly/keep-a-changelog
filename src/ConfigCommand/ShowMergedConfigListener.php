@@ -13,6 +13,10 @@ use Phly\KeepAChangelog\Common\ArrayMergeRecursiveTrait;
 use Phly\KeepAChangelog\Common\IniReadWriteTrait;
 use Phly\KeepAChangelog\Config\LocateGlobalConfigTrait;
 
+use function getcwd;
+use function is_readable;
+use function sprintf;
+
 class ShowMergedConfigListener
 {
     use ArrayMergeRecursiveTrait;

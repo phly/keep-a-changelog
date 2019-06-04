@@ -9,11 +9,20 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
-use Phly\KeepAChangelog\ConfigCommand\CreateConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\AbstractCreateConfigListener;
+use Phly\KeepAChangelog\ConfigCommand\CreateConfigEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+
+use function file_exists;
+use function file_get_contents;
+use function restore_error_handler;
+use function set_error_handler;
+use function sprintf;
+use function unlink;
+
+use const E_WARNING;
 
 abstract class AbstractCreateConfigListenerTestCase extends TestCase
 {
@@ -45,7 +54,7 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
     public function setUp()
     {
         $this->existingConfigFile = null;
-        $this->tempConfigFile = null;
+        $this->tempConfigFile     = null;
     }
 
     public function tearDown()
@@ -62,7 +71,7 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
         $voidReturn = function () {
         };
 
-        $event =  $this->prophesize(CreateConfigEvent::class);
+        $event = $this->prophesize(CreateConfigEvent::class);
         $event->fileExists(Argument::any())->will($voidReturn);
         $event->customChangelog()->will($voidReturn);
         $event->creationFailed(Argument::any())->will($voidReturn);

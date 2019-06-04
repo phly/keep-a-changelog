@@ -9,10 +9,9 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
+use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Version\RemoveChangelogVersionEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\EventDispatcherInterface;

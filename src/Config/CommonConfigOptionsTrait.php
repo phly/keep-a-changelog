@@ -13,6 +13,8 @@ use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 
+use function sprintf;
+
 /**
  * Provides methods for injecting common (but not global) input options.
  */

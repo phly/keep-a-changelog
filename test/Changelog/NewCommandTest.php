@@ -18,6 +18,9 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function array_merge;
+use function sprintf;
+
 class NewCommandTest extends TestCase
 {
     use ExecuteCommandTrait;

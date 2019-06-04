@@ -11,7 +11,6 @@ namespace Phly\KeepAChangelog\Entry;
 
 use Phly\KeepAChangelog\Config\CommonConfigOptionsTrait;
 use Phly\KeepAChangelog\Exception;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,6 +20,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function explode;
 use function in_array;
+use function sprintf;
+use function strpos;
 use function ucwords;
 
 class EntryCommand extends Command
@@ -111,18 +112,18 @@ EOH;
         $issue = $input->getOption('issue') ?: null;
 
         return $this->dispatcher
-            ->dispatch(new AddChangelogEntryEvent(
-                $input,
-                $output,
-                $this->dispatcher,
-                $this->type,
-                $input->getArgument('entry'),
-                $input->getOption('release-version') ?: '',
-                null === $patch ? null : (int) $patch,
-                null === $issue ? null : (int) $issue
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new AddChangelogEntryEvent(
+                    $input,
+                    $output,
+                    $this->dispatcher,
+                    $this->type,
+                    $input->getArgument('entry'),
+                    $input->getOption('release-version') ?: '',
+                    null === $patch ? null : (int) $patch,
+                    null === $issue ? null : (int) $issue
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

@@ -35,8 +35,8 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
     {
         $this->voidReturn = function () {
         };
-        $this->input  = $this->prophesize(InputInterface::class);
-        $this->output = $this->prophesize(OutputInterface::class);
+        $this->input      = $this->prophesize(InputInterface::class);
+        $this->output     = $this->prophesize(OutputInterface::class);
     }
 
     public function getEventProphecy() : ObjectProphecy
@@ -105,7 +105,7 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
         $event = $this->getEventProphecy();
         $this->configureEventToRemove($event);
 
-        $listener = $this->getListener();
+        $listener                 = $this->getListener();
         $listener->questionHelper = $questionHelper->reveal();
 
         $this->assertNull($listener($event->reveal()));
@@ -138,7 +138,7 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
         $event = $this->getEventProphecy();
         $this->configureEventToRemove($event);
 
-        $listener = $this->getListenerWithUnlinkableFile();
+        $listener                 = $this->getListenerWithUnlinkableFile();
         $listener->questionHelper = $questionHelper->reveal();
 
         $this->assertNull($listener($event->reveal()));
@@ -171,7 +171,7 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
         $event = $this->getEventProphecy();
         $this->configureEventToRemove($event);
 
-        $listener = $this->getListener();
+        $listener                 = $this->getListener();
         $listener->questionHelper = $questionHelper->reveal();
 
         $this->assertNull($listener($event->reveal()));

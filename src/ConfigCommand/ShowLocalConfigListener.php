@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\ConfigCommand;
 
+use function file_get_contents;
+use function getcwd;
+use function sprintf;
+
 class ShowLocalConfigListener extends AbstractShowConfigListener
 {
     public function shouldShowConfig(ShowConfigEvent $event) : bool

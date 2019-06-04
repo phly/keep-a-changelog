@@ -14,6 +14,12 @@ use Phly\KeepAChangelog\Bump\BumpChangelogVersionListener;
 use Phly\KeepAChangelog\Config;
 use PHPUnit\Framework\TestCase;
 
+use function file_get_contents;
+use function file_put_contents;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
+
 class BumpChangelogVersionListenerTest extends TestCase
 {
     /** @var string */
@@ -60,7 +66,7 @@ class BumpChangelogVersionListenerTest extends TestCase
      * @dataProvider bumpMethods
      *
      * @param string $bumpMethod Method to use on internal ChangelogBump instance
-     * @param string $expected Version expected back after bumping
+     * @param string $expected   Version expected back after bumping
      */
     public function testBumpsUsingMethodProvidedInEvent(string $bumpMethod, string $expected)
     {

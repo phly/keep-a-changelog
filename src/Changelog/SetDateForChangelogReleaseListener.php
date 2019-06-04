@@ -51,7 +51,7 @@ class SetDateForChangelogReleaseListener
         }
 
         return sprintf(
-            "%s - %s",
+            '%s - %s',
             $matches['prefix'],
             $date
         );

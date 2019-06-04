@@ -17,14 +17,14 @@ class EditLocalConfigListenerTest extends AbstractEditConfigListenerTestCase
 {
     public function getListener() : AbstractEditConfigListener
     {
-        $listener = new EditLocalConfigListener();
+        $listener             = new EditLocalConfigListener();
         $listener->configRoot = __DIR__ . '/../_files/config/local';
         return $listener;
     }
 
     public function getListenerWithFileNotFound() : AbstractEditConfigListener
     {
-        $listener = new EditLocalConfigListener();
+        $listener             = new EditLocalConfigListener();
         $listener->configRoot = __DIR__;
         return $listener;
     }

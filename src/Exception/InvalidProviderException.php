@@ -31,7 +31,7 @@ class InvalidProviderException extends InvalidArgumentException implements Excep
     {
         return new self(sprintf(
             'Provider %s does not implement %s and thus cannot be used to determine where to push tags;'
-                . ' please implement %s',
+            . ' please implement %s',
             gettype($provider),
             Provider\ProviderNameProviderInterface::class,
             Provider\ProviderNameProviderInterface::class

@@ -14,6 +14,10 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use const STDERR;
+use const STDIN;
+use const STDOUT;
+
 class EditorTest extends TestCase
 {
     public function setUp()
@@ -23,8 +27,8 @@ class EditorTest extends TestCase
 
     public function testSpawnsEditorForGivenFilename()
     {
-        $editor = new Editor();
-        $editor->procOpen = function (string $command, array $streams, array &$pipes) {
+        $editor            = new Editor();
+        $editor->procOpen  = function (string $command, array $streams, array &$pipes) {
             TestCase::assertSame("vim 'CHANGELOG.md'", $command);
             TestCase::assertSame([STDIN, STDOUT, STDERR], $streams);
             TestCase::assertSame([], $pipes);

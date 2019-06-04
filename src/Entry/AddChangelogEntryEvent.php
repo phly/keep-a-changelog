@@ -17,6 +17,11 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function implode;
+use function sprintf;
+use function strtolower;
+use function ucwords;
+
 class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwareEventInterface
 {
     use ChangelogEntryDiscoveryTrait;

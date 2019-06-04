@@ -14,6 +14,8 @@ use Phly\KeepAChangelog\ConfigCommand\ShowMergedConfigListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
+use function parse_ini_string;
+
 class ShowMergedConfigListenerTest extends TestCase
 {
     public function setUp()
@@ -43,7 +45,7 @@ class ShowMergedConfigListenerTest extends TestCase
     {
         $this->event->showMerged()->willReturn(true);
 
-        $listener = new ShowMergedConfigListener();
+        $listener             = new ShowMergedConfigListener();
         $listener->configRoot = __DIR__;
 
         $this->assertNull($listener($this->event->reveal()));
@@ -57,8 +59,8 @@ class ShowMergedConfigListenerTest extends TestCase
     {
         $this->event->showMerged()->willReturn(true);
 
-        $listener = new ShowMergedConfigListener();
-        $listener->configRoot = __DIR__ . '/../_files/config';
+        $listener                  = new ShowMergedConfigListener();
+        $listener->configRoot      = __DIR__ . '/../_files/config';
         $listener->localConfigRoot = __DIR__;
 
         $this->assertNull($listener($this->event->reveal()));
@@ -72,8 +74,8 @@ class ShowMergedConfigListenerTest extends TestCase
     {
         $this->event->showMerged()->willReturn(true);
 
-        $listener = new ShowMergedConfigListener();
-        $listener->configRoot = __DIR__ . '/../_files/config';
+        $listener                  = new ShowMergedConfigListener();
+        $listener->configRoot      = __DIR__ . '/../_files/config';
         $listener->localConfigRoot = __DIR__ . '/../_files/config/local';
 
         $this->assertNull($listener($this->event->reveal()));
@@ -81,14 +83,14 @@ class ShowMergedConfigListenerTest extends TestCase
         $this->event->configIsNotReadable(Argument::any(), 'global')->shouldNotHaveBeenCalled();
         $this->event->configIsNotReadable(Argument::any(), 'local')->shouldNotHaveBeenCalled();
         $this->event
-             ->displayMergedConfig(Argument::that(function ($configString) {
-                 $config = parse_ini_string($configString, true);
-                 TestCase::assertSame('CHANGELOG.txt', $config['defaults']['changelog_file']);
-                 TestCase::assertSame('github', $config['defaults']['provider']);
-                 TestCase::assertSame('origin', $config['defaults']['remote']);
-                 TestCase::assertSame('https://github.mwop.net', $config['providers']['github']['url']);
-                 return $configString;
-             }))
+            ->displayMergedConfig(Argument::that(function ($configString) {
+                $config = parse_ini_string($configString, true);
+                TestCase::assertSame('CHANGELOG.txt', $config['defaults']['changelog_file']);
+                TestCase::assertSame('github', $config['defaults']['provider']);
+                TestCase::assertSame('origin', $config['defaults']['remote']);
+                TestCase::assertSame('https://github.mwop.net', $config['providers']['github']['url']);
+                return $configString;
+            }))
             ->shouldHaveBeenCalled();
     }
 }

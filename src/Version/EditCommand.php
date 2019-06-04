@@ -14,7 +14,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class EditCommand extends Command
@@ -59,15 +58,15 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new EditChangelogVersionEvent(
-                $input,
-                $output,
-                $this->dispatcher,
-                $input->getArgument('version') ?: null,
-                $input->getOption('editor') ?: null
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new EditChangelogVersionEvent(
+                    $input,
+                    $output,
+                    $this->dispatcher,
+                    $input->getArgument('version') ?: null,
+                    $input->getOption('editor') ?: null
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

@@ -46,9 +46,9 @@ class InjectionIndexTest extends TestCase
 
     public function testCanSetValidValues()
     {
-        $index = new InjectionIndex();
+        $index        = new InjectionIndex();
         $index->index = 42;
-        $index->type = InjectionIndex::ACTION_INJECT;
+        $index->type  = InjectionIndex::ACTION_INJECT;
 
         $this->assertSame(42, $index->index);
         $this->assertSame(InjectionIndex::ACTION_INJECT, $index->type);

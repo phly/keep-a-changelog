@@ -87,9 +87,9 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new ReleaseEvent($input, $output, $this->dispatcher))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new ReleaseEvent($input, $output, $this->dispatcher))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

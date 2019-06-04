@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\ConfigCommand;
 
+use function getcwd;
+use function sprintf;
+
 class RemoveLocalConfigListener extends AbstractRemoveConfigListener
 {
     public function configRemovalRequested(RemoveConfigEvent $event) : bool

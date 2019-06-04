@@ -10,11 +10,11 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Common\AbstractEvent;
+use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
+use Phly\KeepAChangelog\Common\ChangelogEntryDiscoveryTrait;
 use Phly\KeepAChangelog\Common\EditorAwareEventInterface;
 use Phly\KeepAChangelog\Common\EditorProviderTrait;
 use Phly\KeepAChangelog\Common\VersionValidationTrait;
-use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
-use Phly\KeepAChangelog\Common\ChangelogEntryDiscoveryTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,7 +42,7 @@ class EditChangelogVersionEvent extends AbstractEvent implements
         $this->version    = $version;
         $this->editor     = $editor;
     }
-    
+
     public function isPropagationStopped() : bool
     {
         return $this->failed;

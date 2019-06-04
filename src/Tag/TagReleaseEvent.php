@@ -17,6 +17,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class TagReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
 {
     use ChangelogProviderTrait;
@@ -32,11 +34,11 @@ class TagReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterf
         string $version,
         string $tagName
     ) {
-        $this->input   = $input;
-        $this->output  = $output;
-        $this->dispatcher  = $dispatcher;
-        $this->version = $version;
-        $this->tagName = $tagName;
+        $this->input      = $input;
+        $this->output     = $output;
+        $this->dispatcher = $dispatcher;
+        $this->version    = $version;
+        $this->tagName    = $tagName;
     }
 
     public function isPropagationStopped() : bool

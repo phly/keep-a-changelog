@@ -31,7 +31,7 @@ EOH;
     private $dispatcher;
 
     public function __construct(
-        EventDispatcherInterface $dispatcher = null,
+        ?EventDispatcherInterface $dispatcher = null,
         ?string $name = null
     ) {
         $this->dispatcher = $dispatcher;
@@ -55,15 +55,15 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new BumpChangelogVersionEvent(
-                $input,
-                $output,
-                $this->dispatcher,
-                null,
-                $input->getArgument('version')
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new BumpChangelogVersionEvent(
+                    $input,
+                    $output,
+                    $this->dispatcher,
+                    null,
+                    $input->getArgument('version')
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

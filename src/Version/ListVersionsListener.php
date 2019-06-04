@@ -12,6 +12,8 @@ namespace Phly\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Common\ChangelogParser;
 
 use function sprintf;
+use function str_repeat;
+use function strlen;
 
 class ListVersionsListener
 {

@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Tag;
 
-use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Common\ChangelogAwareEventInterface;
+use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Tag\TagReleaseEvent;
 use PHPUnit\Framework\TestCase;
@@ -109,7 +109,7 @@ class TagReleaseEventTest extends TestCase
     public function testMarkingTaggingCompleteEmitsOutputWithoutStoppingPropagationOrFailure()
     {
         $changelog = 'This is the changelog';
-        $event = $this->createEvent('1.2.3', 'v1.2.3');
+        $event     = $this->createEvent('1.2.3', 'v1.2.3');
         $event->updateChangelog($changelog);
 
         $this->assertNull($event->taggingComplete());

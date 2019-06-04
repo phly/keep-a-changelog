@@ -10,11 +10,8 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Phly\KeepAChangelog\Provider\ProviderSpec;
-use RuntimeException;
 
-use function class_exists;
 use function is_readable;
 use function parse_ini_file;
 
@@ -35,7 +32,7 @@ abstract class AbstractConfigListener
      * defined in the config file. This should only be enabled for
      * global configuration files, as they are the only ones that
      * have appropriate user permissions set!
-     * 
+     *
      * @var bool
      */
     protected $consumeProviderTokens = true;
@@ -72,7 +69,6 @@ abstract class AbstractConfigListener
             if (isset($data['class'])) {
                 $spec->setClassName($data['class']);
             }
-
 
             if (isset($data['url'])) {
                 $spec->setUrl($data['url']);

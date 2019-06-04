@@ -40,12 +40,12 @@ class PushReleaseToProviderListenerTest extends TestCase
     {
         $e = new RuntimeException();
         $this->provider
-             ->createRelease(
-                 'some/package 1.2.3',
-                 '1.2.3',
-                 'this is the changelog'
-             )
-             ->willThrow($e);
+            ->createRelease(
+                'some/package 1.2.3',
+                '1.2.3',
+                'this is the changelog'
+            )
+            ->willThrow($e);
         $this->event->errorCreatingRelease($e)->shouldBeCalled();
 
         $listener = new PushReleaseToProviderListener();
@@ -59,12 +59,12 @@ class PushReleaseToProviderListenerTest extends TestCase
     public function testReportsProviderProblemIfProviderDoesNotReturnValueAfterCreatingRelease()
     {
         $this->provider
-             ->createRelease(
-                 'some/package 1.2.3',
-                 '1.2.3',
-                 'this is the changelog'
-             )
-             ->willReturn(null);
+            ->createRelease(
+                'some/package 1.2.3',
+                '1.2.3',
+                'this is the changelog'
+            )
+            ->willReturn(null);
         $this->event->unexpectedProviderResult()->shouldBeCalled();
 
         $listener = new PushReleaseToProviderListener();
@@ -78,12 +78,12 @@ class PushReleaseToProviderListenerTest extends TestCase
     public function testMarksReleaseCreatedOnSuccess()
     {
         $this->provider
-             ->createRelease(
-                 'some/package 1.2.3',
-                 '1.2.3',
-                 'this is the changelog'
-             )
-             ->willReturn('url-to-release');
+            ->createRelease(
+                'some/package 1.2.3',
+                '1.2.3',
+                'this is the changelog'
+            )
+            ->willReturn('url-to-release');
         $this->event->releaseCreated('url-to-release')->shouldBeCalled();
 
         $listener = new PushReleaseToProviderListener();

@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\Config;
 
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
+use function array_merge;
+
 class PromptForGitRemoteListener
 {
     public function __invoke(RemoteNameDiscovery $event) : void

@@ -13,12 +13,14 @@ use Phly\KeepAChangelog\Common\AbstractEvent;
 use Phly\KeepAChangelog\Common\ChangelogAwareEventInterface;
 use Phly\KeepAChangelog\Common\ChangelogProviderTrait;
 use Phly\KeepAChangelog\Common\VersionValidationTrait;
-use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
+
+use function gettype;
+use function sprintf;
 
 class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
 {
@@ -127,7 +129,7 @@ class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
     public function taggingFailed() : void
     {
         $this->failed = true;
-        $output = $this->output();
+        $output       = $this->output();
         $output->writeln('<error>Error pushing tag to remote!');
         $output->writeln('Please check the output for details.');
     }

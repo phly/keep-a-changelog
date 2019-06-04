@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\Common;
 
 use Throwable;
 
+use function sprintf;
+
 /**
  * Provides an implementation of ChangelogAwareEventInterface.
  */
@@ -32,7 +34,7 @@ trait ChangelogProviderTrait
     public function errorParsingChangelog(string $changelogFile, Throwable $e)
     {
         $this->failed = true;
-        $output = $this->output();
+        $output       = $this->output();
         $output->writeln(sprintf(
             '<error>An error occurred parsing the changelog file "%s" for the release "%s":</error>',
             $changelogFile,

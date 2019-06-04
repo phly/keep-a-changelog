@@ -14,8 +14,6 @@ use Phly\KeepAChangelog\Common\Editor;
 
 use function file_get_contents;
 use function file_put_contents;
-use function proc_close;
-use function proc_open;
 use function sprintf;
 use function sys_get_temp_dir;
 use function uniqid;

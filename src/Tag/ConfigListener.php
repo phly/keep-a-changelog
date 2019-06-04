@@ -23,7 +23,7 @@ class ConfigListener extends BaseConfigListener
     {
         parent::__construct(
             $requiresPackageName = true,
-            $requiresRemoteName = false
+            $requiresRemoteName  = false
         );
     }
 }

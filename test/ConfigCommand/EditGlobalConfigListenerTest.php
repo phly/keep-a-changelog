@@ -17,14 +17,14 @@ class EditGlobalConfigListenerTest extends AbstractEditConfigListenerTestCase
 {
     public function getListener() : AbstractEditConfigListener
     {
-        $listener = new EditGlobalConfigListener();
+        $listener             = new EditGlobalConfigListener();
         $listener->configRoot = __DIR__ . '/../_files/config';
         return $listener;
     }
 
     public function getListenerWithFileNotFound() : AbstractEditConfigListener
     {
-        $listener = new EditGlobalConfigListener();
+        $listener             = new EditGlobalConfigListener();
         $listener->configRoot = __DIR__;
         return $listener;
     }

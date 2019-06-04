@@ -11,12 +11,14 @@ namespace Phly\KeepAChangelog\Common;
 
 use Phly\KeepAChangelog\Exception;
 
+use function file_get_contents;
+
 class ParseChangelogListener
 {
     public function __invoke(ChangelogAwareEventInterface $event) : void
     {
         $changelogFile = $event->config()->changelogFile();
-        $parser = new ChangelogParser();
+        $parser        = new ChangelogParser();
         try {
             $changelog = $parser->findChangelogForVersion(
                 file_get_contents($changelogFile),

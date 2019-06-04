@@ -11,6 +11,8 @@ namespace Phly\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\Config\LocateGlobalConfigTrait;
 
+use function sprintf;
+
 class RemoveGlobalConfigListener extends AbstractRemoveConfigListener
 {
     use LocateGlobalConfigTrait;

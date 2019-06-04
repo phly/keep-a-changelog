@@ -13,34 +13,38 @@ use Phly\KeepAChangelog\ConfigCommand\AbstractCreateConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\CreateLocalConfigListener;
 use Prophecy\Prophecy\ObjectProphecy;
 
+use function getcwd;
+use function sprintf;
+use function sys_get_temp_dir;
+
 class CreateLocalConfigListenerTest extends AbstractCreateConfigListenerTestCase
 {
     public function getListener() : AbstractCreateConfigListener
     {
-        $root = sys_get_temp_dir();
+        $root                 = sys_get_temp_dir();
         $this->tempConfigFile = sprintf('%s/.keep-a-changelog.ini', $root);
 
-        $listener = new CreateLocalConfigListener();
+        $listener             = new CreateLocalConfigListener();
         $listener->configRoot = $root;
         return $listener;
     }
 
     public function getListenerWithExistingFile() : AbstractCreateConfigListener
     {
-        $root = __DIR__ . '/../_files/config/local';
+        $root                     = __DIR__ . '/../_files/config/local';
         $this->existingConfigFile = sprintf('%s/.keep-a-changelog.ini', $root);
 
-        $listener = new CreateLocalConfigListener();
+        $listener             = new CreateLocalConfigListener();
         $listener->configRoot = $root;
         return $listener;
     }
 
     public function getListenerToFailCreatingFile() : AbstractCreateConfigListener
     {
-        $root = '/dev/null';
+        $root                 = '/dev/null';
         $this->tempConfigFile = sprintf('%s/.keep-a-changelog.ini', $root);
 
-        $listener = new CreateLocalConfigListener();
+        $listener             = new CreateLocalConfigListener();
         $listener->configRoot = $root;
         return $listener;
     }

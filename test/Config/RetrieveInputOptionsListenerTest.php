@@ -9,13 +9,11 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Config;
 
-use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config\ConfigDiscovery;
 use Phly\KeepAChangelog\Config\Exception\InvalidProviderException;
 use Phly\KeepAChangelog\Config\RetrieveInputOptionsListener;
 use Phly\KeepAChangelog\Provider;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

@@ -75,24 +75,24 @@ EOT;
     public function bumpBugfixVersion(string $version) : string
     {
         [$major, $minor, $bugfix] = $this->parseVersion($version);
-        $bugfix = (int) $bugfix;
-        $bugfix += 1;
+        $bugfix                   = (int) $bugfix;
+        $bugfix                  += 1;
         return sprintf('%d.%d.%d', $major, $minor, $bugfix);
     }
 
     public function bumpMinorVersion(string $version) : string
     {
         [$major, $minor, $bugfix] = $this->parseVersion($version);
-        $minor = (int) $minor;
-        $minor += 1;
+        $minor                    = (int) $minor;
+        $minor                   += 1;
         return sprintf('%d.%d.0', $major, $minor);
     }
 
     public function bumpMajorVersion(string $version) : string
     {
         [$major, $minor, $bugfix] = $this->parseVersion($version);
-        $major = (int) $major;
-        $major += 1;
+        $major                    = (int) $major;
+        $major                   += 1;
         return sprintf('%d.0.0', $major);
     }
 
@@ -102,8 +102,8 @@ EOT;
     public function updateChangelog(string $version)
     {
         $changelog = sprintf(self::TEMPLATE, $version);
-        $contents = file_get_contents($this->changelogFile);
-        $contents = preg_replace(
+        $contents  = file_get_contents($this->changelogFile);
+        $contents  = preg_replace(
             "/^(\# Changelog\n\n.*?)(\n\n\#\# )/s",
             '$1' . $changelog . '## ',
             $contents

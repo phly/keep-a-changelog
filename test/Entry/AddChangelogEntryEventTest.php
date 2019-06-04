@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Entry;
 
-use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
+use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
 use Phly\KeepAChangelog\Entry\EntryTypes;
 use PHPUnit\Framework\TestCase;

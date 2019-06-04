@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Version\ListVersionsEvent;
 use Phly\KeepAChangelog\Common\EventInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;

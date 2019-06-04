@@ -16,6 +16,8 @@ use Phly\KeepAChangelog\Exception\ExceptionInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
+use function realpath;
+
 class ParseChangelogListenerTest extends TestCase
 {
     public function setUp()
@@ -28,7 +30,7 @@ class ParseChangelogListenerTest extends TestCase
     public function testListenerUpdatesChangelogWhenChangelogFileParsed()
     {
         $changelogFile = realpath(__DIR__ . '/../_files') . '/CHANGELOG.md';
-        $expected = <<< 'EOC'
+        $expected      = <<<'EOC'
 ### Added
 
 - Added a new feature.
@@ -50,7 +52,7 @@ class ParseChangelogListenerTest extends TestCase
 - Fixed some bugs.
 
 EOC;
-        $listener = new ParseChangelogListener();
+        $listener      = new ParseChangelogListener();
 
         $this->config->changelogFile()->willReturn($changelogFile);
         $this->event->version()->willReturn('1.1.0');
@@ -62,7 +64,7 @@ EOC;
     public function testListenerNotifiesEventOfParsingErrors()
     {
         $changelogFile = realpath(__DIR__ . '/../_files') . '/CHANGELOG.md';
-        $listener = new ParseChangelogListener();
+        $listener      = new ParseChangelogListener();
 
         $this->config->changelogFile()->willReturn($changelogFile);
         $this->event->version()->willReturn('1.0.1');

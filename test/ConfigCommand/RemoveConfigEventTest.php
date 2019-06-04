@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
-use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
 use Phly\KeepAChangelog\Common\IOInterface;
+use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\StoppableEventInterface;

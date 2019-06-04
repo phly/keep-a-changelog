@@ -12,10 +12,13 @@ namespace Phly\KeepAChangelog\Entry;
 use TypeError;
 use UnexpectedValueException;
 
+use function in_array;
+use function sprintf;
+
 class InjectionIndex
 {
-    public const ACTION_INJECT = 'inject';
-    public const ACTION_REPLACE = 'replace';
+    public const ACTION_INJECT    = 'inject';
+    public const ACTION_REPLACE   = 'replace';
     public const ACTION_NOT_FOUND = 'not-found';
 
     private const ACTIONS = [
@@ -25,7 +28,7 @@ class InjectionIndex
     ];
 
     /** @var null|int */
-    private $index = null;
+    private $index;
 
     /** @var string */
     private $type = self::ACTION_NOT_FOUND;
@@ -41,7 +44,7 @@ class InjectionIndex
                 throw new UnexpectedValueException(sprintf(
                     'The property "%s" does not exist for class "%s"',
                     $name,
-                    __CLASS__
+                    self::class
                 ));
         }
     }
@@ -59,7 +62,7 @@ class InjectionIndex
                 throw new UnexpectedValueException(sprintf(
                     'The property "%s" does not exist for class "%s"',
                     $name,
-                    __CLASS__
+                    self::class
                 ));
         }
     }

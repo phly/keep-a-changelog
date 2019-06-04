@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Common;
 
+use function preg_match;
+
 class ValidateVersionListener
 {
     public function __invoke(VersionAwareEventInterface $event) : void

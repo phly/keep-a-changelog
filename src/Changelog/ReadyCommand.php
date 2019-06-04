@@ -47,14 +47,14 @@ EOH;
             '-d',
             InputOption::VALUE_REQUIRED,
             'Specific date string to use; use this if the date is other than today,'
-                . ' or if you wish to use a different date format.'
+            . ' or if you wish to use a different date format.'
         );
         $this->addOption(
             'date',
             '-d',
             InputOption::VALUE_REQUIRED,
             'Specific date string to use; use this if the date is other than today,'
-                . ' or if you wish to use a different date format.'
+            . ' or if you wish to use a different date format.'
         );
         $this->addOption(
             'release-version',
@@ -67,15 +67,15 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new ReadyLatestChangelogEvent(
-                $input,
-                $output,
-                $this->dispatcher,
-                $input->getOption('date') ?: date('Y-m-d'),
-                $input->getOption('release-version') ?: null
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new ReadyLatestChangelogEvent(
+                    $input,
+                    $output,
+                    $this->dispatcher,
+                    $input->getOption('date') ?: date('Y-m-d'),
+                    $input->getOption('release-version') ?: null
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

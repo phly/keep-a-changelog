@@ -16,6 +16,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class CreateNewChangelogEvent extends AbstractEvent implements VersionAwareEventInterface
 {
     use VersionValidationTrait;

@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
+use function sprintf;
+
 class PushTagToRemoteListener
 {
     /**

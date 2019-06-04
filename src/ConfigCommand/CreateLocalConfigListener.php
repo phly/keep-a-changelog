@@ -9,9 +9,12 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\ConfigCommand;
 
+use function getcwd;
+use function sprintf;
+
 class CreateLocalConfigListener extends AbstractCreateConfigListener
 {
-    private const TEMPLATE = <<< 'EOT'
+    private const TEMPLATE = <<<'EOT'
 [defaults]
 changelog_file = %s
 provider = github

@@ -9,11 +9,13 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Common;
 
-use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Common\IsChangelogReadableListener;
+use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Release\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+
+use function realpath;
 
 class IsChangelogReadableListenerTest extends TestCase
 {

@@ -9,6 +9,11 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Common;
 
+use function file;
+use function preg_match;
+use function preg_quote;
+use function sprintf;
+
 /**
  * Retrieves changelog entry from the file.
  *
@@ -39,8 +44,8 @@ class DiscoverChangelogEntryListener
 
             if (preg_match($regex, $line)) {
                 $entry->contents = $line;
-                $entry->index = $index;
-                $entry->length = 1;
+                $entry->index    = $index;
+                $entry->length   = 1;
                 continue;
             }
 
@@ -49,7 +54,7 @@ class DiscoverChangelogEntryListener
             }
 
             $entry->contents .= $line;
-            $entry->length += 1;
+            $entry->length   += 1;
         }
 
         if ($entry->index === null) {

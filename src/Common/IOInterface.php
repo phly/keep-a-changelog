@@ -15,5 +15,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 interface IOInterface
 {
     public function input() : InputInterface;
+
     public function output() : OutputInterface;
 }

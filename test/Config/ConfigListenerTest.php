@@ -18,16 +18,16 @@ use Phly\KeepAChangelog\Config\RemoteNameDiscovery;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\QuestionHelper;
 
 class ConfigListenerTest extends TestCase
 {
     public function setUp()
     {
-        $this->config     = new Config();
-        $this->discovery  = $this->prophesize(ConfigDiscovery::class);
+        $this->config    = new Config();
+        $this->discovery = $this->prophesize(ConfigDiscovery::class);
         $this->discovery->config()->willReturn($this->config);
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->input      = $this->prophesize(InputInterface::class)->reveal();

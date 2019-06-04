@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
-use Phly\KeepAChangelog\ConfigCommand\ShowConfigEvent;
 use Phly\KeepAChangelog\Common\IOInterface;
+use Phly\KeepAChangelog\ConfigCommand\ShowConfigEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\StoppableEventInterface;
@@ -115,8 +115,8 @@ class ShowConfigEventTest extends TestCase
 
     public function testDisplayMergedConfigEmitsConfigurationAndStopsPropagationWithoutFailure()
     {
-        $event    = $this->createEvent(true, true);
-        $config   = 'This is the config';
+        $event  = $this->createEvent(true, true);
+        $config = 'This is the config';
 
         $this->assertNull($event->displayMergedConfig($config));
 
@@ -131,7 +131,7 @@ class ShowConfigEventTest extends TestCase
 
     public function testNotifyingConfigIsNotReadableEmitsOutputAndStopsPropagationWithFailure()
     {
-        $event    = $this->createEvent(true, true);
+        $event = $this->createEvent(true, true);
 
         $this->assertNull($event->configIsNotReadable('keep-a-changelog.ini', 'global'));
 

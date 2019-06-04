@@ -62,15 +62,15 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new EditConfigEvent(
-                $input,
-                $output,
-                $input->getOption('local') ?: false,
-                $input->getOption('global') ?: false,
-                $input->getOption('editor') ?: null
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new EditConfigEvent(
+                    $input,
+                    $output,
+                    $input->getOption('local') ?: false,
+                    $input->getOption('global') ?: false,
+                    $input->getOption('editor') ?: null
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

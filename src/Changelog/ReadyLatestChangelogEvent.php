@@ -17,6 +17,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class ReadyLatestChangelogEvent extends AbstractEvent implements ChangelogEntryAwareEventInterface
 {
     use ChangelogEntryDiscoveryTrait;
@@ -24,7 +26,7 @@ class ReadyLatestChangelogEvent extends AbstractEvent implements ChangelogEntryA
 
     /** @var string */
     private $releaseDate;
-    
+
     public function __construct(
         InputInterface $input,
         OutputInterface $output,

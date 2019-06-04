@@ -13,6 +13,12 @@ use Phly\KeepAChangelog\ConfigCommand\AbstractRemoveConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\RemoveGlobalConfigListener;
 use Prophecy\Prophecy\ObjectProphecy;
 
+use function file_exists;
+use function sprintf;
+use function sys_get_temp_dir;
+use function touch;
+use function unlink;
+
 class RemoveGlobalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
 {
     /** @var null|string */
@@ -20,11 +26,11 @@ class RemoveGlobalConfigListenerTest extends AbstractRemoveConfigListenerTestCas
 
     public function getListener() : AbstractRemoveConfigListener
     {
-        $configRoot = sys_get_temp_dir();
+        $configRoot     = sys_get_temp_dir();
         $this->tempFile = sprintf('%s/keep-a-changelog.ini', $configRoot);
         touch($this->tempFile);
 
-        $listener = new RemoveGlobalConfigListener();
+        $listener             = new RemoveGlobalConfigListener();
         $listener->configRoot = $configRoot;
 
         return $listener;
@@ -32,10 +38,10 @@ class RemoveGlobalConfigListenerTest extends AbstractRemoveConfigListenerTestCas
 
     public function getListenerWithFileNotFound() : AbstractRemoveConfigListener
     {
-        $configRoot = sys_get_temp_dir();
+        $configRoot     = sys_get_temp_dir();
         $this->tempFile = sprintf('%s/keep-a-changelog.ini', $configRoot);
 
-        $listener = new RemoveGlobalConfigListener();
+        $listener             = new RemoveGlobalConfigListener();
         $listener->configRoot = $configRoot;
 
         return $listener;
@@ -43,7 +49,7 @@ class RemoveGlobalConfigListenerTest extends AbstractRemoveConfigListenerTestCas
 
     public function getListenerWithUnlinkableFile() : AbstractRemoveConfigListener
     {
-        $configRoot = sys_get_temp_dir();
+        $configRoot     = sys_get_temp_dir();
         $this->tempFile = sprintf('%s/keep-a-changelog.ini', $configRoot);
         touch($this->tempFile);
 
@@ -51,9 +57,9 @@ class RemoveGlobalConfigListenerTest extends AbstractRemoveConfigListenerTestCas
             return false;
         };
 
-        $listener = new RemoveGlobalConfigListener();
+        $listener             = new RemoveGlobalConfigListener();
         $listener->configRoot = $configRoot;
-        $listener->unlink = $unlink;
+        $listener->unlink     = $unlink;
 
         return $listener;
     }

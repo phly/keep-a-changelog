@@ -11,6 +11,18 @@ namespace Phly\KeepAChangelog\Common;
 
 use Phly\KeepAChangelog\Exception;
 
+use function array_merge;
+use function array_values;
+use function implode;
+use function is_array;
+use function is_bool;
+use function is_object;
+use function is_readable;
+use function is_resource;
+use function is_scalar;
+use function parse_ini_file;
+use function sprintf;
+
 trait IniReadWriteTrait
 {
     /**

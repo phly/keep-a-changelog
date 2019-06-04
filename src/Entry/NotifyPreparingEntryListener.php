@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Entry;
 
+use function sprintf;
+use function ucwords;
+
 class NotifyPreparingEntryListener
 {
     public function __invoke(AddChangelogEntryEvent $event) : void

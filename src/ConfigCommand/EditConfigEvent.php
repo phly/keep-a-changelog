@@ -17,6 +17,8 @@ use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class EditConfigEvent implements
     EditorAwareEventInterface,
     IOInterface,
@@ -24,7 +26,7 @@ class EditConfigEvent implements
 {
     use EditorProviderTrait;
     use IOTrait;
-    
+
     /** @var bool */
     private $failed = false;
 

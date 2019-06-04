@@ -13,6 +13,8 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Provider\ProviderSpec;
 use Symfony\Component\Console\Input\InputInterface;
 
+use function class_exists;
+
 /**
  * Look for input options related to configuration and providesrs.
  *

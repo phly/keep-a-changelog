@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Provider;
 
-use Phly\KeepAChangelog\Provider\GitLab;
 use Phly\KeepAChangelog\Provider\Exception;
+use Phly\KeepAChangelog\Provider\GitLab;
 use PHPUnit\Framework\TestCase;
 
 class GitLabTest extends TestCase

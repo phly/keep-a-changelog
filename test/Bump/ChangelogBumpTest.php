@@ -49,12 +49,12 @@ class ChangelogBumpTest extends TestCase
     public function bugfixVersions() : array
     {
         return [
-            'zero-version' => ['2.0.0', '2.0.1'],
-            'nine-version' => ['2.0.9', '2.0.10'],
+            'zero-version'  => ['2.0.0', '2.0.1'],
+            'nine-version'  => ['2.0.9', '2.0.10'],
             'alpha-version' => ['2.0.0alpha1', '2.0.1'],
-            'beta-version' => ['2.0.0beta1', '2.0.1'],
-            'rc-version' => ['2.0.0rc', '2.0.1'],
-            'dev-version' => ['2.0.0dev1', '2.0.1'],
+            'beta-version'  => ['2.0.0beta1', '2.0.1'],
+            'rc-version'    => ['2.0.0rc', '2.0.1'],
+            'dev-version'   => ['2.0.0dev1', '2.0.1'],
         ];
     }
 
@@ -69,12 +69,12 @@ class ChangelogBumpTest extends TestCase
     public function minorVersions() : array
     {
         return [
-            'zero-version' => ['2.1.0', '2.2.0'],
-            'nine-version' => ['2.1.9', '2.2.0'],
+            'zero-version'  => ['2.1.0', '2.2.0'],
+            'nine-version'  => ['2.1.9', '2.2.0'],
             'alpha-version' => ['2.2.0alpha1', '2.3.0'],
-            'beta-version' => ['2.2.0beta1', '2.3.0'],
-            'rc-version' => ['2.2.0rc', '2.3.0'],
-            'dev-version' => ['2.2.0dev1', '2.3.0'],
+            'beta-version'  => ['2.2.0beta1', '2.3.0'],
+            'rc-version'    => ['2.2.0rc', '2.3.0'],
+            'dev-version'   => ['2.2.0dev1', '2.3.0'],
         ];
     }
 
@@ -89,12 +89,12 @@ class ChangelogBumpTest extends TestCase
     public function majorVersions() : array
     {
         return [
-            'zero-version' => ['2.1.0', '3.0.0'],
-            'nine-version' => ['2.1.9', '3.0.0'],
+            'zero-version'  => ['2.1.0', '3.0.0'],
+            'nine-version'  => ['2.1.9', '3.0.0'],
             'alpha-version' => ['2.2.0alpha1', '3.0.0'],
-            'beta-version' => ['2.2.0beta1', '3.0.0'],
-            'rc-version' => ['2.2.0rc', '3.0.0'],
-            'dev-version' => ['2.2.0dev1', '3.0.0'],
+            'beta-version'  => ['2.2.0beta1', '3.0.0'],
+            'rc-version'    => ['2.2.0rc', '3.0.0'],
+            'dev-version'   => ['2.2.0dev1', '3.0.0'],
         ];
     }
 

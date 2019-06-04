@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Provider\Exception;
 
+use InvalidArgumentException;
 use Phly\KeepAChangelog\Exception\ExceptionInterface;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
-use InvalidArgumentException;
 
 use function gettype;
 use function sprintf;

@@ -16,6 +16,14 @@ use Phly\KeepAChangelog\Version\RemoveChangelogVersionEvent;
 use Phly\KeepAChangelog\Version\RemoveChangelogVersionListener;
 use PHPUnit\Framework\TestCase;
 
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function iterator_to_array;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
+
 class RemoveChangelogVersionListenerTest extends TestCase
 {
     /** @var null|string */
@@ -56,7 +64,7 @@ class RemoveChangelogVersionListenerTest extends TestCase
     {
         $filename = $this->createChangelogFile();
         $this->event->versionRemoved()->shouldBeCalled();
-        $this->entry->index = 1000;
+        $this->entry->index  = 1000;
         $this->entry->length = 22;
 
         $listener = new RemoveChangelogVersionListener();
@@ -81,8 +89,8 @@ class RemoveChangelogVersionListenerTest extends TestCase
         int $index,
         int $length
     ) {
-        $filename = $this->createChangelogFile();
-        $this->entry->index = $index;
+        $filename            = $this->createChangelogFile();
+        $this->entry->index  = $index;
         $this->entry->length = $length;
         $this->event->versionRemoved()->shouldBeCalled();
 

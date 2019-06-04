@@ -10,11 +10,13 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\Release;
 
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Release\ReleaseEvent;
 use Phly\KeepAChangelog\Release\PushTagToRemoteListener;
+use Phly\KeepAChangelog\Release\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function sprintf;
 
 class PushTagToRemoteListenerTest extends TestCase
 {
@@ -35,11 +37,11 @@ class PushTagToRemoteListenerTest extends TestCase
         $this->config->setRemote($remote);
         $this->event->output()->will([$this->output, 'reveal']);
 
-        $exec    = function (string $command, array &$output, int &$exitStatus) use ($tagName, $remote) {
+        $exec           = function (string $command, array &$output, int &$exitStatus) use ($tagName, $remote) {
             TestCase::assertSame(sprintf('git push %s %s', $remote, $tagName), $command);
             $exitStatus = 0;
         };
-        $listener = new PushTagToRemoteListener();
+        $listener       = new PushTagToRemoteListener();
         $listener->exec = $exec;
 
         $this->assertNull($listener($this->event->reveal()));
@@ -60,11 +62,11 @@ class PushTagToRemoteListenerTest extends TestCase
         $this->event->output()->will([$this->output, 'reveal']);
         $this->event->taggingFailed()->shouldBeCalled();
 
-        $exec    = function (string $command, array &$output, int &$exitStatus) use ($tagName, $remote) {
+        $exec           = function (string $command, array &$output, int &$exitStatus) use ($tagName, $remote) {
             TestCase::assertSame(sprintf('git push %s %s', $remote, $tagName), $command);
             $exitStatus = 1;
         };
-        $listener = new PushTagToRemoteListener();
+        $listener       = new PushTagToRemoteListener();
         $listener->exec = $exec;
 
         $this->assertNull($listener($this->event->reveal()));

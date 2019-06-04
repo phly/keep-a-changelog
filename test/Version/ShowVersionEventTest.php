@@ -11,7 +11,6 @@ namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
 use Phly\KeepAChangelog\Common\EventInterface;
-use Phly\KeepAChangelog\Version\ShowVersionEvent;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;

@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use function getcwd;
+use function realpath;
+
 class Config
 {
     /** @var string */

@@ -9,9 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Bump;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
 class BumpChangelogVersionListener
 {
     public function __invoke(BumpChangelogVersionEvent $event) : void

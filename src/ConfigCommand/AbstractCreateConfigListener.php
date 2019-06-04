@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\ConfigCommand;
 
+use function file_exists;
+use function file_put_contents;
+use function sprintf;
+
 abstract class AbstractCreateConfigListener
 {
     /**

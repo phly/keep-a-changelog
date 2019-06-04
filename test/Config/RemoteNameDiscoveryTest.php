@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Config\RemoteNameDiscovery;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Helper\QuestionHelper;

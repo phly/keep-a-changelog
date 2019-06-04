@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Common;
 
+use function sprintf;
+
 /**
  * Provides an implementation of the methods defined in ChangelogEntryAwareEventInterface.
  *
@@ -25,7 +27,7 @@ trait ChangelogEntryDiscoveryTrait
         $this->failed = true;
         $this->output->writeln(sprintf(
             '<error>Could not locate version %s in changelog file %s;'
-                . ' please verify the version and/or changelog file.</error>',
+            . ' please verify the version and/or changelog file.</error>',
             $this->version ?: '"latest"',
             $changelogFile
         ));

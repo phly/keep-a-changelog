@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\ConfigCommand;
 
+use function is_readable;
+
 abstract class AbstractShowConfigListener
 {
     abstract public function shouldShowConfig(ShowConfigEvent $event) : bool;

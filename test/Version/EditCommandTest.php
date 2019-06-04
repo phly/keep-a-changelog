@@ -9,14 +9,12 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Version;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Phly\KeepAChangelog\Version\EditChangelogVersionEvent;
 use Phly\KeepAChangelog\Version\EditCommand;
-use Phly\KeepAChangelog\Exception;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use ReflectionMethod;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -50,8 +48,8 @@ class EditCommandTest extends TestCase
         $this->input->getArgument('version')->willReturn('1.2.3');
         $this->input->getOption('editor')->willReturn('vim');
 
-        $input      = $this->input->reveal();
-        $output     = $this->output->reveal();
+        $input  = $this->input->reveal();
+        $output = $this->output->reveal();
 
         $this->dispatcher
             ->dispatch(Argument::that(function ($event) use ($input, $output) {

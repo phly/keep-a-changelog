@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
+use function sprintf;
+use function strrpos;
+use function substr;
+
 class CreateReleaseNameListener
 {
     public function __invoke(ReleaseEvent $event) : void
@@ -19,10 +23,10 @@ class CreateReleaseNameListener
             return;
         }
 
-        $package = $event->config()->package();
-        $version = $event->version();
+        $package       = $event->config()->package();
+        $version       = $event->version();
         $lastSeparator = strrpos($package, '/');
-        $repo = substr($package, $lastSeparator + 1);
+        $repo          = substr($package, $lastSeparator + 1);
         $event->setReleaseName(sprintf('%s %s', $repo, $version));
     }
 }

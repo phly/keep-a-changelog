@@ -15,6 +15,8 @@ use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class RemoveConfigEvent implements
     IOInterface,
     StoppableEventInterface
@@ -84,7 +86,6 @@ class RemoveConfigEvent implements
             '<error>Cannot remove config file %s; file does not exist</error>',
             $configFile
         ));
-        
     }
 
     public function errorRemovingConfig(string $configFile) : void

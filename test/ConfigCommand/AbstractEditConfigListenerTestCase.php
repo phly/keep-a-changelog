@@ -31,7 +31,7 @@ abstract class AbstractEditConfigListenerTestCase extends TestCase
     {
         $this->voidReturn = function () {
         };
-        $this->output = $this->prophesize(OutputInterface::class);
+        $this->output     = $this->prophesize(OutputInterface::class);
     }
 
     public function getEventProphecy() : ObjectProphecy
@@ -90,7 +90,7 @@ abstract class AbstractEditConfigListenerTestCase extends TestCase
             )
             ->willReturn(1);
 
-        $listener = $this->getListener();
+        $listener         = $this->getListener();
         $listener->editor = $editor->reveal();
 
         $this->assertNull($listener($event->reveal()));
@@ -115,7 +115,7 @@ abstract class AbstractEditConfigListenerTestCase extends TestCase
             )
             ->willReturn(0);
 
-        $listener = $this->getListener();
+        $listener         = $this->getListener();
         $listener->editor = $editor->reveal();
 
         $this->assertNull($listener($event->reveal()));

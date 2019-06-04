@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Release;
 
-use Phly\KeepAChangelog\Release\ReleaseEvent;
 use Phly\KeepAChangelog\Release\ReleaseCommand;
+use Phly\KeepAChangelog\Release\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\EventDispatcherInterface;

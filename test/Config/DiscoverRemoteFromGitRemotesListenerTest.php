@@ -10,8 +10,6 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Config\DiscoverRemoteFromGitRemotesListener;
-use Phly\KeepAChangelog\Config\RemoteNameDiscovery;
 use Phly\KeepAChangelog\Provider\ProviderSpec;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -21,7 +19,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
     public function setUp()
     {
         $this->provider = $this->prophesize(ProviderSpec::class);
-        $this->config = $this->prophesize(Config::class);
+        $this->config   = $this->prophesize(Config::class);
         $this->config->provider()->will([$this->provider, 'reveal']);
         $this->event = $this->prophesize(RemoteNameDiscovery::class);
         $this->event->config()->will([$this->config, 'reveal']);
@@ -88,7 +86,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
             )
             ->shouldBeCalled();
 
-        $listener = new DiscoverRemoteFromGitRemotesListener();
+        $listener       = new DiscoverRemoteFromGitRemotesListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $return = 1;
         };
@@ -113,7 +111,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
             )
             ->shouldBeCalled();
 
-        $listener = new DiscoverRemoteFromGitRemotesListener();
+        $listener       = new DiscoverRemoteFromGitRemotesListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $output = [
                 'origin https://github.com/some/package.git (push)',
@@ -140,7 +138,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
             ->foundRemote('myself')
             ->shouldBeCalled();
 
-        $listener = new DiscoverRemoteFromGitRemotesListener();
+        $listener       = new DiscoverRemoteFromGitRemotesListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $output = [
                 'origin https://github.com/some/package.git (push)',
@@ -166,7 +164,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
             ->setRemotes(['upstream', 'myself'])
             ->shouldBeCalled();
 
-        $listener = new DiscoverRemoteFromGitRemotesListener();
+        $listener       = new DiscoverRemoteFromGitRemotesListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $output = [
                 'origin https://github.com/some/package.git (push)',

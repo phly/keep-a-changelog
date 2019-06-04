@@ -11,7 +11,6 @@ namespace PhlyTest\KeepAChangelog\Bump;
 
 use Phly\KeepAChangelog\Bump\BumpChangelogVersionEvent;
 use Phly\KeepAChangelog\Bump\BumpToVersionCommand;
-use Phly\KeepAChangelog\Exception;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -32,7 +31,7 @@ class BumpToVersionCommandTest extends TestCase
 
     public function testExecutionReturnsZeroOnSuccess()
     {
-        $input      = $this->input;
+        $input = $this->input;
         $input->getArgument('version')->willReturn('1.2.3');
         $output     = $this->output;
         $dispatcher = $this->dispatcher;
@@ -59,7 +58,7 @@ class BumpToVersionCommandTest extends TestCase
 
     public function testExecutionReturnsOneOnFailure()
     {
-        $input      = $this->input;
+        $input = $this->input;
         $input->getArgument('version')->willReturn('1.2.3');
         $output     = $this->output;
         $dispatcher = $this->dispatcher;

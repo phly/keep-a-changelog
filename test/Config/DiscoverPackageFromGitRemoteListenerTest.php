@@ -16,6 +16,8 @@ use Phly\KeepAChangelog\Provider\ProviderSpec;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
+use function preg_match;
+
 class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 {
     public function setUp()
@@ -24,7 +26,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
         $this->config   = $this->prophesize(Config::class);
         $this->event    = $this->prophesize(PackageNameDiscovery::class);
     }
-    
+
     public function testReturnsEarlyWhenEventIndicatesPackageAlreadyDiscovered()
     {
         $this->event->packageWasFound()->willReturn(true);
@@ -56,7 +58,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
         $this->event->packageWasFound()->willReturn(false);
         $this->event->config()->will([$this->config, 'reveal']);
 
-        $listener = new DiscoverPackageFromGitRemoteListener();
+        $listener       = new DiscoverPackageFromGitRemoteListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $return = 1;
         };
@@ -72,7 +74,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
         $this->event->packageWasFound()->willReturn(false);
         $this->event->config()->will([$this->config, 'reveal']);
 
-        $listener = new DiscoverPackageFromGitRemoteListener();
+        $listener       = new DiscoverPackageFromGitRemoteListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             if ($command === 'git remote') {
                 $return = 0;
@@ -93,7 +95,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
         $this->event->packageWasFound()->willReturn(false);
         $this->event->config()->will([$this->config, 'reveal']);
 
-        $listener = new DiscoverPackageFromGitRemoteListener();
+        $listener       = new DiscoverPackageFromGitRemoteListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $return = 0;
             if ($command === 'git remote') {
@@ -119,7 +121,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
         $this->event->config()->will([$this->config, 'reveal']);
         $this->event->foundPackage('some/package')->shouldBeCalled();
 
-        $listener = new DiscoverPackageFromGitRemoteListener();
+        $listener       = new DiscoverPackageFromGitRemoteListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $return = 0;
             if ($command === 'git remote') {

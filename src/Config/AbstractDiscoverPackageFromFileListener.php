@@ -9,7 +9,9 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Config;
 
+use function file_get_contents;
 use function is_readable;
+use function json_decode;
 
 abstract class AbstractDiscoverPackageFromFileListener
 {

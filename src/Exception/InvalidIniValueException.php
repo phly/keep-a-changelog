@@ -11,6 +11,7 @@ namespace Phly\KeepAChangelog\Exception;
 
 use InvalidArgumentException;
 
+use function gettype;
 use function sprintf;
 
 class InvalidIniValueException extends InvalidArgumentException implements ExceptionInterface

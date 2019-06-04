@@ -9,11 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Config;
 
-use RuntimeException;
-
-use function rtrim;
 use function sprintf;
-use function strtr;
 
 /**
  * Parses the global config to populate the Config instance.

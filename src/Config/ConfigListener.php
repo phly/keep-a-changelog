@@ -11,15 +11,14 @@ namespace Phly\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 
 class ConfigListener
 {
-    /** @var boolean */
+    /** @var bool */
     protected $requiresPackageName;
 
-    /** @var boolean */
+    /** @var bool */
     protected $requiresRemoteName;
 
     public function __construct(

@@ -9,13 +9,13 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Entry;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
 use Phly\KeepAChangelog\Entry\EntryCommand;
 use Phly\KeepAChangelog\Entry\EntryTypes;
 use Phly\KeepAChangelog\Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

@@ -11,6 +11,14 @@ namespace Phly\KeepAChangelog\Entry;
 
 use Phly\KeepAChangelog\Common\ChangelogEditor;
 
+use function array_splice;
+use function explode;
+use function implode;
+use function in_array;
+use function preg_match;
+use function preg_replace;
+use function sprintf;
+
 class AddChangelogEntryListener
 {
     public const APPEND_NEWLINE = true;
@@ -71,7 +79,7 @@ class AddChangelogEntryListener
             }
 
             $action->index = $index + 2;
-            $action->type = preg_match('/^- Nothing/', $contents[$action->index])
+            $action->type  = preg_match('/^- Nothing/', $contents[$action->index])
                 ? InjectionIndex::ACTION_REPLACE
                 : InjectionIndex::ACTION_INJECT;
             break;

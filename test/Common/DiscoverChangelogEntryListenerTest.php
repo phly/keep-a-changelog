@@ -47,7 +47,7 @@ class DiscoverChangelogEntryListenerTest extends TestCase
     public function testNotifiesEventWithDiscoveredEntryOnSuccess()
     {
         $this->event->version()->willReturn('1.1.0');
-        $expected = <<< 'EOC'
+        $expected = <<<'EOC'
 ## 1.1.0 - 2018-03-23
 
 ### Added

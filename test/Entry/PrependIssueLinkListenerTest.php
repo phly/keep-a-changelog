@@ -14,6 +14,8 @@ use Phly\KeepAChangelog\Entry\PrependIssueLinkListener;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
+use function sprintf;
+
 class PrependIssueLinkListenerTest extends AbstractPrependLinkListenerTestCase
 {
     public function getListener() : AbstractPrependLinkListener

@@ -22,7 +22,7 @@ class ChangelogParserTest extends TestCase
     public function setUp()
     {
         $this->changelog = file_get_contents(__DIR__ . '/../_files/CHANGELOG.md');
-        $this->parser = new ChangelogParser();
+        $this->parser    = new ChangelogParser();
     }
 
     public function testRaisesExceptionIfNoMatchingEntryForVersionFound()
@@ -46,7 +46,7 @@ class ChangelogParserTest extends TestCase
 
     public function testReturnsDiscoveredChangelogWhenDiscovered()
     {
-        $expected = <<<'EOF'
+        $expected  = <<<'EOF'
 ### Added
 
 - Added a new feature.
@@ -75,7 +75,7 @@ EOF;
 
     public function testReturnsDiscoveredChangelogForUnreleasedVersionWhenDiscovered()
     {
-        $expected = <<<'EOF'
+        $expected  = <<<'EOF'
 ### Added
 
 - Nothing.

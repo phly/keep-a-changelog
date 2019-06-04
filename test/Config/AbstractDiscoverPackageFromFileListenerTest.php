@@ -38,7 +38,7 @@ abstract class AbstractDiscoverPackageFromFileListenerTest extends TestCase
     {
         $this->event->packageWasFound()->willReturn(false);
 
-        $listener = $this->createListener();
+        $listener             = $this->createListener();
         $listener->packageDir = __DIR__;
 
         $this->assertNull($listener($this->event->reveal()));
@@ -50,7 +50,7 @@ abstract class AbstractDiscoverPackageFromFileListenerTest extends TestCase
     {
         $this->event->packageWasFound()->willReturn(false);
 
-        $listener = $this->createListener();
+        $listener             = $this->createListener();
         $listener->packageDir = __DIR__ . '/../_files/package_root/malformed';
 
         $this->assertNull($listener($this->event->reveal()));
@@ -63,7 +63,7 @@ abstract class AbstractDiscoverPackageFromFileListenerTest extends TestCase
         $this->event->packageWasFound()->willReturn(false);
         $this->event->foundPackage('some/package')->shouldBeCalled();
 
-        $listener = $this->createListener();
+        $listener             = $this->createListener();
         $listener->packageDir = __DIR__ . '/../_files/package_root';
 
         $this->assertNull($listener($this->event->reveal()));

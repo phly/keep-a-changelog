@@ -15,6 +15,13 @@ use Phly\KeepAChangelog\Config;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
+
 class CreateNewChangelogListenerTest extends TestCase
 {
     /** @var null|string */

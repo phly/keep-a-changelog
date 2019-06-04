@@ -19,7 +19,7 @@ class ProviderSpecTest extends TestCase
     {
         yield 'empty className' => ['', false];
         yield 'not a class className' => ['not-a-class', false];
-        yield 'invalid className' => [__CLASS__, false];
+        yield 'invalid className' => [self::class, false];
         yield 'valid className' => [Provider::class, true];
     }
 

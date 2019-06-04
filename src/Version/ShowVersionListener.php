@@ -9,12 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Common\ChangelogParser;
-use Phly\KeepAChangelog\Exception;
-
-use function file_get_contents;
-use function sprintf;
-
 class ShowVersionListener
 {
     public function __invoke(ShowVersionEvent $event) : void

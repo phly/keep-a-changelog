@@ -56,14 +56,14 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return $this->dispatcher
-            ->dispatch(new RemoveConfigEvent(
-                $input,
-                $output,
-                $input->getOption('local') ?: false,
-                $input->getOption('global') ?: false
-            ))
-            ->failed()
-            ? 1
-            : 0;
+                ->dispatch(new RemoveConfigEvent(
+                    $input,
+                    $output,
+                    $input->getOption('local') ?: false,
+                    $input->getOption('global') ?: false
+                ))
+                ->failed()
+                    ? 1
+                    : 0;
     }
 }

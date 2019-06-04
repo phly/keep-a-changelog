@@ -11,26 +11,23 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractShowConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\ShowLocalConfigListener;
-use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class ShowLocalConfigListenerTest extends AbstractShowConfigListenerTestCase
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $configType = 'local';
 
     public function getListener() : AbstractShowConfigListener
     {
-        $listener = new ShowLocalConfigListener();
+        $listener             = new ShowLocalConfigListener();
         $listener->configRoot = __DIR__ . '/../_files/config/local';
         return $listener;
     }
 
     public function getListenerWithFileNotFound() : AbstractShowConfigListener
     {
-        $listener = new ShowLocalConfigListener();
+        $listener             = new ShowLocalConfigListener();
         $listener->configRoot = __DIR__;
         return $listener;
     }

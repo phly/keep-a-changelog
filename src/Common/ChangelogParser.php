@@ -28,7 +28,7 @@ class ChangelogParser
      */
     public function findAllVersions(string $changelogFile) : iterable
     {
-        $fh = fopen($changelogFile, 'r');
+        $fh    = fopen($changelogFile, 'r');
         $regex = sprintf(
             '/^%s %s - %s$/i',
             preg_quote('##'),

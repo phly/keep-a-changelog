@@ -9,6 +9,13 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Tag;
 
+use function file_put_contents;
+use function sprintf;
+use function sys_get_temp_dir;
+use function system;
+use function tempnam;
+use function unlink;
+
 class TagReleaseListener
 {
     public function __invoke(TagReleaseEvent $event) : void

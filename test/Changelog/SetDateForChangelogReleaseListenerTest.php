@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Changelog;
 
-use Phly\KeepAChangelog\Exception;
 use Phly\KeepAChangelog\Changelog\ReadyLatestChangelogEvent;
 use Phly\KeepAChangelog\Changelog\SetDateForChangelogReleaseListener;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
@@ -18,21 +17,20 @@ use Phly\KeepAChangelog\Config;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
+use function array_merge;
 use function date;
+use function explode;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
-use function restore_error_handler;
-use function set_error_handler;
+use function sprintf;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
 
-use const E_WARNING;
-
 class SetDateForChangelogReleaseListenerTest extends TestCase
 {
-    private const CHANGELOG_ENTRY_TEMPLATE = <<< 'EOC'
+    private const CHANGELOG_ENTRY_TEMPLATE = <<<'EOC'
 %s%s%s%s
 
 ### Added
@@ -79,13 +77,13 @@ EOC;
 
     public function invalidVersionAndDatePermutations() : iterable
     {
-        $leaders = [
+        $leaders    = [
             'no leader'          => '',
             'first-level header' => '# ',
             'third-level header' => '### ',
             'missing whitespace' => '##',
         ];
-        $versions = [
+        $versions   = [
             'major version only' => '1',
             'minor version only' => '1.1',
             'too many dots'      => '1.1.1.1',
@@ -95,10 +93,10 @@ EOC;
             'whitespace only'    => ' ',
             'non-dash character' => ' : ',
         ];
-        $dates = [
-            'past date'           => '2018-05-30',
-            'present date'        => date('Y-m-d'),
-            'future date'         => '2119-05-30',
+        $dates      = [
+            'past date'    => '2018-05-30',
+            'present date' => date('Y-m-d'),
+            'future date'  => '2119-05-30',
         ];
 
         foreach ($leaders as $leaderType => $leader) {
@@ -128,7 +126,7 @@ EOC;
         string $separator,
         string $date
     ) {
-        $contents = sprintf(self::CHANGELOG_ENTRY_TEMPLATE, $leader, $version, $separator, $date);
+        $contents              = sprintf(self::CHANGELOG_ENTRY_TEMPLATE, $leader, $version, $separator, $date);
         $this->entry->contents = $contents;
         $this->event->malformedReleaseLine(explode("\n", $contents)[0])->shouldBeCalled();
 
@@ -147,7 +145,7 @@ EOC;
             'minor version' => ['1.2.0', 26, 22],
             'patch version' => ['0.1.1', 48, 22],
         ];
-        $dates = [
+        $dates    = [
             'standard TBD'   => 'TBD',
             'UNRELEASED'     => 'UNRELEASED',
             'PRERELEASE'     => 'PRERELEASE',
@@ -156,7 +154,7 @@ EOC;
 
         foreach ($versions as $versionType => $entryData) {
             foreach ($dates as $dateType => $date) {
-                $label = sprintf('%s :: %s', $versionType, $dateType);
+                $label     = sprintf('%s :: %s', $versionType, $dateType);
                 $arguments = array_merge($entryData, [$date]);
                 yield $label => $arguments;
             }

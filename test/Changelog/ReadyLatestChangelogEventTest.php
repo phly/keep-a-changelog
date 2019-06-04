@@ -16,13 +16,15 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class ReadyLatestChangelogEventTest extends TestCase
 {
     public function setUp()
     {
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();
-        $this->input = $this->prophesize(InputInterface::class)->reveal();
-        $this->output = $this->prophesize(OutputInterface::class);
+        $this->input      = $this->prophesize(InputInterface::class)->reveal();
+        $this->output     = $this->prophesize(OutputInterface::class);
     }
 
     public function testNotInFailureStateAndPropagationIsNotStoppedByDefault() : ReadyLatestChangelogEvent
@@ -53,7 +55,7 @@ class ReadyLatestChangelogEventTest extends TestCase
     public function testNotifyingEventOfMalformedReleaseLineStopsPropagationAndMarksAsFailure()
     {
         $releaseLine = 'This is a bad release line';
-        $event = new ReadyLatestChangelogEvent(
+        $event       = new ReadyLatestChangelogEvent(
             $this->input,
             $this->output->reveal(),
             $this->dispatcher,

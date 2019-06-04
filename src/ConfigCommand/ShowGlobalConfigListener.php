@@ -9,9 +9,10 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\ConfigCommand;
 
-use Matomo\Ini;
 use Phly\KeepAChangelog\Common\IniReadWriteTrait;
 use Phly\KeepAChangelog\Config\LocateGlobalConfigTrait;
+
+use function sprintf;
 
 class ShowGlobalConfigListener extends AbstractShowConfigListener
 {

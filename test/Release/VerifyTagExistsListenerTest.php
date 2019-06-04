@@ -9,8 +9,6 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Release;
 
-use Phly\KeepAChangelog\Release\ReleaseEvent;
-use Phly\KeepAChangelog\Release\VerifyTagExistsListener;
 use PHPUnit\Framework\TestCase;
 
 class VerifyTagExistsListenerTest extends TestCase
@@ -25,7 +23,7 @@ class VerifyTagExistsListenerTest extends TestCase
 
     public function testCallsExecAndDoesNothingWhenReturnIsZero()
     {
-        $listener = new VerifyTagExistsListener();
+        $listener       = new VerifyTagExistsListener();
         $listener->exec = function ($command, &$output, &$return) {
             $return = 0;
         };
@@ -37,7 +35,7 @@ class VerifyTagExistsListenerTest extends TestCase
 
     public function testCallsExecAndIndicatesTagNotFoundWhenReturnIsNotZero()
     {
-        $listener = new VerifyTagExistsListener();
+        $listener       = new VerifyTagExistsListener();
         $listener->exec = function ($command, &$output, &$return) {
             $return = 1;
         };

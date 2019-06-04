@@ -9,6 +9,16 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Config;
 
+use function array_pop;
+use function count;
+use function parse_url;
+use function preg_match;
+use function preg_quote;
+use function strstr;
+use function strtolower;
+
+use const PHP_URL_HOST;
+
 class DiscoverRemoteFromGitRemotesListener
 {
     /**

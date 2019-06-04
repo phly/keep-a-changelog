@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\Bump;
 
 use Phly\KeepAChangelog\Bump\BumpChangelogVersionEvent;
-use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;

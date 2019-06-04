@@ -12,11 +12,10 @@ namespace Phly\KeepAChangelog\Provider;
 use Gitlab\Client as GitLabClient;
 
 use function filter_var;
-use function parse_url;
+use function preg_match;
 use function sprintf;
 
 use const FILTER_VALIDATE_URL;
-use const PHP_URL_HOST;
 
 class GitLab implements ProviderInterface
 {

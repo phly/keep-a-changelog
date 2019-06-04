@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Common;
 
+use function array_key_exists;
+use function is_array;
+use function is_int;
+
 trait ArrayMergeRecursiveTrait
 {
     /**

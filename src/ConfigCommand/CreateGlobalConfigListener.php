@@ -11,11 +11,13 @@ namespace Phly\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\Config\LocateGlobalConfigTrait;
 
+use function sprintf;
+
 class CreateGlobalConfigListener extends AbstractCreateConfigListener
 {
     use LocateGlobalConfigTrait;
 
-    private const TEMPLATE = <<< 'EOT'
+    private const TEMPLATE = <<<'EOT'
 [defaults]
 changelog_file = %s
 provider = github

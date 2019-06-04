@@ -23,9 +23,9 @@ class ProviderListTest extends TestCase
 
     public function testCanAddProviders()
     {
-        $first = new ProviderSpec('first');
+        $first  = new ProviderSpec('first');
         $second = new ProviderSpec('second');
-        $third = new ProviderSpec('third');
+        $third  = new ProviderSpec('third');
 
         $list = new ProviderList();
         $list->add($first);
