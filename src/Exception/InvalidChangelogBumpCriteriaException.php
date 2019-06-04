@@ -15,7 +15,7 @@ use function sprintf;
 
 class InvalidChangelogBumpCriteriaException extends InvalidArgumentException implements ExceptionInterface
 {
-    public function forCriteria(?string $bumpMethod, ?string $version) : self
+    public static function forCriteria(?string $bumpMethod, ?string $version) : self
     {
         return new self(sprintf(
             'Cannot bump version. Either a bump type OR an explicit version to'
