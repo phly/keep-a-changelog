@@ -24,6 +24,8 @@ interface ProviderInterface
     public function canGenerateLinks() : bool;
 
     /**
+     * @return null|string URL to the created release; null indicates failure
+     *     generally.
      * @throws Exception\MissingPackageNameException
      * @throws Exception\MissingTokenException
      */
