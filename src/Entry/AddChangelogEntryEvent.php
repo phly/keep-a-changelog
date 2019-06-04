@@ -133,7 +133,7 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
         $this->failed = true;
         $this->output->writeln('<error>Generated issue link is invalid</error>');
         $this->output->writeln(sprintf(
-            'The issue identifier provided resulted in the link %s,'
+            'The issue identifier provided resulted in the link "%s",'
             . ' which does not resolve to a valid location.',
             $link
         ));
@@ -144,7 +144,7 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
         $this->failed = true;
         $this->output->writeln('<error>Generated patch link is invalid</error>');
         $this->output->writeln(sprintf(
-            'The patch identifier provided resulted in the link %s,'
+            'The patch identifier provided resulted in the link "%s",'
             . ' which does not resolve to a valid location.',
             $link
         ));
@@ -165,6 +165,6 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
     {
         $this->failed = true;
         $this->output->writeln('<error>Unable to find matching entry type in changelog</error>');
-        $this->output->writeln(sprintf('The entry type %s could not be found.', $this->entryType));
+        $this->output->writeln(sprintf('The entry type "%s" could not be found.', $this->entryType));
     }
 }
