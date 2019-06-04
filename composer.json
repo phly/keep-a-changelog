@@ -22,7 +22,8 @@
     "require-dev": {
         "mikey179/vfsStream": "^1.6",
         "phpunit/phpunit": "^7.0",
-        "webimpress/coding-standard": "^1.0"
+        "webimpress/coding-standard": "dev-master@dev",
+        "zendframework/zend-coding-standard": "2.0.0-alpha.3@alpha || ^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -51,8 +52,8 @@
             "@cs-check",
             "@test"
         ],
-        "cs-check": "phpcs",
-        "cs-fix": "phpcbf",
+        "cs-check": "phpcs -p",
+        "cs-fix": "phpcbf -p",
         "test": "phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     }

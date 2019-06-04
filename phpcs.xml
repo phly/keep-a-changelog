@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="keep-a-changelog coding standard">
-    <rule ref="./vendor/webimpress/coding-standard/ruleset.xml"/>
+    <rule ref="./vendor/zendframework/zend-coding-standard/src/ZendCodingStandard/ruleset.xml"/>
 
     <!-- Paths to check -->
     <file>src</file>
