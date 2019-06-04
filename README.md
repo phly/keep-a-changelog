@@ -110,6 +110,27 @@ in a local configuration file _will be ignored_.
 > configuration is generally restricted to reading by the user only, making it a
 > more sound location to store this sensitive information.
 
+### Package name configuration
+
+As noted above, you can specify a package name in your local configuration file.
+
+Alternately, if none is discovered there and the `--package` option is not
+provided to a command that requires it, the tooling will look for a package name
+in one of the following:
+
+- `composer.json` (`name` key)
+- `package.json` (`name` key)
+
+### Remote name configuration
+
+As noted above, you can specify the name of a git remote to push tags to in
+either your global or your local configuration file.
+
+Alternately, if neither file defines the value, and the `--remote` option is not
+provided to a command that requires it, the tooling will look for the remote
+name by trying to match against remotes listed in your `.git/config`, based on
+the selected provider and package name.
+
 ## Providers
 
 Providers refer to the location where you push releases and create issues and
