@@ -80,7 +80,7 @@ class GitHub implements ProviderInterface
                 'name' => $releaseName,
                 'body' => $changelog,
                 'draft' => false,
-                'prerelease' => false,
+                'prerelease' => $this->isVersionPrelease($tagName),
             ]
         );
 
@@ -202,5 +202,13 @@ class GitHub implements ProviderInterface
         $client->authenticate($this->token, GitHubClient::AUTH_HTTP_TOKEN);
 
         return $client;
+    }
+
+    private function isVersionPrelease(string $version) : bool
+    {
+        if (preg_match('/(alpha|a|beta|b|rc|dev)\d+$/i', $version)) {
+            return true;
+        }
+        return false;
     }
 }
