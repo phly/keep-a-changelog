@@ -2,6 +2,117 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.0.0 - 2019-06-04
+
+### Added
+
+- Configuration is now a first-class citizen within the tooling, and is merged
+  (in order of ascending priority) from each of package defaults,
+  `$XDG_CONFIG_HOME/keep-a-changelog.ini` (usually `$HOME/.config/keep-a-changelog.ini`),
+  `$PWD/.keep-a-changelog.ini` (the directory in which you run the command), and
+  command options. Configuration has the following format:
+
+  ```dosini
+  [defaults]
+  changelog_file = CHANGELOG.md
+  provider = github
+  remote = origin
+  package = some/package ; local ($PWD) config only
+  
+  [providers]
+  github[class] = Phly\KeepAChangelog\Provider\GitHub
+  github[token] = authorization-token ; global config only
+  github[url] = https://some-custom-install.github.com
+  gitlab[class] = Phly\KeepAChangelog\Provider\GitLab
+  gitlab[token] = authorization-token ; global config only
+  gitlab[url] = https://some-custom-install.gitlab.com
+  ```
+
+  Full details can be found in the [README.md](https://github.com/phly/keep-a-changelog/)
+  file.
+
+- Adds the command `config:edit`, which allows editing a global or local
+  configuration file within your specified editor (either `$EDITOR` or the value
+  of the `--editor` option).
+
+- Adds the command `config:remove`, which allows removing either a global or local
+  configuration file.
+
+- Adds the command `config:show`, which allows showing the contents of either a
+  global or local configuration file, or the merged values of the two.
+
+- The `version:edit` command now allows you to specify the specific changelog
+  version you wish to edit. If you do not specify a version, it assumes the most
+  recent listed.
+
+- The various `entry:*` commands now allow you to specify the specific changelog
+  version (via `--version`) to which to add the new entry, instead of only
+  allowing adding to the most recent.
+
+### Changed
+
+- The tooling now requires PHP 7.2, as it consumes and implements
+  [PSR-14 (Event Dispatcher](https://www.php-fig.org/psr/psr-14/) internally.
+
+- Configuration has changed, including where it is stored. If you were using
+  configuration previously, generate new configuration using `keep-a-changelog
+  config:create --global`, and then copy relevant details from your
+  `$HOME/.keep-a-changelog/config.ini` to the new configuration file (you can use
+  `keep-a-changelog config:edit --global` to edit the new file).
+
+- When calling `version:release` or the various `entry:*` commands, package
+  names can now be autodiscovered via one of:
+
+  - The local configuration file.
+  - A [Composer](https://getcomposer.org) `composer.json` file (via the `name` key).
+  - An [NPM](https://docs.npmjs.com/files/package.json) `package.json` file (via the `name` key).
+
+  This means you likely no longer need to specify the package name when pushing
+  a release via the tooling.
+
+- When calling `version:tag`, git remote names can now be specified via one of:
+
+  - The global configuration file.
+  - The local configuration file.
+  - Command-line option.
+  - Autodiscovery via `.git/config`, using the configured provider and package name.
+
+- The `--file|-f` global option for specifying a changelog file is now
+  `--changelog|-c`.
+
+- The `version:release` command now makes the `<package>` argument a `--package` option.
+
+- The `version:release` command now allows releasing any version; this can be useful
+  when creating historical releases.
+
+- The internals were completely rewritten. If you were extending or consuming
+  any classes previously, they are likely either removed, renamed, or rewritten
+  at this time. In particular, all commands are now under sub-namespaces, and
+  dispatch events instead of performing logic internally. This approach should
+  make understanding the workflow of individual commands simpler.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Removes the `config` command; use `config:create` instead.
+
+- Removes the `edit` command; use `version:edit` instead.
+
+- Removes the `new` command; use `changelog:new` instead.
+
+- Removes the `ready` command; use `version:ready` instead.
+
+- Removes the `release` command; use `version:release` instead.
+
+- Removes the `tag` command; use `version:tag` instead.
+
+### Fixed
+
+- Nothing.
+
 ## 1.6.1 - 2019-05-14
 
 ### Added

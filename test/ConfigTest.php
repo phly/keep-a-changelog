@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
- * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
+ * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
  * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
  */
 
@@ -10,81 +10,75 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog;
 
 use Phly\KeepAChangelog\Config;
-use Phly\KeepAChangelog\Exception;
+use Phly\KeepAChangelog\Provider\GitLab;
+use Phly\KeepAChangelog\Provider\ProviderList;
+use Phly\KeepAChangelog\Provider\ProviderSpec;
 use PHPUnit\Framework\TestCase;
+
+use function getcwd;
+use function realpath;
 
 class ConfigTest extends TestCase
 {
-    public function testConstructorRaisesExceptionForInvalidProvider()
-    {
-        $this->expectException(Exception\InvalidProviderException::class);
-        new Config('', 'unknown-provider-name');
-    }
-
-    public function testConstructorAllowsPassingNoArguments()
+    public function testBareInstanceHasExpectedDefaults()
     {
         $config = new Config();
-        $this->assertSame('', $config->token());
-        $this->assertSame(Config::PROVIDER_GITHUB, $config->provider());
+        $this->assertSame(realpath(getcwd()) . '/CHANGELOG.md', $config->changelogFile());
+        $this->assertNull($config->package());
+        $this->assertInstanceOf(ProviderSpec::class, $config->provider());
+        $this->assertInstanceOf(ProviderList::class, $config->providers());
+        $this->assertNull($config->remote());
+
+        $provider = $config->provider();
+        $this->assertSame('github', $provider->name());
+        $this->assertTrue($provider->isComplete());
+
+        $providers = $config->providers();
+        $this->assertTrue($providers->has('github'));
+        $this->assertTrue($providers->has('gitlab'));
+        $this->assertSame($provider, $providers->get('github'));
     }
 
-    public function testConstructorAllowsProvidingProviderArgument()
-    {
-        $config = new Config('token-value', Config::PROVIDER_GITLAB);
-        $this->assertSame('token-value', $config->token());
-        $this->assertSame(Config::PROVIDER_GITLAB, $config->provider());
-        $this->assertSame('gitlab.com', $config->domain());
-    }
-
-    public function testConstructorAllowsProvidingProviderAndProviderDomainArguments()
-    {
-        $config = new Config('token-value', Config::PROVIDER_GITLAB, 'gitlab.phly.dev');
-        $this->assertSame('token-value', $config->token());
-        $this->assertSame(Config::PROVIDER_GITLAB, $config->provider());
-        $this->assertSame('gitlab.phly.dev', $config->domain());
-        return $config;
-    }
-
-    /**
-     * @depends testConstructorAllowsProvidingProviderAndProviderDomainArguments
-     */
-    public function testGetArrayCopyProvidesSerialization(Config $config)
-    {
-        $this->assertSame([
-            'token'    => $config->token(),
-            'provider' => $config->provider(),
-            'domain'   => $config->domain(),
-        ], $config->getArrayCopy());
-    }
-
-    public function testWithDomainReturnsNewInstanceWithChangedDomain()
+    public function testChangelogFileIsMutable()
     {
         $config = new Config();
-        $changed = $config->withDomain('gitlab.phly.dev');
-        $this->assertNotSame($changed, $config);
-        $this->assertSame('gitlab.phly.dev', $changed->domain());
+        $config->setChangelogFile('changelog.txt');
+        $this->assertSame('changelog.txt', $config->changelogFile());
     }
 
-    public function testWithTokenReturnsNewInstanceWithChangedToken()
+    public function testPackageIsMutableAndPushesPackageToConfiguredProvider()
     {
         $config = new Config();
-        $changed = $config->withToken('new-token-value');
-        $this->assertNotSame($changed, $config);
-        $this->assertSame('new-token-value', $changed->token());
+        $config->setPackage('some/package');
+        $this->assertSame('some/package', $config->package());
+
+        $provider = $config->provider()->createProvider();
+        $this->assertTrue($provider->canGenerateLinks());
     }
 
-    public function testWithProviderReturnsNewInstanceWithChangedProvider()
+    public function testRemoteIsMutable()
     {
         $config = new Config();
-        $changed = $config->withProvider(Config::PROVIDER_GITLAB);
-        $this->assertNotSame($changed, $config);
-        $this->assertSame(Config::PROVIDER_GITLAB, $changed->provider());
+        $config->setRemote('upstream');
+        $this->assertSame('upstream', $config->remote());
     }
 
-    public function testWithProviderRaisesExceptionForUnknownProviderType()
+    public function testSettingProviderNameSetsProviderSpec()
     {
         $config = new Config();
-        $this->expectException(Exception\InvalidProviderException::class);
-        $config->withProvider('unknown-provider-type');
+        $config->setProviderName('gitlab');
+
+        $this->assertSame('gitlab', $config->provider()->name());
+    }
+
+    public function testSettingProviderNameWhenPackageIsPresentAlsoPushesPackageToProviderSpec()
+    {
+        $config = new Config();
+        $config->setPackage('some/package');
+        $config->setProviderName('gitlab');
+
+        $provider = $config->provider()->createProvider();
+        $this->assertInstanceOf(GitLab::class, $provider);
+        $this->assertTrue($provider->canGenerateLinks());
     }
 }

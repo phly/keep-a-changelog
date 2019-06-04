@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
- * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
+ * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
  * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
  */
 
@@ -12,7 +12,11 @@ namespace Phly\KeepAChangelog\Exception;
 use InvalidArgumentException;
 use Phly\KeepAChangelog\Provider;
 
-class InvalidProviderException extends InvalidArgumentException
+use function gettype;
+use function implode;
+use function sprintf;
+
+class InvalidProviderException extends InvalidArgumentException implements ExceptionInterface
 {
     public static function forProvider(string $provider, array $allowedProviders) : self
     {

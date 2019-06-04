@@ -11,39 +11,62 @@ namespace Phly\KeepAChangelog\Provider;
 
 use Github\Client as GitHubClient;
 use Github\Exception\ExceptionInterface as GithubException;
-use Phly\KeepAChangelog\Exception;
 
-class GitHub implements
-    IssueMarkupProviderInterface,
-    ProviderInterface,
-    ProviderNameProviderInterface
+use function explode;
+use function filter_var;
+use function preg_match;
+use function rawurlencode;
+use function sprintf;
+
+use const FILTER_VALIDATE_URL;
+
+class GitHub implements ProviderInterface
 {
-    /** @var string */
-    private $domain = 'github.com';
-
-    public function getIssuePrefix() : string
-    {
-        return '#';
-    }
-
-    public function getPatchPrefix() : string
-    {
-        return '#';
-    }
+    private const DEFAULT_URL = 'https://api.github.com';
 
     /**
-     * @inheritDoc
+     * Use for testing purposes only.
+     *
+     * @internal
+     * @var ?GitHubClient
      */
+    public $client;
+
+    /** @var ?string */
+    private $package;
+
+    /** @var ?string */
+    private $token;
+
+    /** @var string */
+    private $url = self::DEFAULT_URL;
+
+    public function canCreateRelease() : bool
+    {
+        return null !== $this->package
+            && null !== $this->token;
+    }
+
+    public function canGenerateLinks() : bool
+    {
+        return null !== $this->package;
+    }
+
     public function createRelease(
-        string $package,
         string $releaseName,
         string $tagName,
-        string $changelog,
-        string $token
+        string $changelog
     ) : ?string {
-        [$org, $repo] = explode('/', $package);
-        $client = new GitHubClient();
-        $client->authenticate($token, GitHubClient::AUTH_HTTP_TOKEN);
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'release creation');
+        }
+
+        if (! $this->token) {
+            throw Exception\MissingTokenException::for($this);
+        }
+
+        [$org, $repo] = explode('/', $this->package);
+        $client       = $this->getClient();
 
         $this->verifyTag($client, $org, $repo, $tagName);
 
@@ -55,48 +78,65 @@ class GitHub implements
                 'name'       => $releaseName,
                 'body'       => $changelog,
                 'draft'      => false,
-                'prerelease' => false,
+                'prerelease' => $this->isVersionPrelease($tagName),
             ]
         );
 
         return $release['html_url'] ?? null;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getRepositoryUrlRegex() : string
+    public function generateIssueLink(int $issueIdentifier) : string
     {
-        return '(github.com[:/](.*?)\.git)';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function generatePullRequestLink(string $package, int $pr) : string
-    {
-        if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*/[a-z0-9]+[a-z0-9_-]*$#i', $package)) {
-            throw Exception\InvalidPackageNameException::forPackage($package);
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'issue link generation');
         }
 
-        return sprintf('https://github.com/%s/pull/%d', $package, $pr);
+        $baseUrl = $this->url === self::DEFAULT_URL
+            ? 'https://github.com'
+            : $this->url;
+
+        $url = sprintf('%s/%s/issues/%d', $baseUrl, $this->package, $issueIdentifier);
+        return sprintf('[#%d](%s)', $issueIdentifier, $url);
     }
 
-    public function getName() : string
+    public function generatePatchLink(int $patchIdentifier) : string
     {
-        return 'GitHub';
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'patch link generation');
+        }
+
+        $baseUrl = $this->url === self::DEFAULT_URL
+            ? 'https://github.com'
+            : $this->url;
+
+        $url = sprintf('%s/%s/pull/%d', $baseUrl, $this->package, $patchIdentifier);
+        return sprintf('[#%d](%s)', $patchIdentifier, $url);
     }
 
-    public function getDomainName() : string
+    public function setPackageName(string $package) : void
     {
-        return $this->domain;
+        if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*/[a-z0-9]+[a-z0-9_-]*$#i', $package)) {
+            throw Exception\InvalidPackageNameException::forPackage($package, $this);
+        }
+        $this->package = $package;
     }
 
-    public function withDomainName(string $domain) : ProviderNameProviderInterface
+    public function setToken(string $token) : void
     {
-        $new = clone $this;
-        $new->domain = $domain;
-        return $new;
+        $this->token = $token;
+    }
+
+    /**
+     * Set the base URL to use for API calls to the provider.
+     *
+     * Generally, this should only be the scheme + authority.
+     */
+    public function setUrl(string $url) : void
+    {
+        if (false === filter_var($url, FILTER_VALIDATE_URL)) {
+            throw Exception\InvalidUrlException::forUrl($url, $this);
+        }
+        $this->url = $url;
     }
 
     /**
@@ -138,5 +178,27 @@ class GitHub implements
                 $tagName
             );
         }
+    }
+
+    private function getClient() : GitHubClient
+    {
+        if ($this->client instanceof GitHubClient) {
+            return $this->client;
+        }
+
+        $client = self::DEFAULT_URL === $this->url
+            ? new GitHubClient()
+            : new GitHubClient(null, null, $this->url);
+        $client->authenticate($this->token, GitHubClient::AUTH_HTTP_TOKEN);
+
+        return $client;
+    }
+
+    private function isVersionPrelease(string $version) : bool
+    {
+        if (preg_match('/(alpha|a|beta|b|rc|dev)\d+$/i', $version)) {
+            return true;
+        }
+        return false;
     }
 }
