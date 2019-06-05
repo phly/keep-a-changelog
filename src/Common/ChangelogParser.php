@@ -28,13 +28,21 @@ class ChangelogParser
      */
     public function findAllVersions(string $changelogFile) : iterable
     {
-        $fh    = fopen($changelogFile, 'rb');
-        $regex = sprintf(
+        $versionRegex       = sprintf(
             '/^%s %s - %s$/i',
             preg_quote('##', '/'),
             '(?P<version>\d+\.\d+\.\d+(?:(?:alpha|a|beta|b|rc|dev)\d+)?)',
             '(?P<date>(\d{4}-\d{2}-\d{2}|TBD))'
         );
+
+        $linkedVersionRegex = sprintf(
+            '/^%s %s - %s$/i',
+            preg_quote('##', '/'),
+            '\[(?P<version>\d+\.\d+\.\d+(?:(?:alpha|a|beta|b|rc|dev)\d+)?)\]',
+            '(?P<date>(\d{4}-\d{2}-\d{2}|TBD))'
+        );
+
+        $fh                 = fopen($changelogFile, 'rb');
 
         while (! feof($fh)) {
             $line = fgets($fh);
@@ -42,8 +50,14 @@ class ChangelogParser
                 continue;
             }
 
-            if (preg_match($regex, $line, $matches)) {
+            if (preg_match($versionRegex, $line, $matches)) {
                 yield $matches['version'] => $matches['date'];
+                continue;
+            }
+
+            if (preg_match($linkedVersionRegex, $line, $matches)) {
+                yield $matches['version'] => $matches['date'];
+                continue;
             }
         }
 
