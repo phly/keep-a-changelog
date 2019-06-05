@@ -73,7 +73,7 @@ class EditConfigEvent implements
     public function editComplete(string $configFile) : void
     {
         $this->output->writeln(sprintf(
-            '<info>Completed editing %s',
+            '<info>Completed editing %s</info>',
             $configFile
         ));
     }
