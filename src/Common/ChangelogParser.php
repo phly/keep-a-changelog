@@ -94,7 +94,11 @@ class ChangelogParser
      */
     public function findChangelogForVersion(string $changelog, string $version) : string
     {
-        $regex = preg_quote('## ' . $version, '/');
+        $regex = sprintf(
+            '%s (?:\[%2$s\]|%2$s)',
+            preg_quote('##', '/'),
+            preg_quote($version, '/')
+        );
         if (! preg_match('/^' . $regex . '/m', $changelog)) {
             throw Exception\ChangelogNotFoundException::forVersion($version);
         }
@@ -104,7 +108,7 @@ class ChangelogParser
             throw Exception\ChangelogMissingDateException::forVersion($version);
         }
 
-        $regex .= "\n\n(?P<changelog>.*?)(?=\n\#\# |$)";
+        $regex .= "\n\n(?P<changelog>.*?)(?=\n\#\# |\n\[.*?\]:\s*\w+|$)";
         if (! preg_match('/' . $regex . '/s', $changelog, $matches)) {
             throw Exception\InvalidChangelogFormatException::forVersion($version);
         }
