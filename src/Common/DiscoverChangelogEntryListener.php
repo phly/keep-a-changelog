@@ -32,9 +32,12 @@ class DiscoverChangelogEntryListener
         $version       = $event->version();
         $contents      = file($filename) ?: [];
         $entry         = new ChangelogEntry();
-        $boundaryRegex = '/^## \d+\.\d+\.\d+/';
+        $boundaryRegex = '/^(?:## (?:\d+\.\d+\.\d+|\[\d+\.\d+\.\d+\])|\[.*?\]:\s*\S+)/';
         $regex         = $version
-            ? sprintf('/^## %s/', preg_quote($version))
+            ? sprintf(
+                '/^## (?:%1$s|\[%1$s\])/',
+                preg_quote($version)
+            )
             : $boundaryRegex;
 
         foreach ($contents as $index => $line) {
