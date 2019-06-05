@@ -1,6 +1,10 @@
 ---
-name: 💥 BC Break
-about: Have you encountered an issue during an upgrade? 💣
+name: BC Break
+about: Have you encountered an issue during an upgrade?
+title: ''
+labels: BC Break
+assignees: ''
+
 ---
 
 <!--

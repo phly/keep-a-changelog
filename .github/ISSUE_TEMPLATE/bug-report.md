@@ -1,6 +1,10 @@
 ---
-name: 🐞 Bug Report
-about: Something is broken? 🔨
+name: Bug Report
+about: Something is broken?
+title: ''
+labels: bug
+assignees: ''
+
 ---
 
 ### Bug Report
@@ -30,4 +34,3 @@ Adding a failing unit test would help us a lot - you can submit one in a Pull Re
 #### Expected behaviour
 
 <!-- What was the expected (correct) behaviour? -->
-
