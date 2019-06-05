@@ -1,16 +1,12 @@
 # Getting Support
 
-Zend Framework offers three support channels:
+This project offers the following support channels:
 
-- For real-time questions, use our
-  [Slack](https://zendframework-slack.herokuapp.com)
-- For detailed questions (e.g., those requiring examples) use our
-  [forums](https://discourse.zendframework.com/c/questions/components)
 - To report issues, use this repository's
   [issue tracker](https://github.com/phly/keep-a-changelog/issues/new)
 
-**DO NOT** use the issue tracker to ask questions; use Slack or the forums for
-that. Questions posed to the issue tracker will be closed.
+Feel free to ask questions via the issue tracker; however, please include the
+veribiage `[QUESTION]` in the issue title to ensure we resolve it as such.
 
 When reporting an issue, please include the following details:
 
