@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
+use function sprintf;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
@@ -89,5 +90,18 @@ EOC;
             __DIR__ . '/../_files/CHANGELOG-EDITOR-EXPECTED.md',
             $changelog
         );
+    }
+
+    public function testCanAppendContentToExistingFile()
+    {
+        $changelog      = $this->createChangelog();
+        $origContents   = file_get_contents($changelog);
+        $appendContents = "These are appended contents.\n";
+        $editor         = new ChangelogEditor();
+
+        $this->assertNull($editor->append($changelog, $appendContents));
+
+        $contents = file_get_contents($changelog);
+        $this->assertSame(sprintf("%s\n%s", $origContents, $appendContents), $contents);
     }
 }

@@ -11,8 +11,10 @@ namespace Phly\KeepAChangelog\Common;
 
 use function array_splice;
 use function file;
+use function file_get_contents;
 use function file_put_contents;
 use function implode;
+use function sprintf;
 
 class ChangelogEditor
 {
@@ -21,5 +23,14 @@ class ChangelogEditor
         $contents = file($filename);
         array_splice($contents, $entry->index, $entry->length, $replacement);
         file_put_contents($filename, implode('', $contents));
+    }
+
+    public function append(string $filename, string $contentsToAppend) : void
+    {
+        $contents = file_get_contents($filename);
+        file_put_contents(
+            $filename,
+            sprintf("%s\n%s", $contents, $contentsToAppend)
+        );
     }
 }
