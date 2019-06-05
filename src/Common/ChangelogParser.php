@@ -70,7 +70,11 @@ class ChangelogParser
      */
     public function findReleaseDateForVersion(string $changelog, string $version) : string
     {
-        $regex = preg_quote('## ' . $version, '/');
+        $regex = sprintf(
+            '%s (?:\[%2$s\]|%2$s)',
+            preg_quote('##', '/'),
+            preg_quote($version, '/')
+        );
         if (! preg_match('/^' . $regex . '/m', $changelog)) {
             throw Exception\ChangelogNotFoundException::forVersion($version);
         }
