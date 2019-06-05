@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Common;
 
+use Phly\KeepAChangelog\Common\ChangelogEntry;
 use Phly\KeepAChangelog\Common\ChangelogParser;
 use Phly\KeepAChangelog\Exception;
 use PHPUnit\Framework\TestCase;
@@ -177,7 +178,7 @@ EOF;
     {
         $changelog = file_get_contents(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
 
-        $actual    = $this->parser->findReleaseDateForVersion($changelog, $version);
+        $actual = $this->parser->findReleaseDateForVersion($changelog, $version);
 
         $this->assertSame($expectedDate, $actual);
     }
@@ -186,7 +187,7 @@ EOF;
     {
         $changelog = file_get_contents(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
 
-        $v2 = <<< 'EOC'
+        $v2 = <<<'EOC'
 ### Added
 
 - Nothing.
@@ -209,7 +210,7 @@ EOF;
 
 EOC;
 
-        $v1 = <<< 'EOC'
+        $v1 = <<<'EOC'
 ### Added
 
 - Added a new feature.
@@ -232,7 +233,7 @@ EOC;
 
 EOC;
 
-        $v0 = <<< 'EOC'
+        $v0 = <<<'EOC'
 ### Added
 
 - Nothing.
@@ -274,14 +275,18 @@ EOC;
 
     public function testCanFetchLinks()
     {
-        $expected = <<< 'EOL'
+        $expectedContents = <<<'EOC'
 [2.0.0]: https://example.com/compare/1.1.0...develop
 [1.1.0]: https://example.com/releases/1.1.0/
 [0.1.0]: https://example.com/releases/0.1.0/
-EOL;
 
-        $actual = $this->parser->findLinks(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
+EOC;
 
-        $this->assertSame($expected, $actual);
+        $links = $this->parser->findLinks(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
+
+        $this->assertInstanceOf(ChangelogEntry::class, $links);
+        $this->assertSame($expectedContents, $links->contents);
+        $this->assertSame(70, $links->index);
+        $this->assertSame(3, $links->length);
     }
 }

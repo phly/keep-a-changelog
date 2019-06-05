@@ -14,6 +14,7 @@ use Phly\KeepAChangelog\Exception;
 use function fclose;
 use function feof;
 use function fgets;
+use function file;
 use function fopen;
 use function preg_match;
 use function preg_quote;
@@ -28,7 +29,7 @@ class ChangelogParser
      */
     public function findAllVersions(string $changelogFile) : iterable
     {
-        $versionRegex       = sprintf(
+        $versionRegex = sprintf(
             '/^%s %s - %s$/i',
             preg_quote('##', '/'),
             '(?P<version>\d+\.\d+\.\d+(?:(?:alpha|a|beta|b|rc|dev)\d+)?)',
@@ -42,7 +43,7 @@ class ChangelogParser
             '(?P<date>(\d{4}-\d{2}-\d{2}|TBD))'
         );
 
-        $fh                 = fopen($changelogFile, 'rb');
+        $fh = fopen($changelogFile, 'rb');
 
         while (! feof($fh)) {
             $line = fgets($fh);
@@ -108,11 +109,35 @@ class ChangelogParser
             throw Exception\ChangelogMissingDateException::forVersion($version);
         }
 
-        $regex .= "\n\n(?P<changelog>.*?)(?=\n\#\# |\n\[.*?\]:\s*\w+|$)";
+        $regex .= "\n\n(?P<changelog>.*?)(?=\n\#\# |\n\[.*?\]:\s*\S+|$)";
         if (! preg_match('/' . $regex . '/s', $changelog, $matches)) {
             throw Exception\InvalidChangelogFormatException::forVersion($version);
         }
 
         return $matches['changelog'];
+    }
+
+    public function findLinks(string $changelogFile) : ChangelogEntry
+    {
+        $regex      = '/^\[.*?]:\s*\S+$/';
+        $linksEntry = new ChangelogEntry();
+        $contents   = file($changelogFile) ?: [];
+        foreach ($contents as $index => $line) {
+            if (! preg_match($regex, $line)) {
+                if ($linksEntry->index) {
+                    break;
+                }
+
+                continue;
+            }
+
+            $linksEntry->contents .= $line;
+            $linksEntry->length   += 1;
+            if (! $linksEntry->index) {
+                $linksEntry->index = $index;
+            }
+        }
+
+        return $linksEntry;
     }
 }
