@@ -86,4 +86,55 @@ EOC;
         $this->assertNull($listener($this->event->reveal()));
         $this->event->changelogEntryNotFound(Argument::any())->shouldNotHaveBeenCalled();
     }
+
+    public function testOmitsLinksWhenReturningLastEntryInFile()
+    {
+        $expected  = <<<'EOC'
+## [0.1.0] - 2018-03-23
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+
+EOC;
+        $changelog = __DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md';
+
+        $config = $this->prophesize(Config::class);
+        $config->changelogFile()->willReturn($changelog);
+
+        $event = $this->prophesize(ChangelogEntryAwareEventInterface::class);
+        $event->config()->will([$config, 'reveal']);
+        $event->version()->willReturn('0.1.0');
+
+        $event
+            ->discoveredChangelogEntry(Argument::that(function ($entry) use ($expected) {
+                TestCase::assertSame(48, $entry->index);
+                TestCase::assertSame(22, $entry->length);
+                TestCase::assertSame($expected, $entry->contents);
+                return $entry;
+            }))
+            ->shouldBeCalled();
+
+        $listener = new DiscoverChangelogEntryListener();
+
+        $this->assertNull($listener($event->reveal()));
+        $event->changelogEntryNotFound(Argument::any())->shouldNotHaveBeenCalled();
+    }
 }
