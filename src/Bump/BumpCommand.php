@@ -15,8 +15,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function array_keys;
-use function in_array;
 use function sprintf;
 
 /**
@@ -63,7 +61,7 @@ EOH;
         EventDispatcherInterface $dispatcher,
         ?string $name = null
     ) {
-        if (! in_array($type, array_keys($this->bumpMethods), true)) {
+        if (! isset($this->bumpMethods[$type])) {
             throw Exception\InvalidBumpTypeException::forType($type);
         }
 

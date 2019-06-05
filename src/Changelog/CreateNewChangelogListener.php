@@ -47,7 +47,7 @@ EOT;
     public function __invoke(CreateNewChangelogEvent $event) : void
     {
         $changelogFile = $event->config()->changelogFile();
-        if (file_exists($changelogFile) && ! $event->overwrite()) {
+        if (! $event->overwrite() && file_exists($changelogFile)) {
             $event->changelogExists($changelogFile);
             return;
         }

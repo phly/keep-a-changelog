@@ -20,7 +20,7 @@ class ChangelogFormatter
     {
         return preg_replace_callback(
             '/^\#\#\# (?<heading>Added|Changed|Deprecated|Removed|Fixed)/m',
-            function (array $matches) {
+            static function (array $matches) {
                 return sprintf(
                     "%s\n%s",
                     $matches['heading'],

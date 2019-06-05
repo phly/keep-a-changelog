@@ -14,7 +14,7 @@ use function count;
 use function parse_url;
 use function preg_match;
 use function preg_quote;
-use function strstr;
+use function strpos;
 use function strtolower;
 
 use const PHP_URL_HOST;
@@ -105,7 +105,7 @@ class DiscoverRemoteFromGitRemotesListener
                 continue;
             }
 
-            if (false === strstr($matches['url'], $package)) {
+            if (false === strpos($matches['url'], $package)) {
                 continue;
             }
 
