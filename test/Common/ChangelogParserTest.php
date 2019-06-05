@@ -149,4 +149,139 @@ EOF;
 
         $this->assertSame($expected, $actual);
     }
+
+    public function testListingAllVersionsIncludesLinkedVersions()
+    {
+        $expected = [
+            '2.0.0' => 'TBD',
+            '1.1.0' => '2018-03-23',
+            '0.1.0' => '2018-03-23',
+        ];
+
+        $actual = iterator_to_array($this->parser->findAllVersions(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md'));
+
+        $this->assertSame($expected, $actual);
+    }
+
+    public function expectedDataForLinkedVersions() : iterable
+    {
+        yield '2.0.0' => ['2.0.0', 'TBD'];
+        yield '1.1.0' => ['1.1.0', '2019-06-05'];
+        yield '0.1.0' => ['0.1.0', '2018-03-23'];
+    }
+
+    /**
+     * @dataProvider expectedDataForLinkedVersions
+     */
+    public function testCanRetrieveDateForLinkedVersions(string $version, string $expectedDate)
+    {
+        $changelog = file_get_contents(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
+
+        $actual    = $this->parser->findReleaseDateForVersion($changelog, $version);
+
+        $this->assertSame($expectedDate, $actual);
+    }
+
+    public function expectedContentsForLinkedVersions() : iterable
+    {
+        $changelog = file_get_contents(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
+
+        $v2 = <<< 'EOC'
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+EOC;
+
+        $v1 = <<< 'EOC'
+### Added
+
+- Added a new feature.
+
+### Changed
+
+- Made some changes.
+
+### Deprecated
+
+- Nothing was deprecated.
+
+### Removed
+
+- Nothing was removed.
+
+### Fixed
+
+- Fixed some bugs.
+
+EOC;
+
+        $v0 = <<< 'EOC'
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+EOC;
+
+        yield '2.0.0' => ['2.0.0', $v2];
+        yield '1.1.0' => ['1.1.0', $v1];
+        yield '0.1.0' => ['0.1.0', $v0];
+    }
+
+    /**
+     * @dataProvider expectedContentsForLinkedVersions
+     */
+    public function testCanRetrieveChangelogForLinkedVersions(string $version, string $expectedContents)
+    {
+        $changelog = file_get_contents(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
+
+        $actual = $this->parser->findChangelogForVersion($changelog, $version);
+
+        $this->assertSame($expectedContents, $actual);
+    }
+
+    public function testCanFetchLinks()
+    {
+        $expected = <<< 'EOL'
+[2.0.0]: https://example.com/compare/1.1.0...develop
+[1.1.0]: https://example.com/releases/1.1.0/
+[0.1.0]: https://example.com/releases/0.1.0/
+EOL;
+
+        $actual = $this->parser->findLinks(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
+
+        $this->assertSame($expected, $actual);
+    }
 }
