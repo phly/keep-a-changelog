@@ -282,6 +282,8 @@ The default providers available are:
 - `bump:minor`: Create a new changelog entry for the next minor release.
 - `bump:major`: Create a new changelog entry for the next major release.
 - `bump:to-version`: Create a new changelog entry for a user-specified version.
+- `changelog:edit-links` (since 2.1.0): Edit reference links from the end of the
+  changelog file.
 - `changelog:new`: Create a new changelog file.
 - `config:create`: Create one or more configuration files.
 - `config:edit`: Edit a configuration file.
