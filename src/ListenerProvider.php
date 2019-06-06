@@ -27,6 +27,12 @@ class ListenerProvider implements ListenerProviderInterface
             Common\ValidateVersionListener::class,
             Changelog\CreateNewChangelogListener::class,
         ],
+        Changelog\EditChangelogLinksEvent::class   => [
+            Config\ConfigListener::class,
+            Common\DiscoverEditorListener::class,
+            Changelog\FindChangelogLinksListener::class,
+            Changelog\EditChangelogLinksListener::class,
+        ],
         ConfigCommand\CreateConfigEvent::class     => [
             ConfigCommand\CreateGlobalConfigListener::class,
             ConfigCommand\CreateLocalConfigListener::class,
