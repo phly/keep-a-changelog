@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#56](https://github.com/phly/keep-a-changelog/pull/56) adds a new command, `changelog:edit-links`, to allow editing reference
+  links in the changelog file.
 
 ### Changed
 
@@ -22,7 +23,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#56](https://github.com/phly/keep-a-changelog/pull/56) / [#38](https://github.com/phly/keep-a-changelog/issues/38) fixes parsing of the changelog file to ensure it recognizes versions
+  using the reference link format.
 
 ## 2.0.1 - TBD
 
