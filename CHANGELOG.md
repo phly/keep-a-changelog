@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file, in reverse 
 - [#56](https://github.com/phly/keep-a-changelog/pull/56) adds a new command, `changelog:edit-links`, to allow editing reference
   links in the changelog file.
 
+- [#57](https://github.com/phly/keep-a-changelog/pull/57) [DEVELOPERS] This patch adds two traits for listeners that use the
+  `Editor` or `ChangelogEditor`; these traits facilitate testing.
+
 ### Changed
 
 - Nothing.
