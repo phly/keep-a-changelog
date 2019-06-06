@@ -1,0 +1,10 @@
+[2.1.0]: https://example.org/diff/2.0.1...develop
+[2.0.1]: https://example.org/releases/2.0.1
+[2.0.0]: https://example.org/releases/2.0.0
+[1.1.1]: https://example.org/releases/1.1.1
+[1.1.0]: https://example.org/releases/1.1.0
+[1.0.1]: https://example.org/releases/1.1.1
+[1.0.0]: https://example.org/releases/1.1.0
+[0.2.1]: https://example.org/releases/0.2.1
+[0.2.0]: https://example.org/releases/0.2.0
+[0.1.0]: https://example.org/releases/0.1.0
