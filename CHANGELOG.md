@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.1.0 - TBD
+## 2.1.0 - 2019-06-06
 
 ### Added
 
@@ -28,28 +28,6 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - [#56](https://github.com/phly/keep-a-changelog/pull/56) / [#38](https://github.com/phly/keep-a-changelog/issues/38) fixes parsing of the changelog file to ensure it recognizes versions
   using the reference link format.
-
-## 2.0.1 - TBD
-
-### Added
-
-- Nothing.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
 
 ## 2.0.0 - 2019-06-04
 
