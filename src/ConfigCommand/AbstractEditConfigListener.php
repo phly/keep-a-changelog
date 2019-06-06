@@ -9,12 +9,14 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\ConfigCommand;
 
-use Phly\KeepAChangelog\Common\Editor;
+use Phly\KeepAChangelog\Common\EditSpawnerTrait;
 
 use function file_exists;
 
 abstract class AbstractEditConfigListener
 {
+    use EditSpawnerTrait;
+
     abstract public function configEditRequested(EditConfigEvent $event) : bool;
 
     abstract public function getConfigFile() : string;
@@ -45,22 +47,4 @@ abstract class AbstractEditConfigListener
 
         $event->editComplete($configFile);
     }
-
-    protected function getEditor() : Editor
-    {
-        if ($this->editor instanceof Editor) {
-            return $this->editor;
-        }
-
-        return new Editor();
-    }
-
-    /**
-     * Provide an Editor instance to use.
-     *
-     * For testing purposes only.
-     *
-     * @var Editor
-     */
-    public $editor;
 }
