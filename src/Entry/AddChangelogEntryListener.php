@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Entry;
 
-use Phly\KeepAChangelog\Common\ChangelogEditor;
+use Phly\KeepAChangelog\Common\ChangelogEditSpawnerTrait;
 
 use function array_splice;
 use function explode;
@@ -21,16 +21,9 @@ use function sprintf;
 
 class AddChangelogEntryListener
 {
-    public const APPEND_NEWLINE = true;
+    use ChangelogEditSpawnerTrait;
 
-    /**
-     * ChangelogEditor instance to use when updating changelog file.
-     *
-     * For testing purposes only.
-     *
-     * @var null|ChangelogEditor
-     */
-    public $editor;
+    public const APPEND_NEWLINE = true;
 
     public function __invoke(AddChangelogEntryEvent $event) : void
     {
@@ -125,13 +118,5 @@ class AddChangelogEntryListener
             $entry .= "\n";
         }
         return $entry;
-    }
-
-    private function getChangelogEditor() : ChangelogEditor
-    {
-        if ($this->editor instanceof ChangelogEditor) {
-            return $this->editor;
-        }
-        return new ChangelogEditor();
     }
 }

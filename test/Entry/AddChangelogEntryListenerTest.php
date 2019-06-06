@@ -183,8 +183,8 @@ EOC;
         $this->event->entry()->willReturn($entry);
         $this->event->addedChangelogEntry('CHANGELOG.md', $section)->shouldBeCalled();
 
-        $listener         = new AddChangelogEntryListener();
-        $listener->editor = $this->editor->reveal();
+        $listener                  = new AddChangelogEntryListener();
+        $listener->changelogEditor = $this->editor->reveal();
 
         $this->assertNull($listener($this->event->reveal()));
 
@@ -224,8 +224,8 @@ EOH;
         $this->event->entry()->willReturn($entry);
         $this->event->addedChangelogEntry('CHANGELOG.md', EntryTypes::TYPE_ADDED)->shouldBeCalled();
 
-        $listener         = new AddChangelogEntryListener();
-        $listener->editor = $this->editor->reveal();
+        $listener                  = new AddChangelogEntryListener();
+        $listener->changelogEditor = $this->editor->reveal();
 
         $this->assertNull($listener($this->event->reveal()));
 

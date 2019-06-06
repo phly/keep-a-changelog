@@ -9,13 +9,14 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Common\ChangelogEditor;
+use Phly\KeepAChangelog\Common\ChangelogEditSpawnerTrait;
 use Phly\KeepAChangelog\Common\EditSpawnerTrait;
 
 use function file_get_contents;
 
 class EditChangelogVersionListener
 {
+    use ChangelogEditSpawnerTrait;
     use EditSpawnerTrait;
 
     public function __invoke(EditChangelogVersionEvent $event) : void
@@ -32,16 +33,18 @@ class EditChangelogVersionListener
         );
 
         if (0 !== $status) {
+            $this->unlinkTempFile($tempFile);
             $event->editorFailed();
             return;
         }
 
-        (new ChangelogEditor())->update(
+        $this->getChangelogEditor()->update(
             $event->config()->changelogFile(),
             file_get_contents($tempFile),
             $changelogEntry
         );
 
+        $this->unlinkTempFile($tempFile);
         $event->editComplete();
     }
 }

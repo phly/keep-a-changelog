@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Common\ChangelogEditor;
+use Phly\KeepAChangelog\Common\ChangelogEditSpawnerTrait;
 
 use function explode;
 use function implode;
@@ -18,6 +18,8 @@ use function sprintf;
 
 class SetDateForChangelogReleaseListener
 {
+    use ChangelogEditSpawnerTrait;
+
     public function __invoke(ReadyLatestChangelogEvent $event) : void
     {
         $entry       = $event->changelogEntry();
@@ -31,7 +33,7 @@ class SetDateForChangelogReleaseListener
 
         $lines[0] = $versionLine;
 
-        (new ChangelogEditor())->update(
+        $this->getChangelogEditor()->update(
             $event->config()->changelogFile(),
             implode("\n", $lines),
             $entry

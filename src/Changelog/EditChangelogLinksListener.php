@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Changelog;
 
-use Phly\KeepAChangelog\Common\ChangelogEditor;
+use Phly\KeepAChangelog\Common\ChangelogEditSpawnerTrait;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
 use Phly\KeepAChangelog\Common\EditSpawnerTrait;
 
@@ -17,6 +17,7 @@ use function file_get_contents;
 
 class EditChangelogLinksListener
 {
+    use ChangelogEditSpawnerTrait;
     use EditSpawnerTrait;
 
     public function __invoke(EditChangelogLinksEvent $event) : void
@@ -41,31 +42,11 @@ class EditChangelogLinksListener
         $linkContents = file_get_contents($tempFile);
         $editor       = $this->getChangelogEditor();
 
-        $this->unlinkTempFile($tempFile);
-
         $links instanceof ChangelogEntry
             ? $editor->update($changelog, $linkContents, $links)
             : $editor->append($changelog, $linkContents);
 
+        $this->unlinkTempFile($tempFile);
         $event->editComplete($changelog);
     }
-
-    private function getChangelogEditor() : ChangelogEditor
-    {
-        if ($this->changelogEditor instanceof ChangelogEditor) {
-            return $this->changelogEditor;
-        }
-
-        return new ChangelogEditor();
-    }
-
-    /**
-     * Provide a ChangelogEditor instance to use.
-     *
-     * For testing purposes only.
-     *
-     * @internal
-     * @var null|ChangelogEditor
-     */
-    public $changelogEditor;
 }

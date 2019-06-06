@@ -9,16 +9,18 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Version;
 
-use Phly\KeepAChangelog\Common\ChangelogEditor;
+use Phly\KeepAChangelog\Common\ChangelogEditSpawnerTrait;
 
 class RemoveChangelogVersionListener
 {
+    use ChangelogEditSpawnerTrait;
+
     public function __invoke(RemoveChangelogVersionEvent $event) : void
     {
         $changelog = $event->config()->changelogFile();
         $entry     = $event->changelogEntry();
 
-        (new ChangelogEditor())->update($changelog, '', $entry);
+        $this->getChangelogEditor()->update($changelog, '', $entry);
 
         $event->versionRemoved();
     }

@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Version;
 
+use Phly\KeepAChangelog\Common\ChangelogEditor;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
-use Phly\KeepAChangelog\Common\ChangelogParser;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use Phly\KeepAChangelog\Version\SetDateForChangelogReleaseListener;
@@ -20,13 +20,7 @@ use Prophecy\Argument;
 use function array_merge;
 use function date;
 use function explode;
-use function file_exists;
-use function file_get_contents;
-use function file_put_contents;
 use function sprintf;
-use function sys_get_temp_dir;
-use function tempnam;
-use function unlink;
 
 class SetDateForChangelogReleaseListenerTest extends TestCase
 {
@@ -55,24 +49,19 @@ class SetDateForChangelogReleaseListenerTest extends TestCase
 
 EOC;
 
-    /** @var null|string name of temporary file used during testing */
-    private $tempFile;
-
     public function setUp()
     {
+        $voidReturn   = function () {
+        };
         $this->config = $this->prophesize(Config::class);
         $this->entry  = new ChangelogEntry();
         $this->event  = $this->prophesize(ReadyLatestChangelogEvent::class);
+
         $this->event->changelogEntry()->willReturn($this->entry);
         $this->event->releaseDate()->willReturn('2019-05-30');
+        $this->event->malformedReleaseLine(Argument::any())->will($voidReturn);
         $this->event->config()->will([$this->config, 'reveal']);
-    }
-
-    public function tearDown()
-    {
-        if ($this->tempFile && file_exists($this->tempFile)) {
-            unlink($this->tempFile);
-        }
+        $this->event->changelogReady()->will($voidReturn);
     }
 
     public function invalidVersionAndDatePermutations() : iterable
@@ -176,18 +165,24 @@ EOC;
         $this->entry->index    = $index;
         $this->entry->length   = $length;
 
-        $this->tempFile = tempnam(sys_get_temp_dir(), 'KAC');
-        file_put_contents($this->tempFile, file_get_contents(__DIR__ . '/../_files/CHANGELOG-MULTIPLE-UNRELEASED.md'));
-        $this->config->changelogFile()->willReturn($this->tempFile);
+        $this->config->changelogFile()->willReturn('changelog.txt');
 
-        $this->event->changelogReady()->shouldBeCalled();
+        $editor = $this->prophesize(ChangelogEditor::class);
+        $editor
+            ->update(
+                'changelog.txt',
+                Argument::containingString(sprintf('## %s - 2019-05-30', $version)),
+                $this->entry
+            )
+            ->will(function () {
+            })
+            ->shouldBeCalled();
 
-        $listener = new SetDateForChangelogReleaseListener();
+        $listener                  = new SetDateForChangelogReleaseListener();
+        $listener->changelogEditor = $editor->reveal();
 
         $this->assertNull($listener($this->event->reveal()));
         $this->event->malformedReleaseLine(Argument::any())->shouldNotHaveBeenCalled();
-
-        $changelog = file_get_contents($this->tempFile);
-        $this->assertSame('2019-05-30', (new ChangelogParser())->findReleaseDateForVersion($changelog, $version));
+        $this->event->changelogReady()->shouldHaveBeenCalled();
     }
 }
