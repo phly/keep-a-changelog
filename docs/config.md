@@ -1,5 +1,8 @@
 ---
+title: Configuration
 permalink: /config.html
+layout: default
+nav_order: 2
 ---
 
 # Configuration

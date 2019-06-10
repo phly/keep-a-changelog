@@ -1,5 +1,8 @@
 ---
 permalink: /providers.html
+title: Providers
+layout: default
+nav_order: 3
 ---
 
 # Providers

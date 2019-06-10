@@ -1,5 +1,8 @@
 ---
+title: Home
 permalink: /index.html
+layout: default
+nav_order: 1
 ---
 
 # phly/keep-a-changelog
