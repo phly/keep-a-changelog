@@ -109,7 +109,7 @@ tool about it. This is done in your [configuration files](config.md).
 Provider configuration is done in the `[providers]` section of your
 configuration file, and each has the following structure:
 
-```dosini
+```ini
 [providers]
 ; Required:
 <name>[class] = Fully\Qualified\Provider\ClassName
