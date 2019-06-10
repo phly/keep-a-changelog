@@ -1,1 +1,4 @@
+title: "phly/keep-a-changelog"
+description: "CLI tooling for Keep-A-Changelog-formatted CHANGELOG.md files, written in PHP"
+show_downloads: false
 theme: jekyll-theme-dinky
