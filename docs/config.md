@@ -27,7 +27,7 @@ If both flags are provided, both files will be created.
 Configuration files are in [INI file format](https://en.wikipedia.org/wiki/INI_file),
 and support the following sections and keys:
 
-```dosini
+```ini
 [defaults]
 
 ; Global config: Default changelog file to use.
@@ -53,7 +53,7 @@ Providers are covered in [another chapter](providers.md).
 
 Local configuration files support additional keys in the `[defaults`] section:
 
-```dosini
+```ini
 ; local .keep-a-changelog.ini file
 [defaults]
 
