@@ -272,6 +272,7 @@ For commands that require a provider, the following input options are exposed:
 ### Default providers
 
 The default providers available are:
+
 - github (default)
 - gitlab
 
