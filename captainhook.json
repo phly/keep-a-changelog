@@ -5,8 +5,8 @@
             {
                 "action": "\\CaptainHook\\App\\Hook\\Message\\Action\\Regex",
                 "options": {
-                    "regex": "#^(feat|fix|docs|qa|refactor): \\S+.*?(\n\n.*)?#s",
-                    "error": "Commit message must have a subject line of the format '(feat|fix|docs|qa|refactor): {description}'; any additional content must have one empty line following.",
+                    "regex": "#^(Merge branch|(?:feat|fix|docs|qa|refactor):) \\S+.*?(\n\n.*)?#s",
+                    "error": "Commit message must have a subject line of the format '(feat|fix|docs|qa|refactor): {description}' or 'Merge branch ...'; any additional content must have one empty line following.",
                     "success": "Expected commit message format detected!"
                 },
                 "conditions": []
