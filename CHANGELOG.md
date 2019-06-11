@@ -123,7 +123,7 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Changed
 
 - The tooling now requires PHP 7.2, as it consumes and implements
-  [PSR-14 (Event Dispatcher](https://www.php-fig.org/psr/psr-14/) internally.
+  [PSR-14 (Event Dispatcher)](https://www.php-fig.org/psr/psr-14/) internally.
 
 - Configuration has changed, including where it is stored. If you were using
   configuration previously, generate new configuration using `keep-a-changelog
