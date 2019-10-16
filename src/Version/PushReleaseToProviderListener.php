@@ -28,7 +28,7 @@ class PushReleaseToProviderListener
         try {
             $release = $provider->createRelease(
                 $releaseName,
-                $event->version(),
+                $event->tagName(),
                 $event->changelog()
             );
         } catch (Throwable $e) {

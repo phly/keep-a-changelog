@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 2.1.1 - TBD
+## 2.1.1 - 2019-10-16
 
 ### Added
 
@@ -44,7 +44,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#61](https://github.com/phly/keep-a-changelog/pull/61) fixes an issue that presented when the tag name associated with a release differs from the version.
 
 ## 2.1.0 - 2019-06-06
 
