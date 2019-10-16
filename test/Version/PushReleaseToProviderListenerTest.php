@@ -47,6 +47,7 @@ class PushReleaseToProviderListenerTest extends TestCase
             )
             ->willThrow($e);
         $this->event->errorCreatingRelease($e)->shouldBeCalled();
+        $this->event->tagName()->willReturn('1.2.3')->shouldBeCalled();
 
         $listener = new PushReleaseToProviderListener();
 
@@ -66,6 +67,7 @@ class PushReleaseToProviderListenerTest extends TestCase
             )
             ->willReturn(null);
         $this->event->unexpectedProviderResult()->shouldBeCalled();
+        $this->event->tagName()->willReturn('1.2.3')->shouldBeCalled();
 
         $listener = new PushReleaseToProviderListener();
 
@@ -85,6 +87,7 @@ class PushReleaseToProviderListenerTest extends TestCase
             )
             ->willReturn('url-to-release');
         $this->event->releaseCreated('url-to-release')->shouldBeCalled();
+        $this->event->tagName()->willReturn('1.2.3')->shouldBeCalled();
 
         $listener = new PushReleaseToProviderListener();
 
