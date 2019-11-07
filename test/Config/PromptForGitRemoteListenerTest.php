@@ -58,7 +58,7 @@ class PromptForGitRemoteListenerTest extends TestCase
                 $this->output,
                 Argument::type(ChoiceQuestion::class)
             )
-            ->willReturn('Abort release');
+            ->willReturn('abort');
 
         $listener = new PromptForGitRemoteListener();
 
@@ -82,7 +82,7 @@ class PromptForGitRemoteListenerTest extends TestCase
                 $this->output,
                 Argument::type(ChoiceQuestion::class)
             )
-            ->willReturn('origin');
+            ->willReturn(0);
 
         $listener = new PromptForGitRemoteListener();
 

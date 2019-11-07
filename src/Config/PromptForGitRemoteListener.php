@@ -31,11 +31,11 @@ class PromptForGitRemoteListener
 
         $remote = $helper->ask($event->input(), $event->output(), $question);
 
-        if ('Abort release' === $remote) {
+        if ('abort' === $remote) {
             $event->abort();
             return;
         }
 
-        $event->foundRemote($remote);
+        $event->foundRemote($choices[$remote]);
     }
 }
