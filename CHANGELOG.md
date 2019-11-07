@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.1.2 - TBD
+## 2.1.2 - 2019-11-07
 
 ### Added
 
@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#62](https://github.com/phly/keep-a-changelog/pull/62) fixes how the command handles the return value when prompting for a remote to use. Previously, it was using the index, instead of looking up the remote name by the index, which would lead to errors.
 
 ## 2.1.1 - 2019-10-16
 
