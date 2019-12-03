@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.2.0 - TBD
+## 2.2.0 - 2019-12-03
 
 ### Added
 
@@ -11,28 +11,6 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Changed
 
 - [#63](https://github.com/phly/keep-a-changelog/pull/63) adds support for symfony/console v5 releases.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 2.1.3 - TBD
-
-### Added
-
-- Nothing.
-
-### Changed
-
-- Nothing.
 
 ### Deprecated
 
