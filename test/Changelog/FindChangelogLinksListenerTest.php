@@ -16,7 +16,7 @@ use Prophecy\Argument;
 
 class FindChangelogLinksListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $voidReturn = function () {
         };

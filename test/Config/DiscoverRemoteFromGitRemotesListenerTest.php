@@ -16,7 +16,7 @@ use Prophecy\Argument;
 
 class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->provider = $this->prophesize(ProviderSpec::class);
         $this->config   = $this->prophesize(Config::class);

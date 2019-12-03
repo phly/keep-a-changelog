@@ -32,7 +32,7 @@ abstract class AbstractShowConfigListenerTestCase extends TestCase
 
     abstract public function configureEventToSkipShow(ObjectProphecy $event) : void;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->voidReturn = function () {
         };

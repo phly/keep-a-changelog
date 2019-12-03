@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class TagReleaseEventTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->config     = $this->prophesize(Config::class);
         $this->input      = $this->prophesize(InputInterface::class);

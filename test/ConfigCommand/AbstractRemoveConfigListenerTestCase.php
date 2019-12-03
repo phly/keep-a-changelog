@@ -31,7 +31,7 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
 
     abstract public function configureEventToSkipRemove(ObjectProphecy $event) : void;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->voidReturn = function () {
         };

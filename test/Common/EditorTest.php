@@ -20,7 +20,7 @@ use const STDOUT;
 
 class EditorTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->output = $this->prophesize(OutputInterface::class);
     }

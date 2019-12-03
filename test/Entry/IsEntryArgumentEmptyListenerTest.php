@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class IsEntryArgumentEmptyListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->event = $this->prophesize(AddChangelogEntryEvent::class);
         $this->event->entryIsEmpty()->will(function () {

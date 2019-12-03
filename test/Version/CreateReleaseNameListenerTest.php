@@ -17,7 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class CreateReleaseNameListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->input  = $this->prophesize(InputInterface::class);
         $this->config = $this->prophesize(Config::class);

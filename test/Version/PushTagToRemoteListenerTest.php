@@ -20,7 +20,7 @@ use function sprintf;
 
 class PushTagToRemoteListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->config = new Config();
         $this->output = $this->prophesize(OutputInterface::class);

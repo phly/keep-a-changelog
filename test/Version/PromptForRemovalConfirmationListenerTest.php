@@ -21,7 +21,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class PromptForRemovalConfirmationListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->entry  = new ChangelogEntry();
         $this->input  = $this->prophesize(InputInterface::class);

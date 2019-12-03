@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class GitLabTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->gitlab = new GitLab();
     }

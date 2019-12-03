@@ -17,7 +17,7 @@ use Prophecy\Argument;
 
 class DiscoverChangelogEntryListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $voidReturn = function () {
         };

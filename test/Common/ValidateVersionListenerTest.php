@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class ValidateVersionListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->event = $this->prophesize(VersionAwareEventInterface::class);
     }

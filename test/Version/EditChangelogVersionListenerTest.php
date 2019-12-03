@@ -23,7 +23,7 @@ use function file_get_contents;
 
 class EditChangelogVersionListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->voidReturn      = function () {
         };

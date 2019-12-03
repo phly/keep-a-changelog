@@ -16,7 +16,7 @@ use UnexpectedValueException;
 
 class ChangelogEntryTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->entry = new ChangelogEntry();
     }

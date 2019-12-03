@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 class RemoveChangelogVersionListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->entry  = new ChangelogEntry();
         $this->config = $this->prophesize(Config::class);

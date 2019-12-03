@@ -26,12 +26,12 @@ class ChangelogEditorTest extends TestCase
     /** @var null|string */
     private $tempFile;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->tempFile = null;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->tempFile && file_exists($this->tempFile)) {
             unlink($this->tempFile);

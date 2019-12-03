@@ -21,7 +21,7 @@
     },
     "require-dev": {
         "captainhook/plugin-composer": "^4.0",
-        "phpunit/phpunit": "^7.4",
+        "phpunit/phpunit": "^8.4.3",
         "webimpress/coding-standard": "dev-master@dev",
         "zendframework/zend-coding-standard": "2.0.0-alpha.3@alpha || ^2.0"
     },

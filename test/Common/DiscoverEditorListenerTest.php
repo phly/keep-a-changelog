@@ -26,7 +26,7 @@ class DiscoverEditorListenerTest extends TestCase
     /** @var array */
     private $serverSuperGlobal = [];
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->serverSuperGlobal = $_SERVER;
         $this->editorEnvValue    = getenv('EDITOR');
@@ -35,7 +35,7 @@ class DiscoverEditorListenerTest extends TestCase
         };
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $_SERVER = $this->serverSuperGlobal;
         $this->editorEnvValue

@@ -27,7 +27,7 @@ class CreateNewChangelogListenerTest extends TestCase
     /** @var null|string */
     private $tempFile;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $voidReturn = function () {
         };
@@ -41,7 +41,7 @@ class CreateNewChangelogListenerTest extends TestCase
         $this->event->createdChangelog()->will($voidReturn);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->tempFile) {
             if (file_exists($this->tempFile)) {

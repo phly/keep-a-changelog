@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class VerifyTagExistsListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->event = $this->prophesize(ReleaseEvent::class);
         $this->event
