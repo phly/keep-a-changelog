@@ -78,7 +78,7 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
      */
     abstract public function reportInvalidLinkRequested(ObjectProphecy $event) : void;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->identifier   = null;
         $this->link         = null;

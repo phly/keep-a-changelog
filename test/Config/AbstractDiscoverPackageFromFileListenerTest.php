@@ -18,7 +18,7 @@ abstract class AbstractDiscoverPackageFromFileListenerTest extends TestCase
 {
     abstract public function createListener() : AbstractDiscoverPackageFromFileListener;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->event = $this->prophesize(PackageNameDiscovery::class);
     }

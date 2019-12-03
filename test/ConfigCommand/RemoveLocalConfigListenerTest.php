@@ -74,13 +74,13 @@ class RemoveLocalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
         $event->removeLocal()->willReturn(false);
     }
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->tempFile = null;
         parent::setUp();
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         if ($this->tempFile && file_exists($this->tempFile)) {
             unlink($this->tempFile);

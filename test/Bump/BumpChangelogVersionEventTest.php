@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class BumpChangelogVersionEventTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->input      = $this->prophesize(InputInterface::class)->reveal();
         $this->output     = $this->prophesize(OutputInterface::class);

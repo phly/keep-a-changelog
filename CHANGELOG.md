@@ -2,15 +2,15 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.1.3 - TBD
+## 2.2.0 - 2019-12-03
 
 ### Added
 
-- Nothing.
+- Adds PHP 7.4 support.
 
 ### Changed
 
-- Nothing.
+- [#63](https://github.com/phly/keep-a-changelog/pull/63) adds support for symfony/console v5 releases.
 
 ### Deprecated
 

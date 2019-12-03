@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class GitHubTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->github = new GitHub();
     }

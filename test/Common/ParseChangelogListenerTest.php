@@ -20,7 +20,7 @@ use function realpath;
 
 class ParseChangelogListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->config = $this->prophesize(Config::class);
         $this->event  = $this->prophesize(ChangelogAwareEventInterface::class);

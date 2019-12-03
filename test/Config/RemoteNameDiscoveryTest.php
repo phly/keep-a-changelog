@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoteNameDiscoveryTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->helper = $this->prophesize(QuestionHelper::class)->reveal();
         $this->input  = $this->prophesize(InputInterface::class)->reveal();

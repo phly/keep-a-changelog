@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateNewChangelogEventTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->config     = $this->prophesize(Config::class);
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();

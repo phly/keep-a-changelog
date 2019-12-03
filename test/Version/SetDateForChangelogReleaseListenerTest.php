@@ -49,7 +49,7 @@ class SetDateForChangelogReleaseListenerTest extends TestCase
 
 EOC;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $voidReturn   = function () {
         };

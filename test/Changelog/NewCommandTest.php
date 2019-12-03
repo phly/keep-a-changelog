@@ -25,7 +25,7 @@ class NewCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);

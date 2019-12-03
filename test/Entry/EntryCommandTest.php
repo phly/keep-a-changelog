@@ -23,7 +23,7 @@ use TypeError;
 
 class EntryCommandTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->input      = $this->prophesize(InputInterface::class);

@@ -24,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->config    = new Config();
         $this->discovery = $this->prophesize(ConfigDiscovery::class);

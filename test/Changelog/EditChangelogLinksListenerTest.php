@@ -23,7 +23,7 @@ use function file_get_contents;
 
 class EditChangelogLinksListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $voidReturn            = function () {
         };

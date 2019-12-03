@@ -20,7 +20,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class PromptForGitRemoteListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->input  = $this->prophesize(InputInterface::class)->reveal();
         $this->output = $this->prophesize(OutputInterface::class)->reveal();

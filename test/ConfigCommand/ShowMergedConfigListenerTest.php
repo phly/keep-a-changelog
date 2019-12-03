@@ -18,7 +18,7 @@ use function parse_ini_string;
 
 class ShowMergedConfigListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $voidReturn = function () {
         };

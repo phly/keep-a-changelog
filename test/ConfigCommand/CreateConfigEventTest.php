@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateConfigEventTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->input  = $this->prophesize(InputInterface::class);
         $this->output = $this->prophesize(OutputInterface::class);

@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PushReleaseToProviderListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->output   = $this->prophesize(OutputInterface::class);
         $this->event    = $this->prophesize(ReleaseEvent::class);

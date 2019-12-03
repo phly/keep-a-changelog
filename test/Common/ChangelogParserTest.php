@@ -20,7 +20,7 @@ use function iterator_to_array;
 
 class ChangelogParserTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->changelog = file_get_contents(__DIR__ . '/../_files/CHANGELOG.md');
         $this->parser    = new ChangelogParser();

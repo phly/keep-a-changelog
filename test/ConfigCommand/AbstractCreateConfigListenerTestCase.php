@@ -51,13 +51,13 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
 
     abstract public function configureEventToSkipCreate(ObjectProphecy $event) : void;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->existingConfigFile = null;
         $this->tempConfigFile     = null;
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         $this->existingConfigFile = null;
         if ($this->tempConfigFile && file_exists($this->tempConfigFile)) {

@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PackageNameDiscoveryTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->config = new Config();
         $this->input  = $this->prophesize(InputInterface::class);

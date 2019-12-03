@@ -20,7 +20,7 @@ use function sprintf;
 
 class ReadyLatestChangelogEventTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();
         $this->input      = $this->prophesize(InputInterface::class)->reveal();

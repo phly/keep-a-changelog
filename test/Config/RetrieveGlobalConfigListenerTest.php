@@ -17,7 +17,7 @@ use function realpath;
 
 class RetrieveGlobalConfigListenerTest extends TestCase
 {
-    public function setUp()
+    protected function setUp() : void
     {
         $this->config = new Config();
         $this->event  = $this->prophesize(ConfigDiscovery::class);

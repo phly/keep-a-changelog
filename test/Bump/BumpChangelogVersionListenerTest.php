@@ -25,7 +25,7 @@ class BumpChangelogVersionListenerTest extends TestCase
     /** @var string */
     private $tempFile;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $this->tempFile = tempnam(sys_get_temp_dir(), 'KAC');
         file_put_contents(
@@ -40,7 +40,7 @@ class BumpChangelogVersionListenerTest extends TestCase
         $this->event->config()->will([$this->config, 'reveal']);
     }
 
-    public function tearDown()
+    protected function tearDown() : void
     {
         unlink($this->tempFile);
     }
