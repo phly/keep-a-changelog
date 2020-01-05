@@ -58,6 +58,14 @@
         "cs-check": "phpcs -p",
         "cs-fix": "phpcbf -p",
         "test": "phpunit --colors=always",
-        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
+        "buildphar" : [
+            "rm -rf vendor",
+            "composer install --no-dev --prefer-dist",
+            "curl -o box -L https://api.getlatestassets.com/github/humbug/box/box.phar",
+            "chmod 755 box",
+            "mkdir -p ./build",
+            "php -d phar.readonly=0 ./box compile"
+        ]
     }
 }
