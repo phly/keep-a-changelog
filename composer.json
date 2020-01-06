@@ -65,6 +65,7 @@
             "curl -o box -L https://api.getlatestassets.com/github/humbug/box/box.phar",
             "chmod 755 box",
             "mkdir -p ./build",
+            "chmod 777 ./build",
             "php -d phar.readonly=0 ./box compile"
         ]
     }

@@ -1,0 +1,44 @@
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+name: Build and deploy PHAR
+on:
+  push:
+    tags:
+    - "*"
+jobs:
+  build:
+    name: Build PHAR-File
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Build Phar
+      uses: MilesChou/composer-action/7.2/install@master
+      with:
+        args: buildphar
+
+    - name: Sign Phar
+      env:
+        DECRYPT_KEY: ${{ secrets.DECRYPT_KEY }}
+        SIGN_KEY: ${{ secrets.SIGN_KEY }}
+      run: |
+        export GPG_TTY=$(tty)
+        echo $DECRYPT_KEY
+        echo Decrypting key
+        gpg --batch --yes --passphrase $DECRYPT_KEY KeepAChangelogSigning.asc.gpg && gpg --batch --yes --import KeepAChangelogSigning.asc
+        echo Signing Artifact
+        gpg --batch --yes --pinentry-mode loopback --passphrase $SIGN_KEY -u 5A30219F03D3A2A5 --armor --detach-sig build/keep-a-changelog.phar
+
+    - name: Create release
+      uses: Roang-zero1/github-create-release-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create GitHub release
+      uses: Roang-zero1/github-upload-release-artifacts-action@master
+      with:
+        args: "build/"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
