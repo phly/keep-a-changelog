@@ -30,15 +30,23 @@ jobs:
         echo Signing Artifact
         gpg --batch --yes --pinentry-mode loopback --passphrase $SIGN_KEY -u 5A30219F03D3A2A5 --armor --detach-sig build/keep-a-changelog.phar
 
-    - name: Create release
-      uses: Roang-zero1/github-create-release-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Prepare Release-Info
+      run: |
+        echo ::set-env name=RELEASE_VERSION::${GITHUB_REF/refs\/tags\//}
+        ./build/keep-a-changelog.phar version:show ${{ env.RELEASE_VERSION }} > release.note
 
-    - name: Create GitHub release
-      uses: Roang-zero1/github-upload-release-artifacts-action@master
+    - name: Create release
+      uses: ncipollo/release-action@v1
       with:
-        args: "build/"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: "build/*"
+        bodyfile: release.note
+        name: "keep-a-changelog ${{ env.RELEASE_VERSION }}"
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+#    - name: Create GitHub release
+#      uses: Roang-zero1/github-upload-release-artifacts-action@master
+#      with:
+#        args: "build/"
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
