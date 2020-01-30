@@ -28,7 +28,7 @@ jobs:
         echo Decrypting key
         gpg --batch --yes --passphrase $DECRYPT_KEY KeepAChangelogSigning.asc.gpg && gpg --batch --yes --import KeepAChangelogSigning.asc
         echo Signing Artifact
-        gpg --batch --yes --pinentry-mode loopback --passphrase $SIGN_KEY -u 5A30219F03D3A2A5 --armor --detach-sig build/keep-a-changelog.phar
+        gpg --batch --yes --pinentry-mode loopback --passphrase $SIGN_KEY -u 9A2577FF9A688FAF --armor --detach-sig build/keep-a-changelog.phar
 
     - name: Prepare Release-Info
       run: |
