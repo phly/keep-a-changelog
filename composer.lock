@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c834f9d2c3aa0f5f75b05bea5c28a88f",
+    "content-hash": "9af3c7361d9045dc03350a0aa374ed9b",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -3573,6 +3573,7 @@
                 "ZendFramework",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-coding-standard",
             "time": "2019-01-01T19:08:39+00:00"
         }
     ],
