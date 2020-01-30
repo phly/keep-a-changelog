@@ -6,8 +6,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- A possibility to create a self-contained PHAR-file and release that 
-  automatically as part of the build-process for a tag
+- [#67](https://github.com/phly/keep-a-changelog/pull/67) adds self-contained PHAR files to new releases.
 
 ### Changed
 
