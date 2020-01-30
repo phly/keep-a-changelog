@@ -2,33 +2,11 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.3.0 - TBD
+## 2.3.0 - 2020-01-30
 
 ### Added
 
-- Nothing.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 2.2.1 - TBD
-
-### Added
-
-- Nothing.
+- [#67](https://github.com/phly/keep-a-changelog/pull/67) adds self-contained PHAR files to new releases.
 
 ### Changed
 

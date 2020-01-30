@@ -60,5 +60,18 @@ script:
 after_script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then travis_retry php vendor/bin/php-coveralls -v ; fi
 
+before_deploy:
+  - composer buildphar
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_API_KEY
+  file:
+    - build/keep-a-changelog.phar
+  skip_cleanup: true
+  on:
+    tags: true
+    php: 7.2
+
 notifications:
   email: false
