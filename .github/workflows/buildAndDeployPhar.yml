@@ -38,9 +38,7 @@ jobs:
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-#        artifacts: "build/*"
+        artifacts: "build/*"
         bodyfile: release.note
         name: "keep-a-changelog ${{ env.RELEASE_VERSION }}"
         token: ${{ secrets.GITHUB_TOKEN }}
-
-
