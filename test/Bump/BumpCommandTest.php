@@ -38,10 +38,10 @@ class BumpCommandTest extends TestCase
 
     public function expectedTypes() : iterable
     {
-        yield 'BUMP_BUGFIX' => [BumpCommand::BUMP_BUGFIX, 'bumpBugfixVersion'];
         yield 'BUMP_MAJOR'  => [BumpCommand::BUMP_MAJOR, 'bumpMajorVersion'];
         yield 'BUMP_MINOR'  => [BumpCommand::BUMP_MINOR, 'bumpMinorVersion'];
-        yield 'BUMP_PATCH'  => [BumpCommand::BUMP_PATCH, 'bumpBugfixVersion'];
+        yield 'BUMP_PATCH'  => [BumpCommand::BUMP_PATCH, 'bumpPatchVersion'];
+        yield 'BUMP_BUGFIX' => [BumpCommand::BUMP_BUGFIX, 'bumpPatchVersion'];
     }
 
     /**

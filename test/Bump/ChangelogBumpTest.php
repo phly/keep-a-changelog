@@ -63,7 +63,7 @@ class ChangelogBumpTest extends TestCase
      */
     public function testBumpsBugfixVersionCorrectly(string $version, string $expected)
     {
-        $this->assertEquals($expected, $this->bumper->bumpBugfixVersion($version));
+        $this->assertEquals($expected, $this->bumper->bumpPatchVersion($version));
     }
 
     public function minorVersions() : array

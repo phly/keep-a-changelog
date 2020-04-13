@@ -37,9 +37,9 @@ $application->getDefinition()
     ]);
 
 $application->addCommands([
-    new Bump\BumpCommand(Bump\BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump'),
-    new Bump\BumpCommand(Bump\BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump:bugfix'),
-    new Bump\BumpCommand(Bump\BumpCommand::BUMP_BUGFIX, $dispatcher, 'bump:patch'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_PATCH, $dispatcher, 'bump'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_PATCH, $dispatcher, 'bump:bugfix'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_PATCH, $dispatcher, 'bump:patch'),
     new Bump\BumpCommand(Bump\BumpCommand::BUMP_MINOR, $dispatcher, 'bump:minor'),
     new Bump\BumpCommand(Bump\BumpCommand::BUMP_MAJOR, $dispatcher, 'bump:major'),
     new Bump\BumpToVersionCommand($dispatcher, 'bump:to-version'),

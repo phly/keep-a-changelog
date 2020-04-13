@@ -72,7 +72,7 @@ EOT;
         return $matches['version'];
     }
 
-    public function bumpBugfixVersion(string $version) : string
+    public function bumpPatchVersion(string $version) : string
     {
         [$major, $minor, $bugfix] = $this->parseVersion($version);
         $bugfix                   = (int) $bugfix;
