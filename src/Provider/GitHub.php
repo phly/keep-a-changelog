@@ -11,6 +11,7 @@ namespace Phly\KeepAChangelog\Provider;
 
 use Github\Client as GitHubClient;
 use Github\Exception\ExceptionInterface as GithubException;
+use Phly\KeepAChangelog\Common\ValidateVersionListener;
 
 use function explode;
 use function filter_var;
@@ -22,7 +23,8 @@ use const FILTER_VALIDATE_URL;
 
 class GitHub implements ProviderInterface
 {
-    private const DEFAULT_URL = 'https://api.github.com';
+    private const DEFAULT_URL       = 'https://api.github.com';
+    private const PRE_RELEASE_REGEX = ValidateVersionListener::PRE_RELEASE_REGEX;
 
     /**
      * Use for testing purposes only.
@@ -196,7 +198,8 @@ class GitHub implements ProviderInterface
 
     private function isVersionPrelease(string $version) : bool
     {
-        if (preg_match('/(alpha|a|beta|b|rc|dev)\d+$/i', $version)) {
+        $pattern = sprintf('/%s$/i', self::PRE_RELEASE_REGEX);
+        if (preg_match($pattern, $version)) {
             return true;
         }
         return false;
