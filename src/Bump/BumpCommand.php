@@ -20,15 +20,15 @@ use function sprintf;
 /**
  * Bump a changelog version.
  *
- * Bumps a changelog to the next bugfix, minor, or major version, based
+ * Bumps a changelog to the next major, minor or patch version, based
  * on how the command is configured at initialization.
  */
 class BumpCommand extends Command
 {
-    public const BUMP_BUGFIX = 'bugfix';
     public const BUMP_MAJOR  = 'major';
     public const BUMP_MINOR  = 'minor';
-    public const BUMP_PATCH  = self::BUMP_BUGFIX;
+    public const BUMP_PATCH  = 'patch';
+    public const BUMP_BUGFIX = self::BUMP_PATCH;
 
     private const DESC_TEMPLATE = 'Create a new changelog entry for the next %s release.';
 
@@ -42,9 +42,9 @@ EOH;
 
     /** @var string[] */
     private $bumpMethods = [
-        self::BUMP_BUGFIX => 'bumpBugfixVersion',
-        self::BUMP_MAJOR  => 'bumpMajorVersion',
-        self::BUMP_MINOR  => 'bumpMinorVersion',
+        self::BUMP_MAJOR => 'bumpMajorVersion',
+        self::BUMP_MINOR => 'bumpMinorVersion',
+        self::BUMP_PATCH => 'bumpPatchVersion',
     ];
 
     /** @var EventDispatcherInterface */
@@ -72,10 +72,14 @@ EOH;
 
     protected function configure() : void
     {
-        $this->setDescription(sprintf(
-            self::DESC_TEMPLATE,
-            $this->type
-        ));
+        if ($this->type === 'bugfix') {
+            $this->setDescription('Alias for bump:patch.');
+        } else {
+            $this->setDescription(sprintf(
+                self::DESC_TEMPLATE,
+                $this->type
+            ));
+        }
 
         $this->setHelp(sprintf(
             self::HELP_TEMPLATE,

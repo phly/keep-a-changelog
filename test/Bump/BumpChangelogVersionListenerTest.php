@@ -57,7 +57,7 @@ class BumpChangelogVersionListenerTest extends TestCase
 
     public function bumpMethods() : iterable
     {
-        yield 'bugfix' => ['bumpBugfixVersion', '2.0.1'];
+        yield 'bugfix' => ['bumpPatchVersion', '2.0.1'];
         yield 'minor'  => ['bumpMinorVersion', '2.1.0'];
         yield 'major'  => ['bumpMajorVersion', '3.0.0'];
     }
