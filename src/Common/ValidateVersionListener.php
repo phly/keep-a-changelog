@@ -10,13 +10,17 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Common;
 
 use function preg_match;
+use function sprintf;
 
 class ValidateVersionListener
 {
+    public const PRE_RELEASE_REGEX = '-?(?:alpha|a|beta|b|rc|dev|patch|pl|p)\.?\d+';
+
     public function __invoke(VersionAwareEventInterface $event) : void
     {
         $version = $event->version() ?: '';
-        if (! preg_match('/^\d+\.\d+\.\d+((?:alpha|a|beta|b|rc|dev|patch|pl|p)\d+)?$/i', $version)) {
+        $pattern = sprintf('/^\d+\.\d+\.\d+(%s)?$/i', self::PRE_RELEASE_REGEX);
+        if (! preg_match($pattern, $version)) {
             $event->versionIsInvalid($version);
             return;
         }
