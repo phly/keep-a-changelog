@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.4.0 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#71](https://github.com/phly/keep-a-changelog/pull/71) changes the values of the constants `BumpCommand::BUMP_BUGFIX` and `::BUMP_PATCH` to be "patch" instead of "bugfix", making them better align with the verbiage in version 2.0 of the Keep A Changelog specification. Usage of the tool does not change, however.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.3.0 - 2020-01-30
 
 ### Added
