@@ -2,13 +2,15 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.4.0 - TBD
+## 2.4.0 - 2020-05-01
 
 ### Added
 
 - Nothing.
 
 ### Changed
+
+- [#72](https://github.com/phly/keep-a-changelog/pull/72) expands the regexp used to validate a version string to allow including a hyphen (`-`) between the version and stability, as well as a period (`.`) between the stability and revision identifier. As an example, the version "1.2.3-rc.1" will now be considered valid by the keep-a-changelog tool.
 
 - [#71](https://github.com/phly/keep-a-changelog/pull/71) changes the values of the constants `BumpCommand::BUMP_BUGFIX` and `::BUMP_PATCH` to be "patch" instead of "bugfix", making them better align with the verbiage in version 2.0 of the Keep A Changelog specification. Usage of the tool does not change, however.
 
