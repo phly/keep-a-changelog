@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
@@ -66,10 +67,12 @@ class ChangelogParser
     }
 
     /**
+     * @param bool $strict Set this to true to indicate that a date must be
+     *                     provided for the version (and not "TBD").
      * @throws Exception\ChangelogNotFoundException
      * @throws Exception\ChangelogMissingDateException
      */
-    public function findReleaseDateForVersion(string $changelog, string $version) : string
+    public function findReleaseDateForVersion(string $changelog, string $version, bool $strict = false) : string
     {
         $regex = sprintf(
             '%s (?:\[%2$s\]|%2$s)',
@@ -80,7 +83,10 @@ class ChangelogParser
             throw Exception\ChangelogNotFoundException::forVersion($version);
         }
 
-        $regex .= ' - (?P<date>(\d{4}-\d{2}-\d{2}|TBD))';
+        $regex .= sprintf(
+            ' - (?P<date>(\d{4}-\d{2}-\d{2}%s))',
+            $strict ? '' : '|TBD'
+        );
         if (! preg_match('/^' . $regex . '/m', $changelog, $matches)) {
             throw Exception\ChangelogMissingDateException::forVersion($version);
         }

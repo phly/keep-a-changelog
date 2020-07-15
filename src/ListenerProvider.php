@@ -127,6 +127,7 @@ class ListenerProvider implements ListenerProviderInterface
             Common\ValidateVersionListener::class,
             Common\IsChangelogReadableListener::class,
             Common\ParseChangelogListener::class,
+            Version\VerifyVersionHasReleaseDateListener::class,
             Common\FormatChangelogListener::class,
             Version\TagReleaseListener::class,
         ],
