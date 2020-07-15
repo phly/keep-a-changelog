@@ -14,7 +14,7 @@
         ]
     },
     "pre-push": {
-        "enabled": false,
+        "enabled": true,
         "actions": [
             {
                 "action": "\\CaptainHook\\App\\Hook\\PHP\\Action\\Linting",
@@ -29,7 +29,7 @@
         ]
     },
     "pre-commit": {
-        "enabled": true,
+        "enabled": false,
         "actions": [
         ]
     },
@@ -46,7 +46,7 @@
         "actions": []
     },
     "post-checkout": {
-        "enabled": false,
+        "enabled": true,
         "actions": [
             {
                 "action": "composer install",
