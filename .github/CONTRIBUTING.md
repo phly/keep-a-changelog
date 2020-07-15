@@ -5,7 +5,7 @@
 If you wish to contribute to this project, please be sure to
 read/subscribe to the following resources:
 
- - [Coding Standards](https://github.com/zendframework/zend-coding-standard) (version 2)
+ - [Coding Standards](https://github.com/laminas/laminas-coding-standard)
  - [Code of Conduct](CODE_OF_CONDUCT.md)
 
 If you are working on new features or refactoring
@@ -89,21 +89,21 @@ pull your work into the master repository. We recommend using
 ### Keeping Up-to-Date
 
 Periodically, you should update your fork or personal repository to
-match the canonical ZF repository. Assuming you have setup your local repository
+match the canonical repository. Assuming you have setup your local repository
 per the instructions above, you can do the following:
 
 
 ```console
-$ git checkout master
+$ git switch latest
 $ git fetch origin
-$ git rebase origin/master
+$ git rebase origin/latest
 # OPTIONALLY, to keep your remote up-to-date -
-$ git push {username} master:master
+$ git push {username} latest:latest
 ```
 
-If you're tracking other branches -- for example, the "develop" branch, where
-new feature development occurs -- you'll want to do the same operations for that
-branch; simply substitute  "develop" for "master".
+If you're tracking other branches -- for example, one of the "release-*"
+branches, to submit bugfixes -- you'll want to do the same operations for that
+branch; simply substitute  "release-*" for "latest".
 
 ### Working on a patch
 
@@ -113,9 +113,10 @@ canonical repository.
 
 A typical workflow will then consist of the following:
 
-1. Create a new local branch based off either your master or develop branch.
+1. Create a new local branch based off either the "latest" branch or a release
+   branch.
 2. Switch to your new local branch. (This step can be combined with the
-   previous step with the use of `git checkout -b`.)
+   previous step with the use of `git switch -c`.)
 3. Do some work, commit, repeat as necessary.
 4. Push the local branch to your remote repository.
 5. Send a pull request.
@@ -124,7 +125,7 @@ The mechanics of this process are actually quite trivial. Below, we will
 create a branch for fixing an issue in the tracker.
 
 ```console
-$ git checkout -b hotfix/9295
+$ git switch -c hotfix/9295 origin/release-2.0.x
 Switched to a new branch 'hotfix/9295'
 ```
 
@@ -146,7 +147,7 @@ Compression objects: 100% (18/18), done.
 Writing objects: 100% (20/20), 8.19KiB, done.
 Total 20 (delta 12), reused 0 (delta 0)
 To ssh://git@github.com/{username}/keep-a-changelog.git
-   b5583aa..4f51698  HEAD -> master
+   b5583aa..4f51698  HEAD -> release-2.0.x
 ```
 
 To send a pull request, you have two options.
@@ -161,10 +162,10 @@ your repository, select the branch you just created, and then select the
 Which branch should you issue a pull request against?
 
 - For fixes against the stable release, issue the pull request against the
-  "master" branch.
+  most recent "release-*" branch.
 - For new features, or fixes that introduce new elements to the public API (such
   as new public methods or properties), issue the pull request against the
-  "develop" branch.
+  "latest" branch.
 
 ### Branch Cleanup
 
