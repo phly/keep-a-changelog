@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -12,6 +13,7 @@ namespace Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Provider;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 
 use function realpath;
 
@@ -22,6 +24,16 @@ class RetrieveGlobalConfigListenerTest extends TestCase
         $this->config = new Config();
         $this->event  = $this->prophesize(ConfigDiscovery::class);
         $this->event->config()->willReturn($this->config);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getAttributeValue(object $object, string $attribute)
+    {
+        $r = new ReflectionProperty($object, $attribute);
+        $r->setAccessible(true);
+        return $r->getValue($object);
     }
 
     public function createListener() : RetrieveGlobalConfigListener
@@ -44,7 +56,7 @@ class RetrieveGlobalConfigListenerTest extends TestCase
         $this->assertInstanceOf(Provider\ProviderSpec::class, $provider);
         $this->assertSame('gitlab', $provider->name());
 
-        $this->assertAttributeSame('this-is-a-gitlab-token', 'token', $provider);
+        $this->assertSame('this-is-a-gitlab-token', $this->getAttributeValue($provider, 'token'));
 
         $providers = $this->config->providers();
         $this->assertSame($provider, $providers->get('gitlab'));
@@ -52,7 +64,7 @@ class RetrieveGlobalConfigListenerTest extends TestCase
         $provider = $providers->get('github');
         $this->assertInstanceOf(Provider\ProviderSpec::class, $provider);
         $this->assertSame('github', $provider->name());
-        $this->assertAttributeSame('https://github.mwop.net', 'url', $provider);
-        $this->assertAttributeSame('this-is-a-github-token', 'token', $provider);
+        $this->assertSame('https://github.mwop.net', $this->getAttributeValue($provider, 'url'));
+        $this->assertSame('this-is-a-github-token', $this->getAttributeValue($provider, 'token'));
     }
 }
