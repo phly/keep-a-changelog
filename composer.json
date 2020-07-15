@@ -43,8 +43,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.4.x-dev",
-            "dev-develop": "2.5.x-dev"
+            "dev-2.4.x": "2.4.x-dev"
         }
     },
     "bin": [
