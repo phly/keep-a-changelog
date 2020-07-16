@@ -55,6 +55,7 @@ $application->addCommands([
     new Entry\EntryCommand($dispatcher, 'entry:deprecated'),
     new Entry\EntryCommand($dispatcher, 'entry:removed'),
     new Entry\EntryCommand($dispatcher, 'entry:fixed'),
+    new Unreleased\PromoteCommand($dispatcher, 'unreleased:promote'),
     new Version\EditCommand($dispatcher, 'version:edit'),
     new Version\ListCommand($dispatcher, 'version:list'),
     new Version\ReadyCommand($dispatcher, 'version:ready'),

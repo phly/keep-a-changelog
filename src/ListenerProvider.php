@@ -77,6 +77,13 @@ class ListenerProvider implements ListenerProviderInterface
             Entry\PrependPatchLinkListener::class,
             Entry\AddChangelogEntryListener::class,
         ],
+        Unreleased\PromoteEvent::class             => [
+            Config\ConfigListener::class,
+            Unreleased\ValidateDateToUseListener::class,
+            Common\IsChangelogReadableListener::class,
+            Common\DiscoverChangelogEntryListener::class,
+            Unreleased\PromoteUnreleasedToNewVersionListener::class,
+        ],
         Version\EditChangelogVersionEvent::class   => [
             Config\ConfigListener::class,
             Common\IsChangelogReadableListener::class,
