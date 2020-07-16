@@ -20,6 +20,7 @@ use function fopen;
 use function preg_match;
 use function preg_quote;
 use function sprintf;
+use function strtolower;
 
 class ChangelogParser
 {

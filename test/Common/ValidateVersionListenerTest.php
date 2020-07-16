@@ -75,6 +75,8 @@ class ValidateVersionListenerTest extends TestCase
         yield 'patch-shorter-uc'        => ['2.0.0P5', $isFailure = false];
         yield 'patch-long-hyphen'       => ['2.0.0-patch4', $isFailure = false];
         yield 'patch-long-hyphen-dot'   => ['2.0.0-patch.4', $isFailure = false];
+
+        yield 'unreleased'              => ['unreleased', $isFailure = false];
     }
 
     /**

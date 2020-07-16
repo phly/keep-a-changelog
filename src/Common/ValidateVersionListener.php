@@ -19,7 +19,7 @@ class ValidateVersionListener
     public function __invoke(VersionAwareEventInterface $event) : void
     {
         $version = $event->version() ?: '';
-        $pattern = sprintf('/^\d+\.\d+\.\d+(%s)?$/i', self::PRE_RELEASE_REGEX);
+        $pattern = sprintf('/^(\d+\.\d+\.\d+(%s)?|unreleased)$/i', self::PRE_RELEASE_REGEX);
         if (! preg_match($pattern, $version)) {
             $event->versionIsInvalid($version);
             return;

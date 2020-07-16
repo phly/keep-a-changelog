@@ -290,7 +290,7 @@ EOC;
         $this->assertSame(3, $links->length);
     }
 
-    public function testCorrectlyIdentifiesUnreleasedVersion(): void
+    public function testCorrectlyIdentifiesUnreleasedVersion() : void
     {
         $changelog = __DIR__ . '/../_files/CHANGELOG-WITH-UNRELEASED-SECTION.md';
 
@@ -305,7 +305,7 @@ EOC;
         $this->assertSame($expected, $actual);
     }
 
-    public function unreleasedVariants(): iterable
+    public function unreleasedVariants() : iterable
     {
         yield 'unreleased' => ['unreleased'];
         yield 'UNRELEASED' => ['UNRELEASED'];
@@ -315,10 +315,10 @@ EOC;
     /**
      * @dataProvider unreleasedVariants
      */
-    public function testCorrectlyReturnsUnreleasedVersion(string $versionName): void
+    public function testCorrectlyReturnsUnreleasedVersion(string $versionName) : void
     {
         $changelogContents = file_get_contents(__DIR__ . '/../_files/CHANGELOG-WITH-UNRELEASED-SECTION.md');
-        $expected  = <<<'EOF'
+        $expected          = <<<'EOF'
 ### Added
 
 - Nothing.
@@ -340,7 +340,7 @@ EOC;
 - Nothing.
 
 EOF;
-        $changelog = $this->parser->findChangelogForVersion($changelogContents, $versionName);
+        $changelog         = $this->parser->findChangelogForVersion($changelogContents, $versionName);
 
         $this->assertEquals($expected, $changelog);
     }

@@ -137,4 +137,118 @@ EOC;
         $this->assertNull($listener($event->reveal()));
         $event->changelogEntryNotFound(Argument::any())->shouldNotHaveBeenCalled();
     }
+
+    public function unreleasedVersions() : iterable
+    {
+        yield 'null'       => [null];
+        yield 'unreleased' => ['unreleased'];
+    }
+
+    /**
+     * @dataProvider unreleasedVersions
+     */
+    public function testNotifiesEventWithDiscoveredEntryWhenUnreleasedSectionFound(?string $version) : void
+    {
+        $changelog = __DIR__ . '/../_files/CHANGELOG-WITH-UNRELEASED-SECTION.md';
+
+        $config = $this->prophesize(Config::class);
+        $config->changelogFile()->willReturn($changelog);
+
+        $event = $this->prophesize(ChangelogEntryAwareEventInterface::class);
+        $event->config()->will([$config, 'reveal']);
+        $event->version()->willReturn($version);
+
+        $expected = <<<'EOC'
+## Unreleased
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+
+EOC;
+        $event
+            ->discoveredChangelogEntry(Argument::that(function ($entry) use ($expected) {
+                TestCase::assertSame(4, $entry->index, $entry->contents);
+                TestCase::assertSame(22, $entry->length);
+                TestCase::assertSame($expected, $entry->contents);
+                return $entry;
+            }))
+            ->shouldBeCalled();
+
+        $listener = new DiscoverChangelogEntryListener();
+
+        $this->assertNull($listener($event->reveal()));
+        $this->event->changelogEntryNotFound(Argument::any())->shouldNotHaveBeenCalled();
+    }
+
+    /**
+     * @dataProvider unreleasedVersions
+     */
+    public function testNotifiesEventWithDiscoveredEntryWhenLinkedUnreleasedSectionFound(?string $version) : void
+    {
+        $changelog = __DIR__ . '/../_files/CHANGELOG-WITH-LINKED-UNRELEASED-SECTION.md';
+
+        $config = $this->prophesize(Config::class);
+        $config->changelogFile()->willReturn($changelog);
+
+        $event = $this->prophesize(ChangelogEntryAwareEventInterface::class);
+        $event->config()->will([$config, 'reveal']);
+        $event->version()->willReturn($version);
+
+        $expected = <<<'EOC'
+## [Unreleased]
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+
+EOC;
+        $event
+            ->discoveredChangelogEntry(Argument::that(function ($entry) use ($expected) {
+                TestCase::assertSame(4, $entry->index, $entry->contents);
+                TestCase::assertSame(22, $entry->length);
+                TestCase::assertSame($expected, $entry->contents);
+                return $entry;
+            }))
+            ->shouldBeCalled();
+
+        $listener = new DiscoverChangelogEntryListener();
+
+        $this->assertNull($listener($event->reveal()));
+        $this->event->changelogEntryNotFound(Argument::any())->shouldNotHaveBeenCalled();
+    }
 }
