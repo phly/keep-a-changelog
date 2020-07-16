@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Version;
 
+use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use Phly\KeepAChangelog\Version\VerifyVersionHasReleaseDateListener;
 use PHPUnit\Framework\TestCase;
@@ -21,34 +22,13 @@ class VerifyVersionHasReleaseDateListenerTest extends TestCase
 {
     public function testDoesNothingIfChangelogHasAssociatedReleaseDate() : void
     {
-        $version   = '1.2.3';
-        $changelog = <<<'END'
-## 1.2.3 - 2020-07-15
+        $config = $this->prophesize(Config::class);
+        $config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG.md')->shouldBeCalled();
 
-### Added
-
-- Nothing.
-
-### Changed
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Fixed
-
-- Something.
-END;
         /** @var TagReleaseEvent|ObjectProphecy $event */
         $event = $this->prophesize(TagReleaseEvent::class);
-        $event->changelog()->willReturn($changelog)->shouldBeCalled();
-        $event->version()->willReturn($version)->shouldBeCalledTimes(1);
+        $event->config()->will([$config, 'reveal'])->shouldBeCalled();
+        $event->version()->willReturn('1.1.0')->shouldBeCalledTimes(1);
         $event->taggingFailed()->shouldNotBeCalled();
         $event->output()->shouldNotBeCalled();
 
@@ -58,35 +38,13 @@ END;
 
     public function testNotifiesEventTaggingFailedIfChangelogDoesNotHaveReleaseDate() : void
     {
-        $version   = '1.2.3';
-        $changelog = <<<'END'
-## 1.2.3 - TBD
-
-### Added
-
-- Nothing.
-
-### Changed
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Fixed
-
-- Something.
-END;
+        $config = $this->prophesize(Config::class);
+        $config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG.md')->shouldBeCalled();
 
         /** @var OutputInterface|ObjectProphecy $event */
         $output = $this->prophesize(OutputInterface::class);
         $output
-            ->writeln(Argument::containingString('Version 1.2.3 does not have a release date'))
+            ->writeln(Argument::containingString('Version 2.0.0 does not have a release date'))
             ->shouldBeCalled();
         $output
             ->writeln(Argument::containingString('version:ready'))
@@ -94,8 +52,8 @@ END;
 
         /** @var TagReleaseEvent|ObjectProphecy $event */
         $event = $this->prophesize(TagReleaseEvent::class);
-        $event->changelog()->willReturn($changelog)->shouldBeCalled();
-        $event->version()->willReturn($version)->shouldBeCalled();
+        $event->config()->will([$config, 'reveal'])->shouldBeCalled();
+        $event->version()->willReturn('2.0.0')->shouldBeCalled();
         $event->taggingFailed()->shouldBeCalled();
         $event->output()->will([$output, 'reveal'])->shouldBeCalled();
 

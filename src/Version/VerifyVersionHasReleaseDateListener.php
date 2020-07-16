@@ -13,6 +13,7 @@ namespace Phly\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Common\ChangelogParser;
 use Phly\KeepAChangelog\Exception\ChangelogMissingDateException;
 
+use function file_get_contents;
 use function sprintf;
 
 class VerifyVersionHasReleaseDateListener
@@ -23,7 +24,7 @@ class VerifyVersionHasReleaseDateListener
 
         try {
             $parser->findReleaseDateForVersion(
-                $event->changelog(),
+                file_get_contents($event->config()->changelogFile()),
                 $event->version(),
                 true
             );
