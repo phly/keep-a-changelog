@@ -30,6 +30,11 @@ class ChangelogParser
      */
     public function findAllVersions(string $changelogFile) : iterable
     {
+        $unreleasedRegex = sprintf(
+            '/^%s \[?unreleased\]?$/i',
+            preg_quote('##', '/')
+        );
+
         $versionRegex = sprintf(
             '/^%s %s - %s$/i',
             preg_quote('##', '/'),
@@ -49,6 +54,11 @@ class ChangelogParser
         while (! feof($fh)) {
             $line = fgets($fh);
             if (! $line) {
+                continue;
+            }
+
+            if (preg_match($unreleasedRegex, $line, $matches)) {
+                yield 'Unreleased' => '';
                 continue;
             }
 
@@ -106,17 +116,19 @@ class ChangelogParser
             preg_quote('##', '/'),
             preg_quote($version, '/')
         );
-        if (! preg_match('/^' . $regex . '/m', $changelog)) {
+        if (! preg_match('/^' . $regex . '/mi', $changelog)) {
             throw Exception\ChangelogNotFoundException::forVersion($version);
         }
 
-        $regex .= ' - (\d{4}-\d{2}-\d{2}|TBD)';
-        if (! preg_match('/^' . $regex . '/m', $changelog)) {
-            throw Exception\ChangelogMissingDateException::forVersion($version);
+        if (strtolower($version) !== 'unreleased') {
+            $regex .= ' - (\d{4}-\d{2}-\d{2}|TBD)';
+            if (! preg_match('/^' . $regex . '/m', $changelog)) {
+                throw Exception\ChangelogMissingDateException::forVersion($version);
+            }
         }
 
         $regex .= "\n\n(?P<changelog>.*?)(?=\n\#\# |\n\[.*?\]:\s*\S+|$)";
-        if (! preg_match('/' . $regex . '/s', $changelog, $matches)) {
+        if (! preg_match('/' . $regex . '/si', $changelog, $matches)) {
             throw Exception\InvalidChangelogFormatException::forVersion($version);
         }
 

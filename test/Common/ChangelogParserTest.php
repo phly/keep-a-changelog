@@ -289,4 +289,59 @@ EOC;
         $this->assertSame(70, $links->index);
         $this->assertSame(3, $links->length);
     }
+
+    public function testCorrectlyIdentifiesUnreleasedVersion(): void
+    {
+        $changelog = __DIR__ . '/../_files/CHANGELOG-WITH-UNRELEASED-SECTION.md';
+
+        $expected = [
+            'Unreleased' => '',
+            '1.1.0'      => '2018-03-23',
+            '0.1.0'      => '2018-03-23',
+        ];
+
+        $actual = iterator_to_array($this->parser->findAllVersions($changelog));
+
+        $this->assertSame($expected, $actual);
+    }
+
+    public function unreleasedVariants(): iterable
+    {
+        yield 'unreleased' => ['unreleased'];
+        yield 'UNRELEASED' => ['UNRELEASED'];
+        yield 'Unreleased' => ['Unreleased'];
+    }
+
+    /**
+     * @dataProvider unreleasedVariants
+     */
+    public function testCorrectlyReturnsUnreleasedVersion(string $versionName): void
+    {
+        $changelogContents = file_get_contents(__DIR__ . '/../_files/CHANGELOG-WITH-UNRELEASED-SECTION.md');
+        $expected  = <<<'EOF'
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+EOF;
+        $changelog = $this->parser->findChangelogForVersion($changelogContents, $versionName);
+
+        $this->assertEquals($expected, $changelog);
+    }
 }
