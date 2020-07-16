@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#74](https://github.com/phly/keep-a-changelog/pull/74) changes the behavior of `version:tag` slightly, by adding a check to see if we have a clean checkout currently. If not, it will abort the operation. Users can pass a new `--force` option to force the operation to continue.
 
 ### Deprecated
 
