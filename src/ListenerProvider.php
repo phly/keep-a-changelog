@@ -124,6 +124,7 @@ class ListenerProvider implements ListenerProviderInterface
         ],
         Version\TagReleaseEvent::class             => [
             Version\TagCommandConfigListener::class,
+            Version\CheckTreeForChangesListener::class,
             Common\ValidateVersionListener::class,
             Common\IsChangelogReadableListener::class,
             Common\ParseChangelogListener::class,

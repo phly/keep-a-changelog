@@ -62,6 +62,13 @@ EOH;
             'Alternate git tag name to use when tagging; defaults to <version>'
         );
 
+        $this->addOption(
+            'force',
+            'f',
+            InputOption::VALUE_NONE,
+            'Force tagging even if there are changes present in your tree'
+        );
+
         $this->injectPackageOption($this);
     }
 
