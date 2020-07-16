@@ -146,6 +146,10 @@ $ keep-a-changelog help <command>
 - `entry:deprecated`: Create a changelog entry in the "Deprecated" section.
 - `entry:removed`: Create a changelog entry in the "Removed" section.
 - `entry:fixed`: Create a changelog entry in the "Fixed" section.
+- `unreleased:create`: Create a new "Unreleased" entry at the top of thee
+  changelog file.
+- `unreleased:promote`: Rename the "Unreleased" entry with the provided version,
+  setting the release date.
 - `version:edit`: Edit a full changelog version and its entries.
 - `version:list`: List all changelog versions currently in the file.
 - `version:ready`: Mark a changelog version ready for release by setting its date.
