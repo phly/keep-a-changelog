@@ -77,6 +77,29 @@ following command:
 $ composer global config bin-dir --absolute
 ```
 
+You can add the following line to your shell profile to auto-add it to your PATH:
+
+```bash
+export PATH=$(composer global config bin-dir --absolute):$PATH
+```
+
+Once setup this way, you can call `keep-a-changelog` instead of
+`./vendor/bin/keep-a-changelog`.
+
+#### PHAR file
+
+Since version 2.3.0, we have offered standalone PHAR binaries. These are
+available under the downloads section for each release. To retrieve the latest,
+you can always use the following url:
+
+- https://github.com/phly/keep-a-changelog/releases/latest/download/keep-a-changelog.phar
+
+Make the file executable (e.g., `chmod 755 keep-a-changelog.phar`), place it in
+your `$PATH`, and, optionally, remove the `.phar` suffix
+
+At the time of writing, the PHAR distribution is not yet capable of
+self-updating or checking for updates.
+
 #### Local Checkout
 
 Alternately, you can check it out locally, and add its binary to your path. I
