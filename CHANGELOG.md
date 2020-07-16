@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.5.0 - TBD
+
+### Added
+
+- [#73](https://github.com/phly/keep-a-changelog/pull/73) adds a new listener to the `version:tag` command, `VerifyVersionHasReleaseDateListener`. This listener ensures that you cannot tag a release that has not had its release date set in the changelog yet.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.4.0 - 2020-05-01
 
 ### Added
