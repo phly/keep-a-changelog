@@ -41,11 +41,6 @@
     "config": {
         "sort-packages": true
     },
-    "extra": {
-        "branch-alias": {
-            "dev-2.5.x": "2.5.x-dev"
-        }
-    },
     "bin": [
         "bin/keep-a-changelog"
     ],
