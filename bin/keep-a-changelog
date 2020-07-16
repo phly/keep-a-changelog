@@ -42,6 +42,7 @@ $application->addCommands([
     new Bump\BumpCommand(Bump\BumpCommand::BUMP_PATCH, $dispatcher, 'bump:patch'),
     new Bump\BumpCommand(Bump\BumpCommand::BUMP_MINOR, $dispatcher, 'bump:minor'),
     new Bump\BumpCommand(Bump\BumpCommand::BUMP_MAJOR, $dispatcher, 'bump:major'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_UNRELEASED, $dispatcher, 'unreleased:create'),
     new Bump\BumpToVersionCommand($dispatcher, 'bump:to-version'),
     new Changelog\EditLinksCommand($dispatcher, 'changelog:edit-links'),
     new Changelog\NewCommand($dispatcher, 'changelog:new'),

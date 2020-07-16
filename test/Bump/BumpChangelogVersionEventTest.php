@@ -87,4 +87,17 @@ class BumpChangelogVersionEventTest extends TestCase
 
         $this->assertNull($event->bumpedChangelog('1.2.3'));
     }
+
+    public function testWhenBumpVersionEqualsUnreleasedConstantVersionIsSetToUnreleasedConstant() : void
+    {
+        $event = new BumpChangelogVersionEvent(
+            $this->input,
+            $this->output->reveal(),
+            $this->dispatcher,
+            BumpChangelogVersionEvent::UNRELEASED
+        );
+
+        $this->assertSame(BumpChangelogVersionEvent::UNRELEASED, $event->version());
+        $this->assertNull($event->bumpMethod());
+    }
 }

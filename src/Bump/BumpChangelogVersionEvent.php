@@ -19,6 +19,8 @@ use function sprintf;
 
 class BumpChangelogVersionEvent extends AbstractEvent
 {
+    public const UNRELEASED = 'Unreleased';
+
     /**
      * ChangelogBump method to use when bumping version.
      *
@@ -50,6 +52,11 @@ class BumpChangelogVersionEvent extends AbstractEvent
             || ($bumpMethod && $version)
         ) {
             throw Exception\InvalidChangelogBumpCriteriaException::forCriteria($bumpMethod, $version);
+        }
+
+        if (! $version && $bumpMethod === self::UNRELEASED) {
+            $version    = self::UNRELEASED;
+            $bumpMethod = null;
         }
 
         $this->input      = $input;

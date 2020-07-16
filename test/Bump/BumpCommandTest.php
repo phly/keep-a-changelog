@@ -38,10 +38,11 @@ class BumpCommandTest extends TestCase
 
     public function expectedTypes() : iterable
     {
-        yield 'BUMP_MAJOR'  => [BumpCommand::BUMP_MAJOR, 'bumpMajorVersion'];
-        yield 'BUMP_MINOR'  => [BumpCommand::BUMP_MINOR, 'bumpMinorVersion'];
-        yield 'BUMP_PATCH'  => [BumpCommand::BUMP_PATCH, 'bumpPatchVersion'];
-        yield 'BUMP_BUGFIX' => [BumpCommand::BUMP_BUGFIX, 'bumpPatchVersion'];
+        yield 'BUMP_MAJOR'      => [BumpCommand::BUMP_MAJOR, 'bumpMajorVersion'];
+        yield 'BUMP_MINOR'      => [BumpCommand::BUMP_MINOR, 'bumpMinorVersion'];
+        yield 'BUMP_PATCH'      => [BumpCommand::BUMP_PATCH, 'bumpPatchVersion'];
+        yield 'BUMP_BUGFIX'     => [BumpCommand::BUMP_BUGFIX, 'bumpPatchVersion'];
+        yield 'BUMP_UNRELEASED' => [BumpCommand::BUMP_UNRELEASED, BumpChangelogVersionEvent::UNRELEASED];
     }
 
     /**
@@ -69,6 +70,13 @@ class BumpCommandTest extends TestCase
                 TestCase::assertSame($input->reveal(), $event->input());
                 TestCase::assertSame($output->reveal(), $event->output());
                 TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+
+                if ($methodName === BumpChangelogVersionEvent::UNRELEASED) {
+                    TestCase::assertNull($event->bumpMethod());
+                    TestCase::assertSame(BumpChangelogVersionEvent::UNRELEASED, $event->version());
+                    return $event;
+                }
+
                 TestCase::assertSame($methodName, $event->bumpMethod());
                 TestCase::assertNull($event->version());
                 return $event;
@@ -98,6 +106,13 @@ class BumpCommandTest extends TestCase
                 TestCase::assertSame($input->reveal(), $event->input());
                 TestCase::assertSame($output->reveal(), $event->output());
                 TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+
+                if ($methodName === BumpChangelogVersionEvent::UNRELEASED) {
+                    TestCase::assertNull($event->bumpMethod());
+                    TestCase::assertSame(BumpChangelogVersionEvent::UNRELEASED, $event->version());
+                    return $event;
+                }
+
                 TestCase::assertSame($methodName, $event->bumpMethod());
                 TestCase::assertNull($event->version());
                 return $event;

@@ -25,12 +25,15 @@ use function sprintf;
  */
 class BumpCommand extends Command
 {
-    public const BUMP_MAJOR  = 'major';
-    public const BUMP_MINOR  = 'minor';
-    public const BUMP_PATCH  = 'patch';
-    public const BUMP_BUGFIX = self::BUMP_PATCH;
+    public const BUMP_MAJOR      = 'major';
+    public const BUMP_MINOR      = 'minor';
+    public const BUMP_PATCH      = 'patch';
+    public const BUMP_BUGFIX     = self::BUMP_PATCH;
+    public const BUMP_UNRELEASED = 'Unreleased';
 
-    private const DESC_TEMPLATE = 'Create a new changelog entry for the next %s release.';
+    private const DESC_TEMPLATE            = 'Create a new changelog entry for the next %s release.';
+    private const DESC_TEMPLATE_BUGFIX     = 'Alias for bump:patch.';
+    private const DESC_TEMPLATE_UNRELEASED = 'Create an Unreleased changelog entry.';
 
     private const HELP_TEMPLATE = <<<'EOH'
 Add a new %1$s release entry to the changelog, based on the latest release.
@@ -40,11 +43,17 @@ a new entry representing the next %1$s release.
 
 EOH;
 
+    private const HELP_TEMPLATE_UNRELEASED = <<<'EOH'
+Add an Unreleased entry to the top of the changelog.
+
+EOH;
+
     /** @var string[] */
     private $bumpMethods = [
-        self::BUMP_MAJOR => 'bumpMajorVersion',
-        self::BUMP_MINOR => 'bumpMinorVersion',
-        self::BUMP_PATCH => 'bumpPatchVersion',
+        self::BUMP_MAJOR      => 'bumpMajorVersion',
+        self::BUMP_MINOR      => 'bumpMinorVersion',
+        self::BUMP_PATCH      => 'bumpPatchVersion',
+        self::BUMP_UNRELEASED => BumpChangelogVersionEvent::UNRELEASED,
     ];
 
     /** @var EventDispatcherInterface */
@@ -72,19 +81,28 @@ EOH;
 
     protected function configure() : void
     {
-        if ($this->type === 'bugfix') {
-            $this->setDescription('Alias for bump:patch.');
-        } else {
-            $this->setDescription(sprintf(
-                self::DESC_TEMPLATE,
-                $this->type
-            ));
+        switch (true) {
+            case $this->type === 'bugfix':
+                $this->setDescription(self::DESC_TEMPLATE_BUGFIX);
+                break;
+            case $this->type === self::BUMP_UNRELEASED:
+                $this->setDescription(self::DESC_TEMPLATE_UNRELEASED);
+                break;
+            default:
+                $this->setDescription(sprintf(
+                    self::DESC_TEMPLATE,
+                    $this->type
+                ));
         }
 
-        $this->setHelp(sprintf(
-            self::HELP_TEMPLATE,
-            $this->type
-        ));
+        $this->setHelp(
+            $this->type === self::BUMP_UNRELEASED
+                ? self::HELP_TEMPLATE_UNRELEASED
+                : sprintf(
+                    self::HELP_TEMPLATE,
+                    $this->type
+                )
+        );
     }
 
     /**
