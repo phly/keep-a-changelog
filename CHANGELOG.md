@@ -6,9 +6,16 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- [#73](https://github.com/phly/keep-a-changelog/pull/73) adds a new listener to the `version:tag` command, `VerifyVersionHasReleaseDateListener`. This listener ensures that you cannot tag a release that has not had its release date set in the changelog yet.
+- [#75](https://github.com/phly/keep-a-changelog/pull/75) adds the ability to correctly parse, show, and manipulate a changelog marked Unreleased in your changelog file, per the 1.0.0 version of the Keep-A-Changelog spec.
+
+- [#75](https://github.com/phly/keep-a-changelog/pull/75) adds the command `unreleased:create`, allowing you to create an Unreleased release in your changelog.
+
+- [#75](https://github.com/phly/keep-a-changelog/pull/75) adds the command `unreleased:promote <version> [--date|-d]`, allowing you to rename an Unreleased release to the given version, and set the release date (defaulting to the current date).
 
 ### Changed
+
+- [#73](https://github.com/phly/keep-a-changelog/pull/73) adds a new listener to the `version:tag` command, `VerifyVersionHasReleaseDateListener`. This listener ensures that you cannot tag a release that has not had its release date set in the changelog yet, aborting if the date is not present.
+
 
 - [#74](https://github.com/phly/keep-a-changelog/pull/74) changes the behavior of `version:tag` slightly, by adding a check to see if we have a clean checkout currently. If not, it will abort the operation. Users can pass a new `--force` option to force the operation to continue.
 
