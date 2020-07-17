@@ -83,6 +83,12 @@ class ListenerProvider implements ListenerProviderInterface
             Milestone\VerifyProviderIsMilestoneAwareListener::class,
             Milestone\CreateMilestoneListener::class,
         ],
+        Milestone\ListMilestonesEvent::class       => [
+            Milestone\CreateCommandConfigListener::class,
+            Milestone\VerifyProviderListener::class,
+            Milestone\VerifyProviderIsMilestoneAwareListener::class,
+            Milestone\ListMilestonesListener::class,
+        ],
         Unreleased\PromoteEvent::class             => [
             Config\ConfigListener::class,
             Unreleased\ValidateDateToUseListener::class,

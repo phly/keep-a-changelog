@@ -56,6 +56,7 @@ $application->addCommands([
     new Entry\EntryCommand($dispatcher, 'entry:removed'),
     new Entry\EntryCommand($dispatcher, 'entry:fixed'),
     new Milestone\CreateCommand($dispatcher, 'milestone:create'),
+    new Milestone\ListCommand($dispatcher, 'milestone:list'),
     new Unreleased\PromoteCommand($dispatcher, 'unreleased:promote'),
     new Version\EditCommand($dispatcher, 'version:edit'),
     new Version\ListCommand($dispatcher, 'version:list'),
