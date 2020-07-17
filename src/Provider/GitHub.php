@@ -13,6 +13,7 @@ use Github\Client as GitHubClient;
 use Github\Exception\ExceptionInterface as GithubException;
 use Phly\KeepAChangelog\Common\ValidateVersionListener;
 
+use function array_map;
 use function explode;
 use function filter_var;
 use function preg_match;
@@ -21,7 +22,7 @@ use function sprintf;
 
 use const FILTER_VALIDATE_URL;
 
-class GitHub implements ProviderInterface
+class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
 {
     private const DEFAULT_URL       = 'https://api.github.com';
     private const PRE_RELEASE_REGEX = ValidateVersionListener::PRE_RELEASE_REGEX;
@@ -139,6 +140,71 @@ class GitHub implements ProviderInterface
             throw Exception\InvalidUrlException::forUrl($url, $this);
         }
         $this->url = $url;
+    }
+
+    /**
+     * @return Milestone[]
+     */
+    public function listMilestones() : iterable
+    {
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'milestone listing');
+        }
+
+        [$org, $repo] = explode('/', $this->package);
+
+        $milestones = $this->getClient()->api('issue')->milestones()->all($org, $repo, ['state' => 'open']);
+
+        return array_map(function ($milestone) : Milestone {
+            return new Milestone(
+                $milestone['number'],
+                $milestone['title'],
+                $milestone['description'] ?? ''
+            );
+        }, $milestones);
+    }
+
+    public function createMilestone(string $title, string $description = '') : Milestone
+    {
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'milestone creation');
+        }
+
+        if (! $this->token) {
+            throw Exception\MissingTokenException::for($this);
+        }
+
+        [$org, $repo] = explode('/', $this->package);
+
+        $milestone = $this->getClient()->api('issue')->milestones()->create($org, $repo, [
+            'title'       => $title,
+            'description' => empty($description) ? null : $description,
+        ]);
+
+        return new Milestone(
+            $milestone['number'],
+            $title,
+            $description
+        );
+    }
+
+    public function closeMilestone(int $id) : bool
+    {
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'milestone closing');
+        }
+
+        if (! $this->token) {
+            throw Exception\MissingTokenException::for($this);
+        }
+
+        [$org, $repo] = explode('/', $this->package);
+
+        $milestone = $this->getClient()->api('issue')->milestones()->update($org, $repo, $id, [
+            'state' => 'closed',
+        ]);
+
+        return $milestone['state'] === 'closed';
     }
 
     /**

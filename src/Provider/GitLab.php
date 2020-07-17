@@ -11,13 +11,14 @@ namespace Phly\KeepAChangelog\Provider;
 
 use Gitlab\Client as GitLabClient;
 
+use function array_map;
 use function filter_var;
 use function preg_match;
 use function sprintf;
 
 use const FILTER_VALIDATE_URL;
 
-class GitLab implements ProviderInterface
+class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
 {
     private const DEFAULT_URL = 'https://gitlab.com';
 
@@ -105,6 +106,65 @@ class GitLab implements ProviderInterface
             throw Exception\InvalidUrlException::forUrl($url, $this);
         }
         $this->url = $url;
+    }
+
+    /**
+     * @return Milestone[]
+     */
+    public function listMilestones() : iterable
+    {
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'milestone listing');
+        }
+
+        $milestones = $this->getClient()->api('milestones')->all($this->package, ['state' => 'active']);
+
+        return array_map(function ($milestone) : Milestone {
+            return new Milestone(
+                $milestone['id'],
+                $milestone['title'],
+                $milestone['description'] ?? ''
+            );
+        }, $milestones);
+    }
+
+    public function createMilestone(string $title, string $description = '') : Milestone
+    {
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'milestone creation');
+        }
+
+        if (! $this->token) {
+            throw Exception\MissingTokenException::for($this);
+        }
+
+        $milestone = $this->getClient()->api('milestones')->create($this->package, [
+            'title'       => $title,
+            'description' => empty($description) ? null : $description,
+        ]);
+
+        return new Milestone(
+            $milestone['id'],
+            $title,
+            $description
+        );
+    }
+
+    public function closeMilestone(int $id) : bool
+    {
+        if (! $this->package) {
+            throw Exception\MissingPackageNameException::for($this, 'milestone closing');
+        }
+
+        if (! $this->token) {
+            throw Exception\MissingTokenException::for($this);
+        }
+
+        $milestone = $this->getClient()->api('milestones')->update($this->package, $id, [
+            'state_event' => 'close',
+        ]);
+
+        return $milestone['state'] === 'closed';
     }
 
     private function getClient() : GitLabClient

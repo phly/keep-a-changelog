@@ -9,9 +9,18 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Provider;
 
+use Github\Api\Issue;
+use Github\Api\Issue\Milestones;
+use Github\Client as GitHubClient;
 use Phly\KeepAChangelog\Provider\Exception;
 use Phly\KeepAChangelog\Provider\GitHub;
+use Phly\KeepAChangelog\Provider\Milestone;
+use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
 use PHPUnit\Framework\TestCase;
+
+use function array_shift;
+use function file_get_contents;
+use function json_decode;
 
 class GitHubTest extends TestCase
 {
@@ -125,5 +134,176 @@ class GitHubTest extends TestCase
         $this->github->setPackageName('some/package');
         $this->expectException(Exception\MissingTokenException::class);
         $this->github->createRelease('some/package 1.2.3', 'v1.2.3', 'the changelog');
+    }
+
+    public function testProviderIsMilestoneAware() : void
+    {
+        $this->assertInstanceOf(MilestoneAwareProviderInterface::class, $this->github);
+    }
+
+    public function testListMilestonesRaisesExceptionIfPackageIsMissing() : void
+    {
+        $this->expectException(Exception\MissingPackageNameException::class);
+        $this->github->listMilestones();
+    }
+
+    public function testListMilestonesReturnsArrayOfMilestoneInstances() : void
+    {
+        $milestonesFromApi = json_decode(
+            file_get_contents(__DIR__ . '/../_files/milestones.json'),
+            true
+        );
+
+        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi
+            ->all('phly', 'keep-a-changelog', ['state' => 'open'])
+            ->willReturn($milestonesFromApi)
+            ->shouldBeCalled();
+
+        $issueApi = $this->prophesize(Issue::class);
+        $issueApi->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+
+        $client = $this->prophesize(GitHubClient::class);
+        $client->api('issue')->will([$issueApi, 'reveal'])->shouldBeCalled();
+
+        $this->github->client = $client->reveal();
+        $this->github->setPackageName('phly/keep-a-changelog');
+
+        $milestones = $this->github->listMilestones();
+
+        $this->assertIsArray($milestones);
+        $this->assertCount(1, $milestones);
+        $milestone = array_shift($milestones);
+        $this->assertInstanceOf(Milestone::class, $milestone);
+        $this->assertSame(1, $milestone->id());
+        $this->assertSame('v1.0', $milestone->title());
+        $this->assertSame('Tracking milestone for version 1.0', $milestone->description());
+    }
+
+    public function testCreateMilestoneRaisesExceptionIfPackageIsMissing() : void
+    {
+        $this->expectException(Exception\MissingPackageNameException::class);
+        $this->github->createMilestone('17.0.0');
+    }
+
+    public function testCreateMilestoneRaisesExceptionIfTokenIsMissing() : void
+    {
+        $this->github->setPackageName('phly/keep-a-changelog');
+        $this->expectException(Exception\MissingTokenException::class);
+        $this->github->createMilestone('17.0.0');
+    }
+
+    public function testCreateMilestoneReturnsCreatedMilestone() : void
+    {
+        $milestonesFromApi = json_decode(
+            file_get_contents(__DIR__ . '/../_files/milestones.json'),
+            true
+        );
+        $milestoneFromApi  = array_shift($milestonesFromApi);
+
+        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi
+            ->create(
+                'phly',
+                'keep-a-changelog',
+                [
+                    'title'       => '17.0.0',
+                    'description' => 'A long time in the future',
+                ]
+            )
+            ->willReturn($milestoneFromApi)
+            ->shouldBeCalled();
+
+        $issueApi = $this->prophesize(Issue::class);
+        $issueApi->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+
+        $client = $this->prophesize(GitHubClient::class);
+        $client->api('issue')->will([$issueApi, 'reveal'])->shouldBeCalled();
+
+        $this->github->client = $client->reveal();
+        $this->github->setPackageName('phly/keep-a-changelog');
+        $this->github->setToken('not-really-a-token');
+
+        $milestone = $this->github->createMilestone('17.0.0', 'A long time in the future');
+
+        // ID will not match the milestone we are "creating"; main thing is
+        // to validate that we cast what's returned from the API to a Milestone
+        // instance.
+        $this->assertInstanceOf(Milestone::class, $milestone);
+        $this->assertSame(1, $milestone->id());
+        $this->assertSame('17.0.0', $milestone->title());
+        $this->assertSame('A long time in the future', $milestone->description());
+    }
+
+    public function testCloseMilestoneRaisesExceptionIfPackageIsMissing() : void
+    {
+        $this->expectException(Exception\MissingPackageNameException::class);
+        $this->github->closeMilestone(1);
+    }
+
+    public function testCloseMilestoneRaisesExceptionIfTokenIsMissing() : void
+    {
+        $this->github->setPackageName('phly/keep-a-changelog');
+        $this->expectException(Exception\MissingTokenException::class);
+        $this->github->closeMilestone(1);
+    }
+
+    public function testCloseMilestoneReturnsFalseIfReturnedMilestoneStateIsNotClosed() : void
+    {
+        $milestonesFromApi = json_decode(
+            file_get_contents(__DIR__ . '/../_files/milestones.json'),
+            true
+        );
+        $milestoneFromApi  = array_shift($milestonesFromApi);
+
+        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi
+            ->update('phly', 'keep-a-changelog', 1, ['state' => 'closed'])
+            ->willReturn($milestoneFromApi)
+            ->shouldBeCalled();
+
+        $issueApi = $this->prophesize(Issue::class);
+        $issueApi->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+
+        $client = $this->prophesize(GitHubClient::class);
+        $client->api('issue')->will([$issueApi, 'reveal'])->shouldBeCalled();
+
+        $this->github->client = $client->reveal();
+        $this->github->setPackageName('phly/keep-a-changelog');
+        $this->github->setToken('not-really-a-token');
+
+        $this->assertFalse(
+            $this->github->closeMilestone(1)
+        );
+    }
+
+    public function testCloseMilestoneReturnsTrueIfReturnedMilestoneStateIsClosed() : void
+    {
+        $milestonesFromApi         = json_decode(
+            file_get_contents(__DIR__ . '/../_files/milestones.json'),
+            true
+        );
+        $milestoneFromApi          = array_shift($milestonesFromApi);
+        $milestoneFromApi['state'] = 'closed';
+
+        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi
+            ->update('phly', 'keep-a-changelog', 1, ['state' => 'closed'])
+            ->willReturn($milestoneFromApi)
+            ->shouldBeCalled();
+
+        $issueApi = $this->prophesize(Issue::class);
+        $issueApi->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+
+        $client = $this->prophesize(GitHubClient::class);
+        $client->api('issue')->will([$issueApi, 'reveal'])->shouldBeCalled();
+
+        $this->github->client = $client->reveal();
+        $this->github->setPackageName('phly/keep-a-changelog');
+        $this->github->setToken('not-really-a-token');
+
+        $this->assertTrue(
+            $this->github->closeMilestone(1)
+        );
     }
 }

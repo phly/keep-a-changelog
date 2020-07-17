@@ -9,9 +9,14 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Provider;
 
+use Gitlab\Api\Milestones;
+use Gitlab\Client as GitLabClient;
 use Phly\KeepAChangelog\Provider\Exception;
 use Phly\KeepAChangelog\Provider\GitLab;
+use Phly\KeepAChangelog\Provider\Milestone;
 use PHPUnit\Framework\TestCase;
+
+use function count;
 
 class GitLabTest extends TestCase
 {
@@ -128,5 +133,154 @@ class GitLabTest extends TestCase
         $this->gitlab->setPackageName('some/package');
         $this->expectException(Exception\MissingTokenException::class);
         $this->gitlab->createRelease('some/package 1.2.3', 'v1.2.3', 'the changelog');
+    }
+
+    public function testListMilestonesRaisesExceptionIfPackageIsMissing()
+    {
+        $this->expectException(Exception\MissingPackageNameException::class);
+        $this->gitlab->listMilestones();
+    }
+
+    public function testListMilestonesReturnsArrayOfMilestoneInstances()
+    {
+        $milestonesFromApi = [
+            [
+                'id'          => 1000,
+                'title'       => '17.0.0',
+                'description' => 'In the future',
+                'state'       => 'active',
+            ],
+            [
+                'id'          => 1001,
+                'title'       => '17.0.1',
+                'description' => 'In the future + 1',
+                'state'       => 'active',
+            ],
+        ];
+
+        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi
+            ->all('phly/keep-a-changelog', ['state' => 'active'])
+            ->willReturn($milestonesFromApi)
+            ->shouldBeCalled();
+
+        $client = $this->prophesize(GitLabClient::class);
+        $client->api('milestones')->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+
+        $this->gitlab->client = $client->reveal();
+        $this->gitlab->setPackageName('phly/keep-a-changelog');
+
+        $milestones = $this->gitlab->listMilestones();
+
+        $this->assertIsArray($milestones);
+        $this->assertGreaterThan(0, count($milestones));
+        $this->assertContainsOnly(Milestone::class, $milestones);
+    }
+
+    public function testCreateMilestoneRaisesExceptionIfPackageIsMissing()
+    {
+        $this->expectException(Exception\MissingPackageNameException::class);
+        $this->gitlab->createMilestone('17.0.0', 'In the future');
+    }
+
+    public function testCreateMilestoneRaisesExceptionIfTokenIsMissing()
+    {
+        $this->gitlab->setPackageName('phly/keep-a-changelog');
+        $this->expectException(Exception\MissingTokenException::class);
+        $this->gitlab->createMilestone('17.0.0', 'In the future');
+    }
+
+    public function testCreateMilestoneReturnsMilestoneInstance()
+    {
+        $milestoneFromApi = [
+            'id'          => 1000,
+            'title'       => '17.0.0',
+            'description' => 'In the future',
+            'state'       => 'active',
+        ];
+
+        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi
+            ->create('phly/keep-a-changelog', ['title' => '17.0.0', 'description' => 'In the future'])
+            ->willReturn($milestoneFromApi)
+            ->shouldBeCalled();
+
+        $client = $this->prophesize(GitLabClient::class);
+        $client->api('milestones')->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+
+        $this->gitlab->client = $client->reveal();
+        $this->gitlab->setPackageName('phly/keep-a-changelog');
+        $this->gitlab->setToken('not-really-a-token');
+
+        $milestone = $this->gitlab->createMilestone('17.0.0', 'In the future');
+
+        $this->assertInstanceOf(Milestone::class, $milestone);
+        /** @var Milestone $milestone */
+        $this->assertSame(1000, $milestone->id());
+        $this->assertSame('17.0.0', $milestone->title());
+        $this->assertSame('In the future', $milestone->description());
+    }
+
+    public function testCloseMilestoneRaisesExceptionIfPackageIsMissing()
+    {
+        $this->expectException(Exception\MissingPackageNameException::class);
+        $this->gitlab->closeMilestone(1000);
+    }
+
+    public function testCloseMilestoneRaisesExceptionIfTokenIsMissing()
+    {
+        $this->gitlab->setPackageName('phly/keep-a-changelog');
+        $this->expectException(Exception\MissingTokenException::class);
+        $this->gitlab->closeMilestone(1000);
+    }
+
+    public function testCloseMilestoneReturnsFalseIfReturnedMilestoneIsActive()
+    {
+        $milestoneFromApi = [
+            'id'          => 1000,
+            'title'       => '17.0.0',
+            'description' => 'In the future',
+            'state'       => 'active',
+        ];
+
+        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi
+            ->update('phly/keep-a-changelog', 1000, ['state_event' => 'close'])
+            ->willReturn($milestoneFromApi)
+            ->shouldBeCalled();
+
+        $client = $this->prophesize(GitLabClient::class);
+        $client->api('milestones')->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+
+        $this->gitlab->client = $client->reveal();
+        $this->gitlab->setPackageName('phly/keep-a-changelog');
+        $this->gitlab->setToken('not-really-a-token');
+
+        $this->assertFalse($this->gitlab->closeMilestone(1000));
+    }
+
+    public function testCloseMilestoneReturnsTrueIfReturnedMilestoneIsClosed()
+    {
+        $milestoneFromApi = [
+            'id'          => 1000,
+            'title'       => '17.0.0',
+            'description' => 'In the future',
+            'state'       => 'closed',
+        ];
+
+        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi
+            ->update('phly/keep-a-changelog', 1000, ['state_event' => 'close'])
+            ->willReturn($milestoneFromApi)
+            ->shouldBeCalled();
+
+        $client = $this->prophesize(GitLabClient::class);
+        $client->api('milestones')->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+
+        $this->gitlab->client = $client->reveal();
+        $this->gitlab->setPackageName('phly/keep-a-changelog');
+        $this->gitlab->setToken('not-really-a-token');
+
+        $this->assertTrue($this->gitlab->closeMilestone(1000));
     }
 }
