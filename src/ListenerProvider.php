@@ -77,6 +77,12 @@ class ListenerProvider implements ListenerProviderInterface
             Entry\PrependPatchLinkListener::class,
             Entry\AddChangelogEntryListener::class,
         ],
+        Milestone\CreateMilestoneEvent::class      => [
+            Milestone\CreateCommandConfigListener::class,
+            Milestone\VerifyProviderListener::class,
+            Milestone\VerifyProviderIsMilestoneAwareListener::class,
+            Milestone\CreateMilestoneListener::class,
+        ],
         Unreleased\PromoteEvent::class             => [
             Config\ConfigListener::class,
             Unreleased\ValidateDateToUseListener::class,
