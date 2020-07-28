@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Milestone;
 
-use Phly\KeepAChangelog\Milestone\CreateCommandConfigListener;
+use Phly\KeepAChangelog\Milestone\CommandConfigListener;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-class CreateCommandConfigListenerTest extends TestCase
+class CommandConfigListenerTest extends TestCase
 {
     /**
      * @return mixed
@@ -28,7 +28,7 @@ class CreateCommandConfigListenerTest extends TestCase
 
     public function testEnablesPackageNameAndRemoteNameRequirements(): void
     {
-        $listener = new CreateCommandConfigListener();
+        $listener = new CommandConfigListener();
         $this->assertTrue($this->reflectParam($listener, 'requiresPackageName'));
         $this->assertTrue($this->reflectParam($listener, 'requiresRemoteName'));
     }

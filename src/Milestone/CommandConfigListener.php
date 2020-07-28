@@ -13,12 +13,12 @@ namespace Phly\KeepAChangelog\Milestone;
 use Phly\KeepAChangelog\Config\ConfigListener;
 
 /**
- * Marshal configuration for the CreateMilestoneEvent
+ * Marshal configuration for the various milestone events
  *
  * Overrides the parent constructor to hardcode the flags for requiring the
  * package name and remote name.
  */
-class CreateCommandConfigListener extends ConfigListener
+class CommandConfigListener extends ConfigListener
 {
     public function __construct()
     {
