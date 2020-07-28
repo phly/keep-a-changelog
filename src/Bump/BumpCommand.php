@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -9,6 +10,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Bump;
 
+use Phly\KeepAChangelog\Common\CreateMilestoneOptionsTrait;
 use Phly\KeepAChangelog\Exception;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
@@ -25,6 +27,8 @@ use function sprintf;
  */
 class BumpCommand extends Command
 {
+    use CreateMilestoneOptionsTrait;
+
     public const BUMP_MAJOR      = 'major';
     public const BUMP_MINOR      = 'minor';
     public const BUMP_PATCH      = 'patch';
@@ -103,6 +107,8 @@ EOH;
                     $this->type
                 )
         );
+
+        $this->injectMilestoneOptions($this);
     }
 
     /**
@@ -110,15 +116,30 @@ EOH;
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        return $this->dispatcher
-                ->dispatch(new BumpChangelogVersionEvent(
-                    $input,
-                    $output,
-                    $this->dispatcher,
-                    $this->bumpMethods[$this->type]
-                ))
-                ->failed()
-                    ? 1
-                    : 0;
+        $event = $this->dispatcher
+            ->dispatch(new BumpChangelogVersionEvent(
+                $input,
+                $output,
+                $this->dispatcher,
+                $this->bumpMethods[$this->type]
+            ));
+
+        if ($event->failed()) {
+            return 1;
+        }
+
+        if (! $this->isMilestoneCreationRequested($input)) {
+            return 0;
+        }
+
+        return $this
+            ->triggerCreateMilestoneEvent(
+                $this->getMilestoneName($input, $event->version()),
+                $output,
+                $this->dispatcher
+            )
+            ->failed()
+                ? 1
+                : 0;
     }
 }

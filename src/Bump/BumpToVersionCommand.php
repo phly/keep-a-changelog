@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
@@ -9,6 +10,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Bump;
 
+use Phly\KeepAChangelog\Common\CreateMilestoneOptionsTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,6 +22,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class BumpToVersionCommand extends Command
 {
+    use CreateMilestoneOptionsTrait;
+
     private const DESCRIPTION = 'Create a new changelog entry for the specified release version.';
 
     private const HELP = <<<'EOH'
@@ -47,6 +51,8 @@ EOH;
             InputArgument::REQUIRED,
             'Version to use with newly created changelog entry.'
         );
+
+        $this->injectMilestoneOptions($this);
     }
 
     /**
@@ -54,16 +60,32 @@ EOH;
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        return $this->dispatcher
-                ->dispatch(new BumpChangelogVersionEvent(
-                    $input,
-                    $output,
-                    $this->dispatcher,
-                    null,
-                    $input->getArgument('version')
-                ))
-                ->failed()
-                    ? 1
-                    : 0;
+        $version = $input->getArgument('version');
+        $event   = $this->dispatcher
+            ->dispatch(new BumpChangelogVersionEvent(
+                $input,
+                $output,
+                $this->dispatcher,
+                null,
+                $version
+            ));
+
+        if ($event->failed()) {
+            return 1;
+        }
+
+        if (! $this->isMilestoneCreationRequested($input)) {
+            return 0;
+        }
+
+        return $this
+            ->triggerCreateMilestoneEvent(
+                $this->getMilestoneName($input, $version),
+                $output,
+                $this->dispatcher
+            )
+            ->failed()
+                ? 1
+                : 0;
     }
 }

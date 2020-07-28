@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2020 Matthew Weier O'Phinney
@@ -9,6 +10,7 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Unreleased;
 
+use Phly\KeepAChangelog\Milestone\CreateMilestoneEvent;
 use Phly\KeepAChangelog\Unreleased\PromoteCommand;
 use Phly\KeepAChangelog\Unreleased\PromoteEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
@@ -62,6 +64,8 @@ class PromoteCommandTest extends TestCase
 
         $input->getArgument('version')->willReturn($version);
         $input->getOption('date')->willReturn($date);
+        $input->getOption('create-milestone')->willReturn(false);
+        $input->getOption('create-milestone-with-name')->willReturn(null);
 
         /** @var PromoteEvent|ObjectProphecy $event */
         $event = $this->prophesize(PromoteEvent::class);
@@ -87,5 +91,92 @@ class PromoteCommandTest extends TestCase
 
         $expectedStatus = $failureStatus ? 1 : 0;
         $this->assertSame($expectedStatus, $this->executeCommand($this->command));
+    }
+
+    public function expectedMilestoneCreationStatuses() : iterable
+    {
+        yield 'success' => [$failed = false, $status = 0];
+        yield 'failed'  => [$failed = true, $status = 1];
+    }
+
+    /**
+     * @dataProvider expectedMilestoneCreationStatuses
+     */
+    public function testDispatchesCreateMilestoneEventWithPromotedVersionWhenRequested(
+        bool $failed,
+        int $expectedStatus
+    ) : void {
+        $version        = '1.2.3';
+        $date           = date('Y-m-d');
+        $dispatcher     = $this->dispatcher;
+        $promoteEvent   = $this->prophesize(PromoteEvent::class);
+        $milestoneEvent = $this->prophesize(CreateMilestoneEvent::class);
+
+        /** @var PromoteEvent|ObjectProphecy $promoteEvent */
+        $promoteEvent->failed()->willReturn(false)->shouldBeCalled();
+        $milestoneEvent->failed()->willReturn($failed)->shouldBeCalled();
+
+        $dispatchCreateMilestoneEvent = function () use ($version, $dispatcher, $promoteEvent, $milestoneEvent) {
+            $dispatcher
+                ->dispatch(Argument::that(function (CreateMilestoneEvent $event) use ($version) {
+                    TestCase::assertSame($version, $event->title());
+                    return $event;
+                }))
+                ->will([$milestoneEvent, 'reveal']);
+            return $promoteEvent->reveal();
+        };
+
+        $dispatcher
+            ->dispatch(Argument::type(PromoteEvent::class))
+            ->will($dispatchCreateMilestoneEvent);
+
+        $this->input->getArgument('version')->willReturn($version);
+        $this->input->getOption('date')->willReturn($date);
+        $this->input->getOption('create-milestone')->willReturn(true)->shouldBeCalled();
+        $this->input->getOption('create-milestone-with-name')->willReturn(null)->shouldBeCalled();
+
+        $command = new PromoteCommand($this->dispatcher->reveal());
+
+        $this->assertSame($expectedStatus, $this->executeCommand($command));
+    }
+
+    /**
+     * @dataProvider expectedMilestoneCreationStatuses
+     */
+    public function testDispatchesCreateMilestoneEventWithNameWhenRequested(
+        bool $failed,
+        int $expectedStatus
+    ) : void {
+        $dispatcher     = $this->dispatcher;
+        $date           = date('Y-m-d');
+        $promoteEvent   = $this->prophesize(PromoteEvent::class);
+        $milestoneEvent = $this->prophesize(CreateMilestoneEvent::class);
+
+        /** @var PromoteEvent|ObjectProphecy $promoteEvent */
+        $promoteEvent->failed()->willReturn(false)->shouldBeCalled();
+        $milestoneEvent->failed()->willReturn($failed)->shouldBeCalled();
+
+        $dispatchCreateMilestoneEvent = function () use ($dispatcher, $promoteEvent, $milestoneEvent) {
+            $dispatcher
+                ->dispatch(Argument::that(function (CreateMilestoneEvent $event) {
+                    TestCase::assertSame('2.0.0 The Big Kahuna', $event->title());
+                    return $event;
+                }))
+                ->will([$milestoneEvent, 'reveal']);
+            return $promoteEvent->reveal();
+        };
+
+        $dispatcher
+            ->dispatch(Argument::type(PromoteEvent::class))
+            ->will($dispatchCreateMilestoneEvent);
+
+        $this->input->getArgument('version')->willReturn('2.0.0');
+        $this->input->getOption('date')->willReturn($date);
+        $this->input->getOption('create-milestone')->willReturn(null)->shouldBeCalled();
+        $this->input->getOption('create-milestone-with-name')->willReturn('2.0.0 The Big Kahuna')->shouldBeCalled();
+
+        $command = new PromoteCommand($this->dispatcher->reveal());
+
+        $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
 }

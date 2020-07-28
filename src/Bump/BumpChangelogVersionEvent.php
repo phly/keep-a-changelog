@@ -83,6 +83,7 @@ class BumpChangelogVersionEvent extends AbstractEvent
 
     public function bumpedChangelog(string $version) : void
     {
+        $this->version = $version;
         $this->output()->writeln(sprintf(
             '<info>Bumped changelog version to %s</info>',
             $version

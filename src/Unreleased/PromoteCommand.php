@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2020 Matthew Weier O'Phinney
@@ -9,6 +10,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Unreleased;
 
+use Phly\KeepAChangelog\Common\CreateMilestoneOptionsTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,6 +22,8 @@ use function date;
 
 class PromoteCommand extends Command
 {
+    use CreateMilestoneOptionsTrait;
+
     private const DESCRIPTION = 'Give a name to an unreleased version.';
 
     private const HELP = <<<'EOH'
@@ -55,20 +59,38 @@ EOH;
             'Specific release date to use',
             date('Y-m-d')
         );
+
+        $this->injectMilestoneOptions($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        return $this->dispatcher
-                ->dispatch(new PromoteEvent(
-                    $input,
-                    $output,
-                    $this->dispatcher,
-                    $input->getArgument('version'),
-                    $input->getOption('date')
-                ))
-                ->failed()
-                    ? 1
-                    : 0;
+        $version = $input->getArgument('version');
+        $event   = $this->dispatcher
+            ->dispatch(new PromoteEvent(
+                $input,
+                $output,
+                $this->dispatcher,
+                $version,
+                $input->getOption('date')
+            ));
+
+        if ($event->failed()) {
+            return 1;
+        }
+
+        if (! $this->isMilestoneCreationRequested($input)) {
+            return 0;
+        }
+
+        return $this
+            ->triggerCreateMilestoneEvent(
+                $this->getMilestoneName($input, $version),
+                $output,
+                $this->dispatcher
+            )
+            ->failed()
+                ? 1
+                : 0;
     }
 }
