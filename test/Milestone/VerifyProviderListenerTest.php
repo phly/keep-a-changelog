@@ -57,7 +57,18 @@ class VerifyProviderListenerTest extends TestCase
         $this->assertNull($this->listener->__invoke($this->event->reveal()));
     }
 
-    public function testListenerTellsEventProviderIsDiscoveredWhenProviderSpecIsComplete(): void
+    public function testListenerMarksEventInvalidIfProviderIsNotMilestoneAware(): void
+    {
+        $provider = $this->prophesize(ProviderInterface::class)->reveal();
+        $this->providerSpec->isComplete()->willReturn(true)->shouldBeCalled();
+        $this->providerSpec->createProvider()->willReturn($provider)->shouldBeCalled();
+
+        $this->event->providerIncapableOfMilestones()->shouldBeCalled();
+
+        $this->assertNull($this->listener->__invoke($this->event->reveal()));
+    }
+
+    public function testListenerTellsEventProviderIsDiscoveredWhenProviderSpecProvideMilestoneAwareProvider(): void
     {
         $provider = $this->prophesize(MilestoneAwareProviderInterface::class)
             ->willImplement(ProviderInterface::class)

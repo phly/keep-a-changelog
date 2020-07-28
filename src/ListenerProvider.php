@@ -80,19 +80,16 @@ class ListenerProvider implements ListenerProviderInterface
         Milestone\CloseMilestoneEvent::class       => [
             Milestone\CommandConfigListener::class,
             Milestone\VerifyProviderListener::class,
-            Milestone\VerifyProviderIsMilestoneAwareListener::class,
             Milestone\CloseMilestoneListener::class,
         ],
         Milestone\CreateMilestoneEvent::class      => [
             Milestone\CommandConfigListener::class,
             Milestone\VerifyProviderListener::class,
-            Milestone\VerifyProviderIsMilestoneAwareListener::class,
             Milestone\CreateMilestoneListener::class,
         ],
         Milestone\ListMilestonesEvent::class       => [
             Milestone\CommandConfigListener::class,
             Milestone\VerifyProviderListener::class,
-            Milestone\VerifyProviderIsMilestoneAwareListener::class,
             Milestone\ListMilestonesListener::class,
         ],
         Unreleased\PromoteEvent::class             => [
