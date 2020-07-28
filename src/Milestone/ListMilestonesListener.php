@@ -16,14 +16,14 @@ use Throwable;
 
 class ListMilestonesListener
 {
-    public function __invoke(ListMilestonesEvent $event) : void
+    public function __invoke(ListMilestonesEvent $event): void
     {
+        /** @var ProviderInterface|MilestoneAwareProviderInterface $provider */
         $provider = $event->provider();
 
         $event->output()->writeln('<info>Fetching milestones...</info>');
 
         try {
-            /** @var ProviderInterface|MilestoneAwareProviderInterface $provider */
             $milestones = $provider->listMilestones();
         } catch (Throwable $e) {
             $event->errorListingMilestones($e);

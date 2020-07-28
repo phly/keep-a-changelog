@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -20,14 +21,14 @@ use function sprintf;
 
 class ReadyLatestChangelogEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();
         $this->input      = $this->prophesize(InputInterface::class)->reveal();
         $this->output     = $this->prophesize(OutputInterface::class);
     }
 
-    public function testNotInFailureStateAndPropagationIsNotStoppedByDefault() : ReadyLatestChangelogEvent
+    public function testNotInFailureStateAndPropagationIsNotStoppedByDefault(): ReadyLatestChangelogEvent
     {
         $event = new ReadyLatestChangelogEvent(
             $this->input,
@@ -79,7 +80,7 @@ class ReadyLatestChangelogEventTest extends TestCase
         $this->output->writeln(Argument::containingString($releaseLine))->shouldHaveBeenCalled();
     }
 
-    public function versionArguments() : iterable
+    public function versionArguments(): iterable
     {
         yield 'null'  => [null, 'most recent changelog'];
         yield '1.2.3' => ['1.2.3', 'changelog version 1.2.3'];

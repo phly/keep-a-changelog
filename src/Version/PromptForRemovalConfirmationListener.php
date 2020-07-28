@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -14,7 +15,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class PromptForRemovalConfirmationListener
 {
-    public function __invoke(RemoveChangelogVersionEvent $event) : void
+    public function __invoke(RemoveChangelogVersionEvent $event): void
     {
         $input = $event->input();
         if ($input->hasOption('force-removal') && $input->getOption('force-removal')) {
@@ -36,7 +37,7 @@ class PromptForRemovalConfirmationListener
         }
     }
 
-    private function getQuestionHelper() : QuestionHelper
+    private function getQuestionHelper(): QuestionHelper
     {
         if ($this->questionHelper instanceof QuestionHelper) {
             return $this->questionHelper;
@@ -50,6 +51,7 @@ class PromptForRemovalConfirmationListener
      * For testing purposes only.
      *
      * @internal
+     *
      * @var null|QuestionHelper
      */
     public $questionHelper;

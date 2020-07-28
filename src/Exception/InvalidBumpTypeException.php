@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -16,7 +17,7 @@ use function sprintf;
 
 class InvalidBumpTypeException extends InvalidArgumentException implements ExceptionInterface
 {
-    public static function forType(string $type) : self
+    public static function forType(string $type): self
     {
         return new self(sprintf(
             'Invalid bump type "%1$s"; must be one of %2$s::BUMP_BUGFIX, %2$s::BUMP_MINOR, or %2$s::BUMP_MAJOR',

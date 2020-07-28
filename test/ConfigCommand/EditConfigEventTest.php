@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -20,14 +21,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EditConfigEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input  = $this->prophesize(InputInterface::class);
         $this->output = $this->prophesize(OutputInterface::class);
         $this->output->writeln(Argument::any())->willReturn(null);
     }
 
-    public function createEvent(bool $editLocal, bool $editGlobal) : EditConfigEvent
+    public function createEvent(bool $editLocal, bool $editGlobal): EditConfigEvent
     {
         return new EditConfigEvent(
             $this->input->reveal(),
@@ -37,7 +38,7 @@ class EditConfigEventTest extends TestCase
         );
     }
 
-    public function testImplementsIOInterface() : EditConfigEvent
+    public function testImplementsIOInterface(): EditConfigEvent
     {
         $event = $this->createEvent(true, true);
         $this->assertInstanceOf(IOInterface::class, $event);
@@ -47,7 +48,7 @@ class EditConfigEventTest extends TestCase
     /**
      * @depends testImplementsIOInterface
      */
-    public function testImplementsEditorAwareInterface(EditConfigEvent $event) : EditConfigEvent
+    public function testImplementsEditorAwareInterface(EditConfigEvent $event): EditConfigEvent
     {
         $this->assertInstanceOf(EditorAwareEventInterface::class, $event);
         return $event;
@@ -56,7 +57,7 @@ class EditConfigEventTest extends TestCase
     /**
      * @depends testImplementsEditorAwareInterface
      */
-    public function testImplementsStoppableEventInterface(EditConfigEvent $event) : EditConfigEvent
+    public function testImplementsStoppableEventInterface(EditConfigEvent $event): EditConfigEvent
     {
         $this->assertInstanceOf(StoppableEventInterface::class, $event);
         return $event;
@@ -65,7 +66,7 @@ class EditConfigEventTest extends TestCase
     /**
      * @depends testImplementsStoppableEventInterface
      */
-    public function testStopPropagationAndFailureStatusAreFalseByDefault(EditConfigEvent $event) : EditConfigEvent
+    public function testStopPropagationAndFailureStatusAreFalseByDefault(EditConfigEvent $event): EditConfigEvent
     {
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
@@ -75,7 +76,7 @@ class EditConfigEventTest extends TestCase
     /**
      * @depends testStopPropagationAndFailureStatusAreFalseByDefault
      */
-    public function testConstructorValuesAreAccessible(EditConfigEvent $event) : EditConfigEvent
+    public function testConstructorValuesAreAccessible(EditConfigEvent $event): EditConfigEvent
     {
         // Cannot do assertSame here as in different test; values change on setUp
         $this->assertInstanceOf(InputInterface::class, $event->input());

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -15,10 +16,7 @@ use function sprintf;
 
 class InvalidIniSectionDataException extends InvalidArgumentException implements ExceptionInterface
 {
-    /**
-     * @param mixed $value
-     */
-    public static function forSection(string $name) : self
+    public static function forSection(string $name): self
     {
         return new self(sprintf(
             'Invalid INI section %s; value must be an array of data',

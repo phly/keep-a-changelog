@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -20,7 +21,7 @@ use function count;
 
 class GitLabTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->gitlab = new GitLab();
     }
@@ -50,7 +51,7 @@ class GitLabTest extends TestCase
         $this->assertTrue($this->gitlab->canCreateRelease());
     }
 
-    public function invalidUrls() : iterable
+    public function invalidUrls(): iterable
     {
         yield 'bare-word'   => ['invalid'];
         yield 'scheme-only' => ['https://'];
@@ -65,7 +66,7 @@ class GitLabTest extends TestCase
         $this->gitlab->setUrl($url);
     }
 
-    public function invalidPackageNames() : iterable
+    public function invalidPackageNames(): iterable
     {
         yield 'empty'                 => [''];
         yield 'invalid-vendor'        => ['@phly'];
@@ -84,7 +85,7 @@ class GitLabTest extends TestCase
         $this->gitlab->setPackageName($package);
     }
 
-    public function packageAndPatchLinks() : iterable
+    public function packageAndPatchLinks(): iterable
     {
         // @phpcs:disable
         yield 'typical'               => ['phly/keep-a-changelog', 42, '[!42](https://gitlab.com/phly/keep-a-changelog/merge_requests/42)'];
@@ -103,7 +104,7 @@ class GitLabTest extends TestCase
         $this->assertSame($expected, $link);
     }
 
-    public function packageAndIssueLinks() : iterable
+    public function packageAndIssueLinks(): iterable
     {
         // @phpcs:disable
         yield 'typical'               => ['phly/keep-a-changelog', 42, '[#42](https://gitlab.com/phly/keep-a-changelog/issues/42)'];
@@ -212,10 +213,10 @@ class GitLabTest extends TestCase
         $this->gitlab->setPackageName('phly/keep-a-changelog');
         $this->gitlab->setToken('not-really-a-token');
 
+        /** @var Milestone $milestone */
         $milestone = $this->gitlab->createMilestone('17.0.0', 'In the future');
 
         $this->assertInstanceOf(Milestone::class, $milestone);
-        /** @var Milestone $milestone */
         $this->assertSame(1000, $milestone->id());
         $this->assertSame('17.0.0', $milestone->title());
         $this->assertSame('In the future', $milestone->description());

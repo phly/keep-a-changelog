@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2020 Matthew Weier O'Phinney
@@ -19,7 +20,7 @@ use Prophecy\Argument;
 
 class PromoteUnreleasedToNewVersionListenerTest extends TestCase
 {
-    public function testWritesChangelogEntry() : void
+    public function testWritesChangelogEntry(): void
     {
         $config = $this->prophesize(Config::class);
         $config->changelogFile()->willReturn('changelog.txt');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -18,7 +19,7 @@ use function sprintf;
 
 class InvalidProviderException extends InvalidArgumentException implements ExceptionInterface
 {
-    public static function forProvider(string $provider, array $allowedProviders) : self
+    public static function forProvider(string $provider, array $allowedProviders): self
     {
         return new self(sprintf(
             'Unknown provider "%s"; must be one of (%s)',
@@ -27,7 +28,7 @@ class InvalidProviderException extends InvalidArgumentException implements Excep
         ));
     }
 
-    public static function forIncompleteProvider(Provider\ProviderInterface $provider) : self
+    public static function forIncompleteProvider(Provider\ProviderInterface $provider): self
     {
         return new self(sprintf(
             'Provider %s does not implement %s and thus cannot be used to determine where to push tags;'
@@ -38,7 +39,7 @@ class InvalidProviderException extends InvalidArgumentException implements Excep
         ));
     }
 
-    public static function forInvalidProviderDomain(string $domain) : self
+    public static function forInvalidProviderDomain(string $domain): self
     {
         return new self(sprintf(
             'Domain "%s" is invalid',

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -17,12 +18,12 @@ class RemoveGlobalConfigListener extends AbstractRemoveConfigListener
 {
     use LocateGlobalConfigTrait;
 
-    public function configRemovalRequested(RemoveConfigEvent $event) : bool
+    public function configRemovalRequested(RemoveConfigEvent $event): bool
     {
         return $event->removeGlobal();
     }
 
-    public function getConfigFile() : string
+    public function getConfigFile(): string
     {
         return sprintf('%s/keep-a-changelog.ini', $this->getConfigRoot());
     }

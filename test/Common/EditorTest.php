@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -20,7 +21,7 @@ use const STDOUT;
 
 class EditorTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->output = $this->prophesize(OutputInterface::class);
     }
@@ -34,7 +35,7 @@ class EditorTest extends TestCase
             TestCase::assertSame([], $pipes);
             return 'CHANGELOG.md';
         };
-        $editor->procClose = function ($process) : int {
+        $editor->procClose = function ($process): int {
             TestCase::assertSame('CHANGELOG.md', $process);
             return 0;
         };

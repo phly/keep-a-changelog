@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -50,27 +51,27 @@ class EditConfigEvent implements
         $this->editor     = $editor;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function editGlobal() : bool
+    public function editGlobal(): bool
     {
         return $this->editGlobal;
     }
 
-    public function editLocal() : bool
+    public function editLocal(): bool
     {
         return $this->editLocal;
     }
 
-    public function failed() : bool
+    public function failed(): bool
     {
         return $this->failed;
     }
 
-    public function editComplete(string $configFile) : void
+    public function editComplete(string $configFile): void
     {
         $this->output->writeln(sprintf(
             '<info>Completed editing %s</info>',
@@ -78,7 +79,7 @@ class EditConfigEvent implements
         ));
     }
 
-    public function configFileNotFound(string $configFile) : void
+    public function configFileNotFound(string $configFile): void
     {
         $this->failed = true;
         $this->output->writeln(sprintf(
@@ -88,7 +89,7 @@ class EditConfigEvent implements
         $this->output->writeln('You may need to use the config:create command to create it first.');
     }
 
-    public function editFailed(string $configFile) : void
+    public function editFailed(string $configFile): void
     {
         $this->failed = true;
         $this->output->writeln(sprintf(
@@ -98,7 +99,7 @@ class EditConfigEvent implements
         $this->output->writeln('Review the output above for potential errosr.');
     }
 
-    public function tooManyOptions() : void
+    public function tooManyOptions(): void
     {
         $this->failed = true;
         $this->output->writeln('<error>Too many options</error>');

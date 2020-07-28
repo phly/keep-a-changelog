@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -44,7 +45,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 EOT;
 
-    public function __invoke(CreateNewChangelogEvent $event) : void
+    public function __invoke(CreateNewChangelogEvent $event): void
     {
         $changelogFile = $event->config()->changelogFile();
         if (! $event->overwrite() && file_exists($changelogFile)) {

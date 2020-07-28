@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -17,12 +18,12 @@ trait EditorProviderTrait
     /** @var null|string */
     private $editor;
 
-    public function editor() : ?string
+    public function editor(): ?string
     {
         return $this->editor;
     }
 
-    public function discoverEditor(string $editor) : void
+    public function discoverEditor(string $editor): void
     {
         $this->editor = $editor;
     }

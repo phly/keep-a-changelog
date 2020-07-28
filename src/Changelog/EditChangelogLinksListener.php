@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -20,7 +21,7 @@ class EditChangelogLinksListener
     use ChangelogEditSpawnerTrait;
     use EditSpawnerTrait;
 
-    public function __invoke(EditChangelogLinksEvent $event) : void
+    public function __invoke(EditChangelogLinksEvent $event): void
     {
         $changelog = $event->config()->changelogFile();
         $links     = $event->links();

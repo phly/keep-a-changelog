@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -21,12 +22,12 @@ trait ChangelogProviderTrait
     /** @var null|string */
     private $changelog;
 
-    public function changelog() : ?string
+    public function changelog(): ?string
     {
         return $this->changelog;
     }
 
-    public function updateChangelog(string $changelog) : void
+    public function updateChangelog(string $changelog): void
     {
         $this->changelog = $changelog;
     }

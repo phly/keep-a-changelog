@@ -33,17 +33,17 @@ class CloseMilestoneEvent extends AbstractMilestoneProviderEvent
         $this->id         = (int) $input->getArgument('id');
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function id() : int
+    public function id(): int
     {
         return $this->id;
     }
 
-    public function milestoneClosed() : void
+    public function milestoneClosed(): void
     {
         $this->output()->writeln(sprintf(
             '<info>Closed milestone %d</info>',
@@ -51,7 +51,7 @@ class CloseMilestoneEvent extends AbstractMilestoneProviderEvent
         ));
     }
 
-    public function errorClosingMilestone(Throwable $e) : void
+    public function errorClosingMilestone(Throwable $e): void
     {
         $this->failed = true;
         $output       = $this->output();

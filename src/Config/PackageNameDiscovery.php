@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -33,23 +34,23 @@ class PackageNameDiscovery implements IOInterface, StoppableEventInterface
         $this->config = $config;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->packageFound
             || null !== $this->config->package();
     }
 
-    public function config() : Config
+    public function config(): Config
     {
         return $this->config;
     }
 
-    public function packageWasFound() : bool
+    public function packageWasFound(): bool
     {
         return $this->isPropagationStopped();
     }
 
-    public function foundPackage(string $package) : void
+    public function foundPackage(string $package): void
     {
         $this->config->setPackage($package);
         $this->packageFound = true;

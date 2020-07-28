@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -20,22 +21,22 @@ class ShowGlobalConfigListener extends AbstractShowConfigListener
     use LocateGlobalConfigTrait;
     use MaskProviderTokensTrait;
 
-    public function shouldShowConfig(ShowConfigEvent $event) : bool
+    public function shouldShowConfig(ShowConfigEvent $event): bool
     {
         return $event->showGlobal() && ! $event->showMerged();
     }
 
-    public function getConfigFile() : string
+    public function getConfigFile(): string
     {
         return sprintf('%s/keep-a-changelog.ini', $this->getConfigRoot());
     }
 
-    public function getConfigType() : string
+    public function getConfigType(): string
     {
         return 'global';
     }
 
-    public function displayConfig(ShowConfigEvent $event, string $configFile) : void
+    public function displayConfig(ShowConfigEvent $event, string $configFile): void
     {
         $event->displayConfig(
             $this->filterConfiguration($configFile),
@@ -44,7 +45,7 @@ class ShowGlobalConfigListener extends AbstractShowConfigListener
         );
     }
 
-    private function filterConfiguration(string $configFile) : string
+    private function filterConfiguration(string $configFile): string
     {
         $config = $this->readIniFile($configFile);
         return $this->arrayToIniString($this->maskProviderTokens($config));

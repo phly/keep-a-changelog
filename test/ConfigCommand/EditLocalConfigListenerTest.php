@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -15,26 +16,26 @@ use Prophecy\Prophecy\ObjectProphecy;
 
 class EditLocalConfigListenerTest extends AbstractEditConfigListenerTestCase
 {
-    public function getListener() : AbstractEditConfigListener
+    public function getListener(): AbstractEditConfigListener
     {
         $listener             = new EditLocalConfigListener();
         $listener->configRoot = __DIR__ . '/../_files/config/local';
         return $listener;
     }
 
-    public function getListenerWithFileNotFound() : AbstractEditConfigListener
+    public function getListenerWithFileNotFound(): AbstractEditConfigListener
     {
         $listener             = new EditLocalConfigListener();
         $listener->configRoot = __DIR__;
         return $listener;
     }
 
-    public function configureEventToEdit(ObjectProphecy $event) : void
+    public function configureEventToEdit(ObjectProphecy $event): void
     {
         $event->editLocal()->willReturn(true);
     }
 
-    public function configureEventToSkipEdit(ObjectProphecy $event) : void
+    public function configureEventToSkipEdit(ObjectProphecy $event): void
     {
         $event->editLocal()->willReturn(false);
     }

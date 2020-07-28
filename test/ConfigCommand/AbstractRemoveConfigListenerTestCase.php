@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -21,17 +22,17 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 abstract class AbstractRemoveConfigListenerTestCase extends TestCase
 {
-    abstract public function getListener() : AbstractRemoveConfigListener;
+    abstract public function getListener(): AbstractRemoveConfigListener;
 
-    abstract public function getListenerWithFileNotFound() : AbstractRemoveConfigListener;
+    abstract public function getListenerWithFileNotFound(): AbstractRemoveConfigListener;
 
-    abstract public function getListenerWithUnlinkableFile() : AbstractRemoveConfigListener;
+    abstract public function getListenerWithUnlinkableFile(): AbstractRemoveConfigListener;
 
-    abstract public function configureEventToRemove(ObjectProphecy $event) : void;
+    abstract public function configureEventToRemove(ObjectProphecy $event): void;
 
-    abstract public function configureEventToSkipRemove(ObjectProphecy $event) : void;
+    abstract public function configureEventToSkipRemove(ObjectProphecy $event): void;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->voidReturn = function () {
         };
@@ -39,7 +40,7 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
         $this->output     = $this->prophesize(OutputInterface::class);
     }
 
-    public function getEventProphecy() : ObjectProphecy
+    public function getEventProphecy(): ObjectProphecy
     {
         $event = $this->prophesize(RemoveConfigEvent::class);
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
@@ -20,7 +21,7 @@ use function iterator_to_array;
 
 class ChangelogParserTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->changelog = file_get_contents(__DIR__ . '/../_files/CHANGELOG.md');
         $this->parser    = new ChangelogParser();
@@ -164,7 +165,7 @@ EOF;
         $this->assertSame($expected, $actual);
     }
 
-    public function expectedDataForLinkedVersions() : iterable
+    public function expectedDataForLinkedVersions(): iterable
     {
         yield '2.0.0' => ['2.0.0', 'TBD'];
         yield '1.1.0' => ['1.1.0', '2019-06-05'];
@@ -183,7 +184,7 @@ EOF;
         $this->assertSame($expectedDate, $actual);
     }
 
-    public function expectedContentsForLinkedVersions() : iterable
+    public function expectedContentsForLinkedVersions(): iterable
     {
         $changelog = file_get_contents(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
 
@@ -290,7 +291,7 @@ EOC;
         $this->assertSame(3, $links->length);
     }
 
-    public function testCorrectlyIdentifiesUnreleasedVersion() : void
+    public function testCorrectlyIdentifiesUnreleasedVersion(): void
     {
         $changelog = __DIR__ . '/../_files/CHANGELOG-WITH-UNRELEASED-SECTION.md';
 
@@ -305,7 +306,7 @@ EOC;
         $this->assertSame($expected, $actual);
     }
 
-    public function unreleasedVariants() : iterable
+    public function unreleasedVariants(): iterable
     {
         yield 'unreleased' => ['unreleased'];
         yield 'UNRELEASED' => ['UNRELEASED'];
@@ -315,7 +316,7 @@ EOC;
     /**
      * @dataProvider unreleasedVariants
      */
-    public function testCorrectlyReturnsUnreleasedVersion(string $versionName) : void
+    public function testCorrectlyReturnsUnreleasedVersion(string $versionName): void
     {
         $changelogContents = file_get_contents(__DIR__ . '/../_files/CHANGELOG-WITH-UNRELEASED-SECTION.md');
         $expected          = <<<'EOF'

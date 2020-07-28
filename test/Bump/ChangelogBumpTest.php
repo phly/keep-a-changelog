@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -26,7 +27,7 @@ class ChangelogBumpTest extends TestCase
     /** @var string */
     private $tempFile;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->tempFile = tempnam(sys_get_temp_dir(), 'KAC');
         file_put_contents(
@@ -36,7 +37,7 @@ class ChangelogBumpTest extends TestCase
         $this->bumper = new ChangelogBump($this->tempFile);
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         unlink($this->tempFile);
     }
@@ -46,7 +47,7 @@ class ChangelogBumpTest extends TestCase
         $this->assertEquals('2.0.0', $this->bumper->findLatestVersion());
     }
 
-    public function bugfixVersions() : array
+    public function bugfixVersions(): array
     {
         return [
             'zero-version'  => ['2.0.0', '2.0.1'],
@@ -66,7 +67,7 @@ class ChangelogBumpTest extends TestCase
         $this->assertEquals($expected, $this->bumper->bumpPatchVersion($version));
     }
 
-    public function minorVersions() : array
+    public function minorVersions(): array
     {
         return [
             'zero-version'  => ['2.1.0', '2.2.0'],
@@ -86,7 +87,7 @@ class ChangelogBumpTest extends TestCase
         $this->assertEquals($expected, $this->bumper->bumpMinorVersion($version));
     }
 
-    public function majorVersions() : array
+    public function majorVersions(): array
     {
         return [
             'zero-version'  => ['2.1.0', '3.0.0'],

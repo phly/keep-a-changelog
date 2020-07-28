@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -18,19 +19,19 @@ abstract class AbstractCreateConfigListener
     /**
      * Return whether or not a config creation should occur.
      */
-    abstract public function configCreateRequested(CreateConfigEvent $event) : bool;
+    abstract public function configCreateRequested(CreateConfigEvent $event): bool;
 
     /**
      * Return the path to the config file to create.
      */
-    abstract public function getConfigFileName() : string;
+    abstract public function getConfigFileName(): string;
 
     /**
      * Return the template for the config file contents.
      */
-    abstract public function getConfigTemplate() : string;
+    abstract public function getConfigTemplate(): string;
 
-    public function __invoke(CreateConfigEvent $event) : void
+    public function __invoke(CreateConfigEvent $event): void
     {
         if (! $this->configCreateRequested($event)) {
             return;

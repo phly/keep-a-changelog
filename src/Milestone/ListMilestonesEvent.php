@@ -31,7 +31,7 @@ class ListMilestonesEvent extends AbstractMilestoneProviderEvent
         $this->dispatcher = $dispatcher;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
@@ -39,7 +39,7 @@ class ListMilestonesEvent extends AbstractMilestoneProviderEvent
     /**
      * @var Milestone[]
      */
-    public function milestonesRetrieved(array $milestones) : void
+    public function milestonesRetrieved(array $milestones): void
     {
         $output = $this->output();
 
@@ -61,7 +61,7 @@ class ListMilestonesEvent extends AbstractMilestoneProviderEvent
         }
     }
 
-    public function errorListingMilestones(Throwable $e) : void
+    public function errorListingMilestones(Throwable $e): void
     {
         $this->failed = true;
         $output       = $this->output();

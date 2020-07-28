@@ -18,7 +18,7 @@ use function sprintf;
 
 class VerifyVersionHasReleaseDateListener
 {
-    public function __invoke(TagReleaseEvent $event) : void
+    public function __invoke(TagReleaseEvent $event): void
     {
         $parser = new ChangelogParser();
 

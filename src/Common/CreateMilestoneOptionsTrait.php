@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 trait CreateMilestoneOptionsTrait
 {
-    private function injectMilestoneOptions(Command $command) : void
+    private function injectMilestoneOptions(Command $command): void
     {
         $command->addOption(
             'create-milestone',
@@ -39,13 +39,13 @@ trait CreateMilestoneOptionsTrait
         );
     }
 
-    private function isMilestoneCreationRequested(InputInterface $input) : bool
+    private function isMilestoneCreationRequested(InputInterface $input): bool
     {
         return $input->getOption('create-milestone')
             || $input->getOption('create-milestone-with-name');
     }
 
-    private function getMilestoneName(InputInterface $input, string $default) : string
+    private function getMilestoneName(InputInterface $input, string $default): string
     {
         return $input->getOption('create-milestone-with-name') ?: $default;
     }
@@ -54,7 +54,7 @@ trait CreateMilestoneOptionsTrait
         string $name,
         OutputInterface $output,
         EventDispatcherInterface $dispatcher
-    ) : CreateMilestoneEvent {
+    ): CreateMilestoneEvent {
         $input = new ArrayInput(
             ['title' => $name],
             new InputDefinition([

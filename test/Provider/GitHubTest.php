@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -24,7 +25,7 @@ use function json_decode;
 
 class GitHubTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->github = new GitHub();
     }
@@ -54,7 +55,7 @@ class GitHubTest extends TestCase
         $this->assertTrue($this->github->canCreateRelease());
     }
 
-    public function invalidUrls() : iterable
+    public function invalidUrls(): iterable
     {
         yield 'bare-word'   => ['invalid'];
         yield 'scheme-only' => ['https://'];
@@ -69,7 +70,7 @@ class GitHubTest extends TestCase
         $this->github->setUrl($url);
     }
 
-    public function invalidPackageNames() : iterable
+    public function invalidPackageNames(): iterable
     {
         yield 'empty'                 => [''];
         yield 'invalid-vendor'        => ['@phly'];
@@ -87,7 +88,7 @@ class GitHubTest extends TestCase
         $this->github->setPackageName($package);
     }
 
-    public function packageAndPatchLinks() : iterable
+    public function packageAndPatchLinks(): iterable
     {
         // @phpcs:disable
         yield 'typical'               => ['phly/keep-a-changelog', 42, '[#42](https://github.com/phly/keep-a-changelog/pull/42)'];
@@ -105,7 +106,7 @@ class GitHubTest extends TestCase
         $this->assertSame($expected, $link);
     }
 
-    public function packageAndIssueLinks() : iterable
+    public function packageAndIssueLinks(): iterable
     {
         // @phpcs:disable
         yield 'typical'               => ['phly/keep-a-changelog', 42, '[#42](https://github.com/phly/keep-a-changelog/issues/42)'];
@@ -136,18 +137,18 @@ class GitHubTest extends TestCase
         $this->github->createRelease('some/package 1.2.3', 'v1.2.3', 'the changelog');
     }
 
-    public function testProviderIsMilestoneAware() : void
+    public function testProviderIsMilestoneAware(): void
     {
         $this->assertInstanceOf(MilestoneAwareProviderInterface::class, $this->github);
     }
 
-    public function testListMilestonesRaisesExceptionIfPackageIsMissing() : void
+    public function testListMilestonesRaisesExceptionIfPackageIsMissing(): void
     {
         $this->expectException(Exception\MissingPackageNameException::class);
         $this->github->listMilestones();
     }
 
-    public function testListMilestonesReturnsArrayOfMilestoneInstances() : void
+    public function testListMilestonesReturnsArrayOfMilestoneInstances(): void
     {
         $milestonesFromApi = json_decode(
             file_get_contents(__DIR__ . '/../_files/milestones.json'),
@@ -180,20 +181,20 @@ class GitHubTest extends TestCase
         $this->assertSame('Tracking milestone for version 1.0', $milestone->description());
     }
 
-    public function testCreateMilestoneRaisesExceptionIfPackageIsMissing() : void
+    public function testCreateMilestoneRaisesExceptionIfPackageIsMissing(): void
     {
         $this->expectException(Exception\MissingPackageNameException::class);
         $this->github->createMilestone('17.0.0');
     }
 
-    public function testCreateMilestoneRaisesExceptionIfTokenIsMissing() : void
+    public function testCreateMilestoneRaisesExceptionIfTokenIsMissing(): void
     {
         $this->github->setPackageName('phly/keep-a-changelog');
         $this->expectException(Exception\MissingTokenException::class);
         $this->github->createMilestone('17.0.0');
     }
 
-    public function testCreateMilestoneReturnsCreatedMilestone() : void
+    public function testCreateMilestoneReturnsCreatedMilestone(): void
     {
         $milestonesFromApi = json_decode(
             file_get_contents(__DIR__ . '/../_files/milestones.json'),
@@ -235,20 +236,20 @@ class GitHubTest extends TestCase
         $this->assertSame('A long time in the future', $milestone->description());
     }
 
-    public function testCloseMilestoneRaisesExceptionIfPackageIsMissing() : void
+    public function testCloseMilestoneRaisesExceptionIfPackageIsMissing(): void
     {
         $this->expectException(Exception\MissingPackageNameException::class);
         $this->github->closeMilestone(1);
     }
 
-    public function testCloseMilestoneRaisesExceptionIfTokenIsMissing() : void
+    public function testCloseMilestoneRaisesExceptionIfTokenIsMissing(): void
     {
         $this->github->setPackageName('phly/keep-a-changelog');
         $this->expectException(Exception\MissingTokenException::class);
         $this->github->closeMilestone(1);
     }
 
-    public function testCloseMilestoneReturnsFalseIfReturnedMilestoneStateIsNotClosed() : void
+    public function testCloseMilestoneReturnsFalseIfReturnedMilestoneStateIsNotClosed(): void
     {
         $milestonesFromApi = json_decode(
             file_get_contents(__DIR__ . '/../_files/milestones.json'),
@@ -277,7 +278,7 @@ class GitHubTest extends TestCase
         );
     }
 
-    public function testCloseMilestoneReturnsTrueIfReturnedMilestoneStateIsClosed() : void
+    public function testCloseMilestoneReturnsTrueIfReturnedMilestoneStateIsClosed(): void
     {
         $milestonesFromApi         = json_decode(
             file_get_contents(__DIR__ . '/../_files/milestones.json'),

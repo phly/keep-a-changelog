@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class VerifyVersionHasReleaseDateListenerTest extends TestCase
 {
-    public function testDoesNothingIfChangelogHasAssociatedReleaseDate() : void
+    public function testDoesNothingIfChangelogHasAssociatedReleaseDate(): void
     {
         $config = $this->prophesize(Config::class);
         $config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG.md')->shouldBeCalled();
@@ -36,12 +36,12 @@ class VerifyVersionHasReleaseDateListenerTest extends TestCase
         $this->assertNull($listener($event->reveal()));
     }
 
-    public function testNotifiesEventTaggingFailedIfChangelogDoesNotHaveReleaseDate() : void
+    public function testNotifiesEventTaggingFailedIfChangelogDoesNotHaveReleaseDate(): void
     {
         $config = $this->prophesize(Config::class);
         $config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG.md')->shouldBeCalled();
 
-        /** @var OutputInterface|ObjectProphecy $event */
+        /** @var OutputInterface|ObjectProphecy $output */
         $output = $this->prophesize(OutputInterface::class);
         $output
             ->writeln(Argument::containingString('Version 2.0.0 does not have a release date'))

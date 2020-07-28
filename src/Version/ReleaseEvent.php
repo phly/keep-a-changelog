@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -48,37 +49,37 @@ class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
         $this->tagName    = $input->getOption('tag-name') ?: $this->version;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function provider() : ?ProviderInterface
+    public function provider(): ?ProviderInterface
     {
         return $this->provider;
     }
 
-    public function releaseName() : ?string
+    public function releaseName(): ?string
     {
         return $this->releaseName;
     }
 
-    public function tagName() : string
+    public function tagName(): string
     {
         return $this->tagName;
     }
 
-    public function setReleaseName(string $releaseName) : void
+    public function setReleaseName(string $releaseName): void
     {
         $this->releaseName = $releaseName;
     }
 
-    public function releaseCreated(string $release) : void
+    public function releaseCreated(string $release): void
     {
         $this->output()->writeln(sprintf('<info>Created %s<info>', $release));
     }
 
-    public function providerIsIncomplete() : void
+    public function providerIsIncomplete(): void
     {
         $this->failed = true;
         $output       = $this->output();
@@ -112,12 +113,12 @@ class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
         );
     }
 
-    public function discoveredProvider(ProviderInterface $provider) : void
+    public function discoveredProvider(ProviderInterface $provider): void
     {
         $this->provider = $provider;
     }
 
-    public function couldNotFindTag() : void
+    public function couldNotFindTag(): void
     {
         $this->failed = true;
         $this->output()->writeln(sprintf(
@@ -126,7 +127,7 @@ class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
         ));
     }
 
-    public function taggingFailed() : void
+    public function taggingFailed(): void
     {
         $this->failed = true;
         $output       = $this->output();
@@ -134,7 +135,7 @@ class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
         $output->writeln('Please check the output for details.');
     }
 
-    public function errorCreatingRelease(Throwable $e) : void
+    public function errorCreatingRelease(Throwable $e): void
     {
         $this->failed = true;
         $output       = $this->output();
@@ -150,7 +151,7 @@ class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
         ));
     }
 
-    public function unexpectedProviderResult() : void
+    public function unexpectedProviderResult(): void
     {
         $this->failed = true;
         $output       = $this->output();

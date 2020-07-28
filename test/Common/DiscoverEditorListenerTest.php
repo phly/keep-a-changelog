@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -26,7 +27,7 @@ class DiscoverEditorListenerTest extends TestCase
     /** @var array */
     private $serverSuperGlobal = [];
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->serverSuperGlobal = $_SERVER;
         $this->editorEnvValue    = getenv('EDITOR');
@@ -35,7 +36,7 @@ class DiscoverEditorListenerTest extends TestCase
         };
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         $_SERVER = $this->serverSuperGlobal;
         $this->editorEnvValue

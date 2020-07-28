@@ -19,7 +19,7 @@ use function realpath;
 
 class RetrieveGlobalConfigListenerTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->config = new Config();
         $this->event  = $this->prophesize(ConfigDiscovery::class);
@@ -36,7 +36,7 @@ class RetrieveGlobalConfigListenerTest extends TestCase
         return $r->getValue($object);
     }
 
-    public function createListener() : RetrieveGlobalConfigListener
+    public function createListener(): RetrieveGlobalConfigListener
     {
         $listener             = new RetrieveGlobalConfigListener();
         $listener->configRoot = realpath(__DIR__ . '/../_files/config');

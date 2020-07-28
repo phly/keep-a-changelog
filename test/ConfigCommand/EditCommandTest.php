@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -22,14 +23,14 @@ class EditCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
     }
 
-    public function failureStatus() : iterable
+    public function failureStatus(): iterable
     {
         yield 'failed'    => [true, 1];
         yield 'succeeded' => [false, 0];

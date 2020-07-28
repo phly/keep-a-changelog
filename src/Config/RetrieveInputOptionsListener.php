@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -22,7 +23,7 @@ use function class_exists;
  */
 class RetrieveInputOptionsListener
 {
-    public function __invoke(ConfigDiscovery $event) : void
+    public function __invoke(ConfigDiscovery $event): void
     {
         $input  = $event->input();
         $config = $event->config();
@@ -45,7 +46,7 @@ class RetrieveInputOptionsListener
         }
     }
 
-    private function processProviderOptions(InputInterface $input, Config $config) : void
+    private function processProviderOptions(InputInterface $input, Config $config): void
     {
         $provider = $this->getProvider($input, $config);
 
@@ -60,7 +61,7 @@ class RetrieveInputOptionsListener
         }
     }
 
-    private function getProvider(InputInterface $input, Config $config) : ProviderSpec
+    private function getProvider(InputInterface $input, Config $config): ProviderSpec
     {
         if ($input->hasOption('provider-class') && $input->getOption('provider-class')) {
             return $this->createProviderFromOption($input->getOption('provider-class'), $config);
@@ -73,7 +74,7 @@ class RetrieveInputOptionsListener
         return $config->provider();
     }
 
-    private function createProviderFromOption(string $class, Config $config) : ProviderSpec
+    private function createProviderFromOption(string $class, Config $config): ProviderSpec
     {
         if (! class_exists($class)) {
             throw Exception\InvalidProviderException::forMissingClass($class, '--provider-class input option');
@@ -88,7 +89,7 @@ class RetrieveInputOptionsListener
         return $spec;
     }
 
-    private function fetchProviderByName(string $name, Config $config) : ProviderSpec
+    private function fetchProviderByName(string $name, Config $config): ProviderSpec
     {
         $providers = $config->providers();
         if (! $providers->has($name)) {

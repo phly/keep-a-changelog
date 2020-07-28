@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -26,7 +27,7 @@ use function sprintf;
  */
 class DiscoverChangelogEntryListener
 {
-    public function __invoke(ChangelogEntryAwareEventInterface $event) : void
+    public function __invoke(ChangelogEntryAwareEventInterface $event): void
     {
         $filename      = $event->config()->changelogFile();
         $version       = $event->version();

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -14,7 +15,7 @@ use Phly\KeepAChangelog\Config\DiscoverPackageFromNpmPackageListener;
 
 class DiscoverPackageFromNpmPackageListenerTest extends AbstractDiscoverPackageFromFileListenerTest
 {
-    public function createListener() : AbstractDiscoverPackageFromFileListener
+    public function createListener(): AbstractDiscoverPackageFromFileListener
     {
         return new DiscoverPackageFromNpmPackageListener();
     }

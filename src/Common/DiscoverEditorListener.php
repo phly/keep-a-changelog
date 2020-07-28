@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -14,7 +15,7 @@ use function strpos;
 
 class DiscoverEditorListener
 {
-    public function __invoke(EditorAwareEventInterface $event) : void
+    public function __invoke(EditorAwareEventInterface $event): void
     {
         if ($event->editor()) {
             // Passed as an argument; nothing to do

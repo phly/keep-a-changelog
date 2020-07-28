@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -14,12 +15,12 @@ use function sprintf;
 
 class RemoveLocalConfigListener extends AbstractRemoveConfigListener
 {
-    public function configRemovalRequested(RemoveConfigEvent $event) : bool
+    public function configRemovalRequested(RemoveConfigEvent $event): bool
     {
         return $event->removeLocal();
     }
 
-    public function getConfigFile() : string
+    public function getConfigFile(): string
     {
         return sprintf('%s/.keep-a-changelog.ini', $this->configRoot ?: getcwd());
     }
@@ -30,6 +31,7 @@ class RemoveLocalConfigListener extends AbstractRemoveConfigListener
      * For testing purposes only.
      *
      * @internal
+     *
      * @var null|string
      */
     public $configRoot;

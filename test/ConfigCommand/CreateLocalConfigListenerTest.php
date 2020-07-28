@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -19,7 +20,7 @@ use function sys_get_temp_dir;
 
 class CreateLocalConfigListenerTest extends AbstractCreateConfigListenerTestCase
 {
-    public function getListener() : AbstractCreateConfigListener
+    public function getListener(): AbstractCreateConfigListener
     {
         $root                 = sys_get_temp_dir();
         $this->tempConfigFile = sprintf('%s/.keep-a-changelog.ini', $root);
@@ -29,7 +30,7 @@ class CreateLocalConfigListenerTest extends AbstractCreateConfigListenerTestCase
         return $listener;
     }
 
-    public function getListenerWithExistingFile() : AbstractCreateConfigListener
+    public function getListenerWithExistingFile(): AbstractCreateConfigListener
     {
         $root                     = __DIR__ . '/../_files/config/local';
         $this->existingConfigFile = sprintf('%s/.keep-a-changelog.ini', $root);
@@ -39,7 +40,7 @@ class CreateLocalConfigListenerTest extends AbstractCreateConfigListenerTestCase
         return $listener;
     }
 
-    public function getListenerToFailCreatingFile() : AbstractCreateConfigListener
+    public function getListenerToFailCreatingFile(): AbstractCreateConfigListener
     {
         $root                 = '/dev/null';
         $this->tempConfigFile = sprintf('%s/.keep-a-changelog.ini', $root);
@@ -49,12 +50,12 @@ class CreateLocalConfigListenerTest extends AbstractCreateConfigListenerTestCase
         return $listener;
     }
 
-    public function configureEventToCreate(ObjectProphecy $event) : void
+    public function configureEventToCreate(ObjectProphecy $event): void
     {
         $event->createLocal()->willReturn(true);
     }
 
-    public function configureEventToSkipCreate(ObjectProphecy $event) : void
+    public function configureEventToSkipCreate(ObjectProphecy $event): void
     {
         $event->createLocal()->willReturn(false);
     }

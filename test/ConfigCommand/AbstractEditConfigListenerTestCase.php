@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -19,22 +20,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractEditConfigListenerTestCase extends TestCase
 {
-    abstract public function getListener() : AbstractEditConfigListener;
+    abstract public function getListener(): AbstractEditConfigListener;
 
-    abstract public function getListenerWithFileNotFound() : AbstractEditConfigListener;
+    abstract public function getListenerWithFileNotFound(): AbstractEditConfigListener;
 
-    abstract public function configureEventToEdit(ObjectProphecy $event) : void;
+    abstract public function configureEventToEdit(ObjectProphecy $event): void;
 
-    abstract public function configureEventToSkipEdit(ObjectProphecy $event) : void;
+    abstract public function configureEventToSkipEdit(ObjectProphecy $event): void;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->voidReturn = function () {
         };
         $this->output     = $this->prophesize(OutputInterface::class);
     }
 
-    public function getEventProphecy() : ObjectProphecy
+    public function getEventProphecy(): ObjectProphecy
     {
         $event = $this->prophesize(EditConfigEvent::class);
 

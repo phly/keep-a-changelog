@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -20,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ReleaseCommandTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
@@ -28,14 +29,14 @@ class ReleaseCommandTest extends TestCase
         $this->event      = $this->prophesize(ReleaseEvent::class);
     }
 
-    public function executeCommand(ReleaseCommand $command) : int
+    public function executeCommand(ReleaseCommand $command): int
     {
         $r = new ReflectionMethod($command, 'execute');
         $r->setAccessible(true);
         return $r->invoke($command, $this->input->reveal(), $this->output->reveal());
     }
 
-    public function createCommand() : ReleaseCommand
+    public function createCommand(): ReleaseCommand
     {
         return new ReleaseCommand($this->dispatcher->reveal());
     }

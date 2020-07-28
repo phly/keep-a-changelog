@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -61,7 +62,7 @@ EOT;
     /**
      * @throws Exception\ChangelogEntriesNotFoundException
      */
-    public function findLatestVersion() : string
+    public function findLatestVersion(): string
     {
         $changelog = file_get_contents($this->changelogFile);
 
@@ -72,7 +73,7 @@ EOT;
         return $matches['version'];
     }
 
-    public function bumpPatchVersion(string $version) : string
+    public function bumpPatchVersion(string $version): string
     {
         [$major, $minor, $bugfix] = $this->parseVersion($version);
         $bugfix                   = (int) $bugfix;
@@ -80,7 +81,7 @@ EOT;
         return sprintf('%d.%d.%d', $major, $minor, $bugfix);
     }
 
-    public function bumpMinorVersion(string $version) : string
+    public function bumpMinorVersion(string $version): string
     {
         [$major, $minor, $bugfix] = $this->parseVersion($version);
         $minor                    = (int) $minor;
@@ -88,7 +89,7 @@ EOT;
         return sprintf('%d.%d.0', $major, $minor);
     }
 
-    public function bumpMajorVersion(string $version) : string
+    public function bumpMajorVersion(string $version): string
     {
         [$major, $minor, $bugfix] = $this->parseVersion($version);
         $major                    = (int) $major;
@@ -111,7 +112,7 @@ EOT;
         file_put_contents($this->changelogFile, $contents);
     }
 
-    private function parseVersion(string $version) : array
+    private function parseVersion(string $version): array
     {
         $base = preg_replace('/^(\d+\.\d+\.\d+).*$/', '$1', $version);
         return explode('.', $base, 3);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -38,7 +39,7 @@ EOH;
         parent::__construct($name);
     }
 
-    protected function configure() : void
+    protected function configure(): void
     {
         $this->setDescription(self::DESCRIPTION);
         $this->setHelp(self::HELP);
@@ -64,7 +65,7 @@ EOH;
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         return $this->dispatcher
                 ->dispatch(new ReadyLatestChangelogEvent(

@@ -32,7 +32,7 @@ class ListMilestonesListenerTest extends TestCase
     /** @var MilestoneAwareProviderInterface|ObjectProphecy */
     private $provider;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->event    = $this->prophesize(ListMilestonesEvent::class);
         $this->output   = $this->prophesize(OutputInterface::class);
@@ -44,7 +44,7 @@ class ListMilestonesListenerTest extends TestCase
         $this->output->writeln(Argument::containingString('Fetching milestones'))->shouldBeCalled();
     }
 
-    public function testNotifiesEventWithDiscoveredMilestonesOnSuccess() : void
+    public function testNotifiesEventWithDiscoveredMilestonesOnSuccess(): void
     {
         $expected = [new Milestone(1, '1.0.0'), new Milestone(2, '1.0.1')];
         $this->provider->listMilestones()->willReturn($expected)->shouldBeCalled();
@@ -55,7 +55,7 @@ class ListMilestonesListenerTest extends TestCase
         $this->assertNull($listener($this->event->reveal()));
     }
 
-    public function testNotifiesEventOfErrorsRetrievingMilestones() : void
+    public function testNotifiesEventOfErrorsRetrievingMilestones(): void
     {
         $e = new RuntimeException('this is the error message');
         $this->provider->listMilestones()->willThrow($e)->shouldBeCalled();

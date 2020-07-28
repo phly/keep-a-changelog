@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -19,7 +20,7 @@ class InvalidIniValueException extends InvalidArgumentException implements Excep
     /**
      * @param mixed $value
      */
-    public static function forValue($value, string $name) : self
+    public static function forValue($value, string $name): self
     {
         return new self(sprintf(
             'Cannot cast value of type %s associated with key %s',
@@ -28,7 +29,7 @@ class InvalidIniValueException extends InvalidArgumentException implements Excep
         ));
     }
 
-    public static function forNestedArrayValue(string $name) : self
+    public static function forNestedArrayValue(string $name): self
     {
         return new self(sprintf(
             'Cannot handle nested list values when generating INI formats; discovered for key %s',

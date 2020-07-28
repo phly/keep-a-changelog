@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -22,13 +23,14 @@ abstract class AbstractDiscoverPackageFromFileListener
      * package file.
      *
      * @internal
+     *
      * @var null|string
      */
     public $packageDir;
 
-    abstract protected function getFileName() : string;
+    abstract protected function getFileName(): string;
 
-    public function __invoke(PackageNameDiscovery $event) : void
+    public function __invoke(PackageNameDiscovery $event): void
     {
         if ($event->packageWasFound()) {
             // Already discovered

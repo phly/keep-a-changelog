@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -24,6 +25,9 @@ class ChangelogEntry
     /** @var int */
     private $length = 0;
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         switch ($name) {
@@ -42,6 +46,9 @@ class ChangelogEntry
         }
     }
 
+    /**
+     * @param mixed $value
+     */
     public function __set(string $name, $value)
     {
         switch ($name) {
@@ -63,17 +70,17 @@ class ChangelogEntry
         }
     }
 
-    private function setContents(string $value) : void
+    private function setContents(string $value): void
     {
         $this->contents = $value;
     }
 
-    private function setIndex(?int $value) : void
+    private function setIndex(?int $value): void
     {
         $this->index = $value;
     }
 
-    private function setLength(int $value) : void
+    private function setLength(int $value): void
     {
         $this->length = $value;
     }

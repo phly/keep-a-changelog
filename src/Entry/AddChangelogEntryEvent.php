@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -59,37 +60,37 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
         $this->issueNumber = $issueNumber;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function entry() : string
+    public function entry(): string
     {
         return $this->entry;
     }
 
-    public function entryType() : string
+    public function entryType(): string
     {
         return $this->entryType;
     }
 
-    public function issueNumber() : ?int
+    public function issueNumber(): ?int
     {
         return $this->issueNumber;
     }
 
-    public function patchNumber() : ?int
+    public function patchNumber(): ?int
     {
         return $this->patchNumber;
     }
 
-    public function updateEntry(string $entry) : void
+    public function updateEntry(string $entry): void
     {
         $this->entry = $entry;
     }
 
-    public function addedChangelogEntry(string $changelogFile, string $entryType) : void
+    public function addedChangelogEntry(string $changelogFile, string $entryType): void
     {
         $this->output->writeln(sprintf(
             '<info>Wrote "%s" entry to %s</info>',
@@ -98,7 +99,7 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
         ));
     }
 
-    public function entryIsEmpty() : void
+    public function entryIsEmpty(): void
     {
         $this->failed = true;
         $this->output->writeln(
@@ -106,7 +107,7 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
         );
     }
 
-    public function issueNumberIsInvalid(int $issueNumber) : void
+    public function issueNumberIsInvalid(int $issueNumber): void
     {
         $this->failed = true;
         $this->output->writeln(sprintf(
@@ -116,7 +117,7 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
         $this->output->writeln('The value must be numeric, and start with a digit between 1 and 9');
     }
 
-    public function patchNumberIsInvalid(int $patchNumber) : void
+    public function patchNumberIsInvalid(int $patchNumber): void
     {
         $this->failed = true;
         $this->output->writeln(sprintf(
@@ -126,14 +127,14 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
         $this->output->writeln('The value must be numeric, and start with a digit between 1 and 9');
     }
 
-    public function providerCannotGenerateLinks() : void
+    public function providerCannotGenerateLinks(): void
     {
         $this->failed = true;
         $this->output->writeln('<error>Cannot generate link to patch or issue</error>');
         $this->output->writeln('In most cases, this is due to a missing package argument.');
     }
 
-    public function issueLinkIsInvalid(string $link) : void
+    public function issueLinkIsInvalid(string $link): void
     {
         $this->failed = true;
         $this->output->writeln('<error>Generated issue link is invalid</error>');
@@ -144,7 +145,7 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
         ));
     }
 
-    public function patchLinkIsInvalid(string $link) : void
+    public function patchLinkIsInvalid(string $link): void
     {
         $this->failed = true;
         $this->output->writeln('<error>Generated patch link is invalid</error>');
@@ -155,7 +156,7 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
         ));
     }
 
-    public function entryTypeIsInvalid() : void
+    public function entryTypeIsInvalid(): void
     {
         $this->failed = true;
         $this->output->writeln('<error>Entry type is invalid</error>');
@@ -166,7 +167,7 @@ class AddChangelogEntryEvent extends AbstractEvent implements ChangelogEntryAwar
         ));
     }
 
-    public function matchingEntryTypeNotFound() : void
+    public function matchingEntryTypeNotFound(): void
     {
         $this->failed = true;
         $this->output->writeln('<error>Unable to find matching entry type in changelog</error>');

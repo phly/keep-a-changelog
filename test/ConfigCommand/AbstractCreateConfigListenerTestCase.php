@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -35,29 +36,29 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
     /**
      * This method should set $tempConfigFile
      */
-    abstract public function getListener() : AbstractCreateConfigListener;
+    abstract public function getListener(): AbstractCreateConfigListener;
 
     /**
      * This method should set $existingConfigFile
      */
-    abstract public function getListenerWithExistingFile() : AbstractCreateConfigListener;
+    abstract public function getListenerWithExistingFile(): AbstractCreateConfigListener;
 
     /**
      * This method should set $tempConfigFile
      */
-    abstract public function getListenerToFailCreatingFile() : AbstractCreateConfigListener;
+    abstract public function getListenerToFailCreatingFile(): AbstractCreateConfigListener;
 
-    abstract public function configureEventToCreate(ObjectProphecy $event) : void;
+    abstract public function configureEventToCreate(ObjectProphecy $event): void;
 
-    abstract public function configureEventToSkipCreate(ObjectProphecy $event) : void;
+    abstract public function configureEventToSkipCreate(ObjectProphecy $event): void;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->existingConfigFile = null;
         $this->tempConfigFile     = null;
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         $this->existingConfigFile = null;
         if ($this->tempConfigFile && file_exists($this->tempConfigFile)) {
@@ -66,7 +67,7 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
         $this->tempConfigFile = null;
     }
 
-    public function getEventProphecy() : ObjectProphecy
+    public function getEventProphecy(): ObjectProphecy
     {
         $voidReturn = function () {
         };
@@ -110,7 +111,7 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
         $event->createdConfigFile(Argument::any())->shouldNotHaveBeenCalled();
     }
 
-    public function changelogFiles() : iterable
+    public function changelogFiles(): iterable
     {
         yield 'null' => [null, 'CHANGELOG.md'];
         yield 'custom' => ['changelog.txt', 'changelog.txt'];

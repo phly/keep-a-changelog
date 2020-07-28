@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -49,32 +50,32 @@ class CreateConfigEvent implements
         $this->customChangelog = $customChangelog;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function failed() : bool
+    public function failed(): bool
     {
         return $this->failed;
     }
 
-    public function createGlobal() : bool
+    public function createGlobal(): bool
     {
         return $this->createGlobal;
     }
 
-    public function createLocal() : bool
+    public function createLocal(): bool
     {
         return $this->createLocal;
     }
 
-    public function customChangelog() : ?string
+    public function customChangelog(): ?string
     {
         return $this->customChangelog;
     }
 
-    public function fileExists(string $filename) : void
+    public function fileExists(string $filename): void
     {
         $this->output->writeln(sprintf(
             '<info>Config file already exists at %s; skipping</info>',
@@ -82,12 +83,12 @@ class CreateConfigEvent implements
         ));
     }
 
-    public function createdConfigFile(string $configFile) : void
+    public function createdConfigFile(string $configFile): void
     {
         $this->output->writeln(sprintf('<info>Created %s</info>', $configFile));
     }
 
-    public function creationFailed(string $filename) : void
+    public function creationFailed(string $filename): void
     {
         $this->failed = true;
         $this->output->writeln(sprintf('<error>Failed creating config file %s</error>', $filename));

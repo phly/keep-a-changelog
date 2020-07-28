@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -17,11 +18,11 @@ abstract class AbstractEditConfigListener
 {
     use EditSpawnerTrait;
 
-    abstract public function configEditRequested(EditConfigEvent $event) : bool;
+    abstract public function configEditRequested(EditConfigEvent $event): bool;
 
-    abstract public function getConfigFile() : string;
+    abstract public function getConfigFile(): string;
 
-    public function __invoke(EditConfigEvent $event) : void
+    public function __invoke(EditConfigEvent $event): void
     {
         if (! $this->configEditRequested($event)) {
             return;

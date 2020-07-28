@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -156,7 +157,7 @@ class ListenerProvider implements ListenerProviderInterface
         ],
     ];
 
-    public function getListenersForEvent(object $event) : iterable
+    public function getListenersForEvent(object $event): iterable
     {
         $type = get_class($event);
         if (! isset($this->listeners[$type])) {

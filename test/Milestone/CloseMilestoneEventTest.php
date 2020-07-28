@@ -30,14 +30,14 @@ class CloseMilestoneEventTest extends TestCase
     /** @var OutputInterface|ObjectProphecy */
     private $output;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
     }
 
-    public function testConstructorPullsIdentifierFromInputArgument() : void
+    public function testConstructorPullsIdentifierFromInputArgument(): void
     {
         $this->input->getArgument('id')->willReturn(200)->shouldBeCalled();
         $event = new CloseMilestoneEvent(
@@ -49,7 +49,7 @@ class CloseMilestoneEventTest extends TestCase
         $this->assertSame(200, $event->id());
     }
 
-    public function testClosingMilestoneEmitsOutput() : void
+    public function testClosingMilestoneEmitsOutput(): void
     {
         $this->input->getArgument('id')->willReturn(200)->shouldBeCalled();
         $this->output->writeln(Argument::containingString('Closed milestone 200'))->shouldBeCalled();
@@ -63,7 +63,7 @@ class CloseMilestoneEventTest extends TestCase
         $this->assertNull($event->milestoneClosed());
     }
 
-    public function testIndicatingErrorEmitsOutputAndFailsEvent() : void
+    public function testIndicatingErrorEmitsOutputAndFailsEvent(): void
     {
         $e      = new RuntimeException('this is the error message');
         $output = $this->output;

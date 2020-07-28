@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -18,7 +19,7 @@ use function parse_ini_string;
 
 class ShowMergedConfigListenerTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $voidReturn = function () {
         };

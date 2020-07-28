@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -15,7 +16,7 @@ use function substr;
 
 class CreateReleaseNameListener
 {
-    public function __invoke(ReleaseEvent $event) : void
+    public function __invoke(ReleaseEvent $event): void
     {
         $name = $event->input()->getOption('name');
         if ($name) {

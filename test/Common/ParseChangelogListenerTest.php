@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -20,7 +21,7 @@ use function realpath;
 
 class ParseChangelogListenerTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->config = $this->prophesize(Config::class);
         $this->event  = $this->prophesize(ChangelogAwareEventInterface::class);

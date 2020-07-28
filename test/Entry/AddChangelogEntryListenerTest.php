@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -70,7 +71,7 @@ EOC;
 
 EOC;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->entry  = new ChangelogEntry();
         $this->config = $this->prophesize(Config::class);
@@ -135,7 +136,7 @@ EOC;
         $this->editor->update(Argument::any())->shouldNotHaveBeenCalled();
     }
 
-    public function expectedResults() : iterable
+    public function expectedResults(): iterable
     {
         // @phpcs:disable
         return [

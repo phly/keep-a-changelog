@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -42,27 +43,27 @@ class ShowConfigEvent extends AbstractEvent
         $this->showMerged = ($showLocal && $showGlobal) || ! ($showGlobal || $showLocal);
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->finished || $this->failed;
     }
 
-    public function showGlobal() : bool
+    public function showGlobal(): bool
     {
         return $this->showGlobal;
     }
 
-    public function showLocal() : bool
+    public function showLocal(): bool
     {
         return $this->showLocal;
     }
 
-    public function showMerged() : bool
+    public function showMerged(): bool
     {
         return $this->showMerged;
     }
 
-    public function displayConfig(string $config, string $type, string $location) : void
+    public function displayConfig(string $config, string $type, string $location): void
     {
         $this->finished = true;
         $this->output->writeln(sprintf(
@@ -74,7 +75,7 @@ class ShowConfigEvent extends AbstractEvent
         $this->output->writeln('');
     }
 
-    public function displayMergedConfig(string $config) : void
+    public function displayMergedConfig(string $config): void
     {
         $this->finished = true;
         $this->output->writeln('<info>Showing merged configuration</info>');
@@ -82,7 +83,7 @@ class ShowConfigEvent extends AbstractEvent
         $this->output->writeln('');
     }
 
-    public function configIsNotReadable(string $configFile, string $type) : void
+    public function configIsNotReadable(string $configFile, string $type): void
     {
         $this->failed = true;
         $this->output->writeln('<error>Unable to read configuration</error>');

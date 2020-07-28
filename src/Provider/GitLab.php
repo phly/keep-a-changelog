@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -26,26 +27,27 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
      * Use for testing purposes only.
      *
      * @internal
-     * @var ?GitLabClient
+     *
+     * @var null|GitLabClient
      */
     public $client;
 
-    /** @var ?string */
+    /** @var null|string */
     private $package;
 
-    /** @var ?string */
+    /** @var null|string */
     private $token;
 
     /** @var string */
     private $url = self::DEFAULT_URL;
 
-    public function canCreateRelease() : bool
+    public function canCreateRelease(): bool
     {
         return null !== $this->token
             && null !== $this->package;
     }
 
-    public function canGenerateLinks() : bool
+    public function canGenerateLinks(): bool
     {
         return null !== $this->package;
     }
@@ -54,7 +56,7 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
         string $releaseName,
         string $tagName,
         string $changelog
-    ) : ?string {
+    ): ?string {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'release creation');
         }
@@ -69,7 +71,7 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
         return $release['tag_name'] ?? null;
     }
 
-    public function generateIssueLink(int $issueIdentifier) : string
+    public function generateIssueLink(int $issueIdentifier): string
     {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'issue link generation');
@@ -78,7 +80,7 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
         return sprintf('[#%d](%s)', $issueIdentifier, $url);
     }
 
-    public function generatePatchLink(int $patchIdentifier) : string
+    public function generatePatchLink(int $patchIdentifier): string
     {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'patch link generation');
@@ -87,7 +89,7 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
         return sprintf('[!%d](%s)', $patchIdentifier, $url);
     }
 
-    public function setPackageName(string $package) : void
+    public function setPackageName(string $package): void
     {
         if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*(/[a-z0-9]+[a-z0-9_-]*)+$#i', $package)) {
             throw Exception\InvalidPackageNameException::forPackage($package, $this);
@@ -95,12 +97,12 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
         $this->package = $package;
     }
 
-    public function setToken(string $token) : void
+    public function setToken(string $token): void
     {
         $this->token = $token;
     }
 
-    public function setUrl(string $url) : void
+    public function setUrl(string $url): void
     {
         if (false === filter_var($url, FILTER_VALIDATE_URL)) {
             throw Exception\InvalidUrlException::forUrl($url, $this);
@@ -111,7 +113,7 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
     /**
      * @return Milestone[]
      */
-    public function listMilestones() : iterable
+    public function listMilestones(): iterable
     {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'milestone listing');
@@ -119,7 +121,7 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
 
         $milestones = $this->getClient()->api('milestones')->all($this->package, ['state' => 'active']);
 
-        return array_map(function ($milestone) : Milestone {
+        return array_map(function ($milestone): Milestone {
             return new Milestone(
                 $milestone['id'],
                 $milestone['title'],
@@ -128,7 +130,7 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
         }, $milestones);
     }
 
-    public function createMilestone(string $title, string $description = '') : Milestone
+    public function createMilestone(string $title, string $description = ''): Milestone
     {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'milestone creation');
@@ -150,7 +152,7 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
         );
     }
 
-    public function closeMilestone(int $id) : bool
+    public function closeMilestone(int $id): bool
     {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'milestone closing');
@@ -167,7 +169,7 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
         return $milestone['state'] === 'closed';
     }
 
-    private function getClient() : GitLabClient
+    private function getClient(): GitLabClient
     {
         if ($this->client instanceof GitLabClient) {
             return $this->client;

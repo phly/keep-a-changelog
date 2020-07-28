@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -18,7 +19,7 @@ use function sprintf;
 
 class MissingTokenException extends RuntimeException implements ExceptionInterface
 {
-    public static function for(ProviderInterface $provider) : self
+    public static function for(ProviderInterface $provider): self
     {
         return new self(sprintf(
             'Unable to create release using provider of type %s due to missing API token',

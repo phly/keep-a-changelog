@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -15,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class ProviderSpecTest extends TestCase
 {
-    public function isCompleteValues() : iterable
+    public function isCompleteValues(): iterable
     {
         yield 'empty className' => ['', false];
         yield 'not a class className' => ['not-a-class', false];

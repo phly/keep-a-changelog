@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -22,7 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class TagReleaseEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->config     = $this->prophesize(Config::class);
         $this->input      = $this->prophesize(InputInterface::class);
@@ -34,7 +35,7 @@ class TagReleaseEventTest extends TestCase
         $this->output->writeln(Argument::type('string'))->willReturn(null);
     }
 
-    public function createEvent(string $version, string $tagName) : TagReleaseEvent
+    public function createEvent(string $version, string $tagName): TagReleaseEvent
     {
         $event = new TagReleaseEvent(
             $this->input->reveal(),
@@ -47,7 +48,7 @@ class TagReleaseEventTest extends TestCase
         return $event;
     }
 
-    public function testImplementsPackageEvent() : TagReleaseEvent
+    public function testImplementsPackageEvent(): TagReleaseEvent
     {
         $event = $this->createEvent('1.2.3', 'v1.2.3');
         $this->assertInstanceOf(TagReleaseEvent::class, $event);

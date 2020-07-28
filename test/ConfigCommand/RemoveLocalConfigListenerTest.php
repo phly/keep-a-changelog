@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -24,7 +25,7 @@ class RemoveLocalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
     /** @var null|string */
     private $tempFile;
 
-    public function getListener() : AbstractRemoveConfigListener
+    public function getListener(): AbstractRemoveConfigListener
     {
         $configRoot     = sys_get_temp_dir();
         $this->tempFile = sprintf('%s/.keep-a-changelog.ini', $configRoot);
@@ -36,7 +37,7 @@ class RemoveLocalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
         return $listener;
     }
 
-    public function getListenerWithFileNotFound() : AbstractRemoveConfigListener
+    public function getListenerWithFileNotFound(): AbstractRemoveConfigListener
     {
         $configRoot     = sys_get_temp_dir();
         $this->tempFile = sprintf('%s/.keep-a-changelog.ini', $configRoot);
@@ -47,13 +48,13 @@ class RemoveLocalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
         return $listener;
     }
 
-    public function getListenerWithUnlinkableFile() : AbstractRemoveConfigListener
+    public function getListenerWithUnlinkableFile(): AbstractRemoveConfigListener
     {
         $configRoot     = sys_get_temp_dir();
         $this->tempFile = sprintf('%s/.keep-a-changelog.ini', $configRoot);
         touch($this->tempFile);
 
-        $unlink = function (string $filename) : bool {
+        $unlink = function (string $filename): bool {
             return false;
         };
 
@@ -64,23 +65,23 @@ class RemoveLocalConfigListenerTest extends AbstractRemoveConfigListenerTestCase
         return $listener;
     }
 
-    public function configureEventToRemove(ObjectProphecy $event) : void
+    public function configureEventToRemove(ObjectProphecy $event): void
     {
         $event->removeLocal()->willReturn(true);
     }
 
-    public function configureEventToSkipRemove(ObjectProphecy $event) : void
+    public function configureEventToSkipRemove(ObjectProphecy $event): void
     {
         $event->removeLocal()->willReturn(false);
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->tempFile = null;
         parent::setUp();
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         if ($this->tempFile && file_exists($this->tempFile)) {
             unlink($this->tempFile);

@@ -25,36 +25,36 @@ class AbstractMilestoneProviderEventTest extends TestCase
     /** @var OutputInterface|ObjectProphecy */
     private $output;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->output = $this->prophesize(OutputInterface::class);
         $this->output->writeln(Argument::type('string'))->willReturn(null);
-        $this->event = new class() extends AbstractMilestoneProviderEvent {
-            public function isPropagationStopped() : bool
+        $this->event = new class () extends AbstractMilestoneProviderEvent {
+            public function isPropagationStopped(): bool
             {
                 return $this->failed();
             }
 
-            public function setOutput(OutputInterface $output) : void
+            public function setOutput(OutputInterface $output): void
             {
                 $this->output = $output;
             }
         };
     }
 
-    public function testProviderIsNullByDefault() : void
+    public function testProviderIsNullByDefault(): void
     {
         $this->assertNull($this->event->provider());
     }
 
-    public function testDiscoveringProviderMakesItAccessible() : void
+    public function testDiscoveringProviderMakesItAccessible(): void
     {
         $provider = $this->prophesize(ProviderInterface::class)->reveal();
         $this->event->discoveredProvider($provider);
         $this->assertSame($provider, $this->event->provider());
     }
 
-    public function testMarkingIncompleteProviderFailsEvent() : void
+    public function testMarkingIncompleteProviderFailsEvent(): void
     {
         $this->event->setOutput($this->output->reveal());
 
@@ -63,7 +63,7 @@ class AbstractMilestoneProviderEventTest extends TestCase
         $this->assertTrue($this->event->failed());
     }
 
-    public function testMarkingProviderIncapableOfMilestonesFailsEvent() : void
+    public function testMarkingProviderIncapableOfMilestonesFailsEvent(): void
     {
         $this->event->setOutput($this->output->reveal());
 

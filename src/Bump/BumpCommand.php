@@ -86,7 +86,7 @@ EOH;
         parent::__construct($name);
     }
 
-    protected function configure() : void
+    protected function configure(): void
     {
         switch (true) {
             case $this->type === 'bugfix':
@@ -117,7 +117,7 @@ EOH;
     /**
      * @throws Exception\ChangelogFileNotFoundException
      */
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $event = $this->dispatcher
             ->dispatch(new BumpChangelogVersionEvent(

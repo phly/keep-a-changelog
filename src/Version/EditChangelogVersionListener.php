@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -19,7 +20,7 @@ class EditChangelogVersionListener
     use ChangelogEditSpawnerTrait;
     use EditSpawnerTrait;
 
-    public function __invoke(EditChangelogVersionEvent $event) : void
+    public function __invoke(EditChangelogVersionEvent $event): void
     {
         $changelogEntry = $event->changelogEntry();
         $tempFile       = $this->createTempFileWithContents(

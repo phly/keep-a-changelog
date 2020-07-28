@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -19,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class BumpChangelogVersionEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class)->reveal();
         $this->output     = $this->prophesize(OutputInterface::class);
@@ -88,7 +89,7 @@ class BumpChangelogVersionEventTest extends TestCase
         $this->assertNull($event->bumpedChangelog('1.2.3'));
     }
 
-    public function testWhenBumpVersionEqualsUnreleasedConstantVersionIsSetToUnreleasedConstant() : void
+    public function testWhenBumpVersionEqualsUnreleasedConstantVersionIsSetToUnreleasedConstant(): void
     {
         $event = new BumpChangelogVersionEvent(
             $this->input,

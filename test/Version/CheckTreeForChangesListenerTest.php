@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CheckTreeForChangesListenerTest extends TestCase
 {
-    public function testListenerDoesNothingIfForceFlagIsPresent() : void
+    public function testListenerDoesNothingIfForceFlagIsPresent(): void
     {
         $input = $this->prophesize(InputInterface::class);
         $input->getOption('force')->willReturn(true)->shouldBeCalled();
@@ -33,7 +33,7 @@ class CheckTreeForChangesListenerTest extends TestCase
         $this->assertNull($listener($event->reveal()));
     }
 
-    public function testListenerDoesNothingIfForceFlagNotPresentButTreeIsClean() : void
+    public function testListenerDoesNothingIfForceFlagNotPresentButTreeIsClean(): void
     {
         $input = $this->prophesize(InputInterface::class);
         $input->getOption('force')->willReturn(null)->shouldBeCalled();
@@ -51,7 +51,7 @@ class CheckTreeForChangesListenerTest extends TestCase
         $this->assertNull($listener($event->reveal()));
     }
 
-    public function testListenerNotifesEventThatTaggingFailedIfForceFlagNotPresentAndTreeIsDirty() : void
+    public function testListenerNotifesEventThatTaggingFailedIfForceFlagNotPresentAndTreeIsDirty(): void
     {
         $input = $this->prophesize(InputInterface::class);
         $input->getOption('force')->willReturn(null)->shouldBeCalled();
@@ -74,7 +74,7 @@ class CheckTreeForChangesListenerTest extends TestCase
         $this->assertNull($listener($event->reveal()));
     }
 
-    public function testListenerNotifesEventThatTaggingFailedIfForceFlagNotPresentAndStatusCheckFails() : void
+    public function testListenerNotifesEventThatTaggingFailedIfForceFlagNotPresentAndStatusCheckFails(): void
     {
         $input = $this->prophesize(InputInterface::class);
         $input->getOption('force')->willReturn(null)->shouldBeCalled();

@@ -33,7 +33,7 @@ class PromoteCommandTest extends TestCase
     /** @var EventDispatcherInterface|ObjectProphecy */
     private $dispatcher;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->input      = $this->prophesize(InputInterface::class);
@@ -41,7 +41,7 @@ class PromoteCommandTest extends TestCase
         $this->command    = new PromoteCommand($this->dispatcher->reveal());
     }
 
-    public function providedInput() : iterable
+    public function providedInput(): iterable
     {
         yield 'failed-version-only'         => [$failed = true, $version = '2.5.0', $date = null];
         yield 'success-version-only'        => [$failed = false, $version = '2.5.0', $date = null];
@@ -56,7 +56,7 @@ class PromoteCommandTest extends TestCase
         bool $failureStatus,
         string $version,
         ?string $date
-    ) : void {
+    ): void {
         $input      = $this->input;
         $output     = $this->output;
         $dispatcher = $this->dispatcher;
@@ -93,7 +93,7 @@ class PromoteCommandTest extends TestCase
         $this->assertSame($expectedStatus, $this->executeCommand($this->command));
     }
 
-    public function expectedMilestoneCreationStatuses() : iterable
+    public function expectedMilestoneCreationStatuses(): iterable
     {
         yield 'success' => [$failed = false, $status = 0];
         yield 'failed'  => [$failed = true, $status = 1];
@@ -105,14 +105,15 @@ class PromoteCommandTest extends TestCase
     public function testDispatchesCreateMilestoneEventWithPromotedVersionWhenRequested(
         bool $failed,
         int $expectedStatus
-    ) : void {
-        $version        = '1.2.3';
-        $date           = date('Y-m-d');
-        $dispatcher     = $this->dispatcher;
-        $promoteEvent   = $this->prophesize(PromoteEvent::class);
+    ): void {
+        $version    = '1.2.3';
+        $date       = date('Y-m-d');
+        $dispatcher = $this->dispatcher;
+        /** @var PromoteEvent|ObjectProphecy $promoteEvent */
+        $promoteEvent = $this->prophesize(PromoteEvent::class);
+        /** @var CreateMilestoneEvent|ObjectProphecy $milestoneEvent */
         $milestoneEvent = $this->prophesize(CreateMilestoneEvent::class);
 
-        /** @var PromoteEvent|ObjectProphecy $promoteEvent */
         $promoteEvent->failed()->willReturn(false)->shouldBeCalled();
         $milestoneEvent->failed()->willReturn($failed)->shouldBeCalled();
 
@@ -146,13 +147,14 @@ class PromoteCommandTest extends TestCase
     public function testDispatchesCreateMilestoneEventWithNameWhenRequested(
         bool $failed,
         int $expectedStatus
-    ) : void {
-        $dispatcher     = $this->dispatcher;
-        $date           = date('Y-m-d');
-        $promoteEvent   = $this->prophesize(PromoteEvent::class);
+    ): void {
+        $dispatcher = $this->dispatcher;
+        $date       = date('Y-m-d');
+        /** @var PromoteEvent|ObjectProphecy $promoteEvent */
+        $promoteEvent = $this->prophesize(PromoteEvent::class);
+        /** @var CreateMilestoneEvent|ObjectProphecy $milestoneEvent */
         $milestoneEvent = $this->prophesize(CreateMilestoneEvent::class);
 
-        /** @var PromoteEvent|ObjectProphecy $promoteEvent */
         $promoteEvent->failed()->willReturn(false)->shouldBeCalled();
         $milestoneEvent->failed()->willReturn($failed)->shouldBeCalled();
 

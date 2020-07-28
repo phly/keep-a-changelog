@@ -31,7 +31,7 @@ class CloseMilestoneListenerTest extends TestCase
     /** @var MilestoneAwareProviderInterface|ObjectProphecy */
     private $provider;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->event    = $this->prophesize(CloseMilestoneEvent::class);
         $this->output   = $this->prophesize(OutputInterface::class);
@@ -45,7 +45,7 @@ class CloseMilestoneListenerTest extends TestCase
         $this->output->writeln(Argument::containingString('Closing milestone'))->shouldBeCalled();
     }
 
-    public function testClosingMilestoneNotifiesEvent() : void
+    public function testClosingMilestoneNotifiesEvent(): void
     {
         $this->provider->closeMilestone(200)->willReturn(true);
         $this->event->errorClosingMilestone(Argument::any())->shouldNotBeCalled();
@@ -56,7 +56,7 @@ class CloseMilestoneListenerTest extends TestCase
         $this->assertNull($listener($this->event->reveal()));
     }
 
-    public function testErrorClosingMilestoneNotifiesEvent() : void
+    public function testErrorClosingMilestoneNotifiesEvent(): void
     {
         $e = new RuntimeException('this is the error message');
         $this->provider->closeMilestone(200)->willThrow($e);

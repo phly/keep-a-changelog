@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -27,7 +28,7 @@ class CreateNewChangelogListenerTest extends TestCase
     /** @var null|string */
     private $tempFile;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $voidReturn = function () {
         };
@@ -41,7 +42,7 @@ class CreateNewChangelogListenerTest extends TestCase
         $this->event->createdChangelog()->will($voidReturn);
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         if ($this->tempFile) {
             if (file_exists($this->tempFile)) {

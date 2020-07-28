@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -18,14 +19,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShowVersionEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
     }
 
-    public function createEvent(?string $version = null) : ShowVersionEvent
+    public function createEvent(?string $version = null): ShowVersionEvent
     {
         return new ShowVersionEvent(
             $this->input->reveal(),
@@ -35,7 +36,7 @@ class ShowVersionEventTest extends TestCase
         );
     }
 
-    public function testEventImplementsPackageEvent() : ShowVersionEvent
+    public function testEventImplementsPackageEvent(): ShowVersionEvent
     {
         $event = $this->createEvent();
         $this->assertInstanceOf(EventInterface::class, $event);

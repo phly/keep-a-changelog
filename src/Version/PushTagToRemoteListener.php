@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -24,11 +25,12 @@ class PushTagToRemoteListener
      * </code>
      *
      * @internal
+     *
      * @var callable
      */
     public $exec = 'exec';
 
-    public function __invoke(ReleaseEvent $event) : void
+    public function __invoke(ReleaseEvent $event): void
     {
         $tagName = $event->tagName();
         $remote  = $event->config()->remote();

@@ -34,7 +34,7 @@ class VerifyProviderListenerTest extends TestCase
     /** @var ProviderSpec|ObjectProphecy */
     private $providerSpec;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->providerSpec = $this->prophesize(ProviderSpec::class);
 
@@ -47,7 +47,7 @@ class VerifyProviderListenerTest extends TestCase
         $this->listener = new VerifyProviderListener();
     }
 
-    public function testListenerMarksEventAsIncompleteIfProviderSpecIsIncomplete() : void
+    public function testListenerMarksEventAsIncompleteIfProviderSpecIsIncomplete(): void
     {
         $this->providerSpec->isComplete()->willReturn(false);
         $this->providerSpec->createProvider()->shouldNotBeCalled();
@@ -57,7 +57,7 @@ class VerifyProviderListenerTest extends TestCase
         $this->assertNull($this->listener->__invoke($this->event->reveal()));
     }
 
-    public function testListenerMarksEventInvalidIfProviderIsNotMilestoneAware() : void
+    public function testListenerMarksEventInvalidIfProviderIsNotMilestoneAware(): void
     {
         $provider = $this->prophesize(ProviderInterface::class)->reveal();
         $this->providerSpec->isComplete()->willReturn(true)->shouldBeCalled();
@@ -68,7 +68,7 @@ class VerifyProviderListenerTest extends TestCase
         $this->assertNull($this->listener->__invoke($this->event->reveal()));
     }
 
-    public function testListenerTellsEventProviderIsDiscoveredWhenProviderSpecProvideMilestoneAwareProvider() : void
+    public function testListenerTellsEventProviderIsDiscoveredWhenProviderSpecProvideMilestoneAwareProvider(): void
     {
         $provider = $this->prophesize(MilestoneAwareProviderInterface::class)
             ->willImplement(ProviderInterface::class)

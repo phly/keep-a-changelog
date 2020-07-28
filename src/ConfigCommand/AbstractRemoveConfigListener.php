@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -17,11 +18,11 @@ use function sprintf;
 
 abstract class AbstractRemoveConfigListener
 {
-    abstract public function configRemovalRequested(RemoveConfigEvent $event) : bool;
+    abstract public function configRemovalRequested(RemoveConfigEvent $event): bool;
 
-    abstract public function getConfigFile() : string;
+    abstract public function getConfigFile(): string;
 
-    public function __invoke(RemoveConfigEvent $event) : void
+    public function __invoke(RemoveConfigEvent $event): void
     {
         if (! $this->configRemovalRequested($event)) {
             return;
@@ -56,7 +57,7 @@ abstract class AbstractRemoveConfigListener
         $event->deletedConfigFile($configFile);
     }
 
-    public function getQuestionHelper() : QuestionHelper
+    public function getQuestionHelper(): QuestionHelper
     {
         if ($this->questionHelper instanceof QuestionHelper) {
             return $this->questionHelper;
@@ -71,6 +72,7 @@ abstract class AbstractRemoveConfigListener
      * For testing purposes only.
      *
      * @internal
+     *
      * @var null|QuestionHelper
      */
     public $questionHelper;
@@ -81,6 +83,7 @@ abstract class AbstractRemoveConfigListener
      * For testing purposes only.
      *
      * @internal
+     *
      * @var callable
      */
     public $unlink = 'unlink';

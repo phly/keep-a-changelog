@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -28,12 +29,12 @@ trait IOTrait
     /** @var OutputInterface */
     protected $output;
 
-    public function input() : InputInterface
+    public function input(): InputInterface
     {
         return $this->input;
     }
 
-    public function output() : OutputInterface
+    public function output(): OutputInterface
     {
         return $this->output;
     }

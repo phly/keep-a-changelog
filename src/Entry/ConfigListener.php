@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -14,9 +15,10 @@ use Phly\KeepAChangelog\Config\ConfigListener as BaseListener;
 
 class ConfigListener extends BaseListener
 {
-    public function __invoke(EventInterface $event) : void
+    public function __invoke(EventInterface $event): void
     {
-        if ($event->input()->getOption('pr')
+        if (
+            $event->input()->getOption('pr')
             || $event->input()->getOption('issue')
         ) {
             $this->requiresPackageName = true;

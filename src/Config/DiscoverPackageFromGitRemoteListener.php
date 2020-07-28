@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -31,11 +32,12 @@ class DiscoverPackageFromGitRemoteListener
      * </code>
      *
      * @internal
+     *
      * @var callable
      */
     public $exec = 'exec';
 
-    public function __invoke(PackageNameDiscovery $event) : void
+    public function __invoke(PackageNameDiscovery $event): void
     {
         if ($event->packageWasFound()) {
             // Already discovered
@@ -64,7 +66,7 @@ class DiscoverPackageFromGitRemoteListener
         }
     }
 
-    private function getRemotes() : iterable
+    private function getRemotes(): iterable
     {
         $exec    = $this->exec;
         $remotes = [];
@@ -88,7 +90,7 @@ class DiscoverPackageFromGitRemoteListener
         }
     }
 
-    private function getDomainFromProviderUrl(?string $url) : ?string
+    private function getDomainFromProviderUrl(?string $url): ?string
     {
         if (! $url) {
             return $url;

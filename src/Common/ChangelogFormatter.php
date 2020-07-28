@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
@@ -16,7 +17,7 @@ use function strlen;
 
 class ChangelogFormatter
 {
-    public function format(string $changelog) : string
+    public function format(string $changelog): string
     {
         return preg_replace_callback(
             '/^\#\#\# (?<heading>Added|Changed|Deprecated|Removed|Fixed)/m',

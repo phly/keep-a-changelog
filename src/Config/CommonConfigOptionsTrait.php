@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -20,7 +21,7 @@ use function sprintf;
  */
 trait CommonConfigOptionsTrait
 {
-    private function injectPackageOption(Command $command) : void
+    private function injectPackageOption(Command $command): void
     {
         $command->addOption(
             'package',
@@ -30,7 +31,7 @@ trait CommonConfigOptionsTrait
         );
     }
 
-    private function injectRemoteOption(Command $command) : void
+    private function injectRemoteOption(Command $command): void
     {
         $command->addOption(
             'remote',
@@ -40,7 +41,7 @@ trait CommonConfigOptionsTrait
         );
     }
 
-    private function injectProviderOptions(Command $command) : void
+    private function injectProviderOptions(Command $command): void
     {
         $command->addOption(
             'provider',

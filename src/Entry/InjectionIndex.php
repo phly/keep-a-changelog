@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -33,6 +34,9 @@ class InjectionIndex
     /** @var string */
     private $type = self::ACTION_NOT_FOUND;
 
+    /**
+     * @return mixed
+     */
     public function __get(string $name)
     {
         switch ($name) {
@@ -49,6 +53,9 @@ class InjectionIndex
         }
     }
 
+    /**
+     * @param mixed $value
+     */
     public function __set(string $name, $value)
     {
         switch ($name) {
@@ -67,12 +74,12 @@ class InjectionIndex
         }
     }
 
-    private function setIndex(int $value) : void
+    private function setIndex(int $value): void
     {
         $this->index = $value;
     }
 
-    private function setType(string $value) : void
+    private function setType(string $value): void
     {
         if (! in_array($value, self::ACTIONS, true)) {
             throw new TypeError(

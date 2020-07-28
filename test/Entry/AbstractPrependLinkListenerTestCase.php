@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -37,48 +38,48 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
     /** @var callable */
     protected $voidReturn;
 
-    abstract public function getListener() : AbstractPrependLinkListener;
+    abstract public function getListener(): AbstractPrependLinkListener;
 
     /**
      * Setup mock for retrieving empty patch|issue identifier
      */
-    abstract public function emptyIdentifierRequested(ObjectProphecy $event) : void;
+    abstract public function emptyIdentifierRequested(ObjectProphecy $event): void;
 
     /**
      * Setup mock for retrieving invalid patch|issue identifier
      */
-    abstract public function invalidIdentifierRequested(ObjectProphecy $event) : void;
+    abstract public function invalidIdentifierRequested(ObjectProphecy $event): void;
 
     /**
      * Setup mock for retrieving patch|issue identifier.
      *
      * Should set $identifier.
      */
-    abstract public function identifierRequested(ObjectProphecy $event) : void;
+    abstract public function identifierRequested(ObjectProphecy $event): void;
 
     /**
      * Setup mock for reporting invalid patch|issue identifier
      */
-    abstract public function reportInvalidIdentifierRequested(ObjectProphecy $event) : void;
+    abstract public function reportInvalidIdentifierRequested(ObjectProphecy $event): void;
 
     /**
      * Setup mock for generating an empty patch|issue link
      */
-    abstract public function generateEmptyLinkRequested(ObjectProphecy $provider) : void;
+    abstract public function generateEmptyLinkRequested(ObjectProphecy $provider): void;
 
     /**
      * Setup mock for generating a patch|issue link
      *
      * Should set $link.
      */
-    abstract public function generateLinkRequested(ObjectProphecy $provider) : void;
+    abstract public function generateLinkRequested(ObjectProphecy $provider): void;
 
     /**
      * Setup mock for reporting invalid patch|issue link
      */
-    abstract public function reportInvalidLinkRequested(ObjectProphecy $event) : void;
+    abstract public function reportInvalidLinkRequested(ObjectProphecy $event): void;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->identifier   = null;
         $this->link         = null;
@@ -93,7 +94,7 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
         };
     }
 
-    public function getEvent() : ObjectProphecy
+    public function getEvent(): ObjectProphecy
     {
         $event = $this->prophesize(AddChangelogEntryEvent::class);
         $event->config()->will([$this->config, 'reveal']);

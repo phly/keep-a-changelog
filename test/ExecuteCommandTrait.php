@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -23,7 +24,7 @@ trait ExecuteCommandTrait
     /** @var OutputInterface|ObjectProphecy */
     protected $output;
 
-    public function executeCommand(Command $command) : int
+    public function executeCommand(Command $command): int
     {
         $r = new ReflectionMethod($command, 'execute');
         $r->setAccessible(true);

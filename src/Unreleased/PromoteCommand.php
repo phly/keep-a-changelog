@@ -44,7 +44,7 @@ EOH;
         parent::__construct($name);
     }
 
-    protected function configure() : void
+    protected function configure(): void
     {
         $this->setDescription(self::DESCRIPTION);
         $this->setHelp(self::HELP);
@@ -66,7 +66,7 @@ EOH;
         $this->injectMilestoneOptions($this);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $version = $input->getArgument('version');
         $event   = $this->dispatcher

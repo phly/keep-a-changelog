@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -19,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PushReleaseToProviderListenerTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->output   = $this->prophesize(OutputInterface::class);
         $this->event    = $this->prophesize(ReleaseEvent::class);

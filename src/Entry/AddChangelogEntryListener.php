@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -25,7 +26,7 @@ class AddChangelogEntryListener
 
     public const APPEND_NEWLINE = true;
 
-    public function __invoke(AddChangelogEntryEvent $event) : void
+    public function __invoke(AddChangelogEntryEvent $event): void
     {
         $entryType = $event->entryType();
         if (! in_array($entryType, EntryTypes::TYPES, true)) {
@@ -61,7 +62,7 @@ class AddChangelogEntryListener
      * Locates the location within the changelog where the injection should occur.
      * Also determines if the injection is a replacement or an addition.
      */
-    private function locateInjectionIndex(array $contents, string $type) : InjectionIndex
+    private function locateInjectionIndex(array $contents, string $type): InjectionIndex
     {
         $action    = new InjectionIndex();
         $typeRegex = sprintf('/^### %s/i', $type);
@@ -84,7 +85,7 @@ class AddChangelogEntryListener
     /**
      * Injects the new entry at the detected index, replacing the line if required.
      */
-    private function injectEntry(array $contents, InjectionIndex $action, string $entry) : string
+    private function injectEntry(array $contents, InjectionIndex $action, string $entry): string
     {
         switch ($action->type) {
             case InjectionIndex::ACTION_REPLACE:
@@ -109,7 +110,7 @@ class AddChangelogEntryListener
      * If the string spans multiple lines, it ensures all additional lines are
      * indented two characters.
      */
-    private function formatEntry(string $entry, bool $withExtraLine = false) : string
+    private function formatEntry(string $entry, bool $withExtraLine = false): string
     {
         $entry = sprintf('- %s', $entry);
         $entry = preg_replace("/\n(?!\s{2}|$)/s", "\n  ", $entry);

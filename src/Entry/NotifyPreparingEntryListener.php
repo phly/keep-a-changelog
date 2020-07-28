@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -14,7 +15,7 @@ use function ucwords;
 
 class NotifyPreparingEntryListener
 {
-    public function __invoke(AddChangelogEntryEvent $event) : void
+    public function __invoke(AddChangelogEntryEvent $event): void
     {
         $event->output()->writeln(sprintf(
             '<info>Preparing entry for %s section</info>',

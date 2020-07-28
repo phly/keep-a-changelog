@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -19,14 +20,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShowConfigEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input  = $this->prophesize(InputInterface::class);
         $this->output = $this->prophesize(OutputInterface::class);
         $this->output->writeln(Argument::any())->willReturn(null);
     }
 
-    public function createEvent(bool $showLocal, bool $showGlobal) : ShowConfigEvent
+    public function createEvent(bool $showLocal, bool $showGlobal): ShowConfigEvent
     {
         return new ShowConfigEvent(
             $this->input->reveal(),
@@ -36,7 +37,7 @@ class ShowConfigEventTest extends TestCase
         );
     }
 
-    public function testImplementsIOInterface() : ShowConfigEvent
+    public function testImplementsIOInterface(): ShowConfigEvent
     {
         $event = $this->createEvent(true, true, 'changelog.txt');
         $this->assertInstanceOf(IOInterface::class, $event);
@@ -46,7 +47,7 @@ class ShowConfigEventTest extends TestCase
     /**
      * @depends testImplementsIOInterface
      */
-    public function testImplementsStoppableEventInterface(ShowConfigEvent $event) : ShowConfigEvent
+    public function testImplementsStoppableEventInterface(ShowConfigEvent $event): ShowConfigEvent
     {
         $this->assertInstanceOf(StoppableEventInterface::class, $event);
         return $event;
@@ -55,7 +56,7 @@ class ShowConfigEventTest extends TestCase
     /**
      * @depends testImplementsStoppableEventInterface
      */
-    public function testStopPropagationAndFailureStatusAreFalseByDefault(ShowConfigEvent $event) : ShowConfigEvent
+    public function testStopPropagationAndFailureStatusAreFalseByDefault(ShowConfigEvent $event): ShowConfigEvent
     {
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
@@ -75,7 +76,7 @@ class ShowConfigEventTest extends TestCase
         $this->assertTrue($event->showGlobal());
     }
 
-    public function mergeFlags()
+    public function mergeFlags(): iterable
     {
         yield 'no local - no global - merged'  => [false, false, true];
         yield 'local - no global - not merged' => [true, false, false];

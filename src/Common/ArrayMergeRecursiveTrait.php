@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -26,7 +27,7 @@ trait ArrayMergeRecursiveTrait
      *
      * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
      */
-    public function arrayMergeRecursive(array $a, array $b, bool $preserveNumericKeys = false) : array
+    public function arrayMergeRecursive(array $a, array $b, bool $preserveNumericKeys = false): array
     {
         foreach ($b as $key => $value) {
             if (! isset($a[$key]) && ! array_key_exists($key, $a)) {

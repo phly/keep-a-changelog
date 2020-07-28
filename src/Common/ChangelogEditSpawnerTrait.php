@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -17,7 +18,7 @@ namespace Phly\KeepAChangelog\Common;
  */
 trait ChangelogEditSpawnerTrait
 {
-    protected function getChangelogEditor() : ChangelogEditor
+    protected function getChangelogEditor(): ChangelogEditor
     {
         if ($this->changelogEditor instanceof ChangelogEditor) {
             return $this->changelogEditor;
@@ -32,6 +33,7 @@ trait ChangelogEditSpawnerTrait
      * For testing purposes only.
      *
      * @internal
+     *
      * @var null|ChangelogEditor
      */
     public $changelogEditor;

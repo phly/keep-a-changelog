@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -18,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoteNameDiscoveryTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->helper = $this->prophesize(QuestionHelper::class)->reveal();
         $this->input  = $this->prophesize(InputInterface::class)->reveal();

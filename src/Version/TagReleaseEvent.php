@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -41,22 +42,22 @@ class TagReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterf
         $this->tagName    = $tagName;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function package() : ?string
+    public function package(): ?string
     {
         return $this->config()->package();
     }
 
-    public function tagName() : string
+    public function tagName(): string
     {
         return $this->tagName;
     }
 
-    public function taggingComplete() : void
+    public function taggingComplete(): void
     {
         $this->output->writeln(sprintf(
             '<info>Created tag "%s" for package "%s" using the following notes:</info>',
@@ -67,7 +68,7 @@ class TagReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterf
         $this->output->write($this->changelog());
     }
 
-    public function taggingFailed() : void
+    public function taggingFailed(): void
     {
         $this->failed = true;
         $this->output->writeln('<error>Error creating tag!</error>');

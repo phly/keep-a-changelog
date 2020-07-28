@@ -34,7 +34,7 @@ class CreateMilestoneEventTest extends TestCase
     /** @var OutputInterface|ObjectProphecy */
     private $output;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->input = $this->prophesize(InputInterface::class);
         $this->input->getArgument('title')->willReturn('2.0.0');
@@ -50,17 +50,17 @@ class CreateMilestoneEventTest extends TestCase
         );
     }
 
-    public function testUsesTitleArgumentFromInput() : void
+    public function testUsesTitleArgumentFromInput(): void
     {
         $this->assertSame('2.0.0', $this->event->title());
     }
 
-    public function testUsesDescriptionArgumentFromInput() : void
+    public function testUsesDescriptionArgumentFromInput(): void
     {
         $this->assertSame('2.0.0 requirements', $this->event->description());
     }
 
-    public function testMarkingMilestoneCreatedSendsOutput() : void
+    public function testMarkingMilestoneCreatedSendsOutput(): void
     {
         $this->output
             ->writeln(Argument::containingString('Created milestone (1234) 2.0.0: 2.0.0 requirements'))
@@ -71,7 +71,7 @@ class CreateMilestoneEventTest extends TestCase
         $this->assertFalse($this->event->failed());
     }
 
-    public function testIndicatingMilestoneCreationErrorMarksEventFailedAndSendsOutput() : void
+    public function testIndicatingMilestoneCreationErrorMarksEventFailedAndSendsOutput(): void
     {
         $e = new RuntimeException('this is the error message');
 

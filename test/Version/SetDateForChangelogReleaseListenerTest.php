@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
@@ -49,7 +50,7 @@ class SetDateForChangelogReleaseListenerTest extends TestCase
 
 EOC;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $voidReturn   = function () {
         };
@@ -64,7 +65,7 @@ EOC;
         $this->event->changelogReady()->will($voidReturn);
     }
 
-    public function invalidVersionAndDatePermutations() : iterable
+    public function invalidVersionAndDatePermutations(): iterable
     {
         $leaders    = [
             'no leader'          => '',
@@ -127,7 +128,7 @@ EOC;
         $this->event->changelogReady()->shouldNotHaveBeenCalled();
     }
 
-    public function validVersionAndDatePermutations() : iterable
+    public function validVersionAndDatePermutations(): iterable
     {
         $versions = [
             'major version' => ['2.0.0', 4, 22],

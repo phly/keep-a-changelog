@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -47,17 +48,17 @@ class Config
         $this->providers->add($gitlabSpec);
     }
 
-    public function changelogFile() : string
+    public function changelogFile(): string
     {
         return $this->changelogFile;
     }
 
-    public function package() : ?string
+    public function package(): ?string
     {
         return $this->package;
     }
 
-    public function provider() : Provider\ProviderSpec
+    public function provider(): Provider\ProviderSpec
     {
         if (! $this->provider) {
             return $this->providers->get($this->providerName);
@@ -66,28 +67,28 @@ class Config
         return $this->provider;
     }
 
-    public function providers() : Provider\ProviderList
+    public function providers(): Provider\ProviderList
     {
         return $this->providers;
     }
 
-    public function remote() : ?string
+    public function remote(): ?string
     {
         return $this->remote;
     }
 
-    public function setChangelogFile(string $file) : void
+    public function setChangelogFile(string $file): void
     {
         $this->changelogFile = $file;
     }
 
-    public function setPackage(string $package) : void
+    public function setPackage(string $package): void
     {
         $this->package = $package;
         $this->provider()->setPackage($package);
     }
 
-    public function setProviderName(string $providerName) : void
+    public function setProviderName(string $providerName): void
     {
         $this->providerName = $providerName;
         $this->provider     = $this->providers->get($providerName);
@@ -96,7 +97,7 @@ class Config
         }
     }
 
-    public function setRemote(string $remote) : void
+    public function setRemote(string $remote): void
     {
         $this->remote = $remote;
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -22,12 +23,12 @@ trait VersionValidationTrait
     /** @var null|string */
     private $version;
 
-    public function version() : ?string
+    public function version(): ?string
     {
         return $this->version;
     }
 
-    public function versionIsInvalid(string $version) : void
+    public function versionIsInvalid(string $version): void
     {
         $this->failed = true;
         $this->output()->writeln(sprintf(

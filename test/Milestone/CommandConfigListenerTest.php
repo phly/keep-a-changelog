@@ -26,7 +26,7 @@ class CommandConfigListenerTest extends TestCase
         return $r->getValue($object);
     }
 
-    public function testEnablesPackageNameAndRemoteNameRequirements() : void
+    public function testEnablesPackageNameAndRemoteNameRequirements(): void
     {
         $listener = new CommandConfigListener();
         $this->assertTrue($this->reflectParam($listener, 'requiresPackageName'));

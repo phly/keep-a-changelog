@@ -27,7 +27,7 @@ class CheckTreeForChangesListener
      */
     public $exec = 'exec';
 
-    public function __invoke(TagReleaseEvent $event) : void
+    public function __invoke(TagReleaseEvent $event): void
     {
         if ($event->input()->getOption('force')) {
             return;

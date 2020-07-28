@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2020 Matthew Weier O'Phinney
@@ -42,38 +43,38 @@ class PromoteEvent extends AbstractEvent implements ChangelogEntryAwareEventInte
         $this->releaseDate = $releaseDate;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function newVersion() : string
+    public function newVersion(): string
     {
         return $this->newVersion;
     }
 
-    public function releaseDate() : string
+    public function releaseDate(): string
     {
         return $this->releaseDate;
     }
 
-    public function version() : string
+    public function version(): string
     {
         return 'unreleased';
     }
 
-    public function versionIsInvalid(string $version) : void
+    public function versionIsInvalid(string $version): void
     {
         // intentional no-op; never should get called
     }
 
-    public function didNotPromote() : void
+    public function didNotPromote(): void
     {
         $this->failed = true;
         $this->output()->writeln('<error>Invalid date provided for release; must be in Y-m-d format</error>');
     }
 
-    public function changelogReady() : void
+    public function changelogReady(): void
     {
         $this->output->writeln(sprintf(
             '<info>Renamed Unreleased entry to "%s" with release date of "%s"</info>',

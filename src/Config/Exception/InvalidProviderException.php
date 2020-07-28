@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -17,7 +18,7 @@ use function sprintf;
 
 class InvalidProviderException extends InvalidArgumentException implements ExceptionInterface
 {
-    public static function forMissingClassName(string $name, string $configType) : self
+    public static function forMissingClassName(string $name, string $configType): self
     {
         return new self(sprintf(
             'Error parsing %s: provider "%s" is missing a "class" setting',
@@ -26,7 +27,7 @@ class InvalidProviderException extends InvalidArgumentException implements Excep
         ));
     }
 
-    public static function forMissingClass(string $name, string $configType) : self
+    public static function forMissingClass(string $name, string $configType): self
     {
         return new self(sprintf(
             'Error parsing %s: cannot autoload the provider "%s"',
@@ -35,7 +36,7 @@ class InvalidProviderException extends InvalidArgumentException implements Excep
         ));
     }
 
-    public static function forInvalidClass(string $name, string $class, string $configType) : self
+    public static function forInvalidClass(string $name, string $class, string $configType): self
     {
         return new self(sprintf(
             'Error parsing %s: class name "%s" associated with provider "%s" does not implement %s',
@@ -46,7 +47,7 @@ class InvalidProviderException extends InvalidArgumentException implements Excep
         ));
     }
 
-    public static function forMissingProvider(string $name, array $known, string $configType) : self
+    public static function forMissingProvider(string $name, array $known, string $configType): self
     {
         return new self(sprintf(
             'Error parsing %s: selected default provider "%s" is not configured. Known providers: %s',

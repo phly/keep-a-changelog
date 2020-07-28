@@ -24,14 +24,14 @@ class BumpToVersionCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
     }
 
-    public function testExecutionReturnsZeroOnSuccess() : void
+    public function testExecutionReturnsZeroOnSuccess(): void
     {
         $input = $this->input;
         $input->getArgument('version')->willReturn('1.2.3');
@@ -60,7 +60,7 @@ class BumpToVersionCommandTest extends TestCase
         $this->assertSame(0, $this->executeCommand($command));
     }
 
-    public function testExecutionReturnsOneOnFailure() : void
+    public function testExecutionReturnsOneOnFailure(): void
     {
         $input = $this->input;
         $input->getArgument('version')->willReturn('1.2.3');
@@ -87,7 +87,7 @@ class BumpToVersionCommandTest extends TestCase
         $this->assertSame(1, $this->executeCommand($command));
     }
 
-    public function expectedMilestoneCreationStatuses() : iterable
+    public function expectedMilestoneCreationStatuses(): iterable
     {
         yield 'success' => [$failed = false, $status = 0];
         yield 'failed'  => [$failed = true, $status = 1];
@@ -99,12 +99,13 @@ class BumpToVersionCommandTest extends TestCase
     public function testDispatchesCreateMilestoneEventWithBumpedVersionWhenRequested(
         bool $failed,
         int $expectedStatus
-    ) : void {
-        $dispatcher     = $this->dispatcher;
-        $bumpEvent      = $this->prophesize(BumpChangelogVersionEvent::class);
+    ): void {
+        $dispatcher = $this->dispatcher;
+        /** @var BumpChangelogVersionEvent|ObjectProphecy $bumpEvent */
+        $bumpEvent = $this->prophesize(BumpChangelogVersionEvent::class);
+        /** @var CreateMilestoneEvent|ObjectProphecy $milestoneEvent */
         $milestoneEvent = $this->prophesize(CreateMilestoneEvent::class);
 
-        /** @var BumpChangelogVersionEvent|ObjectProphecy $bumpEvent */
         $bumpEvent->failed()->willReturn(false)->shouldBeCalled();
         $milestoneEvent->failed()->willReturn($failed)->shouldBeCalled();
 
@@ -137,12 +138,13 @@ class BumpToVersionCommandTest extends TestCase
     public function testDispatchesCreateMilestoneEventWithNameWhenRequested(
         bool $failed,
         int $expectedStatus
-    ) : void {
-        $dispatcher     = $this->dispatcher;
-        $bumpEvent      = $this->prophesize(BumpChangelogVersionEvent::class);
+    ): void {
+        $dispatcher = $this->dispatcher;
+        /** @var BumpChangelogVersionEvent|ObjectProphecy $bumpEvent */
+        $bumpEvent = $this->prophesize(BumpChangelogVersionEvent::class);
+        /** @var CreateMilestoneEvent|ObjectProphecy $milestoneEvent */
         $milestoneEvent = $this->prophesize(CreateMilestoneEvent::class);
 
-        /** @var BumpChangelogVersionEvent|ObjectProphecy $bumpEvent */
         $bumpEvent->failed()->willReturn(false)->shouldBeCalled();
         $milestoneEvent->failed()->willReturn($failed)->shouldBeCalled();
 

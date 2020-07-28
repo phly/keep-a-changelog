@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -18,14 +19,14 @@ use function sprintf;
 
 class ChangelogEditor
 {
-    public function update(string $filename, string $replacement, ChangelogEntry $entry) : void
+    public function update(string $filename, string $replacement, ChangelogEntry $entry): void
     {
         $contents = file($filename);
         array_splice($contents, $entry->index, $entry->length, $replacement);
         file_put_contents($filename, implode('', $contents));
     }
 
-    public function append(string $filename, string $contentsToAppend) : void
+    public function append(string $filename, string $contentsToAppend): void
     {
         $contents = file_get_contents($filename);
         file_put_contents(

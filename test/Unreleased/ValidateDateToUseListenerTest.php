@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2020 Matthew Weier O'Phinney
@@ -15,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class ValidateDateToUseListenerTest extends TestCase
 {
-    public function testDoesNothingIfReleaseDateIsValid() : void
+    public function testDoesNothingIfReleaseDateIsValid(): void
     {
         $event = $this->prophesize(PromoteEvent::class);
         $event->releaseDate()->willReturn('2020-07-16')->shouldBeCalled();
@@ -26,7 +27,7 @@ class ValidateDateToUseListenerTest extends TestCase
         $event->didNotPromote()->shouldNotHaveBeenCalled();
     }
 
-    public function testNotifiesEventOfInabilityToPromote() : void
+    public function testNotifiesEventOfInabilityToPromote(): void
     {
         $event = $this->prophesize(PromoteEvent::class);
         $event->releaseDate()->willReturn('TBD')->shouldBeCalled();

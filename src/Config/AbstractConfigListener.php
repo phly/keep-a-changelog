@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -37,9 +38,9 @@ abstract class AbstractConfigListener
      */
     protected $consumeProviderTokens = true;
 
-    abstract protected function getConfigFile() : string;
+    abstract protected function getConfigFile(): string;
 
-    public function __invoke(ConfigDiscovery $event) : void
+    public function __invoke(ConfigDiscovery $event): void
     {
         $configFile = $this->getConfigFile();
         if (! is_readable($configFile)) {
@@ -59,7 +60,7 @@ abstract class AbstractConfigListener
         }
     }
 
-    private function processProviders(array $providers, Config $config) : void
+    private function processProviders(array $providers, Config $config): void
     {
         $providerList = $config->providers();
 

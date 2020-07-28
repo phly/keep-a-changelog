@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -15,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class IsEntryArgumentEmptyListenerTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->event = $this->prophesize(AddChangelogEntryEvent::class);
         $this->event->entryIsEmpty()->will(function () {

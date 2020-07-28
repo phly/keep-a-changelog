@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -31,26 +32,27 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
      * Use for testing purposes only.
      *
      * @internal
-     * @var ?GitHubClient
+     *
+     * @var null|GitHubClient
      */
     public $client;
 
-    /** @var ?string */
+    /** @var null|string */
     private $package;
 
-    /** @var ?string */
+    /** @var null|string */
     private $token;
 
     /** @var string */
     private $url = self::DEFAULT_URL;
 
-    public function canCreateRelease() : bool
+    public function canCreateRelease(): bool
     {
         return null !== $this->package
             && null !== $this->token;
     }
 
-    public function canGenerateLinks() : bool
+    public function canGenerateLinks(): bool
     {
         return null !== $this->package;
     }
@@ -59,7 +61,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
         string $releaseName,
         string $tagName,
         string $changelog
-    ) : ?string {
+    ): ?string {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'release creation');
         }
@@ -88,7 +90,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
         return $release['html_url'] ?? null;
     }
 
-    public function generateIssueLink(int $issueIdentifier) : string
+    public function generateIssueLink(int $issueIdentifier): string
     {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'issue link generation');
@@ -102,7 +104,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
         return sprintf('[#%d](%s)', $issueIdentifier, $url);
     }
 
-    public function generatePatchLink(int $patchIdentifier) : string
+    public function generatePatchLink(int $patchIdentifier): string
     {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'patch link generation');
@@ -116,7 +118,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
         return sprintf('[#%d](%s)', $patchIdentifier, $url);
     }
 
-    public function setPackageName(string $package) : void
+    public function setPackageName(string $package): void
     {
         if (! preg_match('#^[a-z0-9]+[a-z0-9_-]*/[a-z0-9]+[a-z0-9_-]*$#i', $package)) {
             throw Exception\InvalidPackageNameException::forPackage($package, $this);
@@ -124,7 +126,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
         $this->package = $package;
     }
 
-    public function setToken(string $token) : void
+    public function setToken(string $token): void
     {
         $this->token = $token;
     }
@@ -134,7 +136,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
      *
      * Generally, this should only be the scheme + authority.
      */
-    public function setUrl(string $url) : void
+    public function setUrl(string $url): void
     {
         if (false === filter_var($url, FILTER_VALIDATE_URL)) {
             throw Exception\InvalidUrlException::forUrl($url, $this);
@@ -145,7 +147,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
     /**
      * @return Milestone[]
      */
-    public function listMilestones() : iterable
+    public function listMilestones(): iterable
     {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'milestone listing');
@@ -155,7 +157,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
 
         $milestones = $this->getClient()->api('issue')->milestones()->all($org, $repo, ['state' => 'open']);
 
-        return array_map(function ($milestone) : Milestone {
+        return array_map(function ($milestone): Milestone {
             return new Milestone(
                 $milestone['number'],
                 $milestone['title'],
@@ -164,7 +166,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
         }, $milestones);
     }
 
-    public function createMilestone(string $title, string $description = '') : Milestone
+    public function createMilestone(string $title, string $description = ''): Milestone
     {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'milestone creation');
@@ -188,7 +190,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
         );
     }
 
-    public function closeMilestone(int $id) : bool
+    public function closeMilestone(int $id): bool
     {
         if (! $this->package) {
             throw Exception\MissingPackageNameException::for($this, 'milestone closing');
@@ -208,11 +210,11 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
     }
 
     /**
-     * @throws Exception\MissingTagException if unable to verify the tag exists
-     * @throws Exception\MissingTagException if unable to fetch tag data
-     * @throws Exception\MissingTagException if the tag on github is not signed
+     * @throws Exception\MissingTagException If unable to verify the tag exists.
+     * @throws Exception\MissingTagException If unable to fetch tag data.
+     * @throws Exception\MissingTagException If the tag on github is not signed.
      */
-    private function verifyTag(GitHubClient $client, string $org, string $repo, string $tagName) : void
+    private function verifyTag(GitHubClient $client, string $org, string $repo, string $tagName): void
     {
         try {
             $tagRef = $client
@@ -248,7 +250,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
         }
     }
 
-    private function getClient() : GitHubClient
+    private function getClient(): GitHubClient
     {
         if ($this->client instanceof GitHubClient) {
             return $this->client;
@@ -262,7 +264,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
         return $client;
     }
 
-    private function isVersionPrelease(string $version) : bool
+    private function isVersionPrelease(string $version): bool
     {
         $pattern = sprintf('/%s$/i', self::PRE_RELEASE_REGEX);
         if (preg_match($pattern, $version)) {

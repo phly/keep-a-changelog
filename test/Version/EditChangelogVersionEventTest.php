@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -23,7 +24,7 @@ use function sprintf;
 
 class EditChangelogVersionEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->config     = $this->prophesize(Config::class);
         $this->input      = $this->prophesize(InputInterface::class);
@@ -34,7 +35,7 @@ class EditChangelogVersionEventTest extends TestCase
         $this->output->writeln(Argument::type('string'))->willReturn(null);
     }
 
-    public function createEvent(?string $version = null, ?string $editor = null) : EditChangelogVersionEvent
+    public function createEvent(?string $version = null, ?string $editor = null): EditChangelogVersionEvent
     {
         return new EditChangelogVersionEvent(
             $this->input->reveal(),
@@ -45,7 +46,7 @@ class EditChangelogVersionEventTest extends TestCase
         );
     }
 
-    public function testEventImplementsPackageEvent() : EditChangelogVersionEvent
+    public function testEventImplementsPackageEvent(): EditChangelogVersionEvent
     {
         $event = $this->createEvent();
         $this->assertInstanceOf(EventInterface::class, $event);
@@ -97,7 +98,7 @@ class EditChangelogVersionEventTest extends TestCase
         $this->assertTrue($event->failed());
     }
 
-    public function versionExpectations() : iterable
+    public function versionExpectations(): iterable
     {
         yield 'latest' => [null, 'most recent changelog'];
         yield 'specific' => ['1.2.3', 'change for version 1.2.3'];

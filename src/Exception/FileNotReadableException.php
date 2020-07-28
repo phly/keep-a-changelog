@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -15,7 +16,7 @@ use function sprintf;
 
 class FileNotReadableException extends RuntimeException implements ExceptionInterface
 {
-    public static function forFile(string $filename) : self
+    public static function forFile(string $filename): self
     {
         return new self(sprintf(
             'File "%s" either does not exist or is not readable.',

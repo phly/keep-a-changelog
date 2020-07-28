@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -21,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EditChangelogLinksEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
@@ -30,7 +31,7 @@ class EditChangelogLinksEventTest extends TestCase
         $this->output->writeln(Argument::any())->willReturn(null);
     }
 
-    public function createEvent() : EditChangelogLinksEvent
+    public function createEvent(): EditChangelogLinksEvent
     {
         return new EditChangelogLinksEvent(
             $this->input->reveal(),
@@ -39,7 +40,7 @@ class EditChangelogLinksEventTest extends TestCase
         );
     }
 
-    public function testIsAPackageEvent() : EditChangelogLinksEvent
+    public function testIsAPackageEvent(): EditChangelogLinksEvent
     {
         $event = $this->createEvent();
         $this->assertInstanceOf(EventInterface::class, $event);

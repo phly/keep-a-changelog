@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -24,21 +25,21 @@ abstract class AbstractShowConfigListenerTestCase extends TestCase
      */
     protected $configType;
 
-    abstract public function getListener() : AbstractShowConfigListener;
+    abstract public function getListener(): AbstractShowConfigListener;
 
-    abstract public function getListenerWithFileNotFound() : AbstractShowConfigListener;
+    abstract public function getListenerWithFileNotFound(): AbstractShowConfigListener;
 
-    abstract public function configureEventToShow(ObjectProphecy $event) : void;
+    abstract public function configureEventToShow(ObjectProphecy $event): void;
 
-    abstract public function configureEventToSkipShow(ObjectProphecy $event) : void;
+    abstract public function configureEventToSkipShow(ObjectProphecy $event): void;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->voidReturn = function () {
         };
     }
 
-    public function getEventProphecy() : ObjectProphecy
+    public function getEventProphecy(): ObjectProphecy
     {
         $event = $this->prophesize(ShowConfigEvent::class);
 

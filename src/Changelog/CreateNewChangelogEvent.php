@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
@@ -39,17 +40,17 @@ class CreateNewChangelogEvent extends AbstractEvent implements VersionAwareEvent
         $this->overwrite  = $overwrite;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function overwrite() : bool
+    public function overwrite(): bool
     {
         return $this->overwrite;
     }
 
-    public function changelogExists() : void
+    public function changelogExists(): void
     {
         $this->failed = true;
         $this->output->writeln(sprintf(
@@ -59,7 +60,7 @@ class CreateNewChangelogEvent extends AbstractEvent implements VersionAwareEvent
         $this->output->writeln('If you want to overwrite the file, use the --overwrite|-o option');
     }
 
-    public function createdChangelog() : void
+    public function createdChangelog(): void
     {
         $this->output->writeln(sprintf(
             '<info>Created new changelog in file "%s" using initial version "%s".</info>',

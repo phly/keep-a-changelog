@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -16,7 +17,7 @@ use Prophecy\Argument;
 
 class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->provider = $this->prophesize(ProviderSpec::class);
         $this->config   = $this->prophesize(Config::class);

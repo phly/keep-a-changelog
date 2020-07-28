@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -11,7 +12,7 @@ namespace Phly\KeepAChangelog\Version;
 
 class ShowVersionListener
 {
-    public function __invoke(ShowVersionEvent $event) : void
+    public function __invoke(ShowVersionEvent $event): void
     {
         $changelogEntry = $event->changelogEntry();
         $event->output()->writeln($changelogEntry->contents);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -17,7 +18,7 @@ use Prophecy\Argument;
 
 class DiscoverChangelogEntryListenerTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $voidReturn = function () {
         };
@@ -138,7 +139,7 @@ EOC;
         $event->changelogEntryNotFound(Argument::any())->shouldNotHaveBeenCalled();
     }
 
-    public function unreleasedVersions() : iterable
+    public function unreleasedVersions(): iterable
     {
         yield 'null'       => [null];
         yield 'unreleased' => ['unreleased'];
@@ -147,7 +148,7 @@ EOC;
     /**
      * @dataProvider unreleasedVersions
      */
-    public function testNotifiesEventWithDiscoveredEntryWhenUnreleasedSectionFound(?string $version) : void
+    public function testNotifiesEventWithDiscoveredEntryWhenUnreleasedSectionFound(?string $version): void
     {
         $changelog = __DIR__ . '/../_files/CHANGELOG-WITH-UNRELEASED-SECTION.md';
 
@@ -201,7 +202,7 @@ EOC;
     /**
      * @dataProvider unreleasedVersions
      */
-    public function testNotifiesEventWithDiscoveredEntryWhenLinkedUnreleasedSectionFound(?string $version) : void
+    public function testNotifiesEventWithDiscoveredEntryWhenLinkedUnreleasedSectionFound(?string $version): void
     {
         $changelog = __DIR__ . '/../_files/CHANGELOG-WITH-LINKED-UNRELEASED-SECTION.md';
 

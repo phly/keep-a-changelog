@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2020 Matthew Weier O'Phinney
@@ -28,14 +29,14 @@ class PromoteEventTest extends TestCase
     /** @var OutputInterface|ObjectProphecy */
     private $output;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class)->reveal();
         $this->output     = $this->prophesize(OutputInterface::class);
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();
     }
 
-    public function testConstructorSetsVersionNewVersionAndReleaseDate() : void
+    public function testConstructorSetsVersionNewVersionAndReleaseDate(): void
     {
         $event = new PromoteEvent(
             $this->input,
@@ -50,7 +51,7 @@ class PromoteEventTest extends TestCase
         $this->assertSame('2020-07-16', $event->releaseDate());
     }
 
-    public function testCallingDidNotPromoteStopsPropagationAndEmitsOutput() : void
+    public function testCallingDidNotPromoteStopsPropagationAndEmitsOutput(): void
     {
         $event = new PromoteEvent(
             $this->input,
@@ -66,7 +67,7 @@ class PromoteEventTest extends TestCase
         $this->assertTrue($event->isPropagationStopped());
     }
 
-    public function testCallingChangelogReadyEmitsOutputButDoesNotStopPropagation() : void
+    public function testCallingChangelogReadyEmitsOutputButDoesNotStopPropagation(): void
     {
         $event = new PromoteEvent(
             $this->input,

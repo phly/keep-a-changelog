@@ -29,7 +29,7 @@ class ChangelogParser
      * @return iterable Where keys are the version entries, and values are the
      *     associated dates (either Y-m-d format, or the string 'TBD')
      */
-    public function findAllVersions(string $changelogFile) : iterable
+    public function findAllVersions(string $changelogFile): iterable
     {
         $unreleasedRegex = sprintf(
             '/^%s \[?unreleased\]?$/i',
@@ -83,7 +83,7 @@ class ChangelogParser
      * @throws Exception\ChangelogNotFoundException
      * @throws Exception\ChangelogMissingDateException
      */
-    public function findReleaseDateForVersion(string $changelog, string $version, bool $strict = false) : string
+    public function findReleaseDateForVersion(string $changelog, string $version, bool $strict = false): string
     {
         $regex = sprintf(
             '%s (?:\[%2$s\]|%2$s)',
@@ -110,7 +110,7 @@ class ChangelogParser
      * @throws Exception\ChangelogMissingDateException
      * @throws Exception\InvalidChangelogFormatException
      */
-    public function findChangelogForVersion(string $changelog, string $version) : string
+    public function findChangelogForVersion(string $changelog, string $version): string
     {
         $regex = sprintf(
             '%s (?:\[%2$s\]|%2$s)',
@@ -136,7 +136,7 @@ class ChangelogParser
         return $matches['changelog'];
     }
 
-    public function findLinks(string $changelogFile) : ChangelogEntry
+    public function findLinks(string $changelogFile): ChangelogEntry
     {
         $regex      = '/^\[.*?]:\s*\S+$/';
         $linksEntry = new ChangelogEntry();

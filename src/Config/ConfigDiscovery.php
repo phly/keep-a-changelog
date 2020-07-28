@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -29,7 +30,7 @@ class ConfigDiscovery implements IOInterface
         $this->config = new Config();
     }
 
-    public function config() : Config
+    public function config(): Config
     {
         return $this->config;
     }

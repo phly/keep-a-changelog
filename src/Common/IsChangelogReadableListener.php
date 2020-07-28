@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -13,7 +14,7 @@ use function is_readable;
 
 class IsChangelogReadableListener
 {
-    public function __invoke(EventInterface $event) : void
+    public function __invoke(EventInterface $event): void
     {
         $changelogFile = $event->config()->changelogFile();
 

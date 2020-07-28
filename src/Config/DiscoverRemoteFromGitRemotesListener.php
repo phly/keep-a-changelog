@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -32,11 +33,12 @@ class DiscoverRemoteFromGitRemotesListener
      * </code>
      *
      * @internal
+     *
      * @var callable
      */
     public $exec = 'exec';
 
-    public function __invoke(RemoteNameDiscovery $event) : void
+    public function __invoke(RemoteNameDiscovery $event): void
     {
         if ($event->remoteWasFound()) {
             // Already found
@@ -74,7 +76,7 @@ class DiscoverRemoteFromGitRemotesListener
     /**
      * @return string[]
      */
-    private function getRemotes(string $domain, string $package) : array
+    private function getRemotes(string $domain, string $package): array
     {
         $exec   = $this->exec;
         $output = [];
@@ -89,11 +91,13 @@ class DiscoverRemoteFromGitRemotesListener
         $discovered  = [];
 
         foreach ($output as $line) {
-            if (! preg_match(
-                '/^(?P<name>.*?)\s+(?P<url>.*?)\s+\((?P<type>.*?)\)$/',
-                $line,
-                $matches
-            )) {
+            if (
+                ! preg_match(
+                    '/^(?P<name>.*?)\s+(?P<url>.*?)\s+\((?P<type>.*?)\)$/',
+                    $line,
+                    $matches
+                )
+            ) {
                 continue;
             }
 
@@ -116,7 +120,7 @@ class DiscoverRemoteFromGitRemotesListener
         return $discovered;
     }
 
-    private function getDomainFromProviderUrl(?string $url) : ?string
+    private function getDomainFromProviderUrl(?string $url): ?string
     {
         if (! $url) {
             return $url;

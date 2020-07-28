@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -14,7 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 trait CommonOptionsTrait
 {
-    private function injectEditorOption(Command $command) : void
+    private function injectEditorOption(Command $command): void
     {
         $command->addOption(
             'editor',

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -13,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ValidateVersionListenerTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->event = $this->prophesize(VersionAwareEventInterface::class);
     }
@@ -28,7 +29,7 @@ class ValidateVersionListenerTest extends TestCase
         $this->assertNull($listener($this->event->reveal()));
     }
 
-    public function versions() : iterable
+    public function versions(): iterable
     {
         yield 'major-only'              => ['1', $isFailure = true];
         yield 'minor-only'              => ['1.1', $isFailure = true];

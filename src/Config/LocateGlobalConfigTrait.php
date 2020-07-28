@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -25,11 +26,12 @@ trait LocateGlobalConfigTrait
      * when attempting to find the config file.
      *
      * @internal
+     *
      * @var null|string
      */
     public $configRoot;
 
-    private function getConfigRoot() : string
+    private function getConfigRoot(): string
     {
         if ($this->configRoot) {
             return $this->configRoot;
@@ -51,7 +53,7 @@ trait LocateGlobalConfigTrait
         return sprintf('%s/.config', $this->normalizePath($configRoot));
     }
 
-    private function normalizePath(string $path) : string
+    private function normalizePath(string $path): string
     {
         return rtrim(strtr($path, '\\', '/'), '/');
     }

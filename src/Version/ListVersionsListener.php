@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -17,7 +18,7 @@ use function strlen;
 
 class ListVersionsListener
 {
-    public function __invoke(ListVersionsEvent $event) : void
+    public function __invoke(ListVersionsEvent $event): void
     {
         $output = $event->output();
 

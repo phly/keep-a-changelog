@@ -41,7 +41,7 @@ END;
         parent::__construct($name);
     }
 
-    protected function configure() : void
+    protected function configure(): void
     {
         $this->setDescription('Close a milestone for this package via your provider');
         $this->setHelp(self::HELP);
@@ -53,7 +53,7 @@ END;
         $this->injectProviderOptions($this);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         return $this->dispatcher
                 ->dispatch(new CloseMilestoneEvent(

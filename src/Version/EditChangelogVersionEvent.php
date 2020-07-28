@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -43,12 +44,12 @@ class EditChangelogVersionEvent extends AbstractEvent implements
         $this->editor     = $editor;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function editorFailed() : void
+    public function editorFailed(): void
     {
         $this->failed = true;
         $this->output->writeln(sprintf(
@@ -57,7 +58,7 @@ class EditChangelogVersionEvent extends AbstractEvent implements
         ));
     }
 
-    public function editComplete() : void
+    public function editComplete(): void
     {
         $message = $this->version
             ? sprintf(

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -24,7 +25,7 @@ class ShowMergedConfigListener
     use LocateGlobalConfigTrait;
     use MaskProviderTokensTrait;
 
-    public function __invoke(ShowConfigEvent $event) : void
+    public function __invoke(ShowConfigEvent $event): void
     {
         if (! $event->showMerged()) {
             return;
@@ -58,6 +59,7 @@ class ShowMergedConfigListener
      * For testing purposes only.
      *
      * @internal
+     *
      * @var null|string
      */
     public $localConfigRoot;

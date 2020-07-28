@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -18,7 +19,7 @@ use function sprintf;
 
 class InvalidUrlException extends InvalidArgumentException implements ExceptionInterface
 {
-    public static function forUrl(string $url, ProviderInterface $provider) : self
+    public static function forUrl(string $url, ProviderInterface $provider): self
     {
         return new self(sprintf(
             'The URL "%s" is invalid and cannot be used with provider of type %s',

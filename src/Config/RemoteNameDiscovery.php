@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -53,7 +54,7 @@ class RemoteNameDiscovery implements IOInterface, StoppableEventInterface
         $this->questionHelper = $questionHelper;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         if ($this->abort) {
             return true;
@@ -67,39 +68,39 @@ class RemoteNameDiscovery implements IOInterface, StoppableEventInterface
             || null !== $this->config->remote();
     }
 
-    public function config() : Config
+    public function config(): Config
     {
         return $this->config;
     }
 
-    public function questionHelper() : QuestionHelper
+    public function questionHelper(): QuestionHelper
     {
         return $this->questionHelper;
     }
 
-    public function remotes() : array
+    public function remotes(): array
     {
         return $this->remotes;
     }
 
-    public function remoteWasFound() : bool
+    public function remoteWasFound(): bool
     {
         return $this->remoteFound
             || null !== $this->config->remote();
     }
 
-    public function foundRemote(string $remote) : void
+    public function foundRemote(string $remote): void
     {
         $this->config->setRemote($remote);
         $this->remoteFound = true;
     }
 
-    public function setRemotes(array $remotes) : void
+    public function setRemotes(array $remotes): void
     {
         $this->remotes = $remotes;
     }
 
-    public function reportNoMatchingGitRemoteFound(string $domain, string $package) : void
+    public function reportNoMatchingGitRemoteFound(string $domain, string $package): void
     {
         $this->gitRemoteResolutionFailed = true;
         $output                          = $this->output();
@@ -115,7 +116,7 @@ class RemoteNameDiscovery implements IOInterface, StoppableEventInterface
         ));
     }
 
-    public function abort() : void
+    public function abort(): void
     {
         $this->abort = true;
         $this->output()->writeln('<error>Aborted at user request</error>');

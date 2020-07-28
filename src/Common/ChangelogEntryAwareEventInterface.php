@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -19,15 +20,15 @@ interface ChangelogEntryAwareEventInterface extends
      *
      * This method should stop propagation.
      */
-    public function changelogEntryNotFound(string $changelogFile, string $version) : void;
+    public function changelogEntryNotFound(string $changelogFile, string $version): void;
 
     /**
      * Update the event with the discovered changelog entry.
      */
-    public function discoveredChangelogEntry(ChangelogEntry $entry) : void;
+    public function discoveredChangelogEntry(ChangelogEntry $entry): void;
 
     /**
      * Retrieve the changelog entry, if it exists.
      */
-    public function changelogEntry() : ?ChangelogEntry;
+    public function changelogEntry(): ?ChangelogEntry;
 }

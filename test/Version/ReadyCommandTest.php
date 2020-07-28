@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -26,14 +27,14 @@ class ReadyCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
     }
 
-    public function inputOptions() : iterable
+    public function inputOptions(): iterable
     {
         $cases = [
             'defaults' => [null, null, date('Y-m-d'), null],

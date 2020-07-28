@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -14,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 interface IOInterface
 {
-    public function input() : InputInterface;
+    public function input(): InputInterface;
 
-    public function output() : OutputInterface;
+    public function output(): OutputInterface;
 }

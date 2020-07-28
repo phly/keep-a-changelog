@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -31,12 +32,12 @@ abstract class AbstractEvent implements EventInterface
      */
     protected $failed = false;
 
-    public function failed() : bool
+    public function failed(): bool
     {
         return $this->failed;
     }
 
-    public function changelogFileIsUnreadable(string $changelogFile) : void
+    public function changelogFileIsUnreadable(string $changelogFile): void
     {
         $this->failed = true;
         $this->output()->writeln(sprintf(
@@ -45,12 +46,12 @@ abstract class AbstractEvent implements EventInterface
         ));
     }
 
-    public function configurationIncomplete() : void
+    public function configurationIncomplete(): void
     {
         $this->failed = true;
     }
 
-    public function missingConfiguration() : bool
+    public function missingConfiguration(): bool
     {
         return null === $this->config;
     }
@@ -58,7 +59,7 @@ abstract class AbstractEvent implements EventInterface
     /**
      * Update the event with the discovered configuration instance.
      */
-    public function discoveredConfiguration(Config $config) : void
+    public function discoveredConfiguration(Config $config): void
     {
         $this->config = $config;
     }
@@ -66,7 +67,7 @@ abstract class AbstractEvent implements EventInterface
     /**
      * Return the configuration instance, if available.
      */
-    public function config() : ?Config
+    public function config(): ?Config
     {
         return $this->config;
     }
@@ -76,7 +77,7 @@ abstract class AbstractEvent implements EventInterface
      * configuration listener can dispatch its internal events in order to
      * aggregate configuration.
      */
-    public function dispatcher() : EventDispatcherInterface
+    public function dispatcher(): EventDispatcherInterface
     {
         return $this->dispatcher;
     }

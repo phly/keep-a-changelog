@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -25,7 +26,7 @@ class BumpChangelogVersionListenerTest extends TestCase
     /** @var string */
     private $tempFile;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->tempFile = tempnam(sys_get_temp_dir(), 'KAC');
         file_put_contents(
@@ -40,7 +41,7 @@ class BumpChangelogVersionListenerTest extends TestCase
         $this->event->config()->will([$this->config, 'reveal']);
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         unlink($this->tempFile);
     }
@@ -55,7 +56,7 @@ class BumpChangelogVersionListenerTest extends TestCase
         $this->assertNull($listener($this->event->reveal()));
     }
 
-    public function bumpMethods() : iterable
+    public function bumpMethods(): iterable
     {
         yield 'bugfix' => ['bumpPatchVersion', '2.0.1'];
         yield 'minor'  => ['bumpMinorVersion', '2.1.0'];
@@ -64,7 +65,6 @@ class BumpChangelogVersionListenerTest extends TestCase
 
     /**
      * @dataProvider bumpMethods
-     *
      * @param string $bumpMethod Method to use on internal ChangelogBump instance
      * @param string $expected   Version expected back after bumping
      */

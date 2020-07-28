@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -29,7 +30,7 @@ trait IniReadWriteTrait
      * @throws Exception\FileNotReadableException
      * @throws Exception\IniParsingFailedException
      */
-    public function readIniFile(string $file) : array
+    public function readIniFile(string $file): array
     {
         if (! is_readable($file)) {
             throw Exception\FileNotReadableException::forFile($file);
@@ -46,9 +47,8 @@ trait IniReadWriteTrait
 
     /**
      * @throws Exception\InvalidIniSectionDataException
-     * @param mixed $value
      */
-    public function arrayToIniString(array $data) : string
+    public function arrayToIniString(array $data): string
     {
         $aggregator = [];
 
@@ -77,7 +77,7 @@ trait IniReadWriteTrait
     /**
      * @param mixed $value
      */
-    private function processIniPair(string $key, $value) : array
+    private function processIniPair(string $key, $value): array
     {
         $this->validateValue($value, $key);
 
@@ -95,7 +95,7 @@ trait IniReadWriteTrait
     /**
      * @param mixed $value
      */
-    private function normalizeIniValue($value) : string
+    private function normalizeIniValue($value): string
     {
         if (null === $value) {
             return 'null';
@@ -110,7 +110,7 @@ trait IniReadWriteTrait
         }
     }
 
-    private function processIniHashMap(array $map, string $name) : array
+    private function processIniHashMap(array $map, string $name): array
     {
         $aggregate = [];
         foreach ($map as $key => $value) {
@@ -122,7 +122,7 @@ trait IniReadWriteTrait
         return $aggregate;
     }
 
-    private function processIniList(array $list, string $name) : array
+    private function processIniList(array $list, string $name): array
     {
         $name      = sprintf('%s[]', $name);
         $aggregate = [];
@@ -136,7 +136,7 @@ trait IniReadWriteTrait
      * @throws Exception\InvalidIniValueException
      * @param mixed $value
      */
-    private function validateValue($value, string $name) : void
+    private function validateValue($value, string $name): void
     {
         if (is_resource($value) || is_object($value)) {
             throw Exception\InvalidIniValueException::forValue($value, $name);
@@ -144,9 +144,9 @@ trait IniReadWriteTrait
     }
 
     /**
-     * @param mixed $value;
+     * @param mixed $value
      */
-    private function isAssociativeArray($value) : bool
+    private function isAssociativeArray($value): bool
     {
         if (! is_array($value) || empty($value)) {
             return false;

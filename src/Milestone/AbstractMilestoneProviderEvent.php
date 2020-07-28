@@ -22,17 +22,17 @@ abstract class AbstractMilestoneProviderEvent extends AbstractEvent
     /** @var null|ProviderInterface|MilestoneAwareProviderInterface */
     protected $provider;
 
-    public function provider() : ?ProviderInterface
+    public function provider(): ?ProviderInterface
     {
         return $this->provider;
     }
 
-    public function discoveredProvider(ProviderInterface $provider) : void
+    public function discoveredProvider(ProviderInterface $provider): void
     {
         $this->provider = $provider;
     }
 
-    public function providerIsIncomplete() : void
+    public function providerIsIncomplete(): void
     {
         $this->failed = true;
         $output       = $this->output();
@@ -66,7 +66,7 @@ abstract class AbstractMilestoneProviderEvent extends AbstractEvent
         );
     }
 
-    public function providerIncapableOfMilestones() : void
+    public function providerIncapableOfMilestones(): void
     {
         $this->failed = true;
         $output       = $this->output();

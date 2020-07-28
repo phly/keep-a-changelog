@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -26,12 +27,12 @@ class ChangelogEditorTest extends TestCase
     /** @var null|string */
     private $tempFile;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->tempFile = null;
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         if ($this->tempFile && file_exists($this->tempFile)) {
             unlink($this->tempFile);
@@ -39,7 +40,7 @@ class ChangelogEditorTest extends TestCase
         $this->tempFile = null;
     }
 
-    public function createChangelog() : string
+    public function createChangelog(): string
     {
         $this->tempFile = tempnam(sys_get_temp_dir(), 'CAK');
         file_put_contents(

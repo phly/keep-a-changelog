@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -15,22 +16,22 @@ use function sprintf;
 
 class ShowLocalConfigListener extends AbstractShowConfigListener
 {
-    public function shouldShowConfig(ShowConfigEvent $event) : bool
+    public function shouldShowConfig(ShowConfigEvent $event): bool
     {
         return $event->showLocal() && ! $event->showMerged();
     }
 
-    public function getConfigFile() : string
+    public function getConfigFile(): string
     {
         return sprintf('%s/.keep-a-changelog.ini', $this->configRoot ?: getcwd());
     }
 
-    public function getConfigType() : string
+    public function getConfigType(): string
     {
         return 'local';
     }
 
-    public function displayConfig(ShowConfigEvent $event, string $configFile) : void
+    public function displayConfig(ShowConfigEvent $event, string $configFile): void
     {
         $event->displayConfig(
             file_get_contents($configFile),
@@ -45,6 +46,7 @@ class ShowLocalConfigListener extends AbstractShowConfigListener
      * For testing purposes only.
      *
      * @internal
+     *
      * @var null|string
      */
     public $configRoot;

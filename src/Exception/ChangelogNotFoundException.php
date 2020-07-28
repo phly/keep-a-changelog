@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -15,7 +16,7 @@ use function sprintf;
 
 class ChangelogNotFoundException extends RuntimeException implements ExceptionInterface
 {
-    public static function forVersion(string $version) : self
+    public static function forVersion(string $version): self
     {
         return new self(sprintf(
             'Unable to find changelog entry matching version %s',

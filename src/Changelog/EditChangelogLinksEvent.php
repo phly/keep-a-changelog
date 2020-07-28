@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -48,32 +49,32 @@ class EditChangelogLinksEvent extends AbstractEvent implements EditorAwareEventI
         $this->dispatcher = $dispatcher;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function appendLinksToChangelogFile() : bool
+    public function appendLinksToChangelogFile(): bool
     {
         return $this->appendLinksToChangelogFile;
     }
 
-    public function links() : ?ChangelogEntry
+    public function links(): ?ChangelogEntry
     {
         return $this->links;
     }
 
-    public function discoveredLinks(ChangelogEntry $links) : void
+    public function discoveredLinks(ChangelogEntry $links): void
     {
         $this->links = $links;
     }
 
-    public function noLinksDiscovered() : void
+    public function noLinksDiscovered(): void
     {
         $this->appendLinksToChangelogFile = true;
     }
 
-    public function editComplete(string $changelogFile) : void
+    public function editComplete(string $changelogFile): void
     {
         $this->output->writeln(sprintf(
             '<info>Completed editing links for file %s</info>',
@@ -81,7 +82,7 @@ class EditChangelogLinksEvent extends AbstractEvent implements EditorAwareEventI
         ));
     }
 
-    public function editFailed(string $changelogFile) : void
+    public function editFailed(string $changelogFile): void
     {
         $this->failed = true;
         $this->output->writeln(sprintf(

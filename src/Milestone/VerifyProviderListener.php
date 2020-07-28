@@ -14,7 +14,7 @@ use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
 
 class VerifyProviderListener
 {
-    public function __invoke(AbstractMilestoneProviderEvent $event) : void
+    public function __invoke(AbstractMilestoneProviderEvent $event): void
     {
         $config       = $event->config();
         $providerSpec = $config->provider();

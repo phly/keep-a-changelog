@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -39,14 +40,14 @@ class ProviderSpec
         $this->name = $name;
     }
 
-    public function isComplete() : bool
+    public function isComplete(): bool
     {
         return $this->className
             && class_exists($this->className)
             && in_array(ProviderInterface::class, class_implements($this->className), true);
     }
 
-    public function createProvider() : ProviderInterface
+    public function createProvider(): ProviderInterface
     {
         $class    = $this->className;
         $provider = new $class();
@@ -66,32 +67,32 @@ class ProviderSpec
         return $provider;
     }
 
-    public function name() : string
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function url() : ?string
+    public function url(): ?string
     {
         return $this->url;
     }
 
-    public function setClassName(string $className) : void
+    public function setClassName(string $className): void
     {
         $this->className = $className;
     }
 
-    public function setPackage(string $package) : void
+    public function setPackage(string $package): void
     {
         $this->package = $package;
     }
 
-    public function setToken(string $token) : void
+    public function setToken(string $token): void
     {
         $this->token = $token;
     }
 
-    public function setUrl(string $url) : void
+    public function setUrl(string $url): void
     {
         $this->url = $url;
     }

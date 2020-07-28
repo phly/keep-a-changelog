@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -15,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class VerifyRemoveOptionsListenerTest extends TestCase
 {
-    public function eventOptions() : iterable
+    public function eventOptions(): iterable
     {
         yield 'neither true' => [$removeLocal = false, $removeGlobal = false, $notifiesEvent = true];
         yield 'local true'   => [$removeLocal = true, $removeGlobal = false, $notifiesEvent = false];

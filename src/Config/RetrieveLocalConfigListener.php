@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -43,12 +44,12 @@ class RetrieveLocalConfigListener extends AbstractConfigListener
     protected $configType            = 'local config file';
     protected $consumeProviderTokens = false;
 
-    protected function getConfigFile() : string
+    protected function getConfigFile(): string
     {
         return realpath(getcwd()) . '/.keep-a-changelog.ini';
     }
 
-    protected function processDefaults(array $defaults, Config $config) : void
+    protected function processDefaults(array $defaults, Config $config): void
     {
         parent::processDefaults($defaults, $config);
 

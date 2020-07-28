@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -16,7 +17,7 @@ use UnexpectedValueException;
 
 class ChangelogEntryTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->entry = new ChangelogEntry();
     }
@@ -40,7 +41,7 @@ class ChangelogEntryTest extends TestCase
         $this->entry->unknownProperty = '';
     }
 
-    public function invalidNumericValues() : iterable
+    public function invalidNumericValues(): iterable
     {
         yield 'false' => [false];
         yield 'true' => [true];
@@ -51,7 +52,7 @@ class ChangelogEntryTest extends TestCase
         yield 'object' => [(object) ['value' => 1]];
     }
 
-    public function invalidLengthValues() : iterable
+    public function invalidLengthValues(): iterable
     {
         yield 'null' => [null];
         yield from $this->invalidNumericValues();
@@ -77,7 +78,7 @@ class ChangelogEntryTest extends TestCase
         $this->entry->length = $value;
     }
 
-    public function invalidStringValues() : iterable
+    public function invalidStringValues(): iterable
     {
         yield 'null' => [null];
         yield 'false' => [false];

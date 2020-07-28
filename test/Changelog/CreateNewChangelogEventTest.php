@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018 Matthew Weier O'Phinney
@@ -20,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateNewChangelogEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->config     = $this->prophesize(Config::class);
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();
@@ -28,7 +29,7 @@ class CreateNewChangelogEventTest extends TestCase
         $this->output     = $this->prophesize(OutputInterface::class);
     }
 
-    public function testPropagationIsNotStoppedByDefault() : CreateNewChangelogEvent
+    public function testPropagationIsNotStoppedByDefault(): CreateNewChangelogEvent
     {
         $event = new CreateNewChangelogEvent(
             $this->input,
@@ -50,7 +51,7 @@ class CreateNewChangelogEventTest extends TestCase
         $this->assertInstanceOf(Common\VersionAwareEventInterface::class, $event);
     }
 
-    public function booleanFlags() : iterable
+    public function booleanFlags(): iterable
     {
         yield 'true' => [true];
         yield 'false' => [false];

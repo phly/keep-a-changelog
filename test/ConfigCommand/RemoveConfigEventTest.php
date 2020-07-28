@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -19,14 +20,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoveConfigEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input  = $this->prophesize(InputInterface::class);
         $this->output = $this->prophesize(OutputInterface::class);
         $this->output->writeln(Argument::any())->willReturn(null);
     }
 
-    public function createEvent(bool $removeLocal, bool $removeGlobal) : RemoveConfigEvent
+    public function createEvent(bool $removeLocal, bool $removeGlobal): RemoveConfigEvent
     {
         return new RemoveConfigEvent(
             $this->input->reveal(),
@@ -36,7 +37,7 @@ class RemoveConfigEventTest extends TestCase
         );
     }
 
-    public function testImplementsIOInterface() : RemoveConfigEvent
+    public function testImplementsIOInterface(): RemoveConfigEvent
     {
         $event = $this->createEvent(true, true);
         $this->assertInstanceOf(IOInterface::class, $event);
@@ -46,7 +47,7 @@ class RemoveConfigEventTest extends TestCase
     /**
      * @depends testImplementsIOInterface
      */
-    public function testImplementsStoppableEventInterface(RemoveConfigEvent $event) : RemoveConfigEvent
+    public function testImplementsStoppableEventInterface(RemoveConfigEvent $event): RemoveConfigEvent
     {
         $this->assertInstanceOf(StoppableEventInterface::class, $event);
         return $event;
@@ -55,7 +56,7 @@ class RemoveConfigEventTest extends TestCase
     /**
      * @depends testImplementsStoppableEventInterface
      */
-    public function testStopPropagationAndFailureStatusAreFalseByDefault(RemoveConfigEvent $event) : RemoveConfigEvent
+    public function testStopPropagationAndFailureStatusAreFalseByDefault(RemoveConfigEvent $event): RemoveConfigEvent
     {
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2020 Matthew Weier O'Phinney
@@ -19,7 +20,7 @@ class PromoteUnreleasedToNewVersionListener
 {
     use ChangelogEditSpawnerTrait;
 
-    public function __invoke(PromoteEvent $event) : void
+    public function __invoke(PromoteEvent $event): void
     {
         $entry    = $event->changelogEntry();
         $lines    = explode("\n", $entry->contents);

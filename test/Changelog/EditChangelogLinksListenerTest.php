@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -23,7 +24,7 @@ use function file_get_contents;
 
 class EditChangelogLinksListenerTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $voidReturn            = function () {
         };
@@ -50,7 +51,7 @@ class EditChangelogLinksListenerTest extends TestCase
         $this->listener->mockTempFile    = __DIR__ . '/../_files/LINKS.md';
     }
 
-    public function emptyContentOrLinks() : iterable
+    public function emptyContentOrLinks(): iterable
     {
         yield 'empty' => [null];
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -48,7 +49,8 @@ class BumpChangelogVersionEvent extends AbstractEvent
         ?string $bumpMethod = null,
         ?string $version = null
     ) {
-        if ((! $bumpMethod && ! $version)
+        if (
+            (! $bumpMethod && ! $version)
             || ($bumpMethod && $version)
         ) {
             throw Exception\InvalidChangelogBumpCriteriaException::forCriteria($bumpMethod, $version);
@@ -66,22 +68,22 @@ class BumpChangelogVersionEvent extends AbstractEvent
         $this->version    = $version;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function bumpMethod() : ?string
+    public function bumpMethod(): ?string
     {
         return $this->bumpMethod;
     }
 
-    public function version() : ?string
+    public function version(): ?string
     {
         return $this->version;
     }
 
-    public function bumpedChangelog(string $version) : void
+    public function bumpedChangelog(string $version): void
     {
         $this->version = $version;
         $this->output()->writeln(sprintf(

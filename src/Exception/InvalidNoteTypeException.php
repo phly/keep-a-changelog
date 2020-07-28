@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -17,7 +18,7 @@ use function sprintf;
 
 class InvalidNoteTypeException extends InvalidArgumentException implements ExceptionInterface
 {
-    public static function forCommandName(string $command) : self
+    public static function forCommandName(string $command): self
     {
         return new self(sprintf(
             'Invalid command name "%s"; must be of form "namespace:type", where type is in [%s]',

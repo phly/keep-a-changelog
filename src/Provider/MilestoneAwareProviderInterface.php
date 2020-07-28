@@ -15,9 +15,9 @@ interface MilestoneAwareProviderInterface
     /**
      * @return Milestone[]
      */
-    public function listMilestones() : iterable;
+    public function listMilestones(): iterable;
 
-    public function createMilestone(string $title, string $description = '') : Milestone;
+    public function createMilestone(string $title, string $description = ''): Milestone;
 
-    public function closeMilestone(int $id) : bool;
+    public function closeMilestone(int $id): bool;
 }

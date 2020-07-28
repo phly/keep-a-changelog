@@ -38,22 +38,22 @@ class CreateMilestoneEvent extends AbstractMilestoneProviderEvent
         $this->description = $input->getArgument('description') ?? '';
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function description() : string
+    public function description(): string
     {
         return $this->description;
     }
 
-    public function title() : string
+    public function title(): string
     {
         return $this->title;
     }
 
-    public function milestoneCreated(Milestone $milestone) : void
+    public function milestoneCreated(Milestone $milestone): void
     {
         $this->output()->writeln(sprintf(
             '<info>Created milestone (%d) %s: %s</info>',
@@ -63,7 +63,7 @@ class CreateMilestoneEvent extends AbstractMilestoneProviderEvent
         ));
     }
 
-    public function errorCreatingMilestone(Throwable $e) : void
+    public function errorCreatingMilestone(Throwable $e): void
     {
         $this->failed = true;
         $output       = $this->output();

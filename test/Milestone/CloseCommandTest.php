@@ -23,7 +23,7 @@ class CloseCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
@@ -32,7 +32,7 @@ class CloseCommandTest extends TestCase
         $this->input->getArgument('id')->willReturn('200');
     }
 
-    public function testExecutionReturnsZeroOnSuccess() : void
+    public function testExecutionReturnsZeroOnSuccess(): void
     {
         $input      = $this->input;
         $output     = $this->output;
@@ -58,7 +58,7 @@ class CloseCommandTest extends TestCase
         $this->assertSame(0, $this->executeCommand($command));
     }
 
-    public function testExecutionReturnsOneOnFailure() : void
+    public function testExecutionReturnsOneOnFailure(): void
     {
         $input      = $this->input;
         $output     = $this->output;

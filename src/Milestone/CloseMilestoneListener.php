@@ -16,7 +16,7 @@ use function sprintf;
 
 class CloseMilestoneListener
 {
-    public function __invoke(CloseMilestoneEvent $event) : void
+    public function __invoke(CloseMilestoneEvent $event): void
     {
         $id       = $event->id();
         $provider = $event->provider();

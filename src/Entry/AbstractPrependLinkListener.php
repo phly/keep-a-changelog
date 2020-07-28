@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -21,15 +22,15 @@ use function stream_context_create;
 
 abstract class AbstractPrependLinkListener
 {
-    abstract public function getIdentifier(AddChangelogEntryEvent $event) : ?int;
+    abstract public function getIdentifier(AddChangelogEntryEvent $event): ?int;
 
-    abstract public function generateLink(ProviderInterface $provider, int $identifier) : string;
+    abstract public function generateLink(ProviderInterface $provider, int $identifier): string;
 
-    abstract public function reportInvalidIdentifier(AddChangelogEntryEvent $event, int $identifier) : void;
+    abstract public function reportInvalidIdentifier(AddChangelogEntryEvent $event, int $identifier): void;
 
-    abstract public function reportInvalidLink(AddChangelogEntryEvent $event, string $link) : void;
+    abstract public function reportInvalidLink(AddChangelogEntryEvent $event, string $link): void;
 
-    public function __invoke(AddChangelogEntryEvent $event) : void
+    public function __invoke(AddChangelogEntryEvent $event): void
     {
         $identifier = $this->getIdentifier($event);
         if (! $identifier) {
@@ -61,7 +62,7 @@ abstract class AbstractPrependLinkListener
         ));
     }
 
-    protected function extractUrlFromLink(string $link) : string
+    protected function extractUrlFromLink(string $link): string
     {
         if (! preg_match('#\((?P<url>.*?)\)$#', $link, $matches)) {
             return '';
@@ -70,7 +71,7 @@ abstract class AbstractPrependLinkListener
         return $matches['url'];
     }
 
-    protected function probeLink(string $link) : bool
+    protected function probeLink(string $link): bool
     {
         if (empty($link)) {
             return false;
@@ -92,7 +93,8 @@ abstract class AbstractPrependLinkListener
             return true;
         }
 
-        if ($statusCode >= 300
+        if (
+            $statusCode >= 300
             && $statusCode <= 399
             && array_key_exists('Location', $headers)
         ) {
@@ -111,6 +113,7 @@ abstract class AbstractPrependLinkListener
      * - true|false return this value
      *
      * @internal
+     *
      * @var null|bool
      */
     public $probeLinkStatus;

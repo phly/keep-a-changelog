@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -31,17 +32,17 @@ gitlab[token] = token-should-be-provided-here
 
 EOT;
 
-    public function configCreateRequested(CreateConfigEvent $event) : bool
+    public function configCreateRequested(CreateConfigEvent $event): bool
     {
         return $event->createGlobal();
     }
 
-    public function getConfigFileName() : string
+    public function getConfigFileName(): string
     {
         return sprintf('%s/keep-a-changelog.ini', $this->getConfigRoot());
     }
 
-    public function getConfigTemplate() : string
+    public function getConfigTemplate(): string
     {
         return self::TEMPLATE;
     }

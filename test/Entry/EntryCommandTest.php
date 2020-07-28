@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
@@ -23,14 +24,14 @@ use TypeError;
 
 class EntryCommandTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
     }
 
-    public function executeCommand(EntryCommand $command) : int
+    public function executeCommand(EntryCommand $command): int
     {
         $r = new ReflectionMethod($command, 'execute');
         $r->setAccessible(true);
@@ -43,7 +44,7 @@ class EntryCommandTest extends TestCase
         new EntryCommand($this->dispatcher->reveal());
     }
 
-    public function nonNamespacedCommandNames() : iterable
+    public function nonNamespacedCommandNames(): iterable
     {
         // @phpcs:disable
         return [

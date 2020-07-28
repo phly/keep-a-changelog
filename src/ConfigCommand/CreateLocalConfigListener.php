@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -26,17 +27,17 @@ gitlab[class] = Phly\KeepAChangelog\Provider\GitLab
 
 EOT;
 
-    public function configCreateRequested(CreateConfigEvent $event) : bool
+    public function configCreateRequested(CreateConfigEvent $event): bool
     {
         return $event->createLocal();
     }
 
-    public function getConfigFileName() : string
+    public function getConfigFileName(): string
     {
         return sprintf('%s/.keep-a-changelog.ini', $this->configRoot ?: getcwd());
     }
 
-    public function getConfigTemplate() : string
+    public function getConfigTemplate(): string
     {
         return self::TEMPLATE;
     }
@@ -47,6 +48,7 @@ EOT;
      * For testing purposes only.
      *
      * @internal
+     *
      * @var null|string
      */
     public $configRoot;

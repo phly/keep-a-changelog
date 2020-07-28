@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -21,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AddChangelogEntryEventTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
@@ -36,7 +37,7 @@ class AddChangelogEntryEventTest extends TestCase
         ?string $version = null,
         ?int $patchNumber = null,
         ?int $issueNumber = null
-    ) : AddChangelogEntryEvent {
+    ): AddChangelogEntryEvent {
         return new AddChangelogEntryEvent(
             $this->input->reveal(),
             $this->output->reveal(),
@@ -49,7 +50,7 @@ class AddChangelogEntryEventTest extends TestCase
         );
     }
 
-    public function testImplementsPackageEvent() : AddChangelogEntryEvent
+    public function testImplementsPackageEvent(): AddChangelogEntryEvent
     {
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog');
         $this->assertInstanceOf(EventInterface::class, $event);

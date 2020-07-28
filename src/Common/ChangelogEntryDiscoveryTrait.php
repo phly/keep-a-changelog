@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -22,7 +23,7 @@ trait ChangelogEntryDiscoveryTrait
     /** @var null|ChangelogEntry */
     private $changelogEntry;
 
-    public function changelogEntryNotFound(string $changelogFile, string $version) : void
+    public function changelogEntryNotFound(string $changelogFile, string $version): void
     {
         $this->failed = true;
         $this->output->writeln(sprintf(
@@ -33,12 +34,12 @@ trait ChangelogEntryDiscoveryTrait
         ));
     }
 
-    public function discoveredChangelogEntry(ChangelogEntry $entry) : void
+    public function discoveredChangelogEntry(ChangelogEntry $entry): void
     {
         $this->changelogEntry = $entry;
     }
 
-    public function changelogEntry() : ?ChangelogEntry
+    public function changelogEntry(): ?ChangelogEntry
     {
         return $this->changelogEntry;
     }

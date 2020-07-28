@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -41,17 +42,17 @@ class ReadyLatestChangelogEvent extends AbstractEvent implements ChangelogEntryA
         $this->version     = $version;
     }
 
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->failed;
     }
 
-    public function releaseDate() : string
+    public function releaseDate(): string
     {
         return $this->releaseDate;
     }
 
-    public function malformedReleaseLine(string $versionLine) : void
+    public function malformedReleaseLine(string $versionLine): void
     {
         $this->failed = true;
         $this->output->writeln(
@@ -65,7 +66,7 @@ class ReadyLatestChangelogEvent extends AbstractEvent implements ChangelogEntryA
         $this->output->writeln(sprintf('  %s', $versionLine));
     }
 
-    public function changelogReady() : void
+    public function changelogReady(): void
     {
         $versionString = $this->version
             ? sprintf('changelog version %s', $this->version)

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
  * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
@@ -29,7 +30,7 @@ class ConfigListener
         $this->requiresRemoteName  = $requiresRemoteName;
     }
 
-    public function __invoke(EventInterface $event) : void
+    public function __invoke(EventInterface $event): void
     {
         $input  = $event->input();
         $output = $event->output();
@@ -53,7 +54,7 @@ class ConfigListener
         $event->discoveredConfiguration($config);
     }
 
-    private function packageCheck(EventInterface $event, Config $config) : bool
+    private function packageCheck(EventInterface $event, Config $config): bool
     {
         if (! $this->requiresPackageName) {
             return true;
@@ -66,7 +67,8 @@ class ConfigListener
         $input  = $event->input();
         $output = $event->output();
 
-        if ($event->dispatcher()
+        if (
+            $event->dispatcher()
             ->dispatch(new PackageNameDiscovery($input, $output, $config))
             ->packageWasFound()
         ) {
@@ -81,7 +83,7 @@ class ConfigListener
         return false;
     }
 
-    private function remoteCheck(EventInterface $event, Config $config) : bool
+    private function remoteCheck(EventInterface $event, Config $config): bool
     {
         if (! $this->requiresRemoteName) {
             return true;
@@ -94,7 +96,8 @@ class ConfigListener
         $input  = $event->input();
         $output = $event->output();
 
-        if ($event->dispatcher()
+        if (
+            $event->dispatcher()
             ->dispatch(new RemoteNameDiscovery($input, $output, $config, new QuestionHelper()))
             ->remoteWasFound()
         ) {
