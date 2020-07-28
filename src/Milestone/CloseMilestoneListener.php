@@ -10,15 +10,13 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Milestone;
 
-use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Throwable;
 
 use function sprintf;
 
 class CloseMilestoneListener
 {
-    public function __invoke(CloseMilestoneEvent $event): void
+    public function __invoke(CloseMilestoneEvent $event) : void
     {
         $id       = $event->id();
         $provider = $event->provider();

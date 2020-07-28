@@ -23,14 +23,14 @@ class ListCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
     }
 
-    public function testExecutionReturnsZeroOnSuccess(): void
+    public function testExecutionReturnsZeroOnSuccess() : void
     {
         $input      = $this->input;
         $output     = $this->output;
@@ -55,7 +55,7 @@ class ListCommandTest extends TestCase
         $this->assertSame(0, $this->executeCommand($command));
     }
 
-    public function testExecutionReturnsOneOnFailure(): void
+    public function testExecutionReturnsOneOnFailure() : void
     {
         $input      = $this->input;
         $output     = $this->output;

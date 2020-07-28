@@ -34,7 +34,7 @@ class ListMilestonesEventTest extends TestCase
     /** @var OutputInterface|ObjectProphecy */
     private $output;
 
-    public function setUp(): void
+    public function setUp() : void
     {
         $this->input      = $this->prophesize(InputInterface::class);
         $this->output     = $this->prophesize(OutputInterface::class);
@@ -46,13 +46,13 @@ class ListMilestonesEventTest extends TestCase
         );
     }
 
-    public function testIndicatingMilestonesWithEmptyArraySendsOutputIndicatingNoneFound(): void
+    public function testIndicatingMilestonesWithEmptyArraySendsOutputIndicatingNoneFound() : void
     {
         $this->output->writeln(Argument::containingString('No milestones discovered'))->shouldBeCalled();
         $this->assertNull($this->event->milestonesRetrieved([]));
     }
 
-    public function testIndicatingMilestonesWithArraySendsOutputListingMilestoneData(): void
+    public function testIndicatingMilestonesWithArraySendsOutputListingMilestoneData() : void
     {
         $output     = $this->output;
         $milestone1 = new Milestone(1, '1.0.0', '1.0.0 requirements');
@@ -98,7 +98,7 @@ class ListMilestonesEventTest extends TestCase
         ]));
     }
 
-    public function testIndicatingErrorRetrievingMilestonesSendsOutputAndMarksEventFailed(): void
+    public function testIndicatingErrorRetrievingMilestonesSendsOutputAndMarksEventFailed() : void
     {
         $output = $this->output;
         $e      = new RuntimeException('this is the error message');

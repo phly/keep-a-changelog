@@ -32,7 +32,7 @@ class CreateMilestoneListenerTest extends TestCase
     /** @var MilestoneAwareProviderInterface|ObjectProphecy */
     private $provider;
 
-    public function setUp(): void
+    public function setUp() : void
     {
         $this->provider = $this->prophesize(MilestoneAwareProviderInterface::class)
             ->willImplement(ProviderInterface::class);
@@ -46,7 +46,7 @@ class CreateMilestoneListenerTest extends TestCase
         $this->event->output()->will([$this->output, 'reveal']);
     }
 
-    public function testListenerInformsEventWhenMilestoneIsCreated(): void
+    public function testListenerInformsEventWhenMilestoneIsCreated() : void
     {
         $milestone = $this->prophesize(Milestone::class)->reveal();
         $this->provider->createMilestone('2.0.0', '2.0.0 requirements')->willReturn($milestone)->shouldBeCalled();
@@ -58,7 +58,7 @@ class CreateMilestoneListenerTest extends TestCase
         $this->assertNull($listener($this->event->reveal()));
     }
 
-    public function testListenerInformsEventOfMilestoneCreationError(): void
+    public function testListenerInformsEventOfMilestoneCreationError() : void
     {
         $e = new RuntimeException('this is the error');
         $this->provider->createMilestone('2.0.0', '2.0.0 requirements')->willThrow($e)->shouldBeCalled();
