@@ -18,7 +18,7 @@ use function sprintf;
 
 class CloseMilestoneListener
 {
-    public function __invoke(CloseMilestoneEvent $event) : void
+    public function __invoke(CloseMilestoneEvent $event): void
     {
         $id       = $event->id();
         $provider = $event->provider();
@@ -29,13 +29,12 @@ class CloseMilestoneListener
         ));
 
         try {
-            /** @var ProviderInterface|MilestoneAwareProviderInterface $provider */
-            $milestone = $provider->closeMilestone($id);
+            $status = $provider->closeMilestone($id);
         } catch (Throwable $e) {
             $event->errorClosingMilestone($e);
             return;
         }
 
-        $event->milestoneClosed($milestone);
+        $event->milestoneClosed();
     }
 }

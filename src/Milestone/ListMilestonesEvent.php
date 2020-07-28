@@ -66,7 +66,7 @@ class ListMilestonesEvent extends AbstractMilestoneProviderEvent
         $this->failed = true;
         $output       = $this->output();
 
-        $output->writeln('<error>Error listing milestone!</error>');
+        $output->writeln('<error>Error listing milestones!</error>');
         $output->writeln('An error occurred when attempting to retrieve milestones from your provider:');
         $output->writeln('');
         $output->writeln('Error Message: ' . $e->getMessage());
