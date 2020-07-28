@@ -20,8 +20,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function sprintf;
-
 trait CreateMilestoneOptionsTrait
 {
     private function injectMilestoneOptions(Command $command) : void
@@ -57,8 +55,6 @@ trait CreateMilestoneOptionsTrait
         OutputInterface $output,
         EventDispatcherInterface $dispatcher
     ) : CreateMilestoneEvent {
-        $output->writeln(sprintf('<info>Creating milestone %s</info>', $name));
-
         $input = new ArrayInput(
             ['title' => $name],
             new InputDefinition([

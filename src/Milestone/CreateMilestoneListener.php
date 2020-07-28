@@ -25,7 +25,7 @@ class CreateMilestoneListener
         $provider    = $event->provider();
 
         $event->output()->writeln(sprintf(
-            '<info>Creating milestone %s (%s)</info>',
+            '<info>Creating milestone "%s" (%s)</info>',
             $title,
             $description
         ));
