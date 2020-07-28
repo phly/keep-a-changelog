@@ -18,6 +18,7 @@ maintainer, all you really want to do is:
   changelog.
 - View or edit a changelog version.
 - Extract a changelog version for use in a tag or release.
+- List, create, and close project milestones.
 
 This tool provides those features and more, allowing you to quickly and easily
 handle changelogs for your project.

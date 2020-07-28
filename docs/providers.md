@@ -149,3 +149,51 @@ The default providers available are:
 
 - github (default)
 - gitlab
+
+## Milestone-Aware Providers
+
+- **Since 2.6.0**
+
+Starting in 2.6.0, the project provides an additional interface,
+`Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface`, defining the
+following methods:
+
+```php
+namespace Phly\KeepAChangelog\Provider;
+
+interface MilestoneAwareProviderInterface
+{
+    /**
+     * @return Milestone[]
+     */
+    public function listMilestones() : iterable;
+
+    public function createMilestone(string $title, string $description = '') : Milestone;
+
+    public function closeMilestone(int $id) : bool;
+}
+```
+
+The `Milestone` class is a value object:
+
+```php
+
+namespace Phly\KeepAChangelog\Provider;
+
+class Milestone
+{
+    public function __construct(int $id, string $title, string $description = '');
+
+    public function id() : int;
+
+    public function title() : string;
+
+    public function description() : string;
+}
+```
+
+Providers that implement `MilestoneAwareProviderInterface` are indicating that
+they can create project milestones; the feature is used with the `milestone:*`
+commands, and optionally with the `bump*` and `unreleased:promote` commands.
+
+Currently, each of the github and gitlab providers now implement this interface.
