@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.6.0 - TBD
+
+### Added
+
+- [#76](https://github.com/phly/keep-a-changelog/pull/76) adds "milestone" commands for listing, creating, and closing milestones:
+  - `milestone:list` will list milestones.
+  - `milestone:create` will create a milestone, optionally with a description.
+  - `milestone:close` will close a milestone.
+
+- [#76](https://github.com/phly/keep-a-changelog/pull/76) adds `--create-milestone` and `--create-milestone-with-name` options to the `bump:* `and `unreleased:promote` commands, allowing them to optionally create a milestone on completion.
+
+- [#76](https://github.com/phly/keep-a-changelog/pull/76) adds a new provider interface, `MilestoneAwareProviderInterface`, for indicating that a provider is capable of manipulating project milestones.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## Unreleased - TBD
 
 ### Added
