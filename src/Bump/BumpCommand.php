@@ -45,6 +45,9 @@ Add a new %1$s release entry to the changelog, based on the latest release.
 Parses the CHANGELOG.md file to determine the latest release, and creates
 a new entry representing the next %1$s release.
 
+If --create-milestone or --create-milestone-with-name are provided, a milestone
+will be created for the repository as well.
+
 EOH;
 
     private const HELP_TEMPLATE_UNRELEASED = <<<'EOH'

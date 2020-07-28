@@ -29,6 +29,9 @@ class BumpToVersionCommand extends Command
     private const HELP = <<<'EOH'
 Add a new release entry to the changelog, based on the latest release specified.
 
+If --create-milestone or --create-milestone-with-name are provided, a milestone
+will be created for the repository as well.
+
 EOH;
 
     /** @var EventDispatcherInterface */

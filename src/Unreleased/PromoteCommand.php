@@ -30,6 +30,9 @@ class PromoteCommand extends Command
 Renames the current Unreleased version to the <version> provided, and sets the
 release date to today (unless the --date|-d option is provided).
 
+If --create-milestone or --create-milestone-with-name are provided, a milestone
+will be created for the repository as well.
+
 EOH;
 
     /** @var EventDispatcherInterface */
