@@ -140,7 +140,7 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
 
         $milestone = $this->getClient()->api('milestones')->create($this->package, [
             'title'       => $title,
-            'description' => empty($description) ? null : $description,
+            'description' => empty($description) ? '' : $description,
         ]);
 
         return new Milestone(

@@ -178,7 +178,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
 
         $milestone = $this->getClient()->api('issue')->milestones()->create($org, $repo, [
             'title'       => $title,
-            'description' => empty($description) ? null : $description,
+            'description' => empty($description) ? '' : $description,
         ]);
 
         return new Milestone(
