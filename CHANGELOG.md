@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.0 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#77](https://github.com/phly/keep-a-changelog/pull/77) updates the php-http/guzzle6-adapter dependency to also allow 2.0 versions, allowing the tool to coexist with other tools depending on that later version. Functionally, there are no changes.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.6.0 - 2020-07-28
 
 ### Added
