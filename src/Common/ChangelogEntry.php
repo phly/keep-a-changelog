@@ -70,6 +70,21 @@ class ChangelogEntry
         }
     }
 
+    public function contents(): string
+    {
+        return $this->contents;
+    }
+
+    public function index(): int
+    {
+        return $this->index;
+    }
+
+    public function length(): int
+    {
+        return $this->length;
+    }
+
     private function setContents(string $value): void
     {
         $this->contents = $value;
@@ -77,7 +92,7 @@ class ChangelogEntry
 
     private function setIndex(?int $value): void
     {
-        $this->index = $value;
+        $this->index = $value ?: 0;
     }
 
     private function setLength(int $value): void

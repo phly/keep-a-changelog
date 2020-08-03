@@ -25,7 +25,7 @@ class EditChangelogLinksListener
     {
         $changelog = $event->config()->changelogFile();
         $links     = $event->links();
-        $contents  = $links instanceof ChangelogEntry ? $links->contents : '';
+        $contents  = $links instanceof ChangelogEntry ? $links->contents() : '';
         $tempFile  = $this->createTempFileWithContents($contents);
 
         $status = $this->getEditor()->spawnEditor(

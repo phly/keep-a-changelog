@@ -100,4 +100,18 @@ class ChangelogEntryTest extends TestCase
         $this->expectException(TypeError::class);
         $this->entry->contents = $value;
     }
+
+    public function testAccessorsProxyToProperties(): void
+    {
+        $contents              = 'This is the contents';
+        $length                = 1;
+        $index                 = 0;
+        $this->entry->contents = $contents;
+        $this->entry->index    = $index;
+        $this->entry->length   = $length;
+
+        $this->assertSame($contents, $this->entry->contents());
+        $this->assertSame($index, $this->entry->index());
+        $this->assertSame($length, $this->entry->length());
+    }
 }
