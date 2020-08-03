@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.8.0 - TBD
+## 2.8.0 - 2020-08-03
 
 ### Added
 
-- Nothing.
+- [#78](https://github.com/phly/keep-a-changelog/pull/78) adds accessor methods with return types to the `Phly\KeepAChangelog\Common\ChangelogEntry` class. This change only affects code consumers of the package, and has no effect on end-user consumers of the tooling.
 
 ### Changed
 
