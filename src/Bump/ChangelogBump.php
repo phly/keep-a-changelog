@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Bump;
 
+use Phly\KeepAChangelog\Exception;
+
 use function explode;
 use function file_get_contents;
 use function file_put_contents;

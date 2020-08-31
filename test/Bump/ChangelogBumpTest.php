@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\Bump;
 
 use Phly\KeepAChangelog\Bump\ChangelogBump;
+use Phly\KeepAChangelog\Exception\ChangelogEntriesNotFoundException;
 use PHPUnit\Framework\TestCase;
 
 use function file_get_contents;
@@ -206,5 +207,16 @@ EOC;
 
         $this->bumper->updateChangelog('3.2.1');
         $this->assertEquals($expected, file_get_contents($this->tempFile));
+    }
+
+    public function testFindLatestVersionThrowsExceptionIfNoChangelogEntriesFound(): void
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'KAC');
+        file_put_contents($this->tempFile, 'There are no changelog entries here');
+        $bumper = new ChangelogBump($tempFile);
+
+        $this->expectException(ChangelogEntriesNotFoundException::class);
+
+        $bumper->findLatestVersion();
     }
 }

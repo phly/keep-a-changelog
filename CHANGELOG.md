@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.8.1 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#79](https://github.com/phly/keep-a-changelog/pull/79) fixes a case where the `bump` command (and its subcommands) would result in a fatal error if unable to detect any changelog entries.
+
 ## 2.8.0 - 2020-08-03
 
 ### Added
