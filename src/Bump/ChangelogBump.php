@@ -107,7 +107,7 @@ EOT;
         $changelog = sprintf(self::TEMPLATE, $version);
         $contents  = file_get_contents($this->changelogFile);
         $contents  = preg_replace(
-            "/^(\# Changelog\n\n.*?)(\n\n\#\# )/s",
+            "/^(\# [^\n]*Changelog[^\n]*\n\n.*?)(\n\n\#\# )/si",
             '$1' . $changelog . '## ',
             $contents
         );

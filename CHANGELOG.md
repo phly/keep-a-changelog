@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.0 - TBD
+
+### Added
+
+- [#80](https://github.com/phly/keep-a-changelog/pull/80) adds support for more verbose changelog headings. The heading no longer must be exactly `# Changelog`. Rather, it can be `# My Project's Changelog` or `# The changelog for all the things`. The word "changelog" must still be somewhere in the heading.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.8.1 - 2020-09-01
 
 ### Added
