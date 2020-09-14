@@ -62,12 +62,20 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $localRequested  = $input->getOption('local') ?: false;
+        $globalRequested = $input->getOption('global') ?: false;
+
+        if (! $localRequested && ! $globalRequested) {
+            $output->writeln('<error>You MUST specify one or both of either --local|-l OR --global|-g</error>');
+            return 1;
+        }
+
         return $this->dispatcher
                 ->dispatch(new CreateConfigEvent(
                     $input,
                     $output,
-                    $input->getOption('local') ?: false,
-                    $input->getOption('global') ?: false,
+                    $localRequested,
+                    $globalRequested,
                     $input->getOption('changelog') ?: null
                 ))
                 ->failed()

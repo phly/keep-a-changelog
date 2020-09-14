@@ -71,4 +71,23 @@ class CreateCommandTest extends TestCase
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
+
+    public function testExecutionReturnsOneAndEmitsErrorMessageWhenNeitherLocalNorGlobalOptionProvided(): void
+    {
+        $input = $this->input;
+        $input->getOption('local')->willReturn(null);
+        $input->getOption('global')->willReturn(null);
+
+        $output = $this->output;
+        $output
+            ->writeln(Argument::containingString('--local|-l OR --global|-g'))
+            ->shouldBeCalled();
+
+        $dispatcher = $this->dispatcher;
+        $dispatcher->dispatch(Argument::any())->shouldNotBeCalled();
+
+        $command = new CreateCommand($this->dispatcher->reveal());
+
+        $this->assertSame(1, $this->executeCommand($command));
+    }
 }
