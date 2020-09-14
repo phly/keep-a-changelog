@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.1 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#88](https://github.com/phly/keep-a-changelog/pull/88) fixes an issue where using the phly/keep-a-changelog PHAR with configuration would lead to errors about the inability to locate provider classes. These are now resolved correctly by the PHAR.
+
+- [#88](https://github.com/phly/keep-a-changelog/pull/88) fixes an issue whereby calling `config:create -l` with a phly/keep-a-changelog PHAR file would result in unusable local configuration due to a string injected in the config template during PHAR creation.
+
 ## 2.9.0 - 2020-09-01
 
 ### Added
