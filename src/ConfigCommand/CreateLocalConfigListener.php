@@ -11,22 +11,11 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\ConfigCommand;
 
 use function getcwd;
+use function implode;
 use function sprintf;
 
 class CreateLocalConfigListener extends AbstractCreateConfigListener
 {
-    private const TEMPLATE = <<<'EOT'
-[defaults]
-changelog_file = %s
-provider = github
-remote = origin
-
-[providers]
-github[class] = Phly\KeepAChangelog\Provider\GitHub
-gitlab[class] = Phly\KeepAChangelog\Provider\GitLab
-
-EOT;
-
     public function configCreateRequested(CreateConfigEvent $event): bool
     {
         return $event->createLocal();
@@ -39,7 +28,18 @@ EOT;
 
     public function getConfigTemplate(): string
     {
-        return self::TEMPLATE;
+        // Done this way due to issues with PHAR creation
+        return implode("\n", [
+            '[defaults]',
+            'changelog_file = %s',
+            'provider = github',
+            'remote = origin',
+            '',
+            '[providers]',
+            'github[class] = Phly\KeepAChangelog\Provider\GitHub',
+            'gitlab[class] = Phly\KeepAChangelog\Provider\GitLab',
+            '',
+        ]);
     }
 
     /**

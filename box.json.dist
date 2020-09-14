@@ -1,4 +1,5 @@
 {
   "output": "build/keep-a-changelog.phar",
-  "compactors": ["KevinGH\\Box\\Compactor\\PhpScoper"]
+  "compactors": ["KevinGH\\Box\\Compactor\\PhpScoper"],
+  "php-scoper": "scoper.inc.php"
 }
