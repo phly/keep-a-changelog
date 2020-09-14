@@ -22,6 +22,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- [#89](https://github.com/phly/keep-a-changelog/pull/89) fixes the `config:create` command to emit an error message and return a non-zero status when neither the `--local|-l` nor the `--global|-g` options have been provided.
+
 - [#88](https://github.com/phly/keep-a-changelog/pull/88) fixes an issue where using the phly/keep-a-changelog PHAR with configuration would lead to errors about the inability to locate provider classes. These are now resolved correctly by the PHAR.
 
 - [#88](https://github.com/phly/keep-a-changelog/pull/88) fixes an issue whereby calling `config:create -l` with a phly/keep-a-changelog PHAR file would result in unusable local configuration due to a string injected in the config template during PHAR creation.
