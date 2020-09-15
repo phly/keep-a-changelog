@@ -138,17 +138,12 @@ class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
     public function errorCreatingRelease(Throwable $e): void
     {
         $this->failed = true;
-        $output       = $this->output();
+        if ((int) $e->getCode() === 401) {
+            $this->reportAuthenticationException($e);
+            return;
+        }
 
-        $output->writeln('<error>Error creating release!</error>');
-        $output->writeln('The following error was caught when attempting to create the release:');
-        $output->writeln(sprintf(
-            "[%s: %d] %s\n%s",
-            gettype($e),
-            $e->getCode(),
-            $e->getMessage(),
-            $e->getTraceAsString()
-        ));
+        $this->reportStandardException($e);
     }
 
     public function unexpectedProviderResult(): void
@@ -163,5 +158,28 @@ class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
             . ' You will need to manually create the release.',
             gettype($this->provider)
         ));
+    }
+
+    private function reportStandardException(Throwable $e): void
+    {
+        $output = $this->output();
+
+        $output->writeln('<error>Error creating release!</error>');
+        $output->writeln('The following error was caught when attempting to create the release:');
+        $output->writeln(sprintf(
+            "[%s: %d] %s\n%s",
+            gettype($e),
+            $e->getCode(),
+            $e->getMessage(),
+            $e->getTraceAsString()
+        ));
+    }
+
+    private function reportAuthenticationException(Throwable $e): void
+    {
+        $output = $this->output();
+
+        $output->writeln('<error>Invalid credentials</error>');
+        $output->writeln('The credentials associated with your Git provider are invalid.');
     }
 }

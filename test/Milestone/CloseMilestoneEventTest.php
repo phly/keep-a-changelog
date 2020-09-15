@@ -101,4 +101,30 @@ class CloseMilestoneEventTest extends TestCase
 
         $this->assertNull($event->errorClosingMilestone($e));
     }
+
+    public function testMilestoneCloseErrorDueToAuthenticationProvidesUniqueMessage(): void
+    {
+        $e = new RuntimeException('this is the error message', 401);
+
+        $output = $this->output;
+        $output
+            ->writeln(Argument::containingString('Invalid credentials'))
+            ->will(function () use ($output) {
+                $output
+                    ->writeln(Argument::containingString(
+                        'The credentials associated with your Git provider are invalid'
+                    ))
+                    ->shouldBeCalled();
+            })
+            ->shouldBeCalled();
+
+        $event = new CloseMilestoneEvent(
+            $this->input->reveal(),
+            $this->output->reveal(),
+            $this->dispatcher->reveal()
+        );
+
+        $this->assertNull($event->errorClosingMilestone($e));
+        $this->assertTrue($event->failed());
+    }
 }

@@ -64,11 +64,30 @@ class ListMilestonesEvent extends AbstractMilestoneProviderEvent
     public function errorListingMilestones(Throwable $e): void
     {
         $this->failed = true;
-        $output       = $this->output();
+
+        if ((int) $e->getCode() === 401) {
+            $this->reportAuthenticationException($e);
+            return;
+        }
+
+        $this->reportStandardException($e);
+    }
+
+    private function reportStandardException(Throwable $e): void
+    {
+        $output = $this->output();
 
         $output->writeln('<error>Error listing milestones!</error>');
         $output->writeln('An error occurred when attempting to retrieve milestones from your provider:');
         $output->writeln('');
         $output->writeln('Error Message: ' . $e->getMessage());
+    }
+
+    private function reportAuthenticationException(Throwable $e): void
+    {
+        $output = $this->output();
+
+        $output->writeln('<error>Invalid credentials</error>');
+        $output->writeln('The credentials associated with your Git provider are invalid.');
     }
 }

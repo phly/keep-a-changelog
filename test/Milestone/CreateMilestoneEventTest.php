@@ -98,4 +98,24 @@ class CreateMilestoneEventTest extends TestCase
         $this->assertNull($this->event->errorCreatingMilestone($e));
         $this->assertTrue($this->event->failed());
     }
+
+    public function testMilestoneCreationErrorDueToAuthenticationProvidesUniqueMessage(): void
+    {
+        $e = new RuntimeException('this is the error message', 401);
+
+        $output = $this->output;
+        $output
+            ->writeln(Argument::containingString('Invalid credentials'))
+            ->will(function () use ($output) {
+                $output
+                    ->writeln(Argument::containingString(
+                        'The credentials associated with your Git provider are invalid'
+                    ))
+                    ->shouldBeCalled();
+            })
+            ->shouldBeCalled();
+
+        $this->assertNull($this->event->errorCreatingMilestone($e));
+        $this->assertTrue($this->event->failed());
+    }
 }
