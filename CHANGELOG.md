@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.10.0 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#92](https://github.com/phly/keep-a-changelog/pull/92) modifies the `version:tag` and `version:release` commands.
+  In each, the `version` argument is now optional; when not provided, the tooling will discover the first releasable version in the changelog (essentially, the first with a release date associated), and prompt the user to confirm using that version.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.9.1 - 2020-09-15
 
 ### Added
