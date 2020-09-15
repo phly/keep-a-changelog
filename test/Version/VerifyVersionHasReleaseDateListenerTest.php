@@ -14,7 +14,6 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use Phly\KeepAChangelog\Version\VerifyVersionHasReleaseDateListener;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -29,7 +28,7 @@ class VerifyVersionHasReleaseDateListenerTest extends TestCase
         $event = $this->prophesize(TagReleaseEvent::class);
         $event->config()->will([$config, 'reveal'])->shouldBeCalled();
         $event->version()->willReturn('1.1.0')->shouldBeCalledTimes(1);
-        $event->taggingFailed()->shouldNotBeCalled();
+        $event->changelogMissingDate()->shouldNotBeCalled();
         $event->output()->shouldNotBeCalled();
 
         $listener = new VerifyVersionHasReleaseDateListener();
@@ -39,23 +38,13 @@ class VerifyVersionHasReleaseDateListenerTest extends TestCase
     public function testNotifiesEventTaggingFailedIfChangelogDoesNotHaveReleaseDate(): void
     {
         $config = $this->prophesize(Config::class);
-        $config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG.md')->shouldBeCalled();
-
-        /** @var OutputInterface|ObjectProphecy $output */
         $output = $this->prophesize(OutputInterface::class);
-        $output
-            ->writeln(Argument::containingString('Version 2.0.0 does not have a release date'))
-            ->shouldBeCalled();
-        $output
-            ->writeln(Argument::containingString('version:ready'))
-            ->shouldBeCalled();
+        $event  = $this->prophesize(TagReleaseEvent::class);
 
-        /** @var TagReleaseEvent|ObjectProphecy $event */
-        $event = $this->prophesize(TagReleaseEvent::class);
+        $config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG.md')->shouldBeCalled();
         $event->config()->will([$config, 'reveal'])->shouldBeCalled();
         $event->version()->willReturn('2.0.0')->shouldBeCalled();
-        $event->taggingFailed()->shouldBeCalled();
-        $event->output()->will([$output, 'reveal'])->shouldBeCalled();
+        $event->changelogMissingDate()->shouldBeCalled();
 
         $listener = new VerifyVersionHasReleaseDateListener();
         $this->assertNull($listener($event->reveal()));

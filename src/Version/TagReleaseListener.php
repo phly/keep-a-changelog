@@ -29,7 +29,7 @@ class TagReleaseListener
                 $event->changelog()
             )
         ) {
-            $event->taggingFailed();
+            $event->tagOperationFailed();
             return;
         }
 

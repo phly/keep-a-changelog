@@ -13,7 +13,6 @@ namespace PhlyTest\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Version\CheckTreeForChangesListener;
 use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -26,7 +25,7 @@ class CheckTreeForChangesListenerTest extends TestCase
 
         $event = $this->prophesize(TagReleaseEvent::class);
         $event->input()->will([$input, 'reveal'])->shouldBeCalled();
-        $event->taggingFailed()->shouldNotBeCalled();
+        $event->unversionedChangesPresent()->shouldNotBeCalled();
         $event->output()->shouldNotBeCalled();
 
         $listener = new CheckTreeForChangesListener();
@@ -40,7 +39,7 @@ class CheckTreeForChangesListenerTest extends TestCase
 
         $event = $this->prophesize(TagReleaseEvent::class);
         $event->input()->will([$input, 'reveal'])->shouldBeCalled();
-        $event->taggingFailed()->shouldNotBeCalled();
+        $event->unversionedChangesPresent()->shouldNotBeCalled();
         $event->output()->shouldNotBeCalled();
 
         $listener       = new CheckTreeForChangesListener();
@@ -53,17 +52,13 @@ class CheckTreeForChangesListenerTest extends TestCase
 
     public function testListenerNotifesEventThatTaggingFailedIfForceFlagNotPresentAndTreeIsDirty(): void
     {
-        $input = $this->prophesize(InputInterface::class);
-        $input->getOption('force')->willReturn(null)->shouldBeCalled();
-
+        $input  = $this->prophesize(InputInterface::class);
         $output = $this->prophesize(OutputInterface::class);
-        $output->write(Argument::containingString('not checked in'))->shouldBeCalled();
-        $output->write(Argument::containingString('use the --force'))->shouldBeCalled();
+        $event  = $this->prophesize(TagReleaseEvent::class);
 
-        $event = $this->prophesize(TagReleaseEvent::class);
+        $input->getOption('force')->willReturn(null)->shouldBeCalled();
         $event->input()->will([$input, 'reveal'])->shouldBeCalled();
-        $event->taggingFailed()->shouldBeCalled();
-        $event->output()->will([$output, 'reveal'])->shouldBeCalled();
+        $event->unversionedChangesPresent()->shouldBeCalled();
 
         $listener       = new CheckTreeForChangesListener();
         $listener->exec = function ($command, &$output, &$return) {
@@ -76,17 +71,13 @@ class CheckTreeForChangesListenerTest extends TestCase
 
     public function testListenerNotifesEventThatTaggingFailedIfForceFlagNotPresentAndStatusCheckFails(): void
     {
-        $input = $this->prophesize(InputInterface::class);
-        $input->getOption('force')->willReturn(null)->shouldBeCalled();
-
+        $input  = $this->prophesize(InputInterface::class);
         $output = $this->prophesize(OutputInterface::class);
-        $output->write(Argument::containingString('not checked in'))->shouldBeCalled();
-        $output->write(Argument::containingString('use the --force'))->shouldBeCalled();
+        $event  = $this->prophesize(TagReleaseEvent::class);
 
-        $event = $this->prophesize(TagReleaseEvent::class);
+        $input->getOption('force')->willReturn(null)->shouldBeCalled();
         $event->input()->will([$input, 'reveal'])->shouldBeCalled();
-        $event->taggingFailed()->shouldBeCalled();
-        $event->output()->will([$output, 'reveal'])->shouldBeCalled();
+        $event->unversionedChangesPresent()->shouldBeCalled();
 
         $listener       = new CheckTreeForChangesListener();
         $listener->exec = function ($command, &$output, &$return) {

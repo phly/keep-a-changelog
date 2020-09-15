@@ -68,10 +68,27 @@ class TagReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterf
         $this->output->write($this->changelog());
     }
 
-    public function taggingFailed(): void
+    public function tagOperationFailed(): void
     {
         $this->failed = true;
         $this->output->writeln('<error>Error creating tag!</error>');
-        $this->output->writeln('Check the output logs for details');
+        $this->output->writeln('The "git tag" operation failed; check the output logs for details');
+    }
+
+    public function unversionedChangesPresent(): void
+    {
+        $this->failed = true;
+        $this->output->writeln('<error>You have changes present in your tree that are not checked in.</error>');
+        $this->output->writeln('Either check them in, or use the --force flag.');
+    }
+
+    public function changelogMissingDate(): void
+    {
+        $this->failed = true;
+        $this->output->writeln(sprintf(
+            '<error>Version %s does not have a release date associated with it!</error>',
+            $this->version()
+        ));
+        $this->output->writeln('<error>You may need to run version:ready first</error>');
     }
 }

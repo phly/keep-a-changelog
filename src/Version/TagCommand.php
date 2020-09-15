@@ -18,6 +18,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 class TagCommand extends Command
 {
     use CommonConfigOptionsTrait;
@@ -39,6 +41,11 @@ message format:
 By default, the tool assumes that the current working directory is the package
 name; if this is not the case, provide that optional argument when invoking the
 tool.
+
+NOTE: in some cases, you may need to run the following command to ensure
+gpg operations (for signing tags) will work correctly:
+
+    export GPG_TTY=$(tty)
 
 EOH;
 
@@ -76,6 +83,9 @@ EOH;
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $version = $input->getArgument('version');
+
+        $output->writeln(sprintf('<info>Preparing to tag version %s</info>', $version));
+
         return $this->dispatcher
                 ->dispatch(new TagReleaseEvent(
                     $input,

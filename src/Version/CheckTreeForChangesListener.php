@@ -41,9 +41,7 @@ class CheckTreeForChangesListener
         $exec($command, $output, $status);
 
         if ($status !== 0 || count($output) > 0) {
-            $event->taggingFailed();
-            $event->output()->write('<error>You have changes present in your tree that are not checked in.</error>');
-            $event->output()->write('Either check them in, or use the --force flag.');
+            $event->unversionedChangesPresent();
         }
     }
 }

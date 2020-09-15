@@ -125,19 +125,48 @@ class TagReleaseEventTest extends TestCase
         $this->assertFalse($event->failed());
     }
 
-    public function testMarkingTaggingFailedEmitsOutputAndStopsPropagationWithFailure()
+    public function testTagOperationFailedMarksEventFailed(): void
     {
         $event = $this->createEvent('1.2.3', 'v1.2.3');
 
-        $this->assertNull($event->taggingFailed());
+        $event->tagOperationFailed();
 
         $this->output
-            ->writeln(Argument::containingString('Error creating tag!'))
+            ->writeln(Argument::containingString('Error creating tag'))
             ->shouldHaveBeenCalled();
         $this->output
-            ->writeln(Argument::containingString('Check the output logs'))
+            ->writeln(Argument::containingString('"git tag" operation failed'))
             ->shouldHaveBeenCalled();
-        $this->assertTrue($event->isPropagationStopped());
+        $this->assertTrue($event->failed());
+    }
+
+    public function testUnversionedChangesPresentMarksEventFailed(): void
+    {
+        $event = $this->createEvent('1.2.3', 'v1.2.3');
+
+        $event->unversionedChangesPresent();
+
+        $this->output
+            ->writeln(Argument::containingString('changes present'))
+            ->shouldHaveBeenCalled();
+        $this->output
+            ->writeln(Argument::containingString('check them in'))
+            ->shouldHaveBeenCalled();
+        $this->assertTrue($event->failed());
+    }
+
+    public function testChangelogMissingDateMarksEventFailed(): void
+    {
+        $event = $this->createEvent('1.2.3', 'v1.2.3');
+
+        $event->changelogMissingDate();
+
+        $this->output
+            ->writeln(Argument::containingString('does not have a release date associated'))
+            ->shouldHaveBeenCalled();
+        $this->output
+            ->writeln(Argument::containingString('run version:ready'))
+            ->shouldHaveBeenCalled();
         $this->assertTrue($event->failed());
     }
 }

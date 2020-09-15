@@ -14,7 +14,6 @@ use Phly\KeepAChangelog\Common\ChangelogParser;
 use Phly\KeepAChangelog\Exception\ChangelogMissingDateException;
 
 use function file_get_contents;
-use function sprintf;
 
 class VerifyVersionHasReleaseDateListener
 {
@@ -29,12 +28,7 @@ class VerifyVersionHasReleaseDateListener
                 true
             );
         } catch (ChangelogMissingDateException $e) {
-            $event->taggingFailed();
-            $event->output()->writeln(sprintf(
-                '<error>Version %s does not have a release date associated with it!</error>',
-                $event->version()
-            ));
-            $event->output()->writeln('<error>You may need to run version:ready first</error>');
+            $event->changelogMissingDate();
         }
     }
 }
