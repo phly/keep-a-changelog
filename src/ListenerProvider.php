@@ -121,6 +121,7 @@ class ListenerProvider implements ListenerProviderInterface
         ],
         Version\ReleaseEvent::class                => [
             Version\ReleaseCommandConfigListener::class,
+            Version\DiscoverVersionListener::class,
             Version\VerifyTagExistsListener::class,
             Version\VerifyProviderCanReleaseListener::class,
             Common\IsChangelogReadableListener::class,
@@ -148,6 +149,7 @@ class ListenerProvider implements ListenerProviderInterface
         Version\TagReleaseEvent::class             => [
             Version\TagCommandConfigListener::class,
             Version\CheckTreeForChangesListener::class,
+            Version\DiscoverVersionListener::class,
             Common\ValidateVersionListener::class,
             Common\IsChangelogReadableListener::class,
             Version\VerifyVersionHasReleaseDateListener::class,

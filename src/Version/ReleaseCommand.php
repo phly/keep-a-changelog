@@ -61,7 +61,7 @@ EOH;
         $this->setHelp(self::HELP);
         $this->addArgument(
             'version',
-            InputArgument::REQUIRED,
+            InputArgument::OPTIONAL,
             'Version to release'
         );
         $this->addOption(

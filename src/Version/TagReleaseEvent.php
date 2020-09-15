@@ -20,26 +20,29 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function sprintf;
 
-class TagReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
+class TagReleaseEvent extends AbstractEvent implements
+    ChangelogAwareEventInterface,
+    DiscoverableVersionEventInterface
 {
     use ChangelogProviderTrait;
+    use DiscoverVersionEventTrait;
     use VersionValidationTrait;
 
-    /** @var string */
+    /** @var null|string */
     private $tagName;
 
     public function __construct(
         InputInterface $input,
         OutputInterface $output,
         EventDispatcherInterface $dispatcher,
-        string $version,
-        string $tagName
+        ?string $version,
+        ?string $tagName
     ) {
         $this->input      = $input;
         $this->output     = $output;
         $this->dispatcher = $dispatcher;
         $this->version    = $version;
-        $this->tagName    = $tagName;
+        $this->tagName    = $tagName ?: $version;
     }
 
     public function isPropagationStopped(): bool

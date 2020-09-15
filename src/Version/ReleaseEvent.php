@@ -23,9 +23,12 @@ use Throwable;
 use function gettype;
 use function sprintf;
 
-class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
+class ReleaseEvent extends AbstractEvent implements
+    ChangelogAwareEventInterface,
+    DiscoverableVersionEventInterface
 {
     use ChangelogProviderTrait;
+    use DiscoverVersionEventTrait;
     use VersionValidationTrait;
 
     /** @var null|ProviderInterface */
@@ -72,6 +75,12 @@ class ReleaseEvent extends AbstractEvent implements ChangelogAwareEventInterface
     public function setReleaseName(string $releaseName): void
     {
         $this->releaseName = $releaseName;
+    }
+
+    public function foundVersion(string $version): void
+    {
+        $this->version = $version;
+        $this->tagName = $this->tagName ?: $version;
     }
 
     public function releaseCreated(string $release): void

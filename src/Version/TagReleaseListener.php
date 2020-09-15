@@ -21,11 +21,15 @@ class TagReleaseListener
 {
     public function __invoke(TagReleaseEvent $event): void
     {
+        $version = $event->version();
+
+        $event->output()->writeln(sprintf('<info>Preparing to tag version %s</info>', $version));
+
         if (
             ! $this->tagWithChangelog(
                 $event->tagName(),
                 $event->package(),
-                $event->version(),
+                $version,
                 $event->changelog()
             )
         ) {

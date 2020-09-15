@@ -18,8 +18,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function sprintf;
-
 class TagCommand extends Command
 {
     use CommonConfigOptionsTrait;
@@ -62,7 +60,7 @@ EOH;
     {
         $this->setDescription('Create a new tag, using the relevant changelog entry.');
         $this->setHelp(self::HELP);
-        $this->addArgument('version', InputArgument::REQUIRED, 'Version to tag');
+        $this->addArgument('version', InputArgument::OPTIONAL, 'Version to tag');
         $this->addOption(
             'tagname',
             'a',
@@ -82,17 +80,13 @@ EOH;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $version = $input->getArgument('version');
-
-        $output->writeln(sprintf('<info>Preparing to tag version %s</info>', $version));
-
         return $this->dispatcher
                 ->dispatch(new TagReleaseEvent(
                     $input,
                     $output,
                     $this->dispatcher,
-                    $version,
-                    $input->getOption('tagname') ?: $version
+                    $input->getArgument('version'),
+                    $input->getOption('tagname')
                 ))
                 ->failed()
                     ? 1
