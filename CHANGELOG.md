@@ -22,6 +22,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
+- [#91](https://github.com/phly/keep-a-changelog/pull/91) differentiates the various reasons why version:tag fails, and adds more help information both when requested and when running the command.
+
 - [#90](https://github.com/phly/keep-a-changelog/pull/90) modifies the various events that communicate with the configured Git provider to indicate when invalid credentials were used, versus providing a generic failure message.
 
 - [#89](https://github.com/phly/keep-a-changelog/pull/89) fixes the `config:create` command to emit an error message and return a non-zero status when neither the `--local|-l` nor the `--global|-g` options have been provided.
