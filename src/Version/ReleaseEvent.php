@@ -77,12 +77,6 @@ class ReleaseEvent extends AbstractEvent implements
         $this->releaseName = $releaseName;
     }
 
-    public function foundVersion(string $version): void
-    {
-        $this->version = $version;
-        $this->tagName = $this->tagName ?: $version;
-    }
-
     public function releaseCreated(string $release): void
     {
         $this->output()->writeln(sprintf('<info>Created %s<info>', $release));

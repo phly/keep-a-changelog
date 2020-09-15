@@ -15,6 +15,7 @@ trait DiscoverVersionEventTrait
     public function foundVersion(string $version): void
     {
         $this->version = $version;
+        $this->tagName = $this->tagName ?: $version;
     }
 
     public function versionNotAccepted(): void
