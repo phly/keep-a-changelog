@@ -15,6 +15,7 @@ use Phly\KeepAChangelog\Provider\ProviderInterface;
 use function array_key_exists;
 use function explode;
 use function get_headers;
+use function is_array;
 use function is_bool;
 use function preg_match;
 use function sprintf;
