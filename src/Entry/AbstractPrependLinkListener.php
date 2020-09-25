@@ -98,7 +98,7 @@ abstract class AbstractPrependLinkListener
             && $statusCode <= 399
             && array_key_exists('Location', $headers)
         ) {
-            if (is_array($headers'Location'])) {
+            if (is_array($headers['Location'])) {
                 return $this->probeLink($headers['Location'][0]);
             }
             return $this->probeLink($headers['Location']);
