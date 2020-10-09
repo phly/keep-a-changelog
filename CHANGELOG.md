@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.10.1 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#94](https://github.com/phly/keep-a-changelog/pull/94) fixes parsing of the `Location` header when determining redirects for the `GitLab` provider. GitLab will sometimes provide multiple values for the header, versus the expected single value. The provider now pulls the first one from a list if multiple are present.
+
 ## 2.10.0 - 2020-09-15
 
 ### Added
