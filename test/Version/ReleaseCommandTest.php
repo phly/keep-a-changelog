@@ -14,6 +14,7 @@ use Phly\KeepAChangelog\Version\ReleaseCommand;
 use Phly\KeepAChangelog\Version\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,6 +22,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ReleaseCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class);

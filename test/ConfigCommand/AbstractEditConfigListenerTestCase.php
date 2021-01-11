@@ -15,11 +15,14 @@ use Phly\KeepAChangelog\ConfigCommand\AbstractEditConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\EditConfigEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractEditConfigListenerTestCase extends TestCase
 {
+    use ProphecyTrait;
+
     abstract public function getListener(): AbstractEditConfigListener;
 
     abstract public function getListenerWithFileNotFound(): AbstractEditConfigListener;

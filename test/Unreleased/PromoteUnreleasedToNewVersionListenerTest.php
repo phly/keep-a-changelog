@@ -17,9 +17,12 @@ use Phly\KeepAChangelog\Unreleased\PromoteEvent;
 use Phly\KeepAChangelog\Unreleased\PromoteUnreleasedToNewVersionListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class PromoteUnreleasedToNewVersionListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testWritesChangelogEntry(): void
     {
         $config = $this->prophesize(Config::class);

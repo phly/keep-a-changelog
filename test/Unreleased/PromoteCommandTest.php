@@ -16,6 +16,7 @@ use Phly\KeepAChangelog\Unreleased\PromoteEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,6 +27,7 @@ use function date;
 class PromoteCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
+    use ProphecyTrait;
 
     /** @var PromoteCommand */
     private $command;

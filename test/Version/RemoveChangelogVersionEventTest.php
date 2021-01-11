@@ -15,12 +15,15 @@ use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoveChangelogVersionEventTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->config     = $this->prophesize(Config::class);

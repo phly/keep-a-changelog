@@ -18,12 +18,15 @@ use Phly\KeepAChangelog\Version\EditChangelogVersionEvent;
 use Phly\KeepAChangelog\Version\EditChangelogVersionListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function file_get_contents;
 
 class EditChangelogVersionListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->voidReturn      = function () {

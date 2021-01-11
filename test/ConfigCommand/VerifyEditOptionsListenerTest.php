@@ -13,9 +13,12 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\ConfigCommand\EditConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\VerifyEditOptionsListener;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class VerifyEditOptionsListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function eventOptions(): iterable
     {
         yield 'neither true' => [$editLocal = false, $editGlobal = false, $notifiesEvent = false];

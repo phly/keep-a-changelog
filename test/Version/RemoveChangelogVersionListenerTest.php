@@ -16,9 +16,12 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\RemoveChangelogVersionEvent;
 use Phly\KeepAChangelog\Version\RemoveChangelogVersionListener;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class RemoveChangelogVersionListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->entry  = new ChangelogEntry();

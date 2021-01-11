@@ -13,33 +13,33 @@ env:
 
 matrix:
   include:
-    - php: 7.2
+    - php: 7.3
       env:
         - DEPS=lowest
-    - php: 7.2
+    - php: 7.3
+      env:
+        - DEPS=locked
+    - php: 7.3
+      env:
+        - DEPS=latest
+    - php: 7.4
+      env:
+        - DEPS=lowest
+    - php: 7.4
+      env:
+        - DEPS=locked
+    - php: 7.4
+      env:
+        - DEPS=latest
+    - php: 8.0
+      env:
+        - DEPS=lowest
+    - php: 8.0
       env:
         - DEPS=locked
         - CS_CHECK=true
         - TEST_COVERAGE=true
-    - php: 7.2
-      env:
-        - DEPS=latest
-    - php: 7.3
-      env:
-        - DEPS=lowest
-    - php: 7.3
-      env:
-        - DEPS=locked
-    - php: 7.3
-      env:
-        - DEPS=latest
-    - php: 7.4
-      env:
-        - DEPS=lowest
-    - php: 7.4
-      env:
-        - DEPS=locked
-    - php: 7.4
+    - php: 8.0
       env:
         - DEPS=latest
 
@@ -71,7 +71,7 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    php: 7.2
+    php: 7.3
 
 notifications:
   email: false

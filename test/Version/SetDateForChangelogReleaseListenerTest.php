@@ -17,6 +17,7 @@ use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use Phly\KeepAChangelog\Version\SetDateForChangelogReleaseListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function array_merge;
 use function date;
@@ -25,6 +26,8 @@ use function sprintf;
 
 class SetDateForChangelogReleaseListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private const CHANGELOG_ENTRY_TEMPLATE = <<<'EOC'
 %s%s%s%s
 

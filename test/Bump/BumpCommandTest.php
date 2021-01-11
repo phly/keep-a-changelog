@@ -17,6 +17,7 @@ use Phly\KeepAChangelog\Milestone\CreateMilestoneEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class BumpCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
+    use ProphecyTrait;
 
     protected function setUp(): void
     {

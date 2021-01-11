@@ -13,9 +13,12 @@ namespace PhlyTest\KeepAChangelog\Entry;
 use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
 use Phly\KeepAChangelog\Entry\IsEntryArgumentEmptyListener;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class IsEntryArgumentEmptyListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->event = $this->prophesize(AddChangelogEntryEvent::class);

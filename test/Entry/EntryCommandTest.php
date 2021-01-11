@@ -16,6 +16,7 @@ use Phly\KeepAChangelog\Entry\EntryTypes;
 use Phly\KeepAChangelog\Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,6 +25,8 @@ use TypeError;
 
 class EntryCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);

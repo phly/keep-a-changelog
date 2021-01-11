@@ -15,6 +15,7 @@ use Phly\KeepAChangelog\Version\DiscoverVersionListener;
 use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,6 +23,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class DiscoverVersionListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testReturnsEarlyWhenEventHasVersionComposed(): void
     {
         $event = $this->prophesize(TagReleaseEvent::class);

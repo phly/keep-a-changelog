@@ -14,6 +14,7 @@ use Phly\KeepAChangelog\Bump\BumpChangelogVersionEvent;
 use Phly\KeepAChangelog\Bump\BumpChangelogVersionListener;
 use Phly\KeepAChangelog\Config;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function file_get_contents;
 use function file_put_contents;
@@ -23,6 +24,8 @@ use function unlink;
 
 class BumpChangelogVersionListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var string */
     private $tempFile;
 

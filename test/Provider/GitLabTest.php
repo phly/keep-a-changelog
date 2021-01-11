@@ -16,11 +16,14 @@ use Phly\KeepAChangelog\Provider\Exception;
 use Phly\KeepAChangelog\Provider\GitLab;
 use Phly\KeepAChangelog\Provider\Milestone;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function count;
 
 class GitLabTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->gitlab = new GitLab();
@@ -166,7 +169,7 @@ class GitLabTest extends TestCase
             ->shouldBeCalled();
 
         $client = $this->prophesize(GitLabClient::class);
-        $client->api('milestones')->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $client->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
 
         $this->gitlab->client = $client->reveal();
         $this->gitlab->setPackageName('phly/keep-a-changelog');
@@ -207,7 +210,7 @@ class GitLabTest extends TestCase
             ->shouldBeCalled();
 
         $client = $this->prophesize(GitLabClient::class);
-        $client->api('milestones')->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $client->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
 
         $this->gitlab->client = $client->reveal();
         $this->gitlab->setPackageName('phly/keep-a-changelog');
@@ -251,7 +254,7 @@ class GitLabTest extends TestCase
             ->shouldBeCalled();
 
         $client = $this->prophesize(GitLabClient::class);
-        $client->api('milestones')->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $client->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
 
         $this->gitlab->client = $client->reveal();
         $this->gitlab->setPackageName('phly/keep-a-changelog');
@@ -276,7 +279,7 @@ class GitLabTest extends TestCase
             ->shouldBeCalled();
 
         $client = $this->prophesize(GitLabClient::class);
-        $client->api('milestones')->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $client->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
 
         $this->gitlab->client = $client->reveal();
         $this->gitlab->setPackageName('phly/keep-a-changelog');

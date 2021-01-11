@@ -17,9 +17,12 @@ use Phly\KeepAChangelog\Version\ReleaseEvent;
 use Phly\KeepAChangelog\Version\VerifyProviderCanReleaseListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class VerifyProviderCanReleaseListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testListenerNotifiesEventThatProviderIsIncompleteIfProviderIsNotComplete()
     {
         $providerSpec = $this->prophesize(ProviderSpec::class);

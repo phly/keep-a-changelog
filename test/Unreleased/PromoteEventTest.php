@@ -13,6 +13,7 @@ namespace PhlyTest\KeepAChangelog\Unreleased;
 use Phly\KeepAChangelog\Unreleased\PromoteEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,6 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PromoteEventTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var EventDispatcherInterface */
     private $dispatcher;
 

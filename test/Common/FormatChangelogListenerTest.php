@@ -13,9 +13,12 @@ namespace PhlyTest\KeepAChangelog\Common;
 use Phly\KeepAChangelog\Common\ChangelogAwareEventInterface;
 use Phly\KeepAChangelog\Common\FormatChangelogListener;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class FormatChangelogListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testListenerFormatsProvidedChangelogAndPushesItToTheEvent()
     {
         $event     = $this->prophesize(ChangelogAwareEventInterface::class);

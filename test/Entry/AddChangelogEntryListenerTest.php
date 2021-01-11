@@ -18,9 +18,12 @@ use Phly\KeepAChangelog\Entry\AddChangelogEntryListener;
 use Phly\KeepAChangelog\Entry\EntryTypes;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class AddChangelogEntryListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private const CHANGELOG_INITIAL_ENTRY = <<<'EOC'
 ## 1.2.3 - TBD
 
@@ -173,7 +176,7 @@ EOC;
             ->update(
                 'CHANGELOG.md',
                 Argument::that(function ($newEntry) use ($regExpForExpectedResult) {
-                    TestCase::assertRegExp($regExpForExpectedResult, $newEntry);
+                    TestCase::assertMatchesRegularExpression($regExpForExpectedResult, $newEntry);
                     return $newEntry;
                 }),
                 $this->entry
@@ -211,10 +214,13 @@ EOH;
             ->update(
                 'CHANGELOG.md',
                 Argument::that(function ($newEntry) {
-                    TestCase::assertRegExp("/\n### Added\n\n- This is a multiline entry.\n/s", $newEntry);
-                    TestCase::assertRegExp('/^- This is a multiline entry.$/m', $newEntry);
-                    TestCase::assertRegExp('/^  All lines after the first one$/m', $newEntry);
-                    TestCase::assertRegExp('/^  should be indented.$/m', $newEntry);
+                    TestCase::assertMatchesRegularExpression(
+                        "/\n### Added\n\n- This is a multiline entry.\n/s",
+                        $newEntry
+                    );
+                    TestCase::assertMatchesRegularExpression('/^- This is a multiline entry.$/m', $newEntry);
+                    TestCase::assertMatchesRegularExpression('/^  All lines after the first one$/m', $newEntry);
+                    TestCase::assertMatchesRegularExpression('/^  should be indented.$/m', $newEntry);
                     return $newEntry;
                 }),
                 $this->entry
