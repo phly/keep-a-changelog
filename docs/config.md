@@ -51,7 +51,7 @@ gitlab[token] =
 
 Providers are covered in [another chapter](providers.md).
 
-Local configuration files support additional keys in the `[defaults`] section:
+Local configuration files support additional keys in the `[defaults]` section:
 
 ```ini
 ; local .keep-a-changelog.ini file
@@ -75,7 +75,7 @@ in a local configuration file _will be ignored_.
 As noted above, you can specify a package name in your local configuration file.
 
 Alternately, if none is discovered there and the `--package` option is not
-provided to a command that requires it, the tooling will look for a package name
+provided for a command that requires it, the tooling will look for a package name
 in one of the following:
 
 - `composer.json` (`name` key)
@@ -87,6 +87,6 @@ As noted above, you can specify the name of a git remote to push tags to in
 either your global or your local configuration file.
 
 Alternately, if neither file defines the value, and the `--remote` option is not
-provided to a command that requires it, the tooling will look for the remote
+provided for a command that requires it, the tooling will look for the remote
 name by trying to match against remotes listed in your `.git/config`, based on
 the selected provider and package name.
