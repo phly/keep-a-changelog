@@ -6,11 +6,11 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#97](https://github.com/phly/keep-a-changelog/pull/97) adds support for PHP 8.0.
 
 ### Changed
 
-- Nothing.
+- [#97](https://github.com/phly/keep-a-changelog/pull/97) updates to use the v3 release of knplabs/github-api.
 
 ### Deprecated
 
@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- [#97](https://github.com/phly/keep-a-changelog/pull/97) removes support for PHP versions < 7.4.
 
 ### Fixed
 
