@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.11.0 - TBD
+## 2.11.0 - 2021-01-20
 
 ### Added
 
