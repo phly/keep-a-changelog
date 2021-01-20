@@ -13,15 +13,6 @@ env:
 
 matrix:
   include:
-    - php: 7.3
-      env:
-        - DEPS=lowest
-    - php: 7.3
-      env:
-        - DEPS=locked
-    - php: 7.3
-      env:
-        - DEPS=latest
     - php: 7.4
       env:
         - DEPS=lowest
@@ -71,7 +62,7 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    php: 7.3
+    php: 7.4
 
 notifications:
   email: false

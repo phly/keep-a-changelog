@@ -11,7 +11,7 @@
         "rss": "https://github.com/phly/keep-a-changelog/releases.atom"
     },
     "require": {
-        "php": "^7.3 || ^8.0",
+        "php": "^7.4 || ^8.0",
         "knplabs/github-api": "^3.0.0",
         "laminas/laminas-diactoros": "^2.4.1",
         "m4tthumphrey/php-gitlab-api": "^11.0.0",
@@ -37,7 +37,10 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "7.4.7"
+        }
     },
     "bin": [
         "bin/keep-a-changelog"
