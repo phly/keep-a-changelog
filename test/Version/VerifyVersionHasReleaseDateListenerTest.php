@@ -14,11 +14,14 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use Phly\KeepAChangelog\Version\VerifyVersionHasReleaseDateListener;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class VerifyVersionHasReleaseDateListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testDoesNothingIfChangelogHasAssociatedReleaseDate(): void
     {
         $config = $this->prophesize(Config::class);

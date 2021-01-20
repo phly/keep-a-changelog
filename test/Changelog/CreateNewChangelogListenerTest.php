@@ -15,6 +15,7 @@ use Phly\KeepAChangelog\Changelog\CreateNewChangelogListener;
 use Phly\KeepAChangelog\Config;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function file_exists;
 use function file_get_contents;
@@ -25,6 +26,8 @@ use function unlink;
 
 class CreateNewChangelogListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var null|string */
     private $tempFile;
 

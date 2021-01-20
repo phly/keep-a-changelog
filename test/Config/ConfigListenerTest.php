@@ -18,6 +18,7 @@ use Phly\KeepAChangelog\Config\PackageNameDiscovery;
 use Phly\KeepAChangelog\Config\RemoteNameDiscovery;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +26,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->config    = new Config();

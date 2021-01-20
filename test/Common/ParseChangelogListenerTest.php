@@ -16,11 +16,14 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Exception\ExceptionInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function realpath;
 
 class ParseChangelogListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->config = $this->prophesize(Config::class);

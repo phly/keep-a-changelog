@@ -12,12 +12,15 @@ namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Common\EventInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ListVersionsEventTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->input      = $this->prophesize(InputInterface::class);

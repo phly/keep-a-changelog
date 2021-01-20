@@ -12,12 +12,15 @@ namespace PhlyTest\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class PackageNameDiscoveryTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->config = new Config();

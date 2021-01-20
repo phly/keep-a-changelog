@@ -11,9 +11,12 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Common;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ValidateVersionListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->event = $this->prophesize(VersionAwareEventInterface::class);

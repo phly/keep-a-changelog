@@ -11,21 +11,21 @@
         "rss": "https://github.com/phly/keep-a-changelog/releases.atom"
     },
     "require": {
-        "php": "^7.2",
-        "knplabs/github-api": "^2.8",
-        "m4tthumphrey/php-gitlab-api": "^9.9",
-        "composer/package-versions-deprecated": "^1.10.99",
-        "php-http/guzzle6-adapter": "^1.1 || ^2.0.1",
-        "psr/event-dispatcher": "^1.0",
-        "symfony/console": "^3.4 || ^4.0 || ^5.0"
+        "php": "^7.4 || ^8.0",
+        "knplabs/github-api": "^3.0.0",
+        "laminas/laminas-diactoros": "^2.4.1",
+        "m4tthumphrey/php-gitlab-api": "^11.0.0",
+        "ocramius/package-versions": "^1.5.1 || ^2.1.0",
+        "php-http/guzzle7-adapter": "^0.1.1",
+        "psr/event-dispatcher": "^1.0.0",
+        "symfony/console": "^5.2.1"
     },
     "require-dev": {
-        "captainhook/plugin-composer": "^4.0",
-        "laminas/laminas-coding-standard": "~2.0.1",
-        "phpunit/phpunit": "^8.4.3"
-    },
-    "conflict": {
-        "phpspec/prophecy": "<1.9.0"
+        "captainhook/captainhook": "^5.4",
+        "captainhook/plugin-composer": "^5.2.3",
+        "laminas/laminas-coding-standard": "^2.1.4",
+        "phpspec/prophecy-phpunit": "^2.0.1",
+        "phpunit/phpunit": "^9.5.0"
     },
     "autoload": {
         "psr-4": {
@@ -38,7 +38,10 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "7.4.7"
+        }
     },
     "bin": [
         "bin/keep-a-changelog"

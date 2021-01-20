@@ -13,12 +13,15 @@ namespace Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Provider;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use ReflectionProperty;
 
 use function realpath;
 
 class RetrieveGlobalConfigListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->config = new Config();

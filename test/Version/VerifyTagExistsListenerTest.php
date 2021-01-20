@@ -13,9 +13,12 @@ namespace PhlyTest\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Version\ReleaseEvent;
 use Phly\KeepAChangelog\Version\VerifyTagExistsListener;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class VerifyTagExistsListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->event = $this->prophesize(ReleaseEvent::class);

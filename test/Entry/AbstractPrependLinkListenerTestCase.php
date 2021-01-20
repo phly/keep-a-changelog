@@ -17,12 +17,15 @@ use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Phly\KeepAChangelog\Provider\ProviderSpec;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
 use function sprintf;
 
 abstract class AbstractPrependLinkListenerTestCase extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var Config|ObjectProphecy */
     protected $config;
 

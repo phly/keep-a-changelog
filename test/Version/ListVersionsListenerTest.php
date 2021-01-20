@@ -15,12 +15,15 @@ use Phly\KeepAChangelog\Version\ListVersionsEvent;
 use Phly\KeepAChangelog\Version\ListVersionsListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function sprintf;
 
 class ListVersionsListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testEmitsAllVersionsFoundWithCorrespondingDates()
     {
         $output = $this->prophesize(OutputInterface::class);
@@ -47,7 +50,7 @@ class ListVersionsListenerTest extends TestCase
                 foreach ($expected as $version => $date) {
                     $output
                         ->writeln(Argument::that(function ($message) use ($version, $date) {
-                            TestCase::assertRegExp(
+                            TestCase::assertMatchesRegularExpression(
                                 sprintf('/%s\s+\(release date: %s\)/', $version, $date),
                                 $message
                             );

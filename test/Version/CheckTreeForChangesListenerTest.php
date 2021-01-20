@@ -13,11 +13,14 @@ namespace PhlyTest\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Version\CheckTreeForChangesListener;
 use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CheckTreeForChangesListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testListenerDoesNothingIfForceFlagIsPresent(): void
     {
         $input = $this->prophesize(InputInterface::class);

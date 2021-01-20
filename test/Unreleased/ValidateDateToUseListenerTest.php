@@ -13,9 +13,12 @@ namespace PhlyTest\KeepAChangelog\Unreleased;
 use Phly\KeepAChangelog\Unreleased\PromoteEvent;
 use Phly\KeepAChangelog\Unreleased\ValidateDateToUseListener;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ValidateDateToUseListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testDoesNothingIfReleaseDateIsValid(): void
     {
         $event = $this->prophesize(PromoteEvent::class);

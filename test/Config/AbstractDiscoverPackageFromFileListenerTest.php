@@ -14,9 +14,12 @@ use Phly\KeepAChangelog\Config\AbstractDiscoverPackageFromFileListener;
 use Phly\KeepAChangelog\Config\PackageNameDiscovery;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 abstract class AbstractDiscoverPackageFromFileListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     abstract public function createListener(): AbstractDiscoverPackageFromFileListener;
 
     protected function setUp(): void

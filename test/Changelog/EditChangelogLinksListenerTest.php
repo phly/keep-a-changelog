@@ -18,12 +18,15 @@ use Phly\KeepAChangelog\Common\Editor;
 use Phly\KeepAChangelog\Config;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function file_get_contents;
 
 class EditChangelogLinksListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $voidReturn            = function () {

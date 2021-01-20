@@ -13,6 +13,7 @@ namespace PhlyTest\KeepAChangelog\Common;
 use Phly\KeepAChangelog\Common\Editor;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use const STDERR;
@@ -21,6 +22,8 @@ use const STDOUT;
 
 class EditorTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->output = $this->prophesize(OutputInterface::class);

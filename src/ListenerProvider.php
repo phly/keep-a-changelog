@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
+use Phly\KeepAChangelog\Common\EventInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
 use function get_class;
@@ -17,6 +18,10 @@ use function is_object;
 
 class ListenerProvider implements ListenerProviderInterface
 {
+    /**
+     * @var string[][]
+     * @psalm-var array<class-string<EventInterface>, non-empty-list<class-string>>
+     */
     private $listeners = [
         Bump\BumpChangelogVersionEvent::class      => [
             Config\ConfigListener::class,

@@ -15,11 +15,14 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function realpath;
 
 class IsChangelogReadableListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->config = $this->prophesize(Config::class);

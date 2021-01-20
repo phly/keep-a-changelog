@@ -14,10 +14,13 @@ use Phly\KeepAChangelog\ConfigCommand\AbstractShowConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\ShowConfigEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
 abstract class AbstractShowConfigListenerTestCase extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * Set to either "global" or "local"
      *

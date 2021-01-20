@@ -14,10 +14,13 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\CreateReleaseNameListener;
 use Phly\KeepAChangelog\Version\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Input\InputInterface;
 
 class CreateReleaseNameListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->input  = $this->prophesize(InputInterface::class);

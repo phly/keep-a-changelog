@@ -13,6 +13,7 @@ namespace PhlyTest\KeepAChangelog\Milestone;
 use Phly\KeepAChangelog\Milestone\CloseMilestoneEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
@@ -21,6 +22,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CloseMilestoneEventTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var EventDispatcherInterface|ObjectProphecy */
     private $dispatcher;
 

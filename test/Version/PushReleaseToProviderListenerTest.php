@@ -15,11 +15,14 @@ use Phly\KeepAChangelog\Version\PushReleaseToProviderListener;
 use Phly\KeepAChangelog\Version\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class PushReleaseToProviderListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->output   = $this->prophesize(OutputInterface::class);

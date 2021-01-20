@@ -14,6 +14,7 @@ use Phly\KeepAChangelog\ConfigCommand\AbstractCreateConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\CreateConfigEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
 use function file_exists;
@@ -27,6 +28,8 @@ use const E_WARNING;
 
 abstract class AbstractCreateConfigListenerTestCase extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var null|string */
     public $existingConfigFile;
 
@@ -157,6 +160,6 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
         $event->creationFailed(Argument::any())->shouldNotHaveBeenCalled();
 
         $contents = file_get_contents($this->tempConfigFile);
-        $this->assertRegExp(sprintf('/^changelog_file = %s$/m', $expectedChangelog), $contents);
+        $this->assertMatchesRegularExpression(sprintf('/^changelog_file = %s$/m', $expectedChangelog), $contents);
     }
 }

@@ -14,12 +14,15 @@ use Phly\KeepAChangelog\Common\IOInterface;
 use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoveConfigEventTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->input  = $this->prophesize(InputInterface::class);

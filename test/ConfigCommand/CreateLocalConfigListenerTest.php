@@ -70,7 +70,7 @@ class CreateLocalConfigListenerTest extends AbstractCreateConfigListenerTestCase
     {
         $listener = new CreateLocalConfigListener();
         $template = $listener->getConfigTemplate();
-        $this->assertNotRegExp('/^github\[token\]/m', $template);
-        $this->assertNotRegExp('/^gitlab\[token\]/m', $template);
+        $this->assertDoesNotMatchRegularExpression('/^github\[token\]/m', $template);
+        $this->assertDoesNotMatchRegularExpression('/^gitlab\[token\]/m', $template);
     }
 }

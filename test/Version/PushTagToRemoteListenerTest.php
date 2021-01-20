@@ -15,12 +15,15 @@ use Phly\KeepAChangelog\Version\PushTagToRemoteListener;
 use Phly\KeepAChangelog\Version\ReleaseEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function sprintf;
 
 class PushTagToRemoteListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->config = new Config();

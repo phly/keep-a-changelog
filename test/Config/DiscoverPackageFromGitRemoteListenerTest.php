@@ -16,11 +16,14 @@ use Phly\KeepAChangelog\Config\PackageNameDiscovery;
 use Phly\KeepAChangelog\Provider\ProviderSpec;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function preg_match;
 
 class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->provider = $this->prophesize(ProviderSpec::class);

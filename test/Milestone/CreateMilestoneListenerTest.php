@@ -17,12 +17,15 @@ use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateMilestoneListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var CreateMilestoneEvent|ObjectProphecy */
     private $event;
 

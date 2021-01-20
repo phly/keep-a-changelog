@@ -14,11 +14,14 @@ use Phly\KeepAChangelog\ConfigCommand\ShowConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\ShowMergedConfigListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function parse_ini_string;
 
 class ShowMergedConfigListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $voidReturn = function () {

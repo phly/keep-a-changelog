@@ -13,9 +13,12 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\VerifyRemoveOptionsListener;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class VerifyRemoveOptionsListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function eventOptions(): iterable
     {
         yield 'neither true' => [$removeLocal = false, $removeGlobal = false, $notifiesEvent = true];

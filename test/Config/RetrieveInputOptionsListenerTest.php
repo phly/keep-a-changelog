@@ -15,11 +15,14 @@ use Phly\KeepAChangelog\Config\Exception\InvalidProviderException;
 use Phly\KeepAChangelog\Config\RetrieveInputOptionsListener;
 use Phly\KeepAChangelog\Provider;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RetrieveInputOptionsListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->input  = $this->prophesize(InputInterface::class);

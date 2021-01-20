@@ -14,6 +14,7 @@ use Phly\KeepAChangelog\ConfigCommand\AbstractRemoveConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,6 +23,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 abstract class AbstractRemoveConfigListenerTestCase extends TestCase
 {
+    use ProphecyTrait;
+
     abstract public function getListener(): AbstractRemoveConfigListener;
 
     abstract public function getListenerWithFileNotFound(): AbstractRemoveConfigListener;
@@ -93,7 +96,7 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
                 Argument::that([$this->output, 'reveal']),
                 Argument::that(function ($question) {
                     TestCase::assertInstanceOf(ConfirmationQuestion::class, $question);
-                    TestCase::assertRegExp('/delete this file/', $question->getQuestion());
+                    TestCase::assertMatchesRegularExpression('/delete this file/', $question->getQuestion());
                     return $question;
                 })
             )
@@ -126,7 +129,7 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
                 Argument::that([$this->output, 'reveal']),
                 Argument::that(function ($question) {
                     TestCase::assertInstanceOf(ConfirmationQuestion::class, $question);
-                    TestCase::assertRegExp('/delete this file/', $question->getQuestion());
+                    TestCase::assertMatchesRegularExpression('/delete this file/', $question->getQuestion());
                     return $question;
                 })
             )
@@ -159,7 +162,7 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
                 Argument::that([$this->output, 'reveal']),
                 Argument::that(function ($question) {
                     TestCase::assertInstanceOf(ConfirmationQuestion::class, $question);
-                    TestCase::assertRegExp('/delete this file/', $question->getQuestion());
+                    TestCase::assertMatchesRegularExpression('/delete this file/', $question->getQuestion());
                     return $question;
                 })
             )

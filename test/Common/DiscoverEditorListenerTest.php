@@ -14,6 +14,7 @@ use Phly\KeepAChangelog\Common\DiscoverEditorListener;
 use Phly\KeepAChangelog\Common\EditorAwareEventInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function getenv;
 use function putenv;
@@ -21,6 +22,8 @@ use function sprintf;
 
 class DiscoverEditorListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var null|string */
     private $editorEnvValue;
 

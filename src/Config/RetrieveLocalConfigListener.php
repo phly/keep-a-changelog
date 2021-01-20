@@ -41,7 +41,9 @@ use function realpath;
  */
 class RetrieveLocalConfigListener extends AbstractConfigListener
 {
-    protected $configType            = 'local config file';
+    /** @var string */
+    protected $configType = 'local config file';
+    /** @var bool */
     protected $consumeProviderTokens = false;
 
     protected function getConfigFile(): string

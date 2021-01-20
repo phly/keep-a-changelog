@@ -13,12 +13,15 @@ namespace Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoteNameDiscoveryTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->helper = $this->prophesize(QuestionHelper::class)->reveal();

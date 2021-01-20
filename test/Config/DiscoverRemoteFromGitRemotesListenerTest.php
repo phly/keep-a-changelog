@@ -14,9 +14,12 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Provider\ProviderSpec;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->provider = $this->prophesize(ProviderSpec::class);

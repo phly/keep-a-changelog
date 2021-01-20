@@ -14,11 +14,14 @@ use Phly\KeepAChangelog\Milestone\AbstractMilestoneProviderEvent;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AbstractMilestoneProviderEventTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var AbstractMilestoneProviderEvent */
     private $event;
 

@@ -18,10 +18,13 @@ use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Phly\KeepAChangelog\Provider\ProviderSpec;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class VerifyProviderListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var Config|ObjectProphecy */
     private $config;
 

@@ -65,7 +65,8 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
             throw Exception\MissingTokenException::for($this);
         }
 
-        $release = $this->getClient()->api('repositories')
+        $release = $this->getClient()
+            ->repositories()
             ->createRelease($this->package, $tagName, $changelog);
 
         return $release['tag_name'] ?? null;
@@ -119,7 +120,9 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
             throw Exception\MissingPackageNameException::for($this, 'milestone listing');
         }
 
-        $milestones = $this->getClient()->api('milestones')->all($this->package, ['state' => 'active']);
+        $milestones = $this->getClient()
+            ->milestones()
+            ->all($this->package, ['state' => 'active']);
 
         return array_map(function ($milestone): Milestone {
             return new Milestone(
@@ -140,10 +143,12 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
             throw Exception\MissingTokenException::for($this);
         }
 
-        $milestone = $this->getClient()->api('milestones')->create($this->package, [
-            'title'       => $title,
-            'description' => empty($description) ? '' : $description,
-        ]);
+        $milestone = $this->getClient()
+            ->milestones()
+            ->create($this->package, [
+                'title'       => $title,
+                'description' => empty($description) ? '' : $description,
+            ]);
 
         return new Milestone(
             $milestone['id'],
@@ -162,9 +167,11 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
             throw Exception\MissingTokenException::for($this);
         }
 
-        $milestone = $this->getClient()->api('milestones')->update($this->package, $id, [
-            'state_event' => 'close',
-        ]);
+        $milestone = $this->getClient()
+            ->milestones()
+            ->update($this->package, $id, [
+                'state_event' => 'close',
+            ]);
 
         return $milestone['state'] === 'closed';
     }
@@ -175,7 +182,9 @@ class GitLab implements MilestoneAwareProviderInterface, ProviderInterface
             return $this->client;
         }
 
-        $client = GitLabClient::create($this->url);
+        $client = new GitLabClient();
+
+        $client->setUrl($this->url);
         $client->authenticate($this->token, GitLabClient::AUTH_HTTP_TOKEN);
 
         return $client;

@@ -13,6 +13,7 @@ namespace PhlyTest\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,6 +22,8 @@ use function sprintf;
 
 class ReadyLatestChangelogEventTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();

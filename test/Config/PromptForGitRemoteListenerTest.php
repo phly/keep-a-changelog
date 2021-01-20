@@ -14,6 +14,7 @@ use Phly\KeepAChangelog\Config\PromptForGitRemoteListener;
 use Phly\KeepAChangelog\Config\RemoteNameDiscovery;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,6 +22,8 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class PromptForGitRemoteListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->input  = $this->prophesize(InputInterface::class)->reveal();

@@ -18,6 +18,7 @@ use Phly\KeepAChangelog\Provider\GitHub;
 use Phly\KeepAChangelog\Provider\Milestone;
 use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use function array_shift;
 use function file_get_contents;
@@ -25,6 +26,8 @@ use function json_decode;
 
 class GitHubTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $this->github = new GitHub();

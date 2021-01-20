@@ -14,6 +14,7 @@ use Phly\KeepAChangelog\Milestone\CreateMilestoneEvent;
 use Phly\KeepAChangelog\Provider\Milestone;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
@@ -22,6 +23,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateMilestoneEventTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var EventDispatcherInterface|ObjectProphecy */
     private $dispatcher;
 

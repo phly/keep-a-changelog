@@ -15,9 +15,12 @@ use Phly\KeepAChangelog\Common\DiscoverChangelogEntryListener;
 use Phly\KeepAChangelog\Config;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class DiscoverChangelogEntryListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     protected function setUp(): void
     {
         $voidReturn = function () {
