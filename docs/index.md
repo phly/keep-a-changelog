@@ -23,10 +23,6 @@ maintainer, all you really want to do is:
 This tool provides those features and more, allowing you to quickly and easily
 handle changelogs for your project.
 
-## Requirements
-
-This tool is written in [PHP](http://php.net), and requires version 7.2 or later.
-
 ## Installation
 
 Installation is via [Composer](https://getcomposer.org), and it may be installed
