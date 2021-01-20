@@ -37,7 +37,7 @@ jobs:
 
     - name: Prepare Release-Info
       run: |
-        ./build/keep-a-changelog.phar version:show $(echo $GITHUB_REF | cut -d / -f 3) > release.note
+        ./bin/keep-a-changelog version:show $(echo $GITHUB_REF | cut -d / -f 3) > release.note
 
     - name: Create release
       uses: ncipollo/release-action@v1
