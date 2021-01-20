@@ -13,10 +13,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
 
-    - name: Build Phar
-      uses: MilesChou/composer-action/7.2/install@master
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
       with:
-        args: buildphar
+        php-version: 7.4
+        extensions: mbstring, intl, readline
+        tools: composer:v2
+
+    - name: Build Phar
+      run: composer buildphar
 
     - name: Sign Phar
       env:
