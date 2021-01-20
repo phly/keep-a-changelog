@@ -27,6 +27,9 @@
         "phpspec/prophecy-phpunit": "^2.0.1",
         "phpunit/phpunit": "^9.5.0"
     },
+    "replace": {
+        "laminas/laminas-zendframework-bridge": "*"
+    },
     "autoload": {
         "psr-4": {
             "Phly\\KeepAChangelog\\": "src/"
