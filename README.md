@@ -81,4 +81,4 @@ From there, you can get help for individual commands using:
 $ keep-a-changelog help <command>
 ```
 
-For more information, [please visit the documentation](https://phly.github.io/keep-a-changelog/).
+For more information, [please visit the documentation](https://phly.github.io/keep-a-changelog/#available-commands).
