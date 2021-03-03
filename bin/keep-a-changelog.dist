@@ -1,0 +1,69 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
+ * @copyright Copyright (c) 2018-2019 Matthew Weier O'Phinney
+ * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
+ */
+
+declare(strict_types=1);
+
+namespace Phly\KeepAChangelog;
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputOption;
+
+// Setup/verify autoloading
+if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
+    require $a;
+} elseif (file_exists($a = __DIR__ . '/../vendor/autoload.php')) {
+    require $a;
+} elseif (file_exists($a = __DIR__ . '/../autoload.php')) {
+    require $a;
+} else {
+    fwrite(STDERR, 'Cannot locate autoloader; please run "composer install"' . PHP_EOL);
+    exit(1);
+}
+
+$version = '%VERSION%';
+$dispatcher = new EventDispatcher(new ListenerProvider());
+
+$application = new Application('keep-a-changelog', $version);
+
+$application->getDefinition()
+    ->addOptions([
+        new InputOption('changelog', 'c', InputOption::VALUE_REQUIRED, 'The changelog file to create or modify; defaults to CHANGELOG.md'),
+    ]);
+
+$application->addCommands([
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_PATCH, $dispatcher, 'bump'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_PATCH, $dispatcher, 'bump:bugfix'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_PATCH, $dispatcher, 'bump:patch'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_MINOR, $dispatcher, 'bump:minor'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_MAJOR, $dispatcher, 'bump:major'),
+    new Bump\BumpCommand(Bump\BumpCommand::BUMP_UNRELEASED, $dispatcher, 'unreleased:create'),
+    new Bump\BumpToVersionCommand($dispatcher, 'bump:to-version'),
+    new Changelog\EditLinksCommand($dispatcher, 'changelog:edit-links'),
+    new Changelog\NewCommand($dispatcher, 'changelog:new'),
+    new ConfigCommand\CreateCommand($dispatcher, 'config:create'),
+    new ConfigCommand\EditCommand($dispatcher, 'config:edit'),
+    new ConfigCommand\RemoveCommand($dispatcher, 'config:remove'),
+    new ConfigCommand\ShowCommand($dispatcher, 'config:show'),
+    new Entry\EntryCommand($dispatcher, 'entry:added'),
+    new Entry\EntryCommand($dispatcher, 'entry:changed'),
+    new Entry\EntryCommand($dispatcher, 'entry:deprecated'),
+    new Entry\EntryCommand($dispatcher, 'entry:removed'),
+    new Entry\EntryCommand($dispatcher, 'entry:fixed'),
+    new Milestone\CloseCommand($dispatcher, 'milestone:close'),
+    new Milestone\CreateCommand($dispatcher, 'milestone:create'),
+    new Milestone\ListCommand($dispatcher, 'milestone:list'),
+    new Unreleased\PromoteCommand($dispatcher, 'unreleased:promote'),
+    new Version\EditCommand($dispatcher, 'version:edit'),
+    new Version\ListCommand($dispatcher, 'version:list'),
+    new Version\ReadyCommand($dispatcher, 'version:ready'),
+    new Version\ReleaseCommand($dispatcher, 'version:release'),
+    new Version\RemoveCommand($dispatcher, 'version:remove'),
+    new Version\ShowCommand($dispatcher, 'version:show'),
+    new Version\TagCommand($dispatcher, 'version:tag'),
+]);
+$application->run();

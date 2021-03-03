@@ -20,6 +20,11 @@ jobs:
         extensions: mbstring, intl, readline
         tools: composer:v2
 
+    - name: Prepare binary with version
+      run: |
+        VERSION=$(echo ${GITHUB_REF} | cut -d / -f 3)
+        cat bin/keep-a-changelog.dist | sed -e "s/%VERSION%/${VERSION}/" > bin/keep-a-changelog
+
     - name: Build Phar
       run: composer buildphar
 
