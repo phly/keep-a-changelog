@@ -44,6 +44,10 @@
         "sort-packages": true,
         "platform": {
             "php": "7.4.7"
+        },
+        "allow-plugins": {
+            "captainhook/plugin-composer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "bin": [
