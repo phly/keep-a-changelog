@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Provider;
 
+use Github\AuthMethod;
 use Github\Client as GitHubClient;
 use Github\Exception\ExceptionInterface as GithubException;
 use Phly\KeepAChangelog\Common\ValidateVersionListener;
@@ -257,7 +258,7 @@ class GitHub implements MilestoneAwareProviderInterface, ProviderInterface
         $client = self::DEFAULT_URL === $this->url
             ? new GitHubClient()
             : new GitHubClient(null, null, $this->url);
-        $client->authenticate($this->token, GitHubClient::AUTH_HTTP_TOKEN);
+        $client->authenticate($this->token, AuthMethod::ACCESS_TOKEN);
 
         return $client;
     }
