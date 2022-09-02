@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.12.1 - TBD
+## 2.12.1 - 2022-09-02
 
 ### Added
 
@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- Fixes an issue with the version:release command whereby GitHub/GitLab tokens were not correctly consumed, leading to exceptions.
 
 ## 2.12.0 - 2022-09-02
 
