@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog;
 
-use PackageVersions\Versions;
+use Composer\InstalledVersions;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -26,7 +26,10 @@ if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
     exit(1);
 }
 
-$version = strstr(Versions::getVersion('phly/keep-a-changelog'), '@', true);
+$version = InstalledVersions::getVersion('phly/keep-a-changelog');
+if (false !== strpos($version, '@')) {
+    $version = strstr($version, '@', true);
+}
 $dispatcher = new EventDispatcher(new ListenerProvider());
 
 $application = new Application('keep-a-changelog', $version);

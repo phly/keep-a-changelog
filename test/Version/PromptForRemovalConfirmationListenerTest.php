@@ -2,8 +2,6 @@
 
 /**
  * @see       https://github.com/phly/keep-a-changelog for the canonical source repository
- * @copyright Copyright (c) 2019 Matthew Weier O'Phinney
- * @license   https://github.com/phly/keep-a-changelog/blob/master/LICENSE.md New BSD License
  */
 
 declare(strict_types=1);
@@ -65,6 +63,7 @@ class PromptForRemovalConfirmationListenerTest extends TestCase
 
     public function testListenerAbortsEventOnUserRequest()
     {
+        $this->input->hasOption('force-removal')->willReturn(false);
         $this->helper
             ->ask(
                 Argument::that([$this->input, 'reveal']),
@@ -83,6 +82,7 @@ class PromptForRemovalConfirmationListenerTest extends TestCase
 
     public function testListenerDoesNotNotifyEventIfUserDoesNotAbort()
     {
+        $this->input->hasOption('force-removal')->willReturn(false);
         $this->helper
             ->ask(
                 Argument::that([$this->input, 'reveal']),
