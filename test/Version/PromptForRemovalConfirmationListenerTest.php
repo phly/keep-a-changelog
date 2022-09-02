@@ -63,6 +63,7 @@ class PromptForRemovalConfirmationListenerTest extends TestCase
 
     public function testListenerAbortsEventOnUserRequest()
     {
+        $this->input->hasOption('force-removal')->willReturn(false);
         $this->helper
             ->ask(
                 Argument::that([$this->input, 'reveal']),
@@ -81,6 +82,7 @@ class PromptForRemovalConfirmationListenerTest extends TestCase
 
     public function testListenerDoesNotNotifyEventIfUserDoesNotAbort()
     {
+        $this->input->hasOption('force-removal')->willReturn(false);
         $this->helper
             ->ask(
                 Argument::that([$this->input, 'reveal']),
