@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.12.0 - TBD
+
+### Added
+
+- Adds support for symfony/console v6 releases (thanks to @ramsey).
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.11.0 - 2021-01-20
 
 ### Added
