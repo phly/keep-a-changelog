@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- The utility now uses the composer-runtime-api for purposes of reporting its version.
 
 ### Deprecated
 
@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- This release removes support for Composer version 1 releases.
 
 ### Fixed
 
