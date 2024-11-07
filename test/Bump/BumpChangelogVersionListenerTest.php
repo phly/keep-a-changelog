@@ -11,8 +11,8 @@ namespace PhlyTest\KeepAChangelog\Bump;
 use Phly\KeepAChangelog\Bump\BumpChangelogVersionEvent;
 use Phly\KeepAChangelog\Bump\BumpChangelogVersionListener;
 use Phly\KeepAChangelog\Config;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 use function file_get_contents;
 use function file_put_contents;
@@ -22,7 +22,11 @@ use function unlink;
 
 class BumpChangelogVersionListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    /** @var Config&MockObject **/
+    private $config;
+
+    /** @var BumpChangelogVersionEvent&MockObject **/
+    private $event;
 
     /** @var string */
     private $tempFile;
@@ -35,11 +39,17 @@ class BumpChangelogVersionListenerTest extends TestCase
             file_get_contents(__DIR__ . '/../_files/CHANGELOG.md')
         );
 
-        $this->config = $this->prophesize(Config::class);
-        $this->config->changelogFile()->willReturn($this->tempFile);
+        $this->config = $this->createMock(Config::class);
+        $this->config
+            ->expects($this->any())
+            ->method('changelogFile')
+            ->willReturn($this->tempFile);
 
-        $this->event = $this->prophesize(BumpChangelogVersionEvent::class);
-        $this->event->config()->will([$this->config, 'reveal']);
+        $this->event = $this->createMock(BumpChangelogVersionEvent::class);
+        $this->event
+            ->expects($this->any())
+            ->method('config')
+            ->willReturn($this->config);
     }
 
     protected function tearDown(): void
@@ -49,12 +59,12 @@ class BumpChangelogVersionListenerTest extends TestCase
 
     public function testBumpsToVersionProvidedInEvent()
     {
-        $this->event->version()->willReturn('3.2.1');
-        $this->event->bumpedChangelog('3.2.1')->shouldBeCalled();
+        $this->event->expects($this->atLeastOnce())->method('version')->willReturn('3.2.1');
+        $this->event->expects($this->atLeastOnce())->method('bumpedChangelog')->with('3.2.1');
 
         $listener = new BumpChangelogVersionListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 
     public function bumpMethods(): iterable
@@ -71,12 +81,12 @@ class BumpChangelogVersionListenerTest extends TestCase
      */
     public function testBumpsUsingMethodProvidedInEvent(string $bumpMethod, string $expected)
     {
-        $this->event->version()->willReturn(null);
-        $this->event->bumpMethod()->willReturn($bumpMethod);
-        $this->event->bumpedChangelog($expected)->shouldBeCalled();
+        $this->event->expects($this->atLeastOnce())->method('version')->willReturn(null);
+        $this->event->expects($this->atLeastOnce())->method('bumpMethod')->willReturn($bumpMethod);
+        $this->event->expects($this->atLeastOnce())->method('bumpedChangelog')->with($expected);
 
         $listener = new BumpChangelogVersionListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 }
