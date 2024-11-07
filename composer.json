@@ -24,7 +24,6 @@
         "captainhook/captainhook": "^5.18.3",
         "captainhook/plugin-composer": "^5.3.3",
         "laminas/laminas-coding-standard": "^2.5.0",
-        "phpspec/prophecy-phpunit": "^2.2.0",
         "phpunit/phpunit": "^9.6.21"
     },
     "replace": {
