@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- Removes support for PHP versions prior to PHP 8.1.
 
 ### Fixed
 

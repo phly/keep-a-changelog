@@ -11,7 +11,7 @@
         "rss": "https://github.com/phly/keep-a-changelog/releases.atom"
     },
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.1",
         "composer-runtime-api": "^2.0",
         "knplabs/github-api": "^3.4",
         "laminas/laminas-diactoros": "^2.4.1",
@@ -43,7 +43,7 @@
     "config": {
         "sort-packages": true,
         "platform": {
-            "php": "7.4.7"
+            "php": "8.1.99"
         },
         "allow-plugins": {
             "captainhook/plugin-composer": true,
