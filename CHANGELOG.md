@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.13.0 - TBD
+## 2.13.0 - 2024-11-07
 
 ### Added
 
@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#121](https://github.com/phly/keep-a-changelog/pull/121) updates the symfony/console dependency to allow version 7 releases. (Contributed by [fezfez](https://github.com/fezfez))
 
 ### Deprecated
 
