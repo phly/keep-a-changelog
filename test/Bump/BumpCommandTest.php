@@ -13,10 +13,8 @@ use Phly\KeepAChangelog\Bump\BumpCommand;
 use Phly\KeepAChangelog\Exception;
 use Phly\KeepAChangelog\Milestone\CreateMilestoneEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,19 +22,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 class BumpCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function testConstructorRaisesExceptionForInvalidType()
     {
         $this->expectException(Exception\InvalidBumpTypeException::class);
-        new BumpCommand('invalid-type', $this->dispatcher->reveal());
+        new BumpCommand('invalid-type', $this->dispatcher);
     }
 
     public function expectedTypes(): iterable
@@ -53,7 +52,7 @@ class BumpCommandTest extends TestCase
      */
     public function testConstructorAllowsExpectedTypes(string $bumpType)
     {
-        $command = new BumpCommand($bumpType, $this->dispatcher->reveal());
+        $command = new BumpCommand($bumpType, $this->dispatcher);
         $this->assertInstanceOf(BumpCommand::class, $command);
     }
 
@@ -65,30 +64,32 @@ class BumpCommandTest extends TestCase
         $input      = $this->input;
         $output     = $this->output;
         $dispatcher = $this->dispatcher;
-        $event      = $this->prophesize(BumpChangelogVersionEvent::class);
-        $event->failed()->willReturn(false);
+        $event      = $this->createMock(BumpChangelogVersionEvent::class);
+        $event->expects($this->any())->method('failed')->willReturn(false);
 
         $dispatcher
-            ->dispatch(Argument::that(function ($event) use ($input, $output, $dispatcher, $methodName) {
-                TestCase::assertSame($input->reveal(), $event->input());
-                TestCase::assertSame($output->reveal(), $event->output());
-                TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function ($event) use ($input, $output, $dispatcher, $methodName) {
+                TestCase::assertSame($input, $event->input());
+                TestCase::assertSame($output, $event->output());
+                TestCase::assertSame($dispatcher, $event->dispatcher());
 
                 if ($methodName === BumpChangelogVersionEvent::UNRELEASED) {
                     TestCase::assertNull($event->bumpMethod());
                     TestCase::assertSame(BumpChangelogVersionEvent::UNRELEASED, $event->version());
-                    return $event;
+                    return true;
                 }
 
                 TestCase::assertSame($methodName, $event->bumpMethod());
                 TestCase::assertNull($event->version());
-                return $event;
+                return true;
             }))
-            ->will(function () use ($event) {
-                return $event->reveal();
-            });
+            ->will($this->returnCallback(function () use ($event) {
+                return $event;
+            }));
 
-        $command = new BumpCommand($bumpType, $this->dispatcher->reveal());
+        $command = new BumpCommand($bumpType, $this->dispatcher);
 
         $this->assertSame(0, $this->executeCommand($command));
     }
@@ -101,30 +102,32 @@ class BumpCommandTest extends TestCase
         $input      = $this->input;
         $output     = $this->output;
         $dispatcher = $this->dispatcher;
-        $event      = $this->prophesize(BumpChangelogVersionEvent::class);
-        $event->failed()->willReturn(true);
+        $event      = $this->createMock(BumpChangelogVersionEvent::class);
+        $event->expects($this->any())->method('failed')->willReturn(true);
 
         $dispatcher
-            ->dispatch(Argument::that(function ($event) use ($input, $output, $dispatcher, $methodName) {
-                TestCase::assertSame($input->reveal(), $event->input());
-                TestCase::assertSame($output->reveal(), $event->output());
-                TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function ($event) use ($input, $output, $dispatcher, $methodName) {
+                TestCase::assertSame($input, $event->input());
+                TestCase::assertSame($output, $event->output());
+                TestCase::assertSame($dispatcher, $event->dispatcher());
 
                 if ($methodName === BumpChangelogVersionEvent::UNRELEASED) {
                     TestCase::assertNull($event->bumpMethod());
                     TestCase::assertSame(BumpChangelogVersionEvent::UNRELEASED, $event->version());
-                    return $event;
+                    return true;
                 }
 
                 TestCase::assertSame($methodName, $event->bumpMethod());
                 TestCase::assertNull($event->version());
-                return $event;
+                return true;
             }))
-            ->will(function () use ($event) {
-                return $event->reveal();
-            });
+            ->will($this->returnCallback(function () use ($event) {
+                return $event;
+            }));
 
-        $command = new BumpCommand($bumpType, $this->dispatcher->reveal());
+        $command = new BumpCommand($bumpType, $this->dispatcher);
 
         $this->assertSame(1, $this->executeCommand($command));
     }
@@ -143,33 +146,40 @@ class BumpCommandTest extends TestCase
         int $expectedStatus
     ): void {
         $dispatcher = $this->dispatcher;
-        /** @var BumpChangelogVersionEvent|ObjectProphecy $bumpEvent */
-        $bumpEvent = $this->prophesize(BumpChangelogVersionEvent::class);
-        /** @var CreateMilestoneEvent|ObjectProphecy $milestoneEvent */
-        $milestoneEvent = $this->prophesize(CreateMilestoneEvent::class);
+        /** @var BumpChangelogVersionEvent&MockObject $bumpEvent */
+        $bumpEvent = $this->createMock(BumpChangelogVersionEvent::class);
+        /** @var CreateMilestoneEvent&MockObject $milestoneEvent */
+        $milestoneEvent = $this->createMock(CreateMilestoneEvent::class);
 
-        $bumpEvent->failed()->willReturn(false)->shouldBeCalled();
-        $bumpEvent->version()->willReturn('2.0.1')->shouldBeCalled();
-        $milestoneEvent->failed()->willReturn($failed)->shouldBeCalled();
+        $bumpEvent->expects($this->atLeastOnce())->method('failed')->willReturn(false);
+        $bumpEvent->expects($this->atLeastOnce())->method('version')->willReturn('2.0.1');
+        $milestoneEvent->expects($this->atLeastOnce())->method('failed')->willReturn($failed);
 
-        $dispatchCreateMilestoneEvent = function () use ($dispatcher, $bumpEvent, $milestoneEvent) {
-            $dispatcher
-                ->dispatch(Argument::that(function (CreateMilestoneEvent $event) {
-                    TestCase::assertSame('2.0.1', $event->title());
-                    return $event;
-                }))
-                ->will([$milestoneEvent, 'reveal']);
-            return $bumpEvent->reveal();
-        };
+        $invokedCount = $this->exactly(2);
 
         $dispatcher
-            ->dispatch(Argument::type(BumpChangelogVersionEvent::class))
-            ->will($dispatchCreateMilestoneEvent);
+            ->expects($invokedCount)
+            ->method('dispatch')
+            ->will($this->returnCallback(function ($event) use ($invokedCount, $bumpEvent, $milestoneEvent) {
+                if ($invokedCount->getInvocationCount() === 1) {
+                    $this->assertInstanceOf(BumpChangelogVersionEvent::class, $event);
+                    return $bumpEvent;
+                }
 
-        $this->input->getOption('create-milestone')->willReturn(true)->shouldBeCalled();
-        $this->input->getOption('create-milestone-with-name')->willReturn(null)->shouldBeCalled();
+                $this->assertInstanceOf(CreateMilestoneEvent::class, $event);
+                $this->assertSame('2.0.1', $event->title());
+                return $milestoneEvent;
+            }));
 
-        $command = new BumpCommand(BumpCommand::BUMP_PATCH, $this->dispatcher->reveal());
+        $this->input
+            ->expects($this->atLeast(2))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['create-milestone', true],
+                ['create-milestone-with-name', null],
+            ]));
+
+        $command = new BumpCommand(BumpCommand::BUMP_PATCH, $this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
@@ -182,33 +192,40 @@ class BumpCommandTest extends TestCase
         int $expectedStatus
     ): void {
         $dispatcher = $this->dispatcher;
-        /** @var BumpChangelogVersionEvent|ObjectProphecy $bumpEvent */
-        $bumpEvent = $this->prophesize(BumpChangelogVersionEvent::class);
-        /** @var CreateMilestoneEvent|ObjectProphecy $milestoneEvent */
-        $milestoneEvent = $this->prophesize(CreateMilestoneEvent::class);
+        /** @var BumpChangelogVersionEvent|MockObject $bumpEvent */
+        $bumpEvent = $this->createMock(BumpChangelogVersionEvent::class);
+        /** @var CreateMilestoneEvent|MockObject $milestoneEvent */
+        $milestoneEvent = $this->createMock(CreateMilestoneEvent::class);
 
-        $bumpEvent->failed()->willReturn(false)->shouldBeCalled();
-        $bumpEvent->version()->willReturn('2.0.0')->shouldBeCalled();
-        $milestoneEvent->failed()->willReturn($failed)->shouldBeCalled();
+        $bumpEvent->expects($this->atLeastOnce())->method('failed')->willReturn(false);
+        $bumpEvent->expects($this->atLeastOnce())->method('version')->willReturn('2.0.0');
+        $milestoneEvent->expects($this->atLeastOnce())->method('failed')->willReturn($failed);
 
-        $dispatchCreateMilestoneEvent = function () use ($dispatcher, $bumpEvent, $milestoneEvent) {
-            $dispatcher
-                ->dispatch(Argument::that(function (CreateMilestoneEvent $event) {
-                    TestCase::assertSame('2.0.0 The Big Kahuna', $event->title());
-                    return $event;
-                }))
-                ->will([$milestoneEvent, 'reveal']);
-            return $bumpEvent->reveal();
-        };
+        $invokedCount = $this->exactly(2);
 
         $dispatcher
-            ->dispatch(Argument::type(BumpChangelogVersionEvent::class))
-            ->will($dispatchCreateMilestoneEvent);
+            ->expects($invokedCount)
+            ->method('dispatch')
+            ->will($this->returnCallback(function ($event) use ($invokedCount, $bumpEvent, $milestoneEvent) {
+                if ($invokedCount->getInvocationCount() === 1) {
+                    $this->assertInstanceOf(BumpChangelogVersionEvent::class, $event);
+                    return $bumpEvent;
+                }
 
-        $this->input->getOption('create-milestone')->willReturn(null)->shouldBeCalled();
-        $this->input->getOption('create-milestone-with-name')->willReturn('2.0.0 The Big Kahuna')->shouldBeCalled();
+                $this->assertInstanceOf(CreateMilestoneEvent::class, $event);
+                $this->assertSame('2.0.0 The Big Kahuna', $event->title());
+                return $milestoneEvent;
+            }));
 
-        $command = new BumpCommand(BumpCommand::BUMP_PATCH, $this->dispatcher->reveal());
+        $this->input
+            ->expects($this->atLeast(2))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['create-milestone', null],
+                ['create-milestone-with-name', '2.0.0 The Big Kahuna'],
+            ]));
+        
+        $command = new BumpCommand(BumpCommand::BUMP_PATCH, $this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
