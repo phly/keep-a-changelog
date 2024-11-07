@@ -11,7 +11,6 @@ namespace Phly\KeepAChangelog;
 use Phly\KeepAChangelog\Common\EventInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
-use function get_class;
 use function is_object;
 
 class ListenerProvider implements ListenerProviderInterface
@@ -164,7 +163,7 @@ class ListenerProvider implements ListenerProviderInterface
 
     public function getListenersForEvent(object $event): iterable
     {
-        $type = get_class($event);
+        $type = $event::class;
         if (! isset($this->listeners[$type])) {
             return [];
         }
