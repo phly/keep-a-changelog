@@ -16,7 +16,6 @@ use Phly\KeepAChangelog\Provider\GitHub;
 use Phly\KeepAChangelog\Provider\Milestone;
 use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 use function array_shift;
 use function file_get_contents;
@@ -24,7 +23,7 @@ use function json_decode;
 
 class GitHubTest extends TestCase
 {
-    use ProphecyTrait;
+    private GitHub $github;
 
     protected function setUp(): void
     {
@@ -156,19 +155,20 @@ class GitHubTest extends TestCase
             true
         );
 
-        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi = $this->createMock(Milestones::class);
         $milestonesApi
-            ->all('phly', 'keep-a-changelog', ['state' => 'open'])
-            ->willReturn($milestonesFromApi)
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('all')
+            ->with('phly', 'keep-a-changelog', ['state' => 'open'])
+            ->willReturn($milestonesFromApi);
 
-        $issueApi = $this->prophesize(Issue::class);
-        $issueApi->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $issueApi = $this->createMock(Issue::class);
+        $issueApi->expects($this->once())->method('milestones')->willReturn($milestonesApi);
 
-        $client = $this->prophesize(GitHubClient::class);
-        $client->api('issue')->will([$issueApi, 'reveal'])->shouldBeCalled();
+        $client = $this->createMock(GitHubClient::class);
+        $client->expects($this->once())->method('api')->with('issue')->willReturn($issueApi);
 
-        $this->github->client = $client->reveal();
+        $this->github->client = $client;
         $this->github->setPackageName('phly/keep-a-changelog');
 
         $milestones = $this->github->listMilestones();
@@ -203,9 +203,11 @@ class GitHubTest extends TestCase
         );
         $milestoneFromApi  = array_shift($milestonesFromApi);
 
-        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi = $this->createMock(Milestones::class);
         $milestonesApi
-            ->create(
+            ->expects($this->once())
+            ->method('create')
+            ->with(
                 'phly',
                 'keep-a-changelog',
                 [
@@ -213,16 +215,15 @@ class GitHubTest extends TestCase
                     'description' => 'A long time in the future',
                 ]
             )
-            ->willReturn($milestoneFromApi)
-            ->shouldBeCalled();
+            ->willReturn($milestoneFromApi);
 
-        $issueApi = $this->prophesize(Issue::class);
-        $issueApi->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $issueApi = $this->createMock(Issue::class);
+        $issueApi->expects($this->once())->method('milestones')->willReturn($milestonesApi);
 
-        $client = $this->prophesize(GitHubClient::class);
-        $client->api('issue')->will([$issueApi, 'reveal'])->shouldBeCalled();
+        $client = $this->createMock(GitHubClient::class);
+        $client->expects($this->once())->method('api')->with('issue')->willReturn($issueApi);
 
-        $this->github->client = $client->reveal();
+        $this->github->client = $client;
         $this->github->setPackageName('phly/keep-a-changelog');
         $this->github->setToken('not-really-a-token');
 
@@ -258,19 +259,20 @@ class GitHubTest extends TestCase
         );
         $milestoneFromApi  = array_shift($milestonesFromApi);
 
-        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi = $this->createMock(Milestones::class);
         $milestonesApi
-            ->update('phly', 'keep-a-changelog', 1, ['state' => 'closed'])
-            ->willReturn($milestoneFromApi)
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('update')
+            ->with('phly', 'keep-a-changelog', 1, ['state' => 'closed'])
+            ->willReturn($milestoneFromApi);
 
-        $issueApi = $this->prophesize(Issue::class);
-        $issueApi->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $issueApi = $this->createMock(Issue::class);
+        $issueApi->expects($this->once())->method('milestones')->willReturn($milestonesApi);
 
-        $client = $this->prophesize(GitHubClient::class);
-        $client->api('issue')->will([$issueApi, 'reveal'])->shouldBeCalled();
+        $client = $this->createMock(GitHubClient::class);
+        $client->expects($this->once())->method('api')->with('issue')->willReturn($issueApi);
 
-        $this->github->client = $client->reveal();
+        $this->github->client = $client;
         $this->github->setPackageName('phly/keep-a-changelog');
         $this->github->setToken('not-really-a-token');
 
@@ -288,19 +290,20 @@ class GitHubTest extends TestCase
         $milestoneFromApi          = array_shift($milestonesFromApi);
         $milestoneFromApi['state'] = 'closed';
 
-        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi = $this->createMock(Milestones::class);
         $milestonesApi
-            ->update('phly', 'keep-a-changelog', 1, ['state' => 'closed'])
-            ->willReturn($milestoneFromApi)
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('update')
+            ->with('phly', 'keep-a-changelog', 1, ['state' => 'closed'])
+            ->willReturn($milestoneFromApi);
 
-        $issueApi = $this->prophesize(Issue::class);
-        $issueApi->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $issueApi = $this->createMock(Issue::class);
+        $issueApi->expects($this->once())->method('milestones')->willReturn($milestonesApi);
 
-        $client = $this->prophesize(GitHubClient::class);
-        $client->api('issue')->will([$issueApi, 'reveal'])->shouldBeCalled();
+        $client = $this->createMock(GitHubClient::class);
+        $client->expects($this->once())->method('api')->with('issue')->willReturn($issueApi);
 
-        $this->github->client = $client->reveal();
+        $this->github->client = $client;
         $this->github->setPackageName('phly/keep-a-changelog');
         $this->github->setToken('not-really-a-token');
 
