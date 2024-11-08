@@ -14,13 +14,12 @@ use Phly\KeepAChangelog\Provider\Exception;
 use Phly\KeepAChangelog\Provider\GitLab;
 use Phly\KeepAChangelog\Provider\Milestone;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 use function count;
 
 class GitLabTest extends TestCase
 {
-    use ProphecyTrait;
+    private GitLab $gitlab;
 
     protected function setUp(): void
     {
@@ -160,16 +159,17 @@ class GitLabTest extends TestCase
             ],
         ];
 
-        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi = $this->createMock(Milestones::class);
         $milestonesApi
-            ->all('phly/keep-a-changelog', ['state' => 'active'])
-            ->willReturn($milestonesFromApi)
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('all')
+            ->with('phly/keep-a-changelog', ['state' => 'active'])
+            ->willReturn($milestonesFromApi);
 
-        $client = $this->prophesize(GitLabClient::class);
-        $client->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $client = $this->createMock(GitLabClient::class);
+        $client->expects($this->once())->method('milestones')->willReturn($milestonesApi);
 
-        $this->gitlab->client = $client->reveal();
+        $this->gitlab->client = $client;
         $this->gitlab->setPackageName('phly/keep-a-changelog');
 
         $milestones = $this->gitlab->listMilestones();
@@ -201,16 +201,17 @@ class GitLabTest extends TestCase
             'state'       => 'active',
         ];
 
-        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi = $this->createMock(Milestones::class);
         $milestonesApi
-            ->create('phly/keep-a-changelog', ['title' => '17.0.0', 'description' => 'In the future'])
-            ->willReturn($milestoneFromApi)
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('create')
+            ->with('phly/keep-a-changelog', ['title' => '17.0.0', 'description' => 'In the future'])
+            ->willReturn($milestoneFromApi);
 
-        $client = $this->prophesize(GitLabClient::class);
-        $client->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $client = $this->createMock(GitLabClient::class);
+        $client->expects($this->once())->method('milestones')->willReturn($milestonesApi);
 
-        $this->gitlab->client = $client->reveal();
+        $this->gitlab->client = $client;
         $this->gitlab->setPackageName('phly/keep-a-changelog');
         $this->gitlab->setToken('not-really-a-token');
 
@@ -245,16 +246,17 @@ class GitLabTest extends TestCase
             'state'       => 'active',
         ];
 
-        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi = $this->createMock(Milestones::class);
         $milestonesApi
-            ->update('phly/keep-a-changelog', 1000, ['state_event' => 'close'])
-            ->willReturn($milestoneFromApi)
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('update')
+            ->with('phly/keep-a-changelog', 1000, ['state_event' => 'close'])
+            ->willReturn($milestoneFromApi);
 
-        $client = $this->prophesize(GitLabClient::class);
-        $client->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $client = $this->createMock(GitLabClient::class);
+        $client->expects($this->once())->method('milestones')->willReturn($milestonesApi);
 
-        $this->gitlab->client = $client->reveal();
+        $this->gitlab->client = $client;
         $this->gitlab->setPackageName('phly/keep-a-changelog');
         $this->gitlab->setToken('not-really-a-token');
 
@@ -270,16 +272,17 @@ class GitLabTest extends TestCase
             'state'       => 'closed',
         ];
 
-        $milestonesApi = $this->prophesize(Milestones::class);
+        $milestonesApi = $this->createMock(Milestones::class);
         $milestonesApi
-            ->update('phly/keep-a-changelog', 1000, ['state_event' => 'close'])
-            ->willReturn($milestoneFromApi)
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('update')
+            ->with('phly/keep-a-changelog', 1000, ['state_event' => 'close'])
+            ->willReturn($milestoneFromApi);
 
-        $client = $this->prophesize(GitLabClient::class);
-        $client->milestones()->will([$milestonesApi, 'reveal'])->shouldBeCalled();
+        $client = $this->createMock(GitLabClient::class);
+        $client->expects($this->once())->method('milestones')->willReturn($milestonesApi);
 
-        $this->gitlab->client = $client->reveal();
+        $this->gitlab->client = $client;
         $this->gitlab->setPackageName('phly/keep-a-changelog');
         $this->gitlab->setToken('not-really-a-token');
 
