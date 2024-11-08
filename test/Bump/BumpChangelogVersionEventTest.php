@@ -10,22 +10,23 @@ namespace PhlyTest\KeepAChangelog\Bump;
 
 use Phly\KeepAChangelog\Bump\BumpChangelogVersionEvent;
 use Phly\KeepAChangelog\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class BumpChangelogVersionEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class)->reveal();
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function testInstantiationRaisesExceptionWhenBothBumpMethodAndVersionProvided()
@@ -33,7 +34,7 @@ class BumpChangelogVersionEventTest extends TestCase
         $this->expectException(Exception\InvalidChangelogBumpCriteriaException::class);
         new BumpChangelogVersionEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             'bumpMinor',
             '1.2.3'
@@ -45,7 +46,7 @@ class BumpChangelogVersionEventTest extends TestCase
         $this->expectException(Exception\InvalidChangelogBumpCriteriaException::class);
         new BumpChangelogVersionEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher
         );
     }
@@ -54,7 +55,7 @@ class BumpChangelogVersionEventTest extends TestCase
     {
         $event = new BumpChangelogVersionEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             'bumpMinor'
         );
@@ -67,7 +68,7 @@ class BumpChangelogVersionEventTest extends TestCase
     {
         $event = new BumpChangelogVersionEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             null,
             '1.2.3'
@@ -81,11 +82,12 @@ class BumpChangelogVersionEventTest extends TestCase
     {
         $event = new BumpChangelogVersionEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             'bumpMinor'
         );
-        $this->output->writeln(Argument::containingString('Bumped changelog'))->shouldBeCalled();
+
+        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('Bumped changelog'));
 
         $this->assertNull($event->bumpedChangelog('1.2.3'));
     }
@@ -94,7 +96,7 @@ class BumpChangelogVersionEventTest extends TestCase
     {
         $event = new BumpChangelogVersionEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             BumpChangelogVersionEvent::UNRELEASED
         );
