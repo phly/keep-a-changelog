@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\Changelog;
 use Phly\KeepAChangelog\Changelog\CreateNewChangelogEvent;
 use Phly\KeepAChangelog\Changelog\CreateNewChangelogListener;
 use Phly\KeepAChangelog\Config;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 use function file_exists;
 use function file_get_contents;
@@ -24,23 +23,18 @@ use function unlink;
 
 class CreateNewChangelogListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config&MockObject $config;
+    private CreateNewChangelogEvent&MockObject $event;
 
     /** @var null|string */
     private $tempFile;
 
     protected function setUp(): void
     {
-        $voidReturn = function () {
-        };
-
         $this->tempFile = null;
-        $this->config   = $this->prophesize(Config::class);
-        $this->event    = $this->prophesize(CreateNewChangelogEvent::class);
-        $this->event->config()->will([$this->config, 'reveal']);
-        $this->event->version()->willReturn('1.0.0');
-        $this->event->changelogExists(Argument::any())->will($voidReturn);
-        $this->event->createdChangelog()->will($voidReturn);
+        $this->config   = $this->createMock(Config::class);
+        $this->event    = $this->createMock(CreateNewChangelogEvent::class);
+        $this->event->expects($this->any())->method('config')->willReturn($this->config);
     }
 
     protected function tearDown(): void
@@ -56,16 +50,21 @@ class CreateNewChangelogListenerTest extends TestCase
     public function testNotifesEventChangelogExistsIfFileExistsAndEventNotMarkedToOverwrite()
     {
         $changelog = __DIR__ . '/../_files/CHANGELOG.md';
-        $this->config->changelogFile()->willReturn($changelog);
-
-        $this->event->overwrite()->willReturn(false);
+        $this->config
+            ->expects($this->atLeastOnce())
+            ->method('changelogFile')
+            ->willReturn($changelog);
+        $this->event
+            ->expects($this->atLeastOnce())
+            ->method('overwrite')
+            ->willReturn(false);
 
         $listener = new CreateNewChangelogListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->changelogExists($changelog)->shouldHaveBeenCalled();
-        $this->event->version()->shouldNotHaveBeenCalled();
-        $this->event->createdChangelog()->shouldNotHaveBeenCalled();
+        $this->event->expects($this->atLeastOnce())->method('changelogExists')->with($changelog);
+        $this->event->expects($this->never())->method('version');
+        $this->event->expects($this->never())->method('createdChangelog');
+        $this->assertNull($listener($this->event));
     }
 
     public function testNotifiesEventChangelogCreatedWhenFileDoesNotExistAndIsCreated()
@@ -73,16 +72,16 @@ class CreateNewChangelogListenerTest extends TestCase
         $this->tempFile = $changelog = tempnam(sys_get_temp_dir(), 'CAK');
         unlink($changelog); // tempnam creates the file
 
-        $this->config->changelogFile()->willReturn($changelog);
-        $this->event->overwrite()->willReturn(false);
+        $this->config->expects($this->atLeastOnce())->method('changelogFile')->willReturn($changelog);
+        $this->event->expects($this->atLeastOnce())->method('overwrite')->willReturn(false);
 
         $listener = new CreateNewChangelogListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->changelogExists($changelog)->shouldNotHaveBeenCalled();
-        $this->event->version()->shouldHaveBeenCalled();
-        $this->event->createdChangelog()->shouldHaveBeenCalled();
+        $this->event->expects($this->never())->method('changelogExists');
+        $this->event->expects($this->atLeastOnce())->method('version')->willReturn('1.0.0');
+        $this->event->expects($this->once())->method('createdChangelog');
 
+        $this->assertNull($listener($this->event));
         $this->assertFileEquals(__DIR__ . '/../_files/CHANGELOG-INITIAL.md', $this->tempFile);
     }
 
@@ -91,16 +90,16 @@ class CreateNewChangelogListenerTest extends TestCase
         $this->tempFile = $changelog = tempnam(sys_get_temp_dir(), 'CAK');
         file_put_contents($changelog, file_get_contents(__DIR__ . '/../_files/CHANGELOG.md'));
 
-        $this->config->changelogFile()->willReturn($changelog);
-        $this->event->overwrite()->willReturn(true);
+        $this->config->expects($this->atLeastOnce())->method('changelogFile')->willReturn($changelog);
+        $this->event->expects($this->atLeastOnce())->method('overwrite')->willReturn(true);
 
         $listener = new CreateNewChangelogListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->changelogExists($changelog)->shouldNotHaveBeenCalled();
-        $this->event->version()->shouldHaveBeenCalled();
-        $this->event->createdChangelog()->shouldHaveBeenCalled();
+        $this->event->expects($this->never())->method('changelogExists');
+        $this->event->expects($this->atLeastOnce())->method('version')->willReturn('1.0.0');
+        $this->event->expects($this->once())->method('createdChangelog');
 
+        $this->assertNull($listener($this->event));
         $this->assertFileEquals(__DIR__ . '/../_files/CHANGELOG-INITIAL.md', $this->tempFile);
     }
 }
