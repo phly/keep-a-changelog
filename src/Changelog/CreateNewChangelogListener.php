@@ -15,33 +15,33 @@ use function sprintf;
 class CreateNewChangelogListener
 {
     private const TEMPLATE = <<<'EOT'
-# Changelog
-
-All notable changes to this project will be documented in this file, in reverse chronological order by release.
-
-## %s - TBD
-
-### Added
-
-- Nothing.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-EOT;
+        # Changelog
+        
+        All notable changes to this project will be documented in this file, in reverse chronological order by release.
+        
+        ## %s - TBD
+        
+        ### Added
+        
+        - Nothing.
+        
+        ### Changed
+        
+        - Nothing.
+        
+        ### Deprecated
+        
+        - Nothing.
+        
+        ### Removed
+        
+        - Nothing.
+        
+        ### Fixed
+        
+        - Nothing.
+        
+        EOT;
 
     public function __invoke(CreateNewChangelogEvent $event): void
     {
