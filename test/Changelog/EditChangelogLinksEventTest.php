@@ -12,32 +12,31 @@ use Phly\KeepAChangelog\Changelog\EditChangelogLinksEvent;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
 use Phly\KeepAChangelog\Common\EditorAwareEventInterface;
 use Phly\KeepAChangelog\Common\EventInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class EditChangelogLinksEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
-
-        $this->output->writeln(Argument::any())->willReturn(null);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function createEvent(): EditChangelogLinksEvent
     {
         return new EditChangelogLinksEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $this->dispatcher->reveal()
+            $this->input,
+            $this->output,
+            $this->dispatcher,
         );
     }
 
@@ -109,11 +108,11 @@ class EditChangelogLinksEventTest extends TestCase
     {
         $event = $this->createEvent();
 
-        $this->assertNull($event->editComplete('changelog.txt'));
-
         $this->output
-            ->writeln(Argument::containingString('Completed editing links for file changelog.txt'))
-            ->shouldHaveBeenCalled();
+            ->expects($this->atLeastOnce())
+            ->method('writeln')
+            ->with($this->stringContains('Completed editing links for file changelog.txt'));
+        $this->assertNull($event->editComplete('changelog.txt'));
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
@@ -122,11 +121,21 @@ class EditChangelogLinksEventTest extends TestCase
     {
         $event = $this->createEvent();
 
-        $this->assertNull($event->editFailed('changelog.txt'));
+        $invokedCount = $this->exactly(2);
 
         $this->output
-            ->writeln(Argument::containingString('Editing links for file changelog.txt failed'))
-            ->shouldHaveBeenCalled();
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function($value) use ($invokedCount) {
+                if ($invokedCount->getInvocationCount() !== 1) {
+                    return true;
+                }
+
+                TestCase::assertStringContainsString('Editing links for file changelog.txt failed', $value);
+                return true;
+            }));
+
+        $this->assertNull($event->editFailed('changelog.txt'));
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
