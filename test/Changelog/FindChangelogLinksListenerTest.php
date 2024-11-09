@@ -6,57 +6,62 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Changelog;
+namespace PhlyTest\KeepAChangelog\Changelog;
 
+use Phly\KeepAChangelog\Changelog\EditChangelogLinksEvent;
+use Phly\KeepAChangelog\Changelog\FindChangelogLinksListener;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
 use Phly\KeepAChangelog\Config;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class FindChangelogLinksListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config&MockObject $config;
+    private EditChangelogLinksEvent&MockObject $event;
 
     protected function setUp(): void
     {
-        $voidReturn = function () {
-        };
+        $this->config = $this->createMock(Config::class);
+        $this->event  = $this->createMock(EditChangelogLinksEvent::class);
 
-        $this->config = $this->prophesize(Config::class);
-        $this->event  = $this->prophesize(EditChangelogLinksEvent::class);
-
-        $this->event->config()->will([$this->config, 'reveal']);
-        $this->event->noLinksDiscovered()->will($voidReturn);
-        $this->event->discoveredLinks(Argument::any())->will($voidReturn);
+        $this->event->expects($this->any())->method('config')->willReturn($this->config);
     }
 
     public function testNotifesEventWhenNoLinksDiscovered()
     {
-        $this->config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG.md');
+        $this->config
+            ->expects($this->atLeastOnce())
+            ->method('changelogFile')
+            ->willReturn(__DIR__ . '/../_files/CHANGELOG.md');
+
+        $this->event->expects($this->atLeastOnce())->method('noLinksDiscovered');
+        $this->event->expects($this->never())->method('discoveredLinks');
+
         $listener = new FindChangelogLinksListener();
-
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->noLinksDiscovered()->shouldHaveBeenCalled();
-        $this->event->discoveredLinks()->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testNotifesEventWhenLinksDiscovered()
     {
-        $this->config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
-        $listener = new FindChangelogLinksListener();
+        $this->config
+            ->expects($this->atLeastOnce())
+            ->method('changelogFile')
+            ->willReturn(__DIR__ . '/../_files/CHANGELOG-WITH-LINKS.md');
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->noLinksDiscovered()->shouldNotHaveBeenCalled();
+        $this->event->expects($this->never())->method('noLinksDiscovered');
         $this->event
-            ->discoveredLinks(Argument::that(function ($links) {
+            ->expects($this->once())
+            ->method('discoveredLinks')
+            ->with($this->callback(function ($links) {
                 TestCase::assertInstanceOf(ChangelogEntry::class, $links);
                 TestCase::assertSame(70, $links->index);
                 TestCase::assertSame(3, $links->length);
-                return $links;
-            }))
-            ->shouldHaveBeenCalled();
+                return true;
+            }));
+
+        $listener = new FindChangelogLinksListener();
+        $this->assertNull($listener($this->event));
+
     }
 }
