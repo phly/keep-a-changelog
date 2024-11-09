@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\Changelog;
 use Phly\KeepAChangelog\Changelog\CreateNewChangelogEvent;
 use Phly\KeepAChangelog\Changelog\NewCommand;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,13 +23,14 @@ use function sprintf;
 class NewCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function inputOptions(): iterable
@@ -63,30 +63,35 @@ class NewCommandTest extends TestCase
         $output     = $this->output;
         $dispatcher = $this->dispatcher;
 
-        $input->getOption('initial-version')->willReturn($initialVersion);
-        $input->getOption('overwrite')->willReturn($overwrite);
+        $input
+            ->expects($this->atLeast(2))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['initial-version', $initialVersion],
+                ['overwrite', $overwrite],
+            ]));
 
-        $event = $this->prophesize(CreateNewChangelogEvent::class);
-        $event->failed()->willReturn($failureStatus);
+        $event = $this->createMock(CreateNewChangelogEvent::class);
+        $event->expects($this->atLeastOnce())->method('failed')->willReturn($failureStatus);
 
         $dispatcher
-            ->dispatch(Argument::that(
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(
                 function ($event) use ($input, $output, $dispatcher, $expectedVersion, $expectedOverwrite) {
                     TestCase::assertInstanceOf(CreateNewChangelogEvent::class, $event);
-                    TestCase::assertSame($input->reveal(), $event->input());
-                    TestCase::assertSame($output->reveal(), $event->output());
-                    TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+                    TestCase::assertSame($input, $event->input());
+                    TestCase::assertSame($output, $event->output());
+                    TestCase::assertSame($dispatcher, $event->dispatcher());
                     TestCase::assertSame($expectedVersion, $event->version());
                     TestCase::assertSame($expectedOverwrite, $event->overwrite());
 
-                    return $event;
+                    return true;
                 }
             ))
-            ->will(function () use ($event) {
-                return $event->reveal();
-            });
+            ->willReturn($event);
 
-        $command = new NewCommand($dispatcher->reveal());
+        $command = new NewCommand($dispatcher);
 
         $expectedStatus = $failureStatus ? 1 : 0;
         $this->assertSame($expectedStatus, $this->executeCommand($command));
