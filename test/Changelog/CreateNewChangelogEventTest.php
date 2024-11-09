@@ -11,30 +11,32 @@ namespace PhlyTest\KeepAChangelog\Changelog;
 use Phly\KeepAChangelog\Changelog\CreateNewChangelogEvent;
 use Phly\KeepAChangelog\Common;
 use Phly\KeepAChangelog\Config;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateNewChangelogEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config&MockObject $config;
+    private EventDispatcherInterface&MockObject $dispatcher;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
 
     protected function setUp(): void
     {
-        $this->config     = $this->prophesize(Config::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();
-        $this->input      = $this->prophesize(InputInterface::class)->reveal();
-        $this->output     = $this->prophesize(OutputInterface::class);
+        $this->config     = $this->createMock(Config::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
     }
 
     public function testPropagationIsNotStoppedByDefault(): CreateNewChangelogEvent
     {
         $event = new CreateNewChangelogEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             '1.2.3',
             false
@@ -65,7 +67,7 @@ class CreateNewChangelogEventTest extends TestCase
     {
         $event = new CreateNewChangelogEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             '1.2.3',
             $overwrite
@@ -75,23 +77,30 @@ class CreateNewChangelogEventTest extends TestCase
 
     public function testNotifyingChangelogExistsStopsPropagationWithFailure()
     {
-        $this->config->changelogFile()->willReturn('CHANGELOG.md');
+        $this->config->expects($this->atLeastOnce())->method('changelogFile')->willReturn('CHANGELOG.md');
+
+        $invokedCount = $this->atLeast(2);
 
         $this->output
-            ->writeln(Argument::containingString('file exists'))
-            ->shouldBeCalled();
-        $this->output
-            ->writeln(Argument::containingString('use the --overwrite|-o option'))
-            ->shouldBeCalled();
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function($message) use ($invokedCount) {
+                match ($invokedCount->getInvocationCount()) {
+                    1 => TestCase::assertStringContainsString('file exists', $message),
+                    2 => TestCase::assertStringContainsString('use the --overwrite|-o option', $message),
+                    default => null,
+                };
+                return true;
+            }));
 
         $event = new CreateNewChangelogEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             '1.2.3',
             false
         );
-        $event->discoveredConfiguration($this->config->reveal());
+        $event->discoveredConfiguration($this->config);
 
         $this->assertNull($event->changelogExists());
         $this->assertTrue($event->isPropagationStopped());
@@ -100,22 +109,23 @@ class CreateNewChangelogEventTest extends TestCase
 
     public function testNotifyingChangelogCreatedEmitsOutput()
     {
-        $this->config->changelogFile()->willReturn('CHANGELOG.md');
+        $this->config->expects($this->atLeastOnce())->method('changelogFile')->willReturn('CHANGELOG.md');
 
         $this->output
-            ->writeln(Argument::containingString(
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains(
                 'new changelog in file "CHANGELOG.md" using initial version "1.2.3"'
-            ))
-            ->shouldBeCalled();
+            ));
 
         $event = new CreateNewChangelogEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             '1.2.3',
             false
         );
-        $event->discoveredConfiguration($this->config->reveal());
+        $event->discoveredConfiguration($this->config);
 
         $event->createdChangelog();
     }
