@@ -12,51 +12,41 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\ListVersionsEvent;
 use Phly\KeepAChangelog\Version\ListVersionsListener;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use function sprintf;
 
 class ListVersionsListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testEmitsAllVersionsFoundWithCorrespondingDates()
     {
-        $output = $this->prophesize(OutputInterface::class);
-        $output->writeln(Argument::type('string'))->willReturn(null);
+        $output = $this->createMock(OutputInterface::class);
+        $output->expects($this->atLeastOnce())->method('writeln')->with($this->isType('string'));
+        $invokedCount = $this->atLeast(4);
+        $output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function ($message) use ($invokedCount) {
+                match ($invokedCount->getInvocationCount()) {
+                    1 => TestCase::assertStringContainsString('Found the following versions', $message),
+                    2 => TestCase::assertMatchesRegularExpression('/2\.0\.0\s+\(release date: TBD\)/', $message),
+                    3 => TestCase::assertMatchesRegularExpression('/1\.1\.0\s+\(release date: 2018-03-23\)/', $message),
+                    4 => TestCase::assertMatchesRegularExpression('/0\.1\.0\s+\(release date: 2018-03-23\)/', $message),
+                    default => null,
+                };
+                return true;
+            }));
 
-        $config = $this->prophesize(Config::class);
-        $config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG.md');
+        $config = $this->createMock(Config::class);
+        $config
+            ->expects($this->atLeastOnce())
+            ->method('changelogFile')
+            ->willReturn(__DIR__ . '/../_files/CHANGELOG.md');
 
-        $event = $this->prophesize(ListVersionsEvent::class);
-        $event->output()->will([$output, 'reveal']);
-        $event->config()->will([$config, 'reveal']);
+        $event = $this->createMock(ListVersionsEvent::class);
+        $event->expects($this->any())->method('output')->willReturn($output);
+        $event->expects($this->any())->method('config')->willReturn($config);
 
         $listener = new ListVersionsListener();
 
-        $this->assertNull($listener($event->reveal()));
-        $output
-            ->writeln(Argument::containingString('Found the following versions'))
-            ->will(function () use ($output) {
-                $expected = [
-                    '2.0.0' => 'TBD',
-                    '1.1.0' => '2018-03-23',
-                    '0.1.0' => '2018-03-23',
-                ];
-                foreach ($expected as $version => $date) {
-                    $output
-                        ->writeln(Argument::that(function ($message) use ($version, $date) {
-                            TestCase::assertMatchesRegularExpression(
-                                sprintf('/%s\s+\(release date: %s\)/', $version, $date),
-                                $message
-                            );
-                            return $message;
-                        }))
-                        ->shouldHaveBeenCalled();
-                }
-            })
-            ->shouldHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 }
