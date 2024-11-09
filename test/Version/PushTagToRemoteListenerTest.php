@@ -11,23 +11,25 @@ namespace PhlyTest\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\PushTagToRemoteListener;
 use Phly\KeepAChangelog\Version\ReleaseEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function sprintf;
 
 class PushTagToRemoteListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config $config;
+    private OutputInterface&MockObject $output;
+    private ReleaseEvent&MockObject $event;
 
     protected function setUp(): void
     {
         $this->config = new Config();
-        $this->output = $this->prophesize(OutputInterface::class);
-        $this->event  = $this->prophesize(ReleaseEvent::class);
-        $this->event->config()->willReturn($this->config);
+        $this->output = $this->createMock(OutputInterface::class);
+        $this->event  = $this->createMock(ReleaseEvent::class);
+
+        $this->event->expects($this->any())->method('config')->willReturn($this->config);
     }
 
     public function testDoesNothingWithEventIfPushSucceeded()
@@ -35,9 +37,15 @@ class PushTagToRemoteListenerTest extends TestCase
         $tagName = 'v1.2.3';
         $remote  = 'upstream';
 
-        $this->event->tagName()->willReturn($tagName);
         $this->config->setRemote($remote);
-        $this->event->output()->will([$this->output, 'reveal']);
+        $this->event->expects($this->atLeastOnce())->method('tagName')->willReturn($tagName);
+        $this->event->expects($this->atLeastOnce())->method('output')->willReturn($this->output);
+        $this->event->expects($this->never())->method('taggingFailed');
+
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Pushing tag v1.2.3 to upstream'));
 
         $exec           = function (string $command, array &$output, int &$exitStatus) use ($tagName, $remote) {
             TestCase::assertSame(sprintf('git push %s %s', $remote, $tagName), $command);
@@ -46,12 +54,7 @@ class PushTagToRemoteListenerTest extends TestCase
         $listener       = new PushTagToRemoteListener();
         $listener->exec = $exec;
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->output
-            ->writeln(Argument::containingString('Pushing tag v1.2.3 to upstream'))
-            ->shouldHaveBeenCalled();
-        $this->event->taggingFailed()->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testNotifesEventPushFailed()
@@ -59,10 +62,15 @@ class PushTagToRemoteListenerTest extends TestCase
         $tagName = 'v1.2.3';
         $remote  = 'upstream';
 
-        $this->event->tagName()->willReturn($tagName);
         $this->config->setRemote($remote);
-        $this->event->output()->will([$this->output, 'reveal']);
-        $this->event->taggingFailed()->shouldBeCalled();
+        $this->event->expects($this->atLeastOnce())->method('tagName')->willReturn($tagName);
+        $this->event->expects($this->atLeastOnce())->method('output')->willReturn($this->output);
+        $this->event->expects($this->atLeastOnce())->method('taggingFailed');
+
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Pushing tag v1.2.3 to upstream'));
 
         $exec           = function (string $command, array &$output, int &$exitStatus) use ($tagName, $remote) {
             TestCase::assertSame(sprintf('git push %s %s', $remote, $tagName), $command);
@@ -71,10 +79,6 @@ class PushTagToRemoteListenerTest extends TestCase
         $listener       = new PushTagToRemoteListener();
         $listener->exec = $exec;
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->output
-            ->writeln(Argument::containingString('Pushing tag v1.2.3 to upstream'))
-            ->shouldHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 }
