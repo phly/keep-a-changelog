@@ -11,34 +11,35 @@ namespace Phly\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
 use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoveChangelogVersionEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config&MockObject $config;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->config     = $this->prophesize(Config::class);
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->config     = $this->createMock(Config::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->config->changelogFile()->willReturn('CHANGELOG.md');
-        $this->output->writeln(Argument::type('string'))->willReturn(null);
+        $this->config->expects($this->any())->method('changelogFile')->willReturn('CHANGELOG.md');
     }
 
     public function createEvent(string $version = '1.2.3'): RemoveChangelogVersionEvent
     {
         return new RemoveChangelogVersionEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $this->dispatcher->reveal(),
+            $this->input,
+            $this->output,
+            $this->dispatcher,
             $version
         );
     }
@@ -76,25 +77,29 @@ class RemoveChangelogVersionEventTest extends TestCase
 
     public function testAbortEmitsOutputAndStopsPropagationWithoutFailure()
     {
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Aborting at user request'));
+
         $event = $this->createEvent();
 
         $this->assertNull($event->abort());
-        $this->output
-            ->writeln(Argument::containingString('Aborting at user request'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
 
     public function testNotifyingOfVersionRemovalEmitsOutputWithoutStoppingPropagationOrFailure()
     {
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Removed changelog version 2.1.0 from file CHANGELOG.md'));
+
         $event = $this->createEvent('2.1.0');
-        $event->discoveredConfiguration($this->config->reveal());
+        $event->discoveredConfiguration($this->config);
 
         $this->assertNull($event->versionRemoved());
-        $this->output
-            ->writeln(Argument::containingString('Removed changelog version 2.1.0 from file CHANGELOG.md'))
-            ->shouldHaveBeenCalled();
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
