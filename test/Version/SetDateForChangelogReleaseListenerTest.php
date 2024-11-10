@@ -13,9 +13,8 @@ use Phly\KeepAChangelog\Common\ChangelogEntry;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use Phly\KeepAChangelog\Version\SetDateForChangelogReleaseListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 use function array_merge;
 use function date;
@@ -24,46 +23,44 @@ use function sprintf;
 
 class SetDateForChangelogReleaseListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     private const CHANGELOG_ENTRY_TEMPLATE = <<<'EOC'
-%s%s%s%s
+        %s%s%s%s
+        
+        ### Added
+        
+        - Added some things
+        
+        ### Changed
+        
+        - Change ALL THE THINGS
+        
+        ### Deprecated
+        
+        - Deprecated stuff we do not use
+        
+        ### Removed
+        
+        - Removed things we previously deprecated
+        
+        ### Fixed
+        
+        - Fixed a bug
+        
+        EOC;
 
-### Added
-
-- Added some things
-
-### Changed
-
-- Change ALL THE THINGS
-
-### Deprecated
-
-- Deprecated stuff we do not use
-
-### Removed
-
-- Removed things we previously deprecated
-
-### Fixed
-
-- Fixed a bug
-
-EOC;
+    private Config&MockObject $config;
+    private ChangelogEntry $entry;
+    private ReadyLatestChangelogEvent&MockObject $event;
 
     protected function setUp(): void
     {
-        $voidReturn   = function () {
-        };
-        $this->config = $this->prophesize(Config::class);
+        $this->config = $this->createMock(Config::class);
         $this->entry  = new ChangelogEntry();
-        $this->event  = $this->prophesize(ReadyLatestChangelogEvent::class);
+        $this->event  = $this->createMock(ReadyLatestChangelogEvent::class);
 
-        $this->event->changelogEntry()->willReturn($this->entry);
-        $this->event->releaseDate()->willReturn('2019-05-30');
-        $this->event->malformedReleaseLine(Argument::any())->will($voidReturn);
-        $this->event->config()->will([$this->config, 'reveal']);
-        $this->event->changelogReady()->will($voidReturn);
+        $this->event->expects($this->any())->method('changelogEntry')->willReturn($this->entry);
+        $this->event->expects($this->any())->method('releaseDate')->willReturn('2019-05-30');
+        $this->event->expects($this->any())->method('config')->willReturn($this->config);
     }
 
     public function invalidVersionAndDatePermutations(): iterable
@@ -119,14 +116,14 @@ EOC;
     ) {
         $contents              = sprintf(self::CHANGELOG_ENTRY_TEMPLATE, $leader, $version, $separator, $date);
         $this->entry->contents = $contents;
-        $this->event->malformedReleaseLine(explode("\n", $contents)[0])->shouldBeCalled();
+        $this->event->expects($this->once())->method('malformedReleaseLine')->with(explode("\n", $contents)[0]);
+
+        $this->event->expects($this->never())->method('config');
+        $this->event->expects($this->never())->method('changelogReady');
 
         $listener = new SetDateForChangelogReleaseListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->config()->shouldNotHaveBeenCalled();
-        $this->event->changelogReady()->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function validVersionAndDatePermutations(): iterable
@@ -167,24 +164,24 @@ EOC;
         $this->entry->index    = $index;
         $this->entry->length   = $length;
 
-        $this->config->changelogFile()->willReturn('changelog.txt');
+        $this->config->expects($this->atLeastOnce())->method('changelogFile')->willReturn('changelog.txt');
 
-        $editor = $this->prophesize(ChangelogEditor::class);
+        $this->event->expects($this->never())->method('malformedReleaseLine');
+        $this->event->expects($this->atLeastOnce())->method('changelogReady');
+
+        $editor = $this->createMock(ChangelogEditor::class);
         $editor
-            ->update(
+            ->expects($this->once())
+            ->method('update')
+            ->with(
                 'changelog.txt',
-                Argument::containingString(sprintf('## %s - 2019-05-30', $version)),
+                $this->stringContains(sprintf('## %s - 2019-05-30', $version)),
                 $this->entry
-            )
-            ->will(function () {
-            })
-            ->shouldBeCalled();
+            );
 
         $listener                  = new SetDateForChangelogReleaseListener();
-        $listener->changelogEditor = $editor->reveal();
+        $listener->changelogEditor = $editor;
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->malformedReleaseLine(Argument::any())->shouldNotHaveBeenCalled();
-        $this->event->changelogReady()->shouldHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 }
