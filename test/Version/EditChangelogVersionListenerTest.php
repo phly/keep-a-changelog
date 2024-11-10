@@ -14,86 +14,86 @@ use Phly\KeepAChangelog\Common\Editor;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\EditChangelogVersionEvent;
 use Phly\KeepAChangelog\Version\EditChangelogVersionListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function file_get_contents;
 
 class EditChangelogVersionListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private ChangelogEditor&MockObject $changelogEditor;
+    private Config&MockObject $config;
+    private Editor&MockObject $editor;
+    private ChangelogEntry $entry;
+    private EditChangelogVersionEvent&MockObject $event;
+    private EditChangelogVersionListener $listener;
+    private OutputInterface&MockObject $output;
 
     protected function setUp(): void
     {
-        $this->voidReturn      = function () {
-        };
-        $this->changelogEditor = $this->prophesize(ChangelogEditor::class);
-        $this->config          = $this->prophesize(Config::class);
-        $this->editor          = $this->prophesize(Editor::class);
+        $this->changelogEditor = $this->createMock(ChangelogEditor::class);
+        $this->config          = $this->createMock(Config::class);
+        $this->editor          = $this->createMock(Editor::class);
         $this->entry           = new ChangelogEntry();
-        $this->event           = $this->prophesize(EditChangelogVersionEvent::class);
-        $this->output          = $this->prophesize(OutputInterface::class);
+        $this->event           = $this->createMock(EditChangelogVersionEvent::class);
+        $this->output          = $this->createMock(OutputInterface::class);
 
-        $this->changelogEditor->update(Argument::any(), Argument::any(), Argument::any())->will($this->voidReturn);
+        $this->config->expects($this->any())->method('changelogFile')->willReturn('changelog.txt');
 
-        $this->config->changelogFile()->willReturn('changelog.txt');
-
-        $this->event->changelogEntry()->willReturn($this->entry);
-        $this->event->output()->will([$this->output, 'reveal']);
-        $this->event->editor()->willReturn('vim');
-        $this->event->editorFailed()->will($this->voidReturn);
-        $this->event->config()->will([$this->config, 'reveal']);
-        $this->event->editComplete()->will($this->voidReturn);
+        $this->event->expects($this->any())->method('changelogEntry')->willReturn($this->entry);
+        $this->event->expects($this->any())->method('output')->willReturn($this->output);
+        $this->event->expects($this->any())->method('editor')->willReturn('vim');
+        $this->event->expects($this->any())->method('config')->willReturn($this->config);
 
         $this->listener                  = new EditChangelogVersionListener();
-        $this->listener->editor          = $this->editor->reveal();
-        $this->listener->changelogEditor = $this->changelogEditor->reveal();
+        $this->listener->editor          = $this->editor;
+        $this->listener->changelogEditor = $this->changelogEditor;
         $this->listener->mockTempFile    = __DIR__ . '/../_files/CHANGELOG.md';
     }
 
     public function testMarksEventFailureWhenEditorFails()
     {
         $this->editor
-            ->spawnEditor(
-                Argument::that([$this->output, 'reveal']),
+            ->expects($this->once())
+            ->method('spawnEditor')
+            ->with(
+                $this->output,
                 'vim',
                 $this->listener->mockTempFile
             )
             ->willReturn(1);
 
-        $this->assertNull(($this->listener)($this->event->reveal()));
+        $this->event->expects($this->once())->method('editorFailed');
+        $this->event->expects($this->never())->method('editComplete');
+        $this->event->expects($this->never())->method('config');
+        $this->config->expects($this->never())->method('changelogFile');
+        $this->changelogEditor->expects($this->never())->method('update');
 
-        $this->event->editorFailed()->shouldHaveBeenCalled();
-        $this->event->config()->shouldNotHaveBeenCalled();
-        $this->event->editComplete()->shouldNotHaveBeenCalled();
-        $this->config->changelogFile()->shouldNotHaveBeenCalled();
-        $this->changelogEditor->update(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull(($this->listener)($this->event));
     }
 
     public function testNotifesEventOfEditorCompletion()
     {
         $this->editor
-            ->spawnEditor(
-                Argument::that([$this->output, 'reveal']),
+            ->expects($this->once())
+            ->method('spawnEditor')
+            ->with(
+                $this->output,
                 'vim',
                 $this->listener->mockTempFile
             )
             ->willReturn(0);
 
-        $this->assertNull(($this->listener)($this->event->reveal()));
-
-        $this->event->editorFailed()->shouldNotHaveBeenCalled();
-        $this->event->config()->shouldHaveBeenCalled();
-        $this->event->editComplete()->shouldHaveBeenCalled();
-        $this->config->changelogFile()->shouldHaveBeenCalled();
+        $this->event->expects($this->never())->method('editorFailed');
+        $this->event->expects($this->once())->method('editComplete');
+        $this->event->expects($this->once())->method('config');
+        $this->config->expects($this->once())->method('changelogFile');
         $this->changelogEditor
-            ->update(
-                'changelog.txt',
-                file_get_contents($this->listener->mockTempFile),
-                $this->entry
-            )
-            ->shouldHaveBeenCalled();
+            ->expects($this->once())
+            ->method('update')
+            ->with('changelog.txt', file_get_contents($this->listener->mockTempFile), $this->entry);
+
+        $this->assertNull(($this->listener)($this->event));
     }
 }
