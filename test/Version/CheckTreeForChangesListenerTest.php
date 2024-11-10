@@ -11,55 +11,52 @@ namespace PhlyTest\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Version\CheckTreeForChangesListener;
 use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CheckTreeForChangesListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testListenerDoesNothingIfForceFlagIsPresent(): void
     {
-        $input = $this->prophesize(InputInterface::class);
-        $input->getOption('force')->willReturn(true)->shouldBeCalled();
+        $input = $this->createMock(InputInterface::class);
+        $input->expects($this->once())->method('getOption')->with('force')->willReturn(true);
 
-        $event = $this->prophesize(TagReleaseEvent::class);
-        $event->input()->will([$input, 'reveal'])->shouldBeCalled();
-        $event->unversionedChangesPresent()->shouldNotBeCalled();
-        $event->output()->shouldNotBeCalled();
+        $event = $this->createMock(TagReleaseEvent::class);
+        $event->expects($this->once())->method('input')->willReturn($input);
+        $event->expects($this->never())->method('unversionedChangesPresent');
+        $event->expects($this->never())->method('output');
 
         $listener = new CheckTreeForChangesListener();
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 
     public function testListenerDoesNothingIfForceFlagNotPresentButTreeIsClean(): void
     {
-        $input = $this->prophesize(InputInterface::class);
-        $input->getOption('force')->willReturn(null)->shouldBeCalled();
+        $input = $this->createMock(InputInterface::class);
+        $input->expects($this->once())->method('getOption')->with('force')->willReturn(true);
 
-        $event = $this->prophesize(TagReleaseEvent::class);
-        $event->input()->will([$input, 'reveal'])->shouldBeCalled();
-        $event->unversionedChangesPresent()->shouldNotBeCalled();
-        $event->output()->shouldNotBeCalled();
+        $event = $this->createMock(TagReleaseEvent::class);
+        $event->expects($this->once())->method('input')->willReturn($input);
+        $event->expects($this->never())->method('unversionedChangesPresent');
+        $event->expects($this->never())->method('output');
 
         $listener       = new CheckTreeForChangesListener();
         $listener->exec = function ($command, &$output, &$return) {
             $return = 0;
         };
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 
     public function testListenerNotifesEventThatTaggingFailedIfForceFlagNotPresentAndTreeIsDirty(): void
     {
-        $input  = $this->prophesize(InputInterface::class);
-        $output = $this->prophesize(OutputInterface::class);
-        $event  = $this->prophesize(TagReleaseEvent::class);
+        $input  = $this->createMock(InputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
+        $event  = $this->createMock(TagReleaseEvent::class);
 
-        $input->getOption('force')->willReturn(null)->shouldBeCalled();
-        $event->input()->will([$input, 'reveal'])->shouldBeCalled();
-        $event->unversionedChangesPresent()->shouldBeCalled();
+        $input->expects($this->once())->method('getOption')->with('force')->willReturn(null);
+        $event->expects($this->once())->method('input')->willReturn($input);
+        $event->expects($this->once())->method('unversionedChangesPresent');
 
         $listener       = new CheckTreeForChangesListener();
         $listener->exec = function ($command, &$output, &$return) {
@@ -67,24 +64,24 @@ class CheckTreeForChangesListenerTest extends TestCase
             $return   = 0;
         };
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 
     public function testListenerNotifesEventThatTaggingFailedIfForceFlagNotPresentAndStatusCheckFails(): void
     {
-        $input  = $this->prophesize(InputInterface::class);
-        $output = $this->prophesize(OutputInterface::class);
-        $event  = $this->prophesize(TagReleaseEvent::class);
+        $input  = $this->createMock(InputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
+        $event  = $this->createMock(TagReleaseEvent::class);
 
-        $input->getOption('force')->willReturn(null)->shouldBeCalled();
-        $event->input()->will([$input, 'reveal'])->shouldBeCalled();
-        $event->unversionedChangesPresent()->shouldBeCalled();
+        $input->expects($this->once())->method('getOption')->with('force')->willReturn(null);
+        $event->expects($this->once())->method('input')->willReturn($input);
+        $event->expects($this->once())->method('unversionedChangesPresent');
 
         $listener       = new CheckTreeForChangesListener();
         $listener->exec = function ($command, &$output, &$return) {
             $return = 1;
         };
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 }
