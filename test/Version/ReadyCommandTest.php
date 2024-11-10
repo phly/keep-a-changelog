@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Version\ReadyCommand;
 use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,13 +24,14 @@ use function sprintf;
 class ReadyCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function inputOptions(): iterable
@@ -64,30 +64,35 @@ class ReadyCommandTest extends TestCase
         $output     = $this->output;
         $dispatcher = $this->dispatcher;
 
-        $input->getOption('date')->willReturn($releaseDate);
-        $input->getOption('release-version')->willReturn($releaseVersion);
+        $input
+            ->expects($this->atLeast(2))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['date', $releaseDate],
+                ['release-version', $releaseVersion],
+            ]));
 
-        $event = $this->prophesize(ReadyLatestChangelogEvent::class);
-        $event->failed()->willReturn($failureStatus);
+        $event = $this->createMock(ReadyLatestChangelogEvent::class);
+        $event->expects($this->atLeastOnce())->method('failed')->willReturn($failureStatus);
 
         $dispatcher
-            ->dispatch(Argument::that(
+            ->expects($this->atLeastOnce())
+            ->method('dispatch')
+            ->with($this->callback(
                 function ($event) use ($input, $output, $dispatcher, $expectedDate, $expectedVersion) {
                     TestCase::assertInstanceOf(ReadyLatestChangelogEvent::class, $event);
-                    TestCase::assertSame($input->reveal(), $event->input());
-                    TestCase::assertSame($output->reveal(), $event->output());
-                    TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+                    TestCase::assertSame($input, $event->input());
+                    TestCase::assertSame($output, $event->output());
+                    TestCase::assertSame($dispatcher, $event->dispatcher());
                     TestCase::assertSame($expectedDate, $event->releaseDate());
                     TestCase::assertSame($expectedVersion, $event->version());
 
-                    return $event;
+                    return true;
                 }
             ))
-            ->will(function () use ($event) {
-                return $event->reveal();
-            });
+            ->willReturn($event);
 
-        $command = new ReadyCommand($dispatcher->reveal());
+        $command = new ReadyCommand($dispatcher);
 
         $expectedStatus = $failureStatus ? 1 : 0;
         $this->assertSame($expectedStatus, $this->executeCommand($command));
