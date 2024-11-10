@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Version\ListCommand;
 use Phly\KeepAChangelog\Version\ListVersionsEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,13 +20,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ListCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function failureStatus(): iterable
@@ -43,24 +43,24 @@ class ListCommandTest extends TestCase
         bool $failedFlag,
         int $expectedStatus
     ) {
-        $expected = $this->prophesize(ListVersionsEvent::class);
-        $expected->failed()->willReturn($failedFlag);
+        $expected = $this->createMock(ListVersionsEvent::class);
+        $expected->expects($this->atLeastOnce())->method('failed')->willReturn($failedFlag);
 
-        $input  = $this->input->reveal();
-        $output = $this->output->reveal();
+        $input  = $this->input;
+        $output = $this->output;
 
         $this->dispatcher
-            ->dispatch(Argument::that(function ($event) use ($input, $output) {
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function ($event) use ($input, $output) {
                 TestCase::assertInstanceOf(ListVersionsEvent::class, $event);
                 TestCase::assertSame($input, $event->input());
                 TestCase::assertSame($output, $event->output());
-                return $event;
+                return true;
             }))
-            ->will(function () use ($expected) {
-                return $expected->reveal();
-            });
+            ->willReturn($expected);
 
-        $command = new ListCommand($this->dispatcher->reveal());
+        $command = new ListCommand($this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
