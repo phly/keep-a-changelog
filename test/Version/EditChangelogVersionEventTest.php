@@ -12,9 +12,8 @@ use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
 use Phly\KeepAChangelog\Common\EditorAwareEventInterface;
 use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,25 +22,27 @@ use function sprintf;
 
 class EditChangelogVersionEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config&MockObject $config;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->config     = $this->prophesize(Config::class);
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->config     = $this->createMock(Config::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->config->changelogFile()->willReturn('CHANGELOG.md');
-        $this->output->writeln(Argument::type('string'))->willReturn(null);
+        $this->config->expects($this->any())->method('changelogFile')->willReturn('CHANGELOG.md');
     }
 
     public function createEvent(?string $version = null, ?string $editor = null): EditChangelogVersionEvent
     {
         return new EditChangelogVersionEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $this->dispatcher->reveal(),
+            $this->input,
+            $this->output,
+            $this->dispatcher,
             $version,
             $editor
         );
@@ -89,12 +90,14 @@ class EditChangelogVersionEventTest extends TestCase
     public function testMarkingEditorFailedEmitsOutputAndStopsPropagationWithFailure()
     {
         $event = $this->createEvent();
-        $event->discoveredConfiguration($this->config->reveal());
+        $event->discoveredConfiguration($this->config);
+
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Could not edit CHANGELOG.md'));
 
         $this->assertNull($event->editorFailed());
-        $this->output
-            ->writeln(Argument::containingString('Could not edit CHANGELOG.md'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
@@ -113,12 +116,14 @@ class EditChangelogVersionEventTest extends TestCase
         string $expectedPhrase
     ) {
         $event = $this->createEvent($version);
-        $event->discoveredConfiguration($this->config->reveal());
+        $event->discoveredConfiguration($this->config);
+
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains(sprintf('Edited %s in CHANGELOG.md', $expectedPhrase)));
 
         $this->assertNull($event->editComplete());
-        $this->output
-            ->writeln(Argument::containingString(sprintf('Edited %s in CHANGELOG.md', $expectedPhrase)))
-            ->shouldHaveBeenCalled();
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
