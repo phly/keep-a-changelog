@@ -12,69 +12,71 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config\DiscoverPackageFromGitRemoteListener;
 use Phly\KeepAChangelog\Config\PackageNameDiscovery;
 use Phly\KeepAChangelog\Provider\ProviderSpec;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 use function preg_match;
 
 class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private ProviderSpec&MockObject $provider;
+    private Config&MockObject $config;
+    private PackageNameDiscovery&MockObject $event;
 
     protected function setUp(): void
     {
-        $this->provider = $this->prophesize(ProviderSpec::class);
-        $this->config   = $this->prophesize(Config::class);
-        $this->event    = $this->prophesize(PackageNameDiscovery::class);
+        $this->provider = $this->createMock(ProviderSpec::class);
+        $this->config   = $this->createMock(Config::class);
+        $this->event    = $this->createMock(PackageNameDiscovery::class);
     }
 
     public function testReturnsEarlyWhenEventIndicatesPackageAlreadyDiscovered()
     {
-        $this->event->packageWasFound()->willReturn(true);
+        $this->event->expects($this->once())->method('packageWasFound')->willReturn(true);
+        $this->event->expects($this->never())->method('config');
+        $this->event->expects($this->never())->method('foundPackage');
 
         $listener = new DiscoverPackageFromGitRemoteListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->config()->shouldNotHaveBeenCalled();
-        $this->event->foundPackage(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testReturnsEarlyIfProviderHasNoUrl()
     {
-        $this->provider->url()->willReturn('');
-        $this->config->provider()->will([$this->provider, 'reveal']);
-        $this->event->packageWasFound()->willReturn(false);
-        $this->event->config()->will([$this->config, 'reveal']);
+        $this->provider->expects($this->once())->method('url')->willReturn('');
+        $this->config->expects($this->once())->method('provider')->willReturn($this->provider);
+        $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
+        $this->event->expects($this->once())->method('config')->willReturn($this->config);
+        $this->event->expects($this->never())->method('foundPackage');
 
         $listener = new DiscoverPackageFromGitRemoteListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->foundPackage(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testDoesNotNotifyEventOfAnythingIfNoRemotesFound()
     {
-        $this->provider->url()->willReturn('https://git.mwop.net');
-        $this->config->provider()->will([$this->provider, 'reveal']);
-        $this->event->packageWasFound()->willReturn(false);
-        $this->event->config()->will([$this->config, 'reveal']);
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->config->expects($this->once())->method('provider')->willReturn($this->provider);
+        $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
+        $this->event->expects($this->once())->method('config')->willReturn($this->config);
+        $this->event->expects($this->never())->method('foundPackage');
 
         $listener       = new DiscoverPackageFromGitRemoteListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $return = 1;
         };
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->foundPackage(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testDoesNotNotifyEventOfAnythingIfNoRemoteUrlsFound()
     {
-        $this->provider->url()->willReturn('https://git.mwop.net');
-        $this->config->provider()->will([$this->provider, 'reveal']);
-        $this->event->packageWasFound()->willReturn(false);
-        $this->event->config()->will([$this->config, 'reveal']);
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->config->expects($this->once())->method('provider')->willReturn($this->provider);
+        $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
+        $this->event->expects($this->once())->method('config')->willReturn($this->config);
+        $this->event->expects($this->never())->method('foundPackage');
 
         $listener       = new DiscoverPackageFromGitRemoteListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
@@ -86,16 +88,16 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
             $return = 1;
         };
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->foundPackage(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testDoesNotNotifyEventOfAnythingIfNoMatchingRemotesFound()
     {
-        $this->provider->url()->willReturn('https://git.mwop.net');
-        $this->config->provider()->will([$this->provider, 'reveal']);
-        $this->event->packageWasFound()->willReturn(false);
-        $this->event->config()->will([$this->config, 'reveal']);
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->config->expects($this->once())->method('provider')->willReturn($this->provider);
+        $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
+        $this->event->expects($this->once())->method('config')->willReturn($this->config);
+        $this->event->expects($this->never())->method('foundPackage');
 
         $listener       = new DiscoverPackageFromGitRemoteListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
@@ -111,17 +113,16 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
             $output = ['me@gitlab.com:another/package.git'];
         };
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->foundPackage(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testNotifiesEventOfFirstMatchingRemoteFound()
     {
-        $this->provider->url()->willReturn('https://git.mwop.net');
-        $this->config->provider()->will([$this->provider, 'reveal']);
-        $this->event->packageWasFound()->willReturn(false);
-        $this->event->config()->will([$this->config, 'reveal']);
-        $this->event->foundPackage('some/package')->shouldBeCalled();
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->config->expects($this->once())->method('provider')->willReturn($this->provider);
+        $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
+        $this->event->expects($this->once())->method('config')->willReturn($this->config);
+        $this->event->expects($this->once())->method('foundPackage')->with('some/package');
 
         $listener       = new DiscoverPackageFromGitRemoteListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
@@ -137,6 +138,6 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
             $output = ['you@git.mwop.net:another/package.git'];
         };
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 }
