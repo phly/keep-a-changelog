@@ -9,26 +9,25 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class PackageNameDiscoveryTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config $config;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private Config\PackageNameDiscovery $event;
 
     protected function setUp(): void
     {
         $this->config = new Config();
-        $this->input  = $this->prophesize(InputInterface::class);
-        $this->output = $this->prophesize(OutputInterface::class);
-        $this->event  = new Config\PackageNameDiscovery(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $this->config
-        );
+        $this->input  = $this->createMock(InputInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
+        $this->event  = new Config\PackageNameDiscovery($this->input, $this->output, $this->config);
     }
 
     public function testIsAStoppableEvent()
