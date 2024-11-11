@@ -6,29 +6,33 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Config;
+namespace PhlyTest\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
+use Phly\KeepAChangelog\Config\RemoteNameDiscovery;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoteNameDiscoveryTest extends TestCase
 {
-    use ProphecyTrait;
+    private QuestionHelper&MockObject $helper;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private Config $config;
+    private RemoteNameDiscovery $event;
 
     protected function setUp(): void
     {
-        $this->helper = $this->prophesize(QuestionHelper::class)->reveal();
-        $this->input  = $this->prophesize(InputInterface::class)->reveal();
-        $this->output = $this->prophesize(OutputInterface::class);
+        $this->helper = $this->createMock(QuestionHelper::class);
+        $this->input  = $this->createMock(InputInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
         $this->config = new Config();
         $this->event  = new RemoteNameDiscovery(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->config,
             $this->helper
         );
@@ -69,18 +73,33 @@ class RemoteNameDiscoveryTest extends TestCase
 
     public function testReportingNoGitRemoteFoundStopsPropagationWithoutFindingRemote()
     {
-        $this->output->writeln(Argument::containingString('Cannot determine git remote'))->shouldBeCalled();
-        $this->output->writeln(Argument::containingString('match the provider'))->shouldBeCalled();
-        $this->output->writeln(Argument::containingString('match the <package>'))->shouldBeCalled();
+        $expectedStrings = [
+            'Cannot determine git remote' => false,
+            'match the provider'          => false,
+            'match the <package>'         => false,
+        ];
+        $this->output
+            ->expects($this->atLeast(3))
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use (&$expectedStrings): bool {
+                foreach (array_keys($expectedStrings) as $expectedString) {
+                    if (strstr($message, $expectedString)) {
+                        $expectedStrings[$expectedString] = true;
+                        return true;
+                    }
+                }
+                return true;
+            }));
 
         $this->assertNull($this->event->reportNoMatchingGitRemoteFound('some.tld', 'some/package'));
         $this->assertTrue($this->event->isPropagationStopped());
         $this->assertFalse($this->event->remoteWasFound());
+        $this->assertAllExpectedOutputEmitted($expectedStrings);
     }
 
     public function testAbortingStopsPropagationWithoutFindingRemote()
     {
-        $this->output->writeln(Argument::containingString('Aborted'));
+        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('Aborted'));
 
         $this->assertNull($this->event->abort());
         $this->assertTrue($this->event->isPropagationStopped());
@@ -93,5 +112,21 @@ class RemoteNameDiscoveryTest extends TestCase
         $this->assertTrue($this->event->isPropagationStopped());
         $this->assertTrue($this->event->remoteWasFound());
         $this->assertSame('upstream', $this->config->remote());
+    }
+
+    private function assertAllExpectedOutputEmitted(array $expectedStrings): void
+    {
+        $notFound = [];
+        foreach ($expectedStrings as $string => $found) {
+            if (! $found) {
+                $notFound[] = $string;
+            }
+        }
+
+        if (count($notFound) === 0) {
+            return;
+        }
+
+        $this->fail(sprintf('One or more expected output strings were not emitted: %s', implode(', ', $notFound)));
     }
 }
