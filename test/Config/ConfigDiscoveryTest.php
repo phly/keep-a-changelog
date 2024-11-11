@@ -11,19 +11,16 @@ namespace PhlyTest\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config\ConfigDiscovery;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigDiscoveryTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testCreatesConfigInstanceWhenInstantiated()
     {
         $discovery = new ConfigDiscovery(
-            $this->prophesize(InputInterface::class)->reveal(),
-            $this->prophesize(OutputInterface::class)->reveal()
+            $this->createMock(InputInterface::class),
+            $this->createMock(OutputInterface::class)
         );
 
         $this->assertInstanceOf(Config::class, $discovery->config());
