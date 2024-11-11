@@ -10,64 +10,60 @@ namespace PhlyTest\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config\AbstractDiscoverPackageFromFileListener;
 use Phly\KeepAChangelog\Config\PackageNameDiscovery;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 abstract class AbstractDiscoverPackageFromFileListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    protected PackageNameDiscovery&MockObject $event;
 
     abstract public function createListener(): AbstractDiscoverPackageFromFileListener;
 
     protected function setUp(): void
     {
-        $this->event = $this->prophesize(PackageNameDiscovery::class);
+        $this->event = $this->createMock(PackageNameDiscovery::class);
     }
 
     public function testReturnsEarlyIfEventIndicatesPackageWasFound()
     {
-        $this->event->packageWasFound()->willReturn(true);
+        $this->event->expects($this->once())->method('packageWasFound')->willReturn(true);
+        $this->event->expects($this->never())->method('foundPackage');
 
         $listener = $this->createListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->foundPackage(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testReturnsEarlyIfPackageFileIsNotReadable()
     {
-        $this->event->packageWasFound()->willReturn(false);
+        $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
+        $this->event->expects($this->never())->method('foundPackage');
 
         $listener             = $this->createListener();
         $listener->packageDir = __DIR__;
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->foundPackage(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testReturnsEarlyIfPackageFileDoesNotContainPackageName()
     {
-        $this->event->packageWasFound()->willReturn(false);
+        $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
+        $this->event->expects($this->never())->method('foundPackage');
 
         $listener             = $this->createListener();
         $listener->packageDir = __DIR__ . '/../_files/package_root/malformed';
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->foundPackage(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testReportsPackageFoundToEventWhenSuccessful()
     {
-        $this->event->packageWasFound()->willReturn(false);
-        $this->event->foundPackage('some/package')->shouldBeCalled();
+        $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
+        $this->event->expects($this->once())->method('foundPackage')->with('some/package');
 
         $listener             = $this->createListener();
         $listener->packageDir = __DIR__ . '/../_files/package_root';
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 }
