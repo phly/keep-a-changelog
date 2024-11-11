@@ -8,34 +8,38 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Config;
 
+use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Config\ConfigDiscovery;
 use Phly\KeepAChangelog\Config\Exception\InvalidProviderException;
 use Phly\KeepAChangelog\Config\RetrieveInputOptionsListener;
 use Phly\KeepAChangelog\Provider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RetrieveInputOptionsListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private ConfigDiscovery $event;
+    private Config $config;
 
     protected function setUp(): void
     {
-        $this->input  = $this->prophesize(InputInterface::class);
-        $this->output = $this->prophesize(OutputInterface::class);
+        $this->input  = $this->createMock(InputInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
         $this->event  = new ConfigDiscovery(
-            $this->input->reveal(),
-            $this->output->reveal()
+            $this->input,
+            $this->output
         );
         $this->config = $this->event->config();
     }
 
     public function testRaisesExceptionSettingProviderFromProviderClassOptionWhenClassDoesNotExist()
     {
-        $this->input->hasOption('provider-class')->willReturn(true);
-        $this->input->getOption('provider-class')->willReturn(ThisClassDoesNotExist::class);
+        $this->input->expects($this->atLeastOnce())->method('hasOption')->with('provider-class')->willReturn(true);
+        $this->input->expects($this->atLeastOnce())->method('getOption')->with('provider-class')->willReturn(ThisClassDoesNotExist::class);
         $listener = new RetrieveInputOptionsListener();
         $this->expectException(InvalidProviderException::class);
         $listener($this->event);
@@ -43,9 +47,14 @@ class RetrieveInputOptionsListenerTest extends TestCase
 
     public function testRaisesExceptionSettingProviderFromProviderOptionWhenNotInProviderList()
     {
-        $this->input->hasOption('provider-class')->willReturn(false);
-        $this->input->hasOption('provider')->willReturn(true);
-        $this->input->getOption('provider')->willReturn('unknown-provider-type');
+        $this->input
+            ->expects($this->atLeast(2))
+            ->method('hasOption')
+            ->will($this->returnValueMap([
+                ['provider-class', false],
+                ['provider', true],
+            ]));
+        $this->input->expects($this->atLeastOnce())->method('getOption')->with('provider')->willReturn('unknown-provider-type');
         $listener = new RetrieveInputOptionsListener();
         $this->expectException(InvalidProviderException::class);
         $listener($this->event);
@@ -53,14 +62,18 @@ class RetrieveInputOptionsListenerTest extends TestCase
 
     public function testCanPopulateProviderFromProviderClassOption()
     {
-        $this->input->hasOption('provider-class')->willReturn(true);
-        $this->input->getOption('provider-class')->willReturn(Provider\GitLab::class);
-
-        $this->input->hasOption('provider-token')->willReturn(false);
-        $this->input->hasOption('provider-url')->willReturn(false);
-        $this->input->hasOption('package')->willReturn(false);
-        $this->input->hasOption('changelog')->willReturn(false);
-        $this->input->hasOption('remote')->willReturn(false);
+        $this->input
+            ->expects($this->atLeast(6))
+            ->method('hasOption')
+            ->will($this->returnValueMap([
+                ['provider-class', true],
+                ['provider-token', false],
+                ['provider-url', false],
+                ['package', false],
+                ['changelog', false],
+                ['remote', false],
+            ]));
+        $this->input->expects($this->atLeastOnce())->method('getOption')->with('provider-class')->willReturn(Provider\GitLab::class);
 
         $listener = new RetrieveInputOptionsListener();
 
@@ -74,21 +87,27 @@ class RetrieveInputOptionsListenerTest extends TestCase
 
     public function testCanPopulateProviderFromProviderOption()
     {
-        $this->input->hasOption('provider-class')->willReturn(false);
-        $this->input->hasOption('provider')->willReturn(true);
-        $this->input->getOption('provider')->willReturn('gitlab');
-
-        $this->input->hasOption('provider-token')->willReturn(true);
-        $this->input->getOption('provider-token')->willReturn('this-is-the-token');
-
-        $this->input->hasOption('provider-url')->willReturn(true);
-        $this->input->getOption('provider-url')->willReturn('https://git.mwop.net');
-
-        $this->input->hasOption('package')->willReturn(true);
-        $this->input->getOption('package')->willReturn('some/package');
-
-        $this->input->hasOption('changelog')->willReturn(false);
-        $this->input->hasOption('remote')->willReturn(false);
+        $this->input
+            ->expects($this->atLeast(7))
+            ->method('hasOption')
+            ->will($this->returnValueMap([
+                ['provider-class', false],
+                ['provider', true],
+                ['provider-token', true],
+                ['provider-url', true],
+                ['package', true],
+                ['changelog', false],
+                ['remote', false],
+            ]));
+        $this->input
+            ->expects($this->atLeast(4))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['provider', 'gitlab'],
+                ['provider-token', 'this-is-the-token'],
+                ['provider-url', 'https://git.mwop.net'],
+                ['package', 'some/package'],
+            ]));
 
         $listener = new RetrieveInputOptionsListener();
 
@@ -105,15 +124,23 @@ class RetrieveInputOptionsListenerTest extends TestCase
 
     public function testCanPopulatePackageFromOption()
     {
-        $this->input->hasOption('provider-class')->willReturn(false);
-        $this->input->hasOption('provider')->willReturn(false);
-        $this->input->hasOption('provider-token')->willReturn(false);
-        $this->input->hasOption('provider-url')->willReturn(false);
-        $this->input->hasOption('changelog')->willReturn(false);
-        $this->input->hasOption('remote')->willReturn(false);
-
-        $this->input->hasOption('package')->willReturn(true);
-        $this->input->getOption('package')->willReturn('some/package');
+        $this->input
+            ->expects($this->atLeast(7))
+            ->method('hasOption')
+            ->will($this->returnValueMap([
+                ['provider-class', false],
+                ['provider', false],
+                ['provider-token', false],
+                ['provider-url', false],
+                ['package', true],
+                ['changelog', false],
+                ['remote', false],
+            ]));
+        $this->input
+            ->expects($this->once())
+            ->method('getOption')
+            ->with('package')
+            ->willReturn('some/package');
 
         $listener = new RetrieveInputOptionsListener();
 
@@ -124,15 +151,23 @@ class RetrieveInputOptionsListenerTest extends TestCase
 
     public function testCanPopulateChangelogFileFromOption()
     {
-        $this->input->hasOption('provider-class')->willReturn(false);
-        $this->input->hasOption('provider')->willReturn(false);
-        $this->input->hasOption('provider-token')->willReturn(false);
-        $this->input->hasOption('provider-url')->willReturn(false);
-        $this->input->hasOption('package')->willReturn(false);
-        $this->input->hasOption('remote')->willReturn(false);
-
-        $this->input->hasOption('changelog')->willReturn(true);
-        $this->input->getOption('changelog')->willReturn('changelog.txt');
+        $this->input
+            ->expects($this->atLeast(7))
+            ->method('hasOption')
+            ->will($this->returnValueMap([
+                ['provider-class', false],
+                ['provider', false],
+                ['provider-token', false],
+                ['provider-url', false],
+                ['package', false],
+                ['changelog', true],
+                ['remote', false],
+            ]));
+        $this->input
+            ->expects($this->once())
+            ->method('getOption')
+            ->with('changelog')
+            ->willReturn('changelog.txt');
 
         $listener = new RetrieveInputOptionsListener();
 
@@ -143,15 +178,23 @@ class RetrieveInputOptionsListenerTest extends TestCase
 
     public function testCanPopulateRemoteFromOption()
     {
-        $this->input->hasOption('provider-class')->willReturn(false);
-        $this->input->hasOption('provider')->willReturn(false);
-        $this->input->hasOption('provider-token')->willReturn(false);
-        $this->input->hasOption('provider-url')->willReturn(false);
-        $this->input->hasOption('package')->willReturn(false);
-        $this->input->hasOption('changelog')->willReturn(false);
-
-        $this->input->hasOption('remote')->willReturn(true);
-        $this->input->getOption('remote')->willReturn('upstream');
+        $this->input
+            ->expects($this->atLeast(7))
+            ->method('hasOption')
+            ->will($this->returnValueMap([
+                ['provider-class', false],
+                ['provider', false],
+                ['provider-token', false],
+                ['provider-url', false],
+                ['package', false],
+                ['changelog', false],
+                ['remote', true],
+            ]));
+        $this->input
+            ->expects($this->once())
+            ->method('getOption')
+            ->with('remote')
+            ->willReturn('upstream');
 
         $listener = new RetrieveInputOptionsListener();
 
