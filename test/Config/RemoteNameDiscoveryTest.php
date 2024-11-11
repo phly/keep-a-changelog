@@ -73,28 +73,22 @@ class RemoteNameDiscoveryTest extends TestCase
 
     public function testReportingNoGitRemoteFoundStopsPropagationWithoutFindingRemote()
     {
-        $expectedStrings = [
-            'Cannot determine git remote' => false,
-            'match the provider'          => false,
-            'match the <package>'         => false,
-        ];
+        $invokedCounter = $this->exactly(3);
         $this->output
-            ->expects($this->atLeast(3))
+            ->expects($invokedCounter)
             ->method('writeln')
-            ->with($this->callback(function (string $message) use (&$expectedStrings): bool {
-                foreach (array_keys($expectedStrings) as $expectedString) {
-                    if (strstr($message, $expectedString)) {
-                        $expectedStrings[$expectedString] = true;
-                        return true;
-                    }
-                }
+            ->with($this->callback(function (string $message) use ($invokedCounter): bool {
+                match ($invokedCounter->getInvocationCount()) {
+                    1 => TestCase::assertStringContainsString('Cannot determine git remote', $message),
+                    2 => TestCase::assertStringContainsString('match the provider', $message),
+                    3 => TestCase::assertStringContainsString('match the <package>', $message),
+                };
                 return true;
             }));
 
         $this->assertNull($this->event->reportNoMatchingGitRemoteFound('some.tld', 'some/package'));
         $this->assertTrue($this->event->isPropagationStopped());
         $this->assertFalse($this->event->remoteWasFound());
-        $this->assertAllExpectedOutputEmitted($expectedStrings);
     }
 
     public function testAbortingStopsPropagationWithoutFindingRemote()
@@ -112,21 +106,5 @@ class RemoteNameDiscoveryTest extends TestCase
         $this->assertTrue($this->event->isPropagationStopped());
         $this->assertTrue($this->event->remoteWasFound());
         $this->assertSame('upstream', $this->config->remote());
-    }
-
-    private function assertAllExpectedOutputEmitted(array $expectedStrings): void
-    {
-        $notFound = [];
-        foreach ($expectedStrings as $string => $found) {
-            if (! $found) {
-                $notFound[] = $string;
-            }
-        }
-
-        if (count($notFound) === 0) {
-            return;
-        }
-
-        $this->fail(sprintf('One or more expected output strings were not emitted: %s', implode(', ', $notFound)));
     }
 }
