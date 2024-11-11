@@ -10,9 +10,8 @@ namespace PhlyTest\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config\PromptForGitRemoteListener;
 use Phly\KeepAChangelog\Config\RemoteNameDiscovery;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,80 +19,78 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class PromptForGitRemoteListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private QuestionHelper&MockObject $helper;
+    private RemoteNameDiscovery&MockObject $event;
 
     protected function setUp(): void
     {
-        $this->input  = $this->prophesize(InputInterface::class)->reveal();
-        $this->output = $this->prophesize(OutputInterface::class)->reveal();
-        $this->helper = $this->prophesize(QuestionHelper::class);
-        $this->event  = $this->prophesize(RemoteNameDiscovery::class);
-        $this->event->input()->willReturn($this->input);
-        $this->event->output()->willReturn($this->output);
-        $this->event->questionHelper()->will([$this->helper, 'reveal']);
+        $this->input  = $this->createMock(InputInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
+        $this->helper = $this->createMock(QuestionHelper::class);
+        $this->event  = $this->createMock(RemoteNameDiscovery::class);
+
+        $this->event->expects($this->any())->method('input')->willReturn($this->input);
+        $this->event->expects($this->any())->method('output')->willReturn($this->output);
+        $this->event->expects($this->any())->method('questionHelper')->willReturn($this->helper);
     }
 
     public function testListenerReturnsEarlyIfEventIndicatesRemoteAlreadyFound()
     {
-        $this->event->remoteWasFound()->willReturn(true);
+        $this->event->expects($this->never())->method('abort');
+        $this->event->expects($this->never())->method('foundRemote');
+        $this->event->expects($this->never())->method('input');
+        $this->event->expects($this->never())->method('output');
+        $this->event->expects($this->never())->method('questionHelper');
+        $this->event->expects($this->never())->method('remotes');
+        $this->event->expects($this->once())->method('remoteWasFound')->willReturn(true);
 
         $listener = new PromptForGitRemoteListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->remotes()->shouldNotHaveBeenCalled();
-        $this->event->questionHelper()->shouldNotHaveBeenCalled();
-        $this->event->input()->shouldNotHaveBeenCalled();
-        $this->event->output()->shouldNotHaveBeenCalled();
-        $this->event->abort()->shouldNotHaveBeenCalled();
-        $this->event->foundRemote()->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testListenerAbortsEventOnUserRequest()
     {
-        $this->event->remoteWasFound()->willReturn(false);
-        $this->event->remotes()->willReturn(['origin']);
-        $this->event->abort()->shouldBeCalled();
+        $this->event->expects($this->once())->method('abort');
+        $this->event->expects($this->never())->method('foundRemote');
+        $this->event->expects($this->once())->method('input')->willReturn($this->input);
+        $this->event->expects($this->once())->method('output')->willReturn($this->output);
+        $this->event->expects($this->once())->method('questionHelper')->willReturn($this->helper);
+        $this->event->expects($this->once())->method('remotes')->willReturn(['origin']);
+        $this->event->expects($this->once())->method('remoteWasFound')->willReturn(false);
+
         $this->helper
-            ->ask(
-                $this->input,
-                $this->output,
-                Argument::type(ChoiceQuestion::class)
-            )
+            ->expects($this->once())
+            ->method('ask')
+            ->with($this->input, $this->output, $this->isInstanceOf(ChoiceQuestion::class))
             ->willReturn('abort');
 
         $listener = new PromptForGitRemoteListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->remotes()->shouldHaveBeenCalled();
-        $this->event->questionHelper()->shouldHaveBeenCalled();
-        $this->event->input()->shouldHaveBeenCalled();
-        $this->event->output()->shouldHaveBeenCalled();
-        $this->event->foundRemote()->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testListenerNotifiesEventOfChosenRemote()
     {
-        $this->event->remoteWasFound()->willReturn(false);
-        $this->event->remotes()->willReturn(['origin']);
-        $this->event->foundRemote('origin')->shouldBeCalled();
+        $this->event->expects($this->never())->method('abort');
+        $this->event->expects($this->once())->method('foundRemote')->with('origin');
+        $this->event->expects($this->once())->method('input')->willReturn($this->input);
+        $this->event->expects($this->once())->method('output')->willReturn($this->output);
+        $this->event->expects($this->once())->method('questionHelper')->willReturn($this->helper);
+        $this->event->expects($this->once())->method('remotes')->willReturn(['origin']);
+        $this->event->expects($this->once())->method('remoteWasFound')->willReturn(false);
+
         $this->helper
-            ->ask(
-                $this->input,
-                $this->output,
-                Argument::type(ChoiceQuestion::class)
-            )
+            ->expects($this->once())
+            ->method('ask')
+            ->with($this->input, $this->output, $this->isInstanceOf(ChoiceQuestion::class))
             ->willReturn(0);
 
         $listener = new PromptForGitRemoteListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
 
-        $this->event->remotes()->shouldHaveBeenCalled();
-        $this->event->questionHelper()->shouldHaveBeenCalled();
-        $this->event->input()->shouldHaveBeenCalled();
-        $this->event->output()->shouldHaveBeenCalled();
-        $this->event->abort()->shouldNotHaveBeenCalled();
     }
 }
