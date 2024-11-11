@@ -10,21 +10,22 @@ namespace Phly\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Provider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use ReflectionProperty;
 
 use function realpath;
 
 class RetrieveGlobalConfigListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config $config;
+    private ConfigDiscovery&MockObject $event;
 
     protected function setUp(): void
     {
         $this->config = new Config();
-        $this->event  = $this->prophesize(ConfigDiscovery::class);
-        $this->event->config()->willReturn($this->config);
+        $this->event  = $this->createMock(ConfigDiscovery::class);
+        $this->event->expects($this->any())->method('config')->willReturn($this->config);
     }
 
     /**
@@ -48,7 +49,7 @@ class RetrieveGlobalConfigListenerTest extends TestCase
     {
         $listener = $this->createListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
 
         $this->assertSame('changelog.txt', $this->config->changelogFile());
         $this->assertSame('upstream', $this->config->remote());
