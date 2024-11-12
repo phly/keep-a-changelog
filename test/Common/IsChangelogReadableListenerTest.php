@@ -11,44 +11,44 @@ namespace PhlyTest\KeepAChangelog\Common;
 use Phly\KeepAChangelog\Common\IsChangelogReadableListener;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\ReleaseEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 use function realpath;
 
 class IsChangelogReadableListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config&MockObject $config;
+    private ReleaseEvent&MockObject $event;
 
     protected function setUp(): void
     {
-        $this->config = $this->prophesize(Config::class);
-        $this->event  = $this->prophesize(ReleaseEvent::class);
+        $this->config = $this->createMock(Config::class);
+        $this->event  = $this->createMock(ReleaseEvent::class);
 
-        $this->event->config()->will([$this->config, 'reveal']);
+        $this->event->expects($this->any())->method('config')->willReturn($this->config);
     }
 
     public function testDoesNothingIfConfiguredChangelogFileIsReadable()
     {
         $changelogFile = realpath(__DIR__ . '/../_files') . '/CHANGELOG.md';
-        $this->config->changelogFile()->willReturn($changelogFile);
+        $this->config->expects($this->once())->method('changelogFile')->willReturn($changelogFile);
+        $this->event->expects($this->never())->method('changelogFileIsUnreadable');
 
         $listener = new IsChangelogReadableListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
 
-        $this->event->changelogFileIsUnreadable(Argument::any())->shouldNotHaveBeenCalled();
     }
 
     public function testTellsEventChangelogFileIsUnreadableIfProvidedFileIsNotReadable()
     {
-        $expected = realpath(__DIR__) . '/CHANGELOG.md';
-        $this->config->changelogFile()->willReturn($expected);
-        $this->event->changelogFileIsUnreadable($expected)->shouldBeCalled();
+        $changelogFile = realpath(__DIR__) . '/CHANGELOG.md';
+        $this->config->expects($this->once())->method('changelogFile')->willReturn($changelogFile);
+        $this->event->expects($this->once())->method('changelogFileIsUnreadable');
 
         $listener = new IsChangelogReadableListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 }
