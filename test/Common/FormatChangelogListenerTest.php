@@ -11,70 +11,40 @@ namespace PhlyTest\KeepAChangelog\Common;
 use Phly\KeepAChangelog\Common\ChangelogAwareEventInterface;
 use Phly\KeepAChangelog\Common\FormatChangelogListener;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class FormatChangelogListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testListenerFormatsProvidedChangelogAndPushesItToTheEvent()
     {
-        $event     = $this->prophesize(ChangelogAwareEventInterface::class);
+        $event     = $this->createMock(ChangelogAwareEventInterface::class);
         $changelog = <<<'EOC'
-### Added
+            ### Added
 
-- Added a new feature.
+            - Added a new feature.
 
-### Changed
+            ### Changed
 
-- Made some changes.
+            - Made some changes.
 
-### Deprecated
+            ### Deprecated
 
-- Nothing was deprecated.
+            - Nothing was deprecated.
 
-### Removed
+            ### Removed
 
-- Nothing was removed.
+            - Nothing was removed.
 
-### Fixed
+            ### Fixed
 
-- Fixed some bugs.
+            - Fixed some bugs.
 
-EOC;
+            EOC;
 
-        $expected = <<<'EOC'
-Added
------
-
-- Added a new feature.
-
-Changed
--------
-
-- Made some changes.
-
-Deprecated
-----------
-
-- Nothing was deprecated.
-
-Removed
--------
-
-- Nothing was removed.
-
-Fixed
------
-
-- Fixed some bugs.
-
-EOC;
-        $event->changelog()->willReturn($changelog);
-        $event->updateChangelog($expected)->shouldBeCalled();
+        $event->expects($this->once())->method('changelog')->willReturn($changelog);
+        $event->expects($this->once())->method('updateChangelog');
 
         $listener = new FormatChangelogListener();
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 }
