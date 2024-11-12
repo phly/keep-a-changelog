@@ -10,9 +10,8 @@ namespace PhlyTest\KeepAChangelog\Common;
 
 use Phly\KeepAChangelog\Common\DiscoverEditorListener;
 use Phly\KeepAChangelog\Common\EditorAwareEventInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 use function getenv;
 use function putenv;
@@ -20,21 +19,16 @@ use function sprintf;
 
 class DiscoverEditorListenerTest extends TestCase
 {
-    use ProphecyTrait;
 
-    /** @var null|string */
-    private $editorEnvValue;
-
-    /** @var array */
-    private $serverSuperGlobal = [];
+    private ?string $editorEnvValue;
+    private EditorAwareEventInterface&MockObject $event;
+    private array $serverSuperGlobal = [];
 
     protected function setUp(): void
     {
         $this->serverSuperGlobal = $_SERVER;
         $this->editorEnvValue    = getenv('EDITOR');
-        $this->event             = $this->prophesize(EditorAwareEventInterface::class);
-        $this->voidReturn        = function () {
-        };
+        $this->event             = $this->createMock(EditorAwareEventInterface::class);
     }
 
     protected function tearDown(): void
@@ -47,45 +41,46 @@ class DiscoverEditorListenerTest extends TestCase
 
     public function testListenerReturnsEarlyIfEventAlreadyComposesEditor()
     {
-        $this->event->editor()->willReturn('vim');
+        $this->event->expects($this->once())->method('editor')->willReturn('vim');
+        $this->event->expects($this->never())->method('discoverEditor');
+
         $listener = new DiscoverEditorListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->discoverEditor(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testListenerNotifiesEventOfEditorFoundInEnv()
     {
         putenv('EDITOR=some-custom-editor');
-        $this->event->editor()->will($this->voidReturn);
-        $this->event->discoverEditor('some-custom-editor')->shouldBeCalled();
+        $this->event->expects($this->once())->method('editor')->willReturn(null);
+        $this->event->expects($this->once())->method('discoverEditor')->with('some-custom-editor');
 
         $listener = new DiscoverEditorListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 
     public function testListenerDefaultsToNotepadOnWindows()
     {
         putenv('EDITOR');
-        $this->event->editor()->will($this->voidReturn);
+        $this->event->expects($this->once())->method('editor')->willReturn(null);
         $_SERVER['OS'] = 'Windows 10';
-        $this->event->discoverEditor('notepad')->shouldBeCalled();
+        $this->event->expects($this->once())->method('discoverEditor')->with('notepad');
 
         $listener = new DiscoverEditorListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 
     public function testListenerDefaultsToViOnNonWindowsSystems()
     {
         putenv('EDITOR');
-        $this->event->editor()->will($this->voidReturn);
+        $this->event->expects($this->once())->method('editor')->willReturn(null);
         $_SERVER['OS'] = 'GNU/Linux';
-        $this->event->discoverEditor('vi')->shouldBeCalled();
+        $this->event->expects($this->once())->method('discoverEditor')->with('vi');
 
         $listener = new DiscoverEditorListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 }
