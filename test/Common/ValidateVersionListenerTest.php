@@ -8,26 +8,26 @@ declare(strict_types=1);
 
 namespace Phly\KeepAChangelog\Common;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class ValidateVersionListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private VersionAwareEventInterface&MockObject $event;
 
     protected function setUp(): void
     {
-        $this->event = $this->prophesize(VersionAwareEventInterface::class);
+        $this->event = $this->createMock(VersionAwareEventInterface::class);
     }
 
     public function testEmptyVersionIsInvalid()
     {
-        $this->event->version()->willReturn(null);
-        $this->event->versionIsInvalid('')->shouldBeCalled();
+        $this->event->expects($this->once())->method('version')->willReturn(null);
+        $this->event->expects($this->once())->method('versionIsInvalid');
 
         $listener = new ValidateVersionListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 
     public function versions(): iterable
@@ -86,13 +86,13 @@ class ValidateVersionListenerTest extends TestCase
      */
     public function testIdentifiesVersionsCorrectly(string $version, bool $isFailure)
     {
-        $this->event->version()->willReturn($version);
+        $this->event->expects($this->once())->method('version')->willReturn($version);
         $isFailure
-            ? $this->event->versionIsInvalid($version)->shouldBeCalled()
-            : $this->event->versionIsInvalid($version)->shouldNotBeCalled();
+            ? $this->event->expects($this->once())->method('versionIsInvalid')
+            : $this->event->expects($this->never())->method('versionIsInvalid');
 
         $listener = new ValidateVersionListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 }
