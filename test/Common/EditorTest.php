@@ -9,9 +9,8 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\Common;
 
 use Phly\KeepAChangelog\Common\Editor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use const STDERR;
@@ -20,13 +19,6 @@ use const STDOUT;
 
 class EditorTest extends TestCase
 {
-    use ProphecyTrait;
-
-    protected function setUp(): void
-    {
-        $this->output = $this->prophesize(OutputInterface::class);
-    }
-
     public function testSpawnsEditorForGivenFilename()
     {
         $editor            = new Editor();
@@ -41,12 +33,10 @@ class EditorTest extends TestCase
             return 0;
         };
 
-        $this->output->writeln(Argument::containingString('Executing'))->shouldBeCalled();
+        /** @var OutputInterface&MockObject $output */
+        $output = $this->createMock(OutputInterface::class);
+        $output->expects($this->once())->method('writeln')->with($this->stringContains('Executing'));
 
-        $this->assertSame(0, $editor->spawnEditor(
-            $this->output->reveal(),
-            'vim',
-            'CHANGELOG.md'
-        ));
+        $this->assertSame(0, $editor->spawnEditor($output, 'vim', 'CHANGELOG.md'));
     }
 }
