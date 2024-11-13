@@ -11,119 +11,104 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\Common\Editor;
 use Phly\KeepAChangelog\ConfigCommand\AbstractEditConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\EditConfigEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractEditConfigListenerTestCase extends TestCase
 {
-    use ProphecyTrait;
+    protected OutputInterface&MockObject $output;
 
     abstract public function getListener(): AbstractEditConfigListener;
 
     abstract public function getListenerWithFileNotFound(): AbstractEditConfigListener;
 
-    abstract public function configureEventToEdit(ObjectProphecy $event): void;
+    abstract public function configureEventToEdit(EditConfigEvent&MockObject $event): void;
 
-    abstract public function configureEventToSkipEdit(ObjectProphecy $event): void;
+    abstract public function configureEventToSkipEdit(EditConfigEvent&MockObject $event): void;
 
     protected function setUp(): void
     {
-        $this->voidReturn = function () {
-        };
-        $this->output     = $this->prophesize(OutputInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
     }
 
-    public function getEventProphecy(): ObjectProphecy
+    public function getEvent(): EditConfigEvent&MockObject
     {
-        $event = $this->prophesize(EditConfigEvent::class);
+        /** @var EditConfigEvent&MockObject $event */
+        $event = $this->createMock(EditConfigEvent::class);
 
-        $event->output()->will([$this->output, 'reveal']);
-        $event->editor()->willReturn('vim');
-        $event->configFileNotFound(Argument::any())->will($this->voidReturn);
-        $event->editFailed(Argument::any())->will($this->voidReturn);
-        $event->editComplete(Argument::any())->will($this->voidReturn);
+        $event->expects($this->any())->method('output')->willReturn($this->output);
+        $event->expects($this->any())->method('editor')->willReturn('vim');
 
         return $event;
     }
 
     public function testListenerReturnsEarlyIfEventNotConfiguredToEdit()
     {
-        $event = $this->getEventProphecy();
+        $event = $this->getEvent();
         $this->configureEventToSkipEdit($event);
+        $event->expects($this->never())->method('configFileNotFound');
+        $event->expects($this->never())->method('editFailed');
+        $event->expects($this->never())->method('editComplete');
 
         $listener = $this->getListener();
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
 
-        $event->configFileNotFound(Argument::any())->shouldNotHaveBeenCalled();
-        $event->editFailed(Argument::any())->shouldNotHaveBeenCalled();
-        $event->editComplete(Argument::any())->shouldNotHaveBeenCalled();
     }
 
     public function testListenerReturnsEarlyIfConfigFileNotFound()
     {
-        $event = $this->getEventProphecy();
+        $event = $this->getEvent();
         $this->configureEventToEdit($event);
+        $event->expects($this->once())->method('configFileNotFound');
+        $event->expects($this->never())->method('editFailed');
+        $event->expects($this->never())->method('editComplete');
 
         $listener = $this->getListenerWithFileNotFound();
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->configFileNotFound(Argument::any())->shouldHaveBeenCalled();
-        $event->editFailed(Argument::any())->shouldNotHaveBeenCalled();
-        $event->editComplete(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testListenerReturnsEarlyIfEditFailed()
     {
-        $event = $this->getEventProphecy();
+        $event = $this->getEvent();
         $this->configureEventToEdit($event);
-        $event->editor()->willReturn('vim');
+        $event->expects($this->never())->method('configFileNotFound');
+        $event->expects($this->once())->method('editFailed')->with($this->isType('string'));
+        $event->expects($this->never())->method('editComplete');
 
-        $editor = $this->prophesize(Editor::class);
+        $editor = $this->createMock(Editor::class);
         $editor
-            ->spawnEditor(
-                $this->output->reveal(),
-                'vim',
-                Argument::type('string')
-            )
+            ->expects($this->once())
+            ->method('spawnEditor')
+            ->with($this->output, 'vim', $this->isType('string'))
             ->willReturn(1);
 
         $listener         = $this->getListener();
-        $listener->editor = $editor->reveal();
+        $listener->editor = $editor;
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->configFileNotFound(Argument::any())->shouldNotHaveBeenCalled();
-        $event->editFailed(Argument::type('string'))->shouldHaveBeenCalled();
-        $event->editComplete(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testListenerNotifiesEventOfCompletion()
     {
-        $event = $this->getEventProphecy();
+        $event = $this->getEvent();
         $this->configureEventToEdit($event);
-        $event->editor()->willReturn('vim');
+        $event->expects($this->never())->method('configFileNotFound');
+        $event->expects($this->never())->method('editFailed');
+        $event->expects($this->once())->method('editComplete')->with($this->isType('string'));
 
-        $editor = $this->prophesize(Editor::class);
+        $editor = $this->createMock(Editor::class);
         $editor
-            ->spawnEditor(
-                $this->output->reveal(),
-                'vim',
-                Argument::type('string')
-            )
+            ->expects($this->once())
+            ->method('spawnEditor')
+            ->with($this->output, 'vim', $this->isType('string'))
             ->willReturn(0);
 
         $listener         = $this->getListener();
-        $listener->editor = $editor->reveal();
+        $listener->editor = $editor;
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->configFileNotFound(Argument::any())->shouldNotHaveBeenCalled();
-        $event->editFailed(Argument::any())->shouldNotHaveBeenCalled();
-        $event->editComplete(Argument::type('string'))->shouldHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 }
