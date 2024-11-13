@@ -10,10 +10,8 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractCreateConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\CreateConfigEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 
 use function file_exists;
 use function file_get_contents;
@@ -26,8 +24,6 @@ use const E_WARNING;
 
 abstract class AbstractCreateConfigListenerTestCase extends TestCase
 {
-    use ProphecyTrait;
-
     /** @var null|string */
     public $existingConfigFile;
 
@@ -49,9 +45,9 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
      */
     abstract public function getListenerToFailCreatingFile(): AbstractCreateConfigListener;
 
-    abstract public function configureEventToCreate(ObjectProphecy $event): void;
+    abstract public function configureEventToCreate(CreateConfigEvent&MockObject $event): void;
 
-    abstract public function configureEventToSkipCreate(ObjectProphecy $event): void;
+    abstract public function configureEventToSkipCreate(CreateConfigEvent&MockObject $event): void;
 
     protected function setUp(): void
     {
@@ -68,48 +64,39 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
         $this->tempConfigFile = null;
     }
 
-    public function getEventProphecy(): ObjectProphecy
+    public function getEvent(): CreateConfigEvent&MockObject
     {
-        $voidReturn = function () {
-        };
-
-        $event = $this->prophesize(CreateConfigEvent::class);
-        $event->fileExists(Argument::any())->will($voidReturn);
-        $event->customChangelog()->will($voidReturn);
-        $event->creationFailed(Argument::any())->will($voidReturn);
-        $event->createdConfigFile(Argument::any())->will($voidReturn);
-
+        /** @var CreateConfigEvent&MockObject $event */
+        $event = $this->createMock(CreateConfigEvent::class);
         return $event;
     }
 
     public function testReturnsEarlyIfEventIsNotAllowedToCreateConfig()
     {
+        $event    = $this->getEvent();
         $listener = $this->getListener();
 
-        $event = $this->getEventProphecy();
         $this->configureEventToSkipCreate($event);
+        $event->expects($this->never())->method('fileExists');
+        $event->expects($this->never())->method('customChangelog');
+        $event->expects($this->never())->method('creationFailed');
+        $event->expects($this->never())->method('createdConfigFile');
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->fileExists(Argument::any())->shouldNotHaveBeenCalled();
-        $event->customChangelog()->shouldNotHaveBeenCalled();
-        $event->creationFailed(Argument::any())->shouldNotHaveBeenCalled();
-        $event->createdConfigFile(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testReturnsEarlyIfFileExists()
     {
         $listener = $this->getListenerWithExistingFile();
+        $event    = $this->getEvent();
 
-        $event = $this->getEventProphecy();
         $this->configureEventToCreate($event);
-        $event->fileExists($this->existingConfigFile)->shouldBeCalled();
+        $event->expects($this->once())->method('fileExists')->with($this->existingConfigFile);
+        $event->expects($this->never())->method('customChangelog');
+        $event->expects($this->never())->method('creationFailed');
+        $event->expects($this->never())->method('createdConfigFile');
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->customChangelog()->shouldNotHaveBeenCalled();
-        $event->creationFailed(Argument::any())->shouldNotHaveBeenCalled();
-        $event->createdConfigFile(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function changelogFiles(): iterable
@@ -124,20 +111,19 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
     public function testNotifiesOfCreationFailure(?string $changelog)
     {
         $listener = $this->getListenerToFailCreatingFile();
+        $event    = $this->getEvent();
 
-        $event = $this->getEventProphecy();
         $this->configureEventToCreate($event);
-        $event->customChangelog()->willReturn($changelog);
-        $event->creationFailed($this->tempConfigFile)->shouldBeCalled();
+        $event->expects($this->never())->method('fileExists');
+        $event->expects($this->once())->method('customChangelog')->willReturn($changelog);
+        $event->expects($this->once())->method('creationFailed')->with($this->tempConfigFile);
+        $event->expects($this->never())->method('createdConfigFile');
 
         set_error_handler(function ($errno, $errmsg) {
             return true;
         }, E_WARNING);
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
         restore_error_handler();
-
-        $event->fileExists(Argument::any())->shouldNotHaveBeenCalled();
-        $event->createdConfigFile(Argument::any())->shouldNotHaveBeenCalled();
     }
 
     /**
@@ -147,15 +133,15 @@ abstract class AbstractCreateConfigListenerTestCase extends TestCase
     {
         $listener = $this->getListener();
 
-        $event = $this->getEventProphecy();
+        $event = $this->getEvent();
         $this->configureEventToCreate($event);
-        $event->customChangelog()->willReturn($changelog);
-        $event->createdConfigFile($this->tempConfigFile)->shouldBeCalled();
 
-        $this->assertNull($listener($event->reveal()));
+        $event->expects($this->never())->method('fileExists');
+        $event->expects($this->once())->method('customChangelog')->willReturn($changelog);
+        $event->expects($this->never())->method('creationFailed');
+        $event->expects($this->once())->method('createdConfigFile')->with($this->tempConfigFile);
 
-        $event->fileExists(Argument::any())->shouldNotHaveBeenCalled();
-        $event->creationFailed(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
 
         $contents = file_get_contents($this->tempConfigFile);
         $this->assertMatchesRegularExpression(sprintf('/^changelog_file = %s$/m', $expectedChangelog), $contents);

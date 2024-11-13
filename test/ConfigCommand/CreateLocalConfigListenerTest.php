@@ -9,8 +9,9 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractCreateConfigListener;
+use Phly\KeepAChangelog\ConfigCommand\CreateConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\CreateLocalConfigListener;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 
 use function getcwd;
 use function sprintf;
@@ -48,14 +49,14 @@ class CreateLocalConfigListenerTest extends AbstractCreateConfigListenerTestCase
         return $listener;
     }
 
-    public function configureEventToCreate(ObjectProphecy $event): void
+    public function configureEventToCreate(CreateConfigEvent&MockObject $event): void
     {
-        $event->createLocal()->willReturn(true);
+        $event->expects($this->atLeastOnce())->method('createLocal')->willReturn(true);
     }
 
-    public function configureEventToSkipCreate(ObjectProphecy $event): void
+    public function configureEventToSkipCreate(CreateConfigEvent&MockObject $event): void
     {
-        $event->createLocal()->willReturn(false);
+        $event->expects($this->atLeastOnce())->method('createLocal')->willReturn(false);
     }
 
     public function testUsesLocalDotfileAsConfigFile()
