@@ -9,8 +9,9 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractCreateConfigListener;
+use Phly\KeepAChangelog\ConfigCommand\CreateConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\CreateGlobalConfigListener;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 
 use function sprintf;
 use function sys_get_temp_dir;
@@ -47,13 +48,13 @@ class CreateGlobalConfigListenerTest extends AbstractCreateConfigListenerTestCas
         return $listener;
     }
 
-    public function configureEventToCreate(ObjectProphecy $event): void
+    public function configureEventToCreate(CreateConfigEvent&MockObject $event): void
     {
-        $event->createGlobal()->willReturn(true);
+        $event->expects($this->atLeastOnce())->method('createGlobal')->willReturn(true);
     }
 
-    public function configureEventToSkipCreate(ObjectProphecy $event): void
+    public function configureEventToSkipCreate(CreateConfigEvent&MockObject $event): void
     {
-        $event->createGlobal()->willReturn(false);
+        $event->expects($this->atLeastOnce())->method('createGlobal')->willReturn(false);
     }
 }
