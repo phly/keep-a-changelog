@@ -10,15 +10,11 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractShowConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\ShowConfigEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 
 abstract class AbstractShowConfigListenerTestCase extends TestCase
 {
-    use ProphecyTrait;
-
     /**
      * Set to either "global" or "local"
      *
@@ -30,77 +26,64 @@ abstract class AbstractShowConfigListenerTestCase extends TestCase
 
     abstract public function getListenerWithFileNotFound(): AbstractShowConfigListener;
 
-    abstract public function configureEventToShow(ObjectProphecy $event): void;
+    abstract public function configureEventToShow(ShowConfigEvent&MockObject $event): void;
 
-    abstract public function configureEventToSkipShow(ObjectProphecy $event): void;
+    abstract public function configureEventToSkipShow(ShowConfigEvent&MockObject $event): void;
 
-    protected function setUp(): void
+    public function getEvent(): ShowConfigEvent&MockObject
     {
-        $this->voidReturn = function () {
-        };
-    }
-
-    public function getEventProphecy(): ObjectProphecy
-    {
-        $event = $this->prophesize(ShowConfigEvent::class);
-
-        $event
-            ->configIsNotReadable(Argument::any(), Argument::any())
-            ->will($this->voidReturn);
-        $event
-            ->displayConfig(Argument::any(), Argument::any(), Argument::any())
-            ->will($this->voidReturn);
+        /** @var ShowConfigEvent&MockObject $event */
+        $event = $this->createMock(ShowConfigEvent::class);
 
         return $event;
     }
 
     public function testListenerReturnsEarlyIfEventNotConfiguredToShow()
     {
-        $event = $this->getEventProphecy();
+        $event = $this->getEvent();
         $this->configureEventToSkipShow($event);
+        $event->expects($this->never())->method('configIsNotReadable');
+        $event->expects($this->never())->method('displayConfig');
 
         $listener = $this->getListener();
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->configIsNotReadable(Argument::any())->shouldNotHaveBeenCalled();
-        $event->displayConfig(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testListenerReturnsEarlyIfConfigFileNotReadable()
     {
-        $event = $this->getEventProphecy();
-        $this->configureEventToShow($event);
-
+        $event    = $this->getEvent();
         $listener = $this->getListenerWithFileNotFound();
 
-        $this->assertNull($listener($event->reveal()));
-
+        $this->configureEventToShow($event);
         $event
-            ->configIsNotReadable(
+            ->expects($this->once())
+            ->method('configIsNotReadable')
+            ->with(
                 $listener->getConfigFile(),
                 $listener->getConfigType()
-            )
-            ->shouldHaveBeenCalled();
-        $event->displayConfig(Argument::any())->shouldNotHaveBeenCalled();
+            );
+        $event->expects($this->never())->method('displayConfig');
+
+        $this->assertNull($listener($event));
     }
 
     public function testListenerTellsEventToDisplayConfig()
     {
-        $event = $this->getEventProphecy();
-        $this->configureEventToShow($event);
-
+        $event    = $this->getEvent();
         $listener = $this->getListener();
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->configIsNotReadable(Argument::any())->shouldNotHaveBeenCalled();
+        $this->configureEventToShow($event);
+        $event->expects($this->never())->method('configIsNotReadable');
         $event
-            ->displayConfig(
-                Argument::type('string'),
+            ->expects($this->once())
+            ->method('displayConfig')
+            ->with(
+                $this->isType('string'),
                 $this->configType,
                 $listener->getConfigFile()
-            )
-            ->shouldHaveBeenCalled();
+            );
+
+        $this->assertNull($listener($event));
     }
 }
