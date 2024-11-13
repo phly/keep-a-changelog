@@ -10,10 +10,8 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractRemoveConfigListener;
 use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +19,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 abstract class AbstractRemoveConfigListenerTestCase extends TestCase
 {
-    use ProphecyTrait;
+    protected InputInterface&MockObject $input;
+    protected OutputInterface&MockObject $output;
 
     abstract public function getListener(): AbstractRemoveConfigListener;
 
@@ -29,158 +28,148 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
 
     abstract public function getListenerWithUnlinkableFile(): AbstractRemoveConfigListener;
 
-    abstract public function configureEventToRemove(ObjectProphecy $event): void;
+    abstract public function configureEventToRemove(RemoveConfigEvent&MockObject $event): void;
 
-    abstract public function configureEventToSkipRemove(ObjectProphecy $event): void;
+    abstract public function configureEventToSkipRemove(RemoveConfigEvent&MockObject $event): void;
 
     protected function setUp(): void
     {
-        $this->voidReturn = function () {
-        };
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
+        $this->input  = $this->createMock(InputInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
     }
 
-    public function getEventProphecy(): ObjectProphecy
+    public function getEvent(): RemoveConfigEvent&MockObject
     {
-        $event = $this->prophesize(RemoveConfigEvent::class);
+        /** @var RemoveConfigEvent&MockObject $event */
+        $event = $this->createMock(RemoveConfigEvent::class);
 
-        $event->input()->will([$this->input, 'reveal']);
-        $event->output()->will([$this->output, 'reveal']);
-        $event->configFileNotFound(Argument::any())->will($this->voidReturn);
-        $event->abort(Argument::any())->will($this->voidReturn);
-        $event->errorRemovingConfig(Argument::any())->will($this->voidReturn);
-        $event->deletedConfigFile(Argument::any())->will($this->voidReturn);
+        $event->expects($this->any())->method('input')->willReturn($this->input);
+        $event->expects($this->any())->method('output')->willReturn($this->output);
 
         return $event;
     }
 
     public function testListenerReturnsEarlyIfEventNotConfiguredToRemove()
     {
-        $event = $this->getEventProphecy();
-        $this->configureEventToSkipRemove($event);
-
         $listener = $this->getListener();
+        $event    = $this->getEvent();
 
-        $this->assertNull($listener($event->reveal()));
+        $this->configureEventToSkipRemove($event);
+        $event->expects($this->never())->method('configFileNotFound');
+        $event->expects($this->never())->method('abort');
+        $event->expects($this->never())->method('errorRemovingConfig');
+        $event->expects($this->never())->method('deletedConfigFile');
 
-        $event->configFileNotFound(Argument::any())->shouldNotHaveBeenCalled();
-        $event->abort(Argument::any())->shouldNotHaveBeenCalled();
-        $event->errorRemovingConfig(Argument::any())->shouldNotHaveBeenCalled();
-        $event->deletedConfigFile(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testListenerReturnsEarlyIfConfigFileNotFound()
     {
-        $event = $this->getEventProphecy();
-        $this->configureEventToRemove($event);
-
         $listener = $this->getListenerWithFileNotFound();
+        $event    = $this->getEvent();
 
-        $this->assertNull($listener($event->reveal()));
+        $this->configureEventToRemove($event);
+        $event->expects($this->once())->method('configFileNotFound');
+        $event->expects($this->never())->method('abort');
+        $event->expects($this->never())->method('errorRemovingConfig');
+        $event->expects($this->never())->method('deletedConfigFile');
 
-        $event->configFileNotFound(Argument::any())->shouldHaveBeenCalled();
-        $event->abort(Argument::any())->shouldNotHaveBeenCalled();
-        $event->errorRemovingConfig(Argument::any())->shouldNotHaveBeenCalled();
-        $event->deletedConfigFile(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testAllowsUserToAbortRemoval()
     {
-        $questionHelper = $this->prophesize(QuestionHelper::class);
+        $event          = $this->getEvent();
+        $listener       = $this->getListener();
+        $questionHelper = $this->createMock(QuestionHelper::class);
+
         $questionHelper
-            ->ask(
-                Argument::that([$this->input, 'reveal']),
-                Argument::that([$this->output, 'reveal']),
-                Argument::that(function ($question) {
-                    TestCase::assertInstanceOf(ConfirmationQuestion::class, $question);
+            ->expects($this->once())
+            ->method('ask')
+            ->with(
+                $this->input,
+                $this->output,
+                $this->callback(function (ConfirmationQuestion $question): bool {
                     TestCase::assertMatchesRegularExpression('/delete this file/', $question->getQuestion());
-                    return $question;
+                    return true;
                 })
             )
             ->willReturn(false);
 
-        $this->output
-            ->writeln(Argument::containingString('Found the following configuration file'))
-            ->shouldBeCalled();
+        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('Found the following configuration file'));
 
-        $event = $this->getEventProphecy();
         $this->configureEventToRemove($event);
+        $event->expects($this->never())->method('configFileNotFound');
+        $event->expects($this->once())->method('abort')->with($this->isType('string'));
+        $event->expects($this->never())->method('errorRemovingConfig');
+        $event->expects($this->never())->method('deletedConfigFile');
 
-        $listener                 = $this->getListener();
-        $listener->questionHelper = $questionHelper->reveal();
+        $listener->questionHelper = $questionHelper;
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->configFileNotFound(Argument::any())->shouldNotHaveBeenCalled();
-        $event->abort(Argument::type('string'))->shouldHaveBeenCalled();
-        $event->errorRemovingConfig(Argument::any())->shouldNotHaveBeenCalled();
-        $event->deletedConfigFile(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testNotifiesOfRemovalError()
     {
-        $questionHelper = $this->prophesize(QuestionHelper::class);
+        $listener       = $this->getListenerWithUnlinkableFile();
+        $event          = $this->getEvent();
+        $questionHelper = $this->createMock(QuestionHelper::class);
+
         $questionHelper
-            ->ask(
-                Argument::that([$this->input, 'reveal']),
-                Argument::that([$this->output, 'reveal']),
-                Argument::that(function ($question) {
-                    TestCase::assertInstanceOf(ConfirmationQuestion::class, $question);
+            ->expects($this->once())
+            ->method('ask')
+            ->with(
+                $this->input,
+                $this->output,
+                $this->callback(function (ConfirmationQuestion $question): bool {
                     TestCase::assertMatchesRegularExpression('/delete this file/', $question->getQuestion());
-                    return $question;
+                    return true;
                 })
             )
             ->willReturn(true);
 
-        $this->output
-            ->writeln(Argument::containingString('Found the following configuration file'))
-            ->shouldBeCalled();
+        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('Found the following configuration file'));
 
-        $event = $this->getEventProphecy();
         $this->configureEventToRemove($event);
+        $event->expects($this->never())->method('configFileNotFound');
+        $event->expects($this->never())->method('abort');
+        $event->expects($this->once())->method('errorRemovingConfig')->with($this->isType('string'));
+        $event->expects($this->never())->method('deletedConfigFile');
 
-        $listener                 = $this->getListenerWithUnlinkableFile();
-        $listener->questionHelper = $questionHelper->reveal();
+        $listener->questionHelper = $questionHelper;
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->configFileNotFound(Argument::any())->shouldNotHaveBeenCalled();
-        $event->abort(Argument::any())->shouldNotHaveBeenCalled();
-        $event->errorRemovingConfig(Argument::type('string'))->shouldHaveBeenCalled();
-        $event->deletedConfigFile(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testNotifiesOfRemovalCompletion()
     {
-        $questionHelper = $this->prophesize(QuestionHelper::class);
+        $listener       = $this->getListener();
+        $event          = $this->getEvent();
+        $questionHelper = $this->createMock(QuestionHelper::class);
+
         $questionHelper
-            ->ask(
-                Argument::that([$this->input, 'reveal']),
-                Argument::that([$this->output, 'reveal']),
-                Argument::that(function ($question) {
-                    TestCase::assertInstanceOf(ConfirmationQuestion::class, $question);
+            ->expects($this->once())
+            ->method('ask')
+            ->with(
+                $this->input,
+                $this->output,
+                $this->callback(function (ConfirmationQuestion $question): bool {
                     TestCase::assertMatchesRegularExpression('/delete this file/', $question->getQuestion());
-                    return $question;
+                    return true;
                 })
             )
             ->willReturn(true);
 
-        $this->output
-            ->writeln(Argument::containingString('Found the following configuration file'))
-            ->shouldBeCalled();
+        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('Found the following configuration file'));
 
-        $event = $this->getEventProphecy();
         $this->configureEventToRemove($event);
+        $event->expects($this->never())->method('configFileNotFound');
+        $event->expects($this->never())->method('abort');
+        $event->expects($this->never())->method('errorRemovingConfig');
+        $event->expects($this->once())->method('deletedConfigFile')->with($this->isType('string'));
 
-        $listener                 = $this->getListener();
-        $listener->questionHelper = $questionHelper->reveal();
+        $listener->questionHelper = $questionHelper;
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->configFileNotFound(Argument::any())->shouldNotHaveBeenCalled();
-        $event->abort(Argument::any())->shouldNotHaveBeenCalled();
-        $event->errorRemovingConfig(Argument::any())->shouldNotHaveBeenCalled();
-        $event->deletedConfigFile(Argument::type('string'))->shouldHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 }
