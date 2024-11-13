@@ -9,8 +9,9 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractShowConfigListener;
+use Phly\KeepAChangelog\ConfigCommand\ShowConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\ShowLocalConfigListener;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ShowLocalConfigListenerTest extends AbstractShowConfigListenerTestCase
 {
@@ -31,15 +32,15 @@ class ShowLocalConfigListenerTest extends AbstractShowConfigListenerTestCase
         return $listener;
     }
 
-    public function configureEventToShow(ObjectProphecy $event): void
+    public function configureEventToShow(ShowConfigEvent&MockObject $event): void
     {
-        $event->showLocal()->willReturn(true);
-        $event->showMerged()->willReturn(false);
+        $event->expects($this->any())->method('showLocal')->willReturn(true);
+        $event->expects($this->any())->method('showMerged')->willReturn(false);
     }
 
-    public function configureEventToSkipShow(ObjectProphecy $event): void
+    public function configureEventToSkipShow(ShowConfigEvent&MockObject $event): void
     {
-        $event->showLocal()->willReturn(false);
-        $event->showMerged()->willReturn(true);
+        $event->expects($this->any())->method('showLocal')->willReturn(false);
+        $event->expects($this->any())->method('showMerged')->willReturn(true);
     }
 }
