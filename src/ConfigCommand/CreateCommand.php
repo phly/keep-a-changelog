@@ -19,17 +19,17 @@ class CreateCommand extends Command
     private const DESCRIPTION = 'Create a configuration file or files.';
 
     private const HELP = <<<'EOH'
-Allows you to create and seed a configuration file.
-
-If --local is provided, it will create local configuration in
-./.keep-a-changelog.ini.
-   
-If --global is provided, it will create global configuration in
-$XDG_CONFIG_HOME/keep-a-changelog.ini.
-
-If --changelog is provided, that file will be used to seed the changelog_file
-configuration setting.
-EOH;
+        Allows you to create and seed a configuration file.
+        
+        If --local is provided, it will create local configuration in
+        ./.keep-a-changelog.ini.
+           
+        If --global is provided, it will create global configuration in
+        $XDG_CONFIG_HOME/keep-a-changelog.ini.
+        
+        If --changelog is provided, that file will be used to seed the changelog_file
+        configuration setting.
+        EOH;
 
     /** @var EventDispatcherInterface */
     private $dispatcher;
