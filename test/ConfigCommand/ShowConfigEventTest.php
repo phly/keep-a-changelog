@@ -10,32 +10,26 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\Common\IOInterface;
 use Phly\KeepAChangelog\ConfigCommand\ShowConfigEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ShowConfigEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
 
     protected function setUp(): void
     {
-        $this->input  = $this->prophesize(InputInterface::class);
-        $this->output = $this->prophesize(OutputInterface::class);
-        $this->output->writeln(Argument::any())->willReturn(null);
+        $this->input  = $this->createMock(InputInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
     }
 
     public function createEvent(bool $showLocal, bool $showGlobal): ShowConfigEvent
     {
-        return new ShowConfigEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $showLocal,
-            $showGlobal
-        );
+        return new ShowConfigEvent($this->input, $this->output, $showLocal, $showGlobal);
     }
 
     public function testImplementsIOInterface(): ShowConfigEvent
@@ -104,13 +98,20 @@ class ShowConfigEventTest extends TestCase
         $type     = 'local';
         $location = '.keep-a-changelog.ini';
 
-        $this->assertNull($event->displayConfig($config, $type, $location));
-
+        $invokedCount = $this->exactly(3);
         $this->output
-            ->writeln(Argument::containingString('Showing local configuration (.keep-a-changelog.ini)'))
-            ->shouldHaveBeenCalled();
-        $this->output->writeln($config)->shouldHaveBeenCalled();
-        $this->output->writeln('')->shouldHaveBeenCalled();
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount, $config): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1 => TestCase::assertStringContainsString('Showing local configuration (.keep-a-changelog.ini)', $message),
+                    2 => TestCase::assertEquals($config, $message),
+                    3 => TestCase::assertEquals('', $message),
+                };
+                return true;
+            }));
+
+        $this->assertNull($event->displayConfig($config, $type, $location));
         $this->assertTrue($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
@@ -120,13 +121,21 @@ class ShowConfigEventTest extends TestCase
         $event  = $this->createEvent(true, true);
         $config = 'This is the config';
 
+        $invokedCount = $this->exactly(3);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount, $config): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1 => TestCase::assertStringContainsString('Showing merged configuration', $message),
+                    2 => TestCase::assertEquals($config, $message),
+                    3 => TestCase::assertEquals('', $message),
+                };
+                return true;
+            }));
+
         $this->assertNull($event->displayMergedConfig($config));
 
-        $this->output
-            ->writeln(Argument::containingString('Showing merged configuration'))
-            ->shouldHaveBeenCalled();
-        $this->output->writeln($config)->shouldHaveBeenCalled();
-        $this->output->writeln('')->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
@@ -135,14 +144,20 @@ class ShowConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
+        $invokedCount = $this->exactly(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1 => TestCase::assertStringContainsString('Unable to read configuration', $message),
+                    2 => TestCase::assertStringContainsString('global configuration file "keep-a-changelog.ini"', $message),
+                };
+                return true;
+            }));
+
         $this->assertNull($event->configIsNotReadable('keep-a-changelog.ini', 'global'));
 
-        $this->output
-            ->writeln(Argument::containingString('Unable to read configuration'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('global configuration file "keep-a-changelog.ini"'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
