@@ -10,22 +10,22 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\Common\IOInterface;
 use Phly\KeepAChangelog\ConfigCommand\CreateConfigEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateConfigEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
 
     protected function setUp(): void
     {
-        $this->input  = $this->prophesize(InputInterface::class);
-        $this->output = $this->prophesize(OutputInterface::class);
-        $this->output->writeln(Argument::any())->willReturn(null);
+        $this->input  = $this->createMock(InputInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
     }
 
     public function createEvent(
@@ -34,8 +34,8 @@ class CreateConfigEventTest extends TestCase
         ?string $customChangelog = null
     ): CreateConfigEvent {
         return new CreateConfigEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
+            $this->input,
+            $this->output,
             $createLocal,
             $createGlobal,
             $customChangelog
@@ -86,11 +86,12 @@ class CreateConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
-        $this->assertNull($event->fileExists('changelog.txt'));
-
         $this->output
-            ->writeln(Argument::containingString('Config file already exists at changelog.txt'))
-            ->shouldHaveBeenCalled();
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Config file already exists at changelog.txt'));
+
+        $this->assertNull($event->fileExists('changelog.txt'));
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
@@ -99,11 +100,12 @@ class CreateConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
-        $this->assertNull($event->createdConfigFile('changelog.txt'));
-
         $this->output
-            ->writeln(Argument::containingString('Created changelog.txt'))
-            ->shouldHaveBeenCalled();
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Created changelog.txt'));
+
+        $this->assertNull($event->createdConfigFile('changelog.txt'));
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
@@ -112,14 +114,20 @@ class CreateConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
-        $this->assertNull($event->creationFailed('changelog.txt'));
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Failed creating config file', $message),
+                    2       => TestCase::assertStringContainsString('Verify', $message),
+                    default => true,
+                };
+                return true;
+            }));
 
-        $this->output
-            ->writeln(Argument::containingString('Failed creating config file'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('Verify'))
-            ->shouldHaveBeenCalled();
+        $this->assertNull($event->creationFailed('changelog.txt'));
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
