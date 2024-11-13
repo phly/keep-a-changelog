@@ -11,12 +11,9 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\ConfigCommand\EditConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\VerifyEditOptionsListener;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class VerifyEditOptionsListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function eventOptions(): iterable
     {
         yield 'neither true' => [$editLocal = false, $editGlobal = false, $notifiesEvent = false];
@@ -33,17 +30,16 @@ class VerifyEditOptionsListenerTest extends TestCase
         bool $editGlobal,
         bool $notifiesEvents
     ) {
-        $event = $this->prophesize(EditConfigEvent::class);
-        $event->editLocal()->willReturn($editLocal);
-        $event->editGlobal()->willReturn($editGlobal);
+        $event = $this->createMock(EditConfigEvent::class);
+        $event->expects($this->any())->method('editLocal')->willReturn($editLocal);
+        $event->expects($this->any())->method('editGlobal')->willReturn($editGlobal);
 
-        $tooManyOptions = $event->tooManyOptions();
         $notifiesEvents
-            ? $tooManyOptions->shouldBeCalled()
-            : $tooManyOptions->shouldNotBeenCalled();
+            ? $event->expects($this->once())->method('tooManyOptions')
+            : $event->expects($this->never())->method('tooManyOptions');
 
         $listener = new VerifyEditOptionsListener();
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 }
