@@ -9,8 +9,9 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractEditConfigListener;
+use Phly\KeepAChangelog\ConfigCommand\EditConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\EditLocalConfigListener;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class EditLocalConfigListenerTest extends AbstractEditConfigListenerTestCase
 {
@@ -28,13 +29,13 @@ class EditLocalConfigListenerTest extends AbstractEditConfigListenerTestCase
         return $listener;
     }
 
-    public function configureEventToEdit(ObjectProphecy $event): void
+    public function configureEventToEdit(EditConfigEvent&MockObject $event): void
     {
-        $event->editLocal()->willReturn(true);
+        $event->expects($this->any())->method('editLocal')->willReturn(true);
     }
 
-    public function configureEventToSkipEdit(ObjectProphecy $event): void
+    public function configureEventToSkipEdit(EditConfigEvent&MockObject $event): void
     {
-        $event->editLocal()->willReturn(false);
+        $event->expects($this->any())->method('editLocal')->willReturn(false);
     }
 }
