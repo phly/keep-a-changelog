@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\ConfigCommand\CreateCommand;
 use Phly\KeepAChangelog\ConfigCommand\CreateConfigEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,13 +20,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CreateCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function failureStatus(): iterable
@@ -43,50 +43,62 @@ class CreateCommandTest extends TestCase
         bool $failedFlag,
         int $expectedStatus
     ) {
-        $expected = $this->prophesize(CreateConfigEvent::class);
-        $expected->failed()->willReturn($failedFlag);
+        $input    = $this->input;
+        $output   = $this->output;
+        $expected = $this->createMock(CreateConfigEvent::class);
 
-        $this->input->getOption('local')->willReturn(true);
-        $this->input->getOption('global')->willReturn(true);
-        $this->input->getOption('changelog')->willReturn('changelog.txt');
+        $expected->expects($this->once())->method('failed')->willReturn($failedFlag);
 
-        $input  = $this->input->reveal();
-        $output = $this->output->reveal();
+        $this->input
+            ->expects($this->atLeast(3))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['local', true],
+                ['global', true],
+                ['changelog', 'changelog.txt'],
+            ]));
 
         $this->dispatcher
-            ->dispatch(Argument::that(function ($event) use ($input, $output) {
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function ($event) use ($input, $output): bool {
                 TestCase::assertInstanceOf(CreateConfigEvent::class, $event);
                 TestCase::assertSame($input, $event->input());
                 TestCase::assertSame($output, $event->output());
                 TestCase::assertTrue($event->createLocal());
                 TestCase::assertTrue($event->createGlobal());
                 TestCase::assertSame('changelog.txt', $event->customChangelog());
-                return $event;
+                return true;
             }))
-            ->will(function () use ($expected) {
-                return $expected->reveal();
-            });
+            ->willReturn($expected);
 
-        $command = new CreateCommand($this->dispatcher->reveal());
+        $command = new CreateCommand($this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
 
     public function testExecutionReturnsOneAndEmitsErrorMessageWhenNeitherLocalNorGlobalOptionProvided(): void
     {
-        $input = $this->input;
-        $input->getOption('local')->willReturn(null);
-        $input->getOption('global')->willReturn(null);
-
-        $output = $this->output;
-        $output
-            ->writeln(Argument::containingString('--local|-l OR --global|-g'))
-            ->shouldBeCalled();
-
+        $input      = $this->input;
+        $output     = $this->output;
         $dispatcher = $this->dispatcher;
-        $dispatcher->dispatch(Argument::any())->shouldNotBeCalled();
 
-        $command = new CreateCommand($this->dispatcher->reveal());
+        $input
+            ->expects($this->atLeast(2))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['local', false],
+                ['global', false],
+            ]));
+
+        $output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('--local|-l OR --global|-g'));
+
+        $dispatcher->expects($this->never())->method('dispatch');
+
+        $command = new CreateCommand($this->dispatcher);
 
         $this->assertSame(1, $this->executeCommand($command));
     }
