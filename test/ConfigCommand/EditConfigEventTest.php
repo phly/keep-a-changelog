@@ -11,32 +11,26 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\Common\EditorAwareEventInterface;
 use Phly\KeepAChangelog\Common\IOInterface;
 use Phly\KeepAChangelog\ConfigCommand\EditConfigEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class EditConfigEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
 
     protected function setUp(): void
     {
-        $this->input  = $this->prophesize(InputInterface::class);
-        $this->output = $this->prophesize(OutputInterface::class);
-        $this->output->writeln(Argument::any())->willReturn(null);
+        $this->input  = $this->createMock(InputInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
     }
 
     public function createEvent(bool $editLocal, bool $editGlobal): EditConfigEvent
     {
-        return new EditConfigEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $editLocal,
-            $editGlobal
-        );
+        return new EditConfigEvent($this->input, $this->output, $editLocal, $editGlobal);
     }
 
     public function testImplementsIOInterface(): EditConfigEvent
@@ -109,12 +103,13 @@ class EditConfigEventTest extends TestCase
     public function testMarkingEditCompleteEmitsOutputWithoutStoppingPropagationOrFailure()
     {
         $event = $this->createEvent(true, true);
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Completed editing keep-a-changelog.ini'));
 
         $this->assertNull($event->editComplete('keep-a-changelog.ini'));
 
-        $this->output
-            ->writeln(Argument::containingString('Completed editing keep-a-changelog.ini'))
-            ->shouldHaveBeenCalled();
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
@@ -123,11 +118,20 @@ class EditConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
+        $invokedCount = $this->atLeast(1);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1 => TestCase::assertStringContainsString('Could not find config file keep-a-changelog.ini', $message),
+                    default => true,
+                };
+                return true;
+            }));
+
         $this->assertNull($event->configFileNotFound('keep-a-changelog.ini'));
 
-        $this->output
-            ->writeln(Argument::containingString('Could not find config file keep-a-changelog.ini'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
@@ -136,11 +140,20 @@ class EditConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
+        $invokedCount = $this->atLeast(1);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1 => TestCase::assertStringContainsString('Editing config file keep-a-changelog.ini failed', $message),
+                    default => true,
+                };
+                return true;
+            }));
+
         $this->assertNull($event->editFailed('keep-a-changelog.ini'));
 
-        $this->output
-            ->writeln(Argument::containingString('Editing config file keep-a-changelog.ini failed'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
@@ -149,14 +162,20 @@ class EditConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
+        $invokedCount = $this->exactly(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1 => TestCase::assertStringContainsString('Too many options', $message),
+                    2 => TestCase::assertStringContainsString('only use ONE', $message),
+                };
+                return true;
+            }));
+
         $this->assertNull($event->tooManyOptions());
 
-        $this->output
-            ->writeln(Argument::containingString('Too many options'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('only use ONE'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
