@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\ConfigCommand\RemoveCommand;
 use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,13 +20,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RemoveCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function failureStatus(): iterable
@@ -43,29 +43,32 @@ class RemoveCommandTest extends TestCase
         bool $failedFlag,
         int $expectedStatus
     ) {
-        $expected = $this->prophesize(RemoveConfigEvent::class);
-        $expected->failed()->willReturn($failedFlag);
+        $expected = $this->createMock(RemoveConfigEvent::class);
 
-        $this->input->getOption('local')->willReturn(true);
-        $this->input->getOption('global')->willReturn(true);
+        $expected->expects($this->once())->method('failed')->willReturn($failedFlag);
 
-        $input  = $this->input->reveal();
-        $output = $this->output->reveal();
+        $this->input
+            ->expects($this->atLeast(2))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['local', true],
+                ['global', true],
+            ]));
 
         $this->dispatcher
-            ->dispatch(Argument::that(function ($event) use ($input, $output) {
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (RemoveConfigEvent $event): bool {
                 TestCase::assertInstanceOf(RemoveConfigEvent::class, $event);
-                TestCase::assertSame($input, $event->input());
-                TestCase::assertSame($output, $event->output());
+                TestCase::assertSame($this->input, $event->input());
+                TestCase::assertSame($this->output, $event->output());
                 TestCase::assertTrue($event->removeLocal());
                 TestCase::assertTrue($event->removeGlobal());
-                return $event;
+                return true;
             }))
-            ->will(function () use ($expected) {
-                return $expected->reveal();
-            });
+            ->willReturn($expected);
 
-        $command = new RemoveCommand($this->dispatcher->reveal());
+        $command = new RemoveCommand($this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
