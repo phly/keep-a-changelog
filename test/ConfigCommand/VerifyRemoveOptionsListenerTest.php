@@ -11,12 +11,9 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\VerifyRemoveOptionsListener;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class VerifyRemoveOptionsListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function eventOptions(): iterable
     {
         yield 'neither true' => [$removeLocal = false, $removeGlobal = false, $notifiesEvent = true];
@@ -33,17 +30,16 @@ class VerifyRemoveOptionsListenerTest extends TestCase
         bool $removeGlobal,
         bool $notifiesEvents
     ) {
-        $event = $this->prophesize(RemoveConfigEvent::class);
-        $event->removeLocal()->willReturn($removeLocal);
-        $event->removeGlobal()->willReturn($removeGlobal);
+        $event = $this->createMock(RemoveConfigEvent::class);
+        $event->expects($this->any())->method('removeLocal')->willReturn($removeLocal);
+        $event->expects($this->any())->method('removeGlobal')->willReturn($removeGlobal);
 
-        $missingOptions = $event->missingOptions();
         $notifiesEvents
-            ? $missingOptions->shouldBeCalled()
-            : $missingOptions->shouldNotBeenCalled();
+            ? $event->expects($this->once())->method('missingOptions')
+            : $event->expects($this->never())->method('missingOptions');
 
         $listener = new VerifyRemoveOptionsListener();
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 }
