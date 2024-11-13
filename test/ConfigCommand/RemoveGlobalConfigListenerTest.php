@@ -9,8 +9,9 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractRemoveConfigListener;
+use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
 use Phly\KeepAChangelog\ConfigCommand\RemoveGlobalConfigListener;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 
 use function file_exists;
 use function sprintf;
@@ -63,14 +64,14 @@ class RemoveGlobalConfigListenerTest extends AbstractRemoveConfigListenerTestCas
         return $listener;
     }
 
-    public function configureEventToRemove(ObjectProphecy $event): void
+    public function configureEventToRemove(RemoveConfigEvent&MockObject $event): void
     {
-        $event->removeGlobal()->willReturn(true);
+        $event->expects($this->atLeastOnce())->method('removeGlobal')->willReturn(true);
     }
 
-    public function configureEventToSkipRemove(ObjectProphecy $event): void
+    public function configureEventToSkipRemove(RemoveConfigEvent&MockObject $event): void
     {
-        $event->removeGlobal()->willReturn(false);
+        $event->expects($this->atLeastOnce())->method('removeGlobal')->willReturn(false);
     }
 
     protected function setUp(): void
