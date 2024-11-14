@@ -10,32 +10,26 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\Common\IOInterface;
 use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RemoveConfigEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
 
     protected function setUp(): void
     {
-        $this->input  = $this->prophesize(InputInterface::class);
-        $this->output = $this->prophesize(OutputInterface::class);
-        $this->output->writeln(Argument::any())->willReturn(null);
+        $this->input  = $this->createMock(InputInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
     }
 
     public function createEvent(bool $removeLocal, bool $removeGlobal): RemoveConfigEvent
     {
-        return new RemoveConfigEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $removeLocal,
-            $removeGlobal
-        );
+        return new RemoveConfigEvent($this->input, $this->output, $removeLocal, $removeGlobal);
     }
 
     public function testImplementsIOInterface(): RemoveConfigEvent
@@ -81,11 +75,13 @@ class RemoveConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Removed the file changelog.txt'));
+
         $this->assertNull($event->deletedConfigFile('changelog.txt'));
 
-        $this->output
-            ->writeln(Argument::containingString('Removed the file changelog.txt'))
-            ->shouldHaveBeenCalled();
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
@@ -94,11 +90,13 @@ class RemoveConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Aborted removal of changelog.txt'));
+
         $this->assertNull($event->abort('changelog.txt'));
 
-        $this->output
-            ->writeln(Argument::containingString('Aborted removal of changelog.txt'))
-            ->shouldHaveBeenCalled();
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
@@ -107,11 +105,13 @@ class RemoveConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Cannot remove config file changelog.txt'));
+
         $this->assertNull($event->configFileNotFound('changelog.txt'));
 
-        $this->output
-            ->writeln(Argument::containingString('Cannot remove config file changelog.txt'))
-            ->shouldHaveBeenCalled();
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
@@ -120,14 +120,21 @@ class RemoveConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Operation failed', $message),
+                    2       => TestCase::assertStringContainsString('Unable to remove the file changelog.txt', $message),
+                    default => true,
+                };
+                return true;
+            }));
+
         $this->assertNull($event->errorRemovingConfig('changelog.txt'));
 
-        $this->output
-            ->writeln(Argument::containingString('Operation failed'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('Unable to remove the file changelog.txt'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
@@ -136,14 +143,21 @@ class RemoveConfigEventTest extends TestCase
     {
         $event = $this->createEvent(true, true);
 
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Missing options!', $message),
+                    2       => TestCase::assertStringContainsString('One or more', $message),
+                    default => true,
+                };
+                return true;
+            }));
+
         $this->assertNull($event->missingOptions());
 
-        $this->output
-            ->writeln(Argument::containingString('Missing options!'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('One or more'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
