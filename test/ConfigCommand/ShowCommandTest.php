@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\ConfigCommand\ShowCommand;
 use Phly\KeepAChangelog\ConfigCommand\ShowConfigEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,13 +20,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ShowCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function failureStatus(): iterable
@@ -43,29 +43,30 @@ class ShowCommandTest extends TestCase
         bool $failedFlag,
         int $expectedStatus
     ) {
-        $expected = $this->prophesize(ShowConfigEvent::class);
-        $expected->failed()->willReturn($failedFlag);
+        $expected = $this->createMock(ShowConfigEvent::class);
+        $expected->expects($this->atLeastOnce())->method('failed')->willReturn($failedFlag);
 
-        $this->input->getOption('local')->willReturn(true);
-        $this->input->getOption('global')->willReturn(true);
-
-        $input  = $this->input->reveal();
-        $output = $this->output->reveal();
+        $this->input
+            ->expects($this->any())
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['local', true],
+                ['global', true],
+            ]));
 
         $this->dispatcher
-            ->dispatch(Argument::that(function ($event) use ($input, $output) {
-                TestCase::assertInstanceOf(ShowConfigEvent::class, $event);
-                TestCase::assertSame($input, $event->input());
-                TestCase::assertSame($output, $event->output());
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (ShowConfigEvent $event): bool {
+                TestCase::assertSame($this->input, $event->input());
+                TestCase::assertSame($this->output, $event->output());
                 TestCase::assertTrue($event->showLocal());
                 TestCase::assertTrue($event->showGlobal());
-                return $event;
+                return true;
             }))
-            ->will(function () use ($expected) {
-                return $expected->reveal();
-            });
+            ->willReturn($expected);
 
-        $command = new ShowCommand($this->dispatcher->reveal());
+        $command = new ShowCommand($this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
