@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\ConfigCommand;
 use Phly\KeepAChangelog\ConfigCommand\EditCommand;
 use Phly\KeepAChangelog\ConfigCommand\EditConfigEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,13 +20,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class EditCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function failureStatus(): iterable
@@ -43,31 +43,32 @@ class EditCommandTest extends TestCase
         bool $failedFlag,
         int $expectedStatus
     ) {
-        $expected = $this->prophesize(EditConfigEvent::class);
-        $expected->failed()->willReturn($failedFlag);
+        $expected = $this->createMock(EditConfigEvent::class);
+        $expected->expects($this->once())->method('failed')->willReturn($failedFlag);
 
-        $this->input->getOption('local')->willReturn(true);
-        $this->input->getOption('global')->willReturn(true);
-        $this->input->getOption('editor')->willReturn('custom-editor');
-
-        $input  = $this->input->reveal();
-        $output = $this->output->reveal();
+        $this->input
+            ->expects($this->atLeast(3))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['local', true],
+                ['global', true],
+                ['editor', 'custom-editor'],
+            ]));
 
         $this->dispatcher
-            ->dispatch(Argument::that(function ($event) use ($input, $output) {
-                TestCase::assertInstanceOf(EditConfigEvent::class, $event);
-                TestCase::assertSame($input, $event->input());
-                TestCase::assertSame($output, $event->output());
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (EditConfigEvent $event): bool {
+                TestCase::assertSame($this->input, $event->input());
+                TestCase::assertSame($this->output, $event->output());
                 TestCase::assertTrue($event->editLocal());
                 TestCase::assertTrue($event->editGlobal());
                 TestCase::assertSame('custom-editor', $event->editor());
-                return $event;
+                return true;
             }))
-            ->will(function () use ($expected) {
-                return $expected->reveal();
-            });
+            ->willReturn($expected);
 
-        $command = new EditCommand($this->dispatcher->reveal());
+        $command = new EditCommand($this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
