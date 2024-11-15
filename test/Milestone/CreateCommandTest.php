@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\Milestone;
 use Phly\KeepAChangelog\Milestone\CreateCommand;
 use Phly\KeepAChangelog\Milestone\CreateMilestoneEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,68 +20,68 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CreateCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input = $this->prophesize(InputInterface::class);
-        $this->input->getArgument('title')->willReturn('2.0.0');
-        $this->input->getArgument('description')->willReturn('2.0.0 requirements');
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input
+            ->expects($this->any())
+            ->method('getArgument')
+            ->will($this->returnValueMap([
+                ['title', '2.0.0'],
+                ['description', '2.0.0 requirements'],
+            ]));
     }
 
     public function testExecutionReturnsZeroOnSuccess(): void
     {
-        $input      = $this->input;
-        $output     = $this->output;
-        $dispatcher = $this->dispatcher;
-        $event      = $this->prophesize(CreateMilestoneEvent::class);
-        $event->failed()->willReturn(false);
+        $event = $this->createMock(CreateMilestoneEvent::class);
+        $event->expects($this->once())->method('failed')->willReturn(false);
 
-        $dispatcher
-            ->dispatch(Argument::that(function (CreateMilestoneEvent $event) use ($input, $output, $dispatcher) {
-                TestCase::assertSame($input->reveal(), $event->input());
-                TestCase::assertSame($output->reveal(), $event->output());
-                TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+        $this->dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (CreateMilestoneEvent $event): bool {
+                TestCase::assertSame($this->input, $event->input());
+                TestCase::assertSame($this->output, $event->output());
+                TestCase::assertSame($this->dispatcher, $event->dispatcher());
                 TestCase::assertSame('2.0.0', $event->title());
                 TestCase::assertSame('2.0.0 requirements', $event->description());
 
-                return $event;
+                return true;
             }))
-            ->will(function () use ($event) {
-                return $event->reveal();
-            });
+            ->willReturn($event);
 
-        $command = new CreateCommand($this->dispatcher->reveal());
+        $command = new CreateCommand($this->dispatcher);
 
         $this->assertSame(0, $this->executeCommand($command));
     }
 
     public function testExecutionReturnsOneOnFailure(): void
     {
-        $input      = $this->input;
-        $output     = $this->output;
-        $dispatcher = $this->dispatcher;
-        $event      = $this->prophesize(CreateMilestoneEvent::class);
-        $event->failed()->willReturn(true);
+        $event = $this->createMock(CreateMilestoneEvent::class);
+        $event->expects($this->once())->method('failed')->willReturn(true);
 
-        $dispatcher
-            ->dispatch(Argument::that(function (CreateMilestoneEvent $event) use ($input, $output, $dispatcher) {
-                TestCase::assertSame($input->reveal(), $event->input());
-                TestCase::assertSame($output->reveal(), $event->output());
-                TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+        $this->dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (CreateMilestoneEvent $event): bool {
+                TestCase::assertSame($this->input, $event->input());
+                TestCase::assertSame($this->output, $event->output());
+                TestCase::assertSame($this->dispatcher, $event->dispatcher());
                 TestCase::assertSame('2.0.0', $event->title());
                 TestCase::assertSame('2.0.0 requirements', $event->description());
 
-                return $event;
+                return true;
             }))
-            ->will(function () use ($event) {
-                return $event->reveal();
-            });
+            ->willReturn($event);
 
-        $command = new CreateCommand($this->dispatcher->reveal());
+        $command = new CreateCommand($this->dispatcher);
 
         $this->assertSame(1, $this->executeCommand($command));
     }
