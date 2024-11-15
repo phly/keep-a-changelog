@@ -10,27 +10,19 @@ namespace PhlyTest\KeepAChangelog\Milestone;
 
 use Phly\KeepAChangelog\Milestone\AbstractMilestoneProviderEvent;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AbstractMilestoneProviderEventTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /** @var AbstractMilestoneProviderEvent */
-    private $event;
-
-    /** @var OutputInterface|ObjectProphecy */
-    private $output;
+    private AbstractMilestoneProviderEvent $event;
+    private OutputInterface&MockObject $output;
 
     public function setUp(): void
     {
-        $this->output = $this->prophesize(OutputInterface::class);
-        $this->output->writeln(Argument::type('string'))->willReturn(null);
-        $this->event = new class () extends AbstractMilestoneProviderEvent {
+        $this->output = $this->createMock(OutputInterface::class);
+        $this->event  = new class () extends AbstractMilestoneProviderEvent {
             public function isPropagationStopped(): bool
             {
                 return $this->failed();
@@ -50,26 +42,27 @@ class AbstractMilestoneProviderEventTest extends TestCase
 
     public function testDiscoveringProviderMakesItAccessible(): void
     {
-        $provider = $this->prophesize(ProviderInterface::class)->reveal();
+        /** @var ProviderInterface&MockObject $provider */
+        $provider = $this->createMock(ProviderInterface::class);
         $this->event->discoveredProvider($provider);
         $this->assertSame($provider, $this->event->provider());
     }
 
     public function testMarkingIncompleteProviderFailsEvent(): void
     {
-        $this->event->setOutput($this->output->reveal());
+        $this->event->setOutput($this->output);
+        $this->output->expects($this->atLeastOnce())->method('writeln')->with($this->isType('string'));
 
         $this->assertNull($this->event->providerIsIncomplete());
-        $this->output->writeln(Argument::type('string'))->shouldHaveBeenCalled();
         $this->assertTrue($this->event->failed());
     }
 
     public function testMarkingProviderIncapableOfMilestonesFailsEvent(): void
     {
-        $this->event->setOutput($this->output->reveal());
+        $this->event->setOutput($this->output);
+        $this->output->expects($this->atLeastOnce())->method('writeln')->with($this->isType('string'));
 
         $this->assertNull($this->event->providerIncapableOfMilestones());
-        $this->output->writeln(Argument::type('string'))->shouldHaveBeenCalled();
         $this->assertTrue($this->event->failed());
     }
 }
