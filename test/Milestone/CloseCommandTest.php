@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\Milestone;
 use Phly\KeepAChangelog\Milestone\CloseCommand;
 use Phly\KeepAChangelog\Milestone\CloseMilestoneEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,65 +20,60 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CloseCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->input->getArgument('id')->willReturn('200');
+        $this->input->expects($this->any())->method('getArgument')->with('id')->willReturn('200');
     }
 
     public function testExecutionReturnsZeroOnSuccess(): void
     {
-        $input      = $this->input;
-        $output     = $this->output;
-        $dispatcher = $this->dispatcher;
-        $event      = $this->prophesize(CloseMilestoneEvent::class);
-        $event->failed()->willReturn(false);
+        $event = $this->createMock(CloseMilestoneEvent::class);
+        $event->expects($this->once())->method('failed')->willReturn(false);
 
-        $dispatcher
-            ->dispatch(Argument::that(function (CloseMilestoneEvent $event) use ($input, $output, $dispatcher) {
-                TestCase::assertSame($input->reveal(), $event->input());
-                TestCase::assertSame($output->reveal(), $event->output());
-                TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+        $this->dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (CloseMilestoneEvent $event): bool {
+                TestCase::assertSame($this->input, $event->input());
+                TestCase::assertSame($this->output, $event->output());
+                TestCase::assertSame($this->dispatcher, $event->dispatcher());
                 TestCase::assertSame(200, $event->id());
 
-                return $event;
+                return true;
             }))
-            ->will(function () use ($event) {
-                return $event->reveal();
-            });
+            ->willReturn($event);
 
-        $command = new CloseCommand($this->dispatcher->reveal());
+        $command = new CloseCommand($this->dispatcher);
 
         $this->assertSame(0, $this->executeCommand($command));
     }
 
     public function testExecutionReturnsOneOnFailure(): void
     {
-        $input      = $this->input;
-        $output     = $this->output;
-        $dispatcher = $this->dispatcher;
-        $event      = $this->prophesize(CloseMilestoneEvent::class);
-        $event->failed()->willReturn(true);
+        $event = $this->createMock(CloseMilestoneEvent::class);
+        $event->expects($this->once())->method('failed')->willReturn(true);
 
-        $dispatcher
-            ->dispatch(Argument::that(function (CloseMilestoneEvent $event) use ($input, $output, $dispatcher) {
-                TestCase::assertSame($input->reveal(), $event->input());
-                TestCase::assertSame($output->reveal(), $event->output());
-                TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+        $this->dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (CloseMilestoneEvent $event): bool {
+                TestCase::assertSame($this->input, $event->input());
+                TestCase::assertSame($this->output, $event->output());
+                TestCase::assertSame($this->dispatcher, $event->dispatcher());
                 TestCase::assertSame(200, $event->id());
 
-                return $event;
+                return true;
             }))
-            ->will(function () use ($event) {
-                return $event->reveal();
-            });
+            ->willReturn($event);
 
-        $command = new CloseCommand($this->dispatcher->reveal());
+        $command = new CloseCommand($this->dispatcher);
 
         $this->assertSame(1, $this->executeCommand($command));
     }
