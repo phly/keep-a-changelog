@@ -13,61 +13,52 @@ use Phly\KeepAChangelog\Milestone\CreateMilestoneListener;
 use Phly\KeepAChangelog\Provider\Milestone;
 use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
+use PhlyTest\KeepAChangelog\TestAsset\AbstractMilestoneAwareProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateMilestoneListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /** @var CreateMilestoneEvent|ObjectProphecy */
-    private $event;
-
-    /** @var OutputInterface|ObjectProphecy */
-    private $output;
-
-    /** @var MilestoneAwareProviderInterface|ObjectProphecy */
-    private $provider;
+    private CreateMilestoneEvent&MockObject $event;
+    private OutputInterface&MockObject $output;
+    private MilestoneAwareProviderInterface&ProviderInterface&MockObject $provider;
 
     public function setUp(): void
     {
-        $this->provider = $this->prophesize(MilestoneAwareProviderInterface::class)
-            ->willImplement(ProviderInterface::class);
+        $this->provider = $this->createMock(AbstractMilestoneAwareProvider::class);
+        $this->output   = $this->createMock(OutputInterface::class);
+        $this->event    = $this->createMock(CreateMilestoneEvent::class);
 
-        $this->output = $this->prophesize(OutputInterface::class);
-
-        $this->event = $this->prophesize(CreateMilestoneEvent::class);
-        $this->event->title()->willReturn('2.0.0');
-        $this->event->description()->willReturn('2.0.0 requirements');
-        $this->event->provider()->will([$this->provider, 'reveal']);
-        $this->event->output()->will([$this->output, 'reveal']);
+        $this->event->expects($this->atLeastOnce())->method('title')->willReturn('2.0.0');
+        $this->event->expects($this->atLeastOnce())->method('description')->willReturn('2.0.0 requirements');
+        $this->event->expects($this->any())->method('provider')->willReturn($this->provider);
+        $this->event->expects($this->any())->method('output')->willReturn($this->output);
     }
 
     public function testListenerInformsEventWhenMilestoneIsCreated(): void
     {
-        $milestone = $this->prophesize(Milestone::class)->reveal();
-        $this->provider->createMilestone('2.0.0', '2.0.0 requirements')->willReturn($milestone)->shouldBeCalled();
-        $this->event->milestoneCreated($milestone)->shouldBeCalled();
-        $this->event->errorCreatingMilestone(Argument::any())->shouldNotBeCalled();
+        $milestone = $this->createMock(Milestone::class);
+
+        $this->provider->expects($this->once())->method('createMilestone')->with('2.0.0', '2.0.0 requirements')->willReturn($milestone);
+        $this->event->expects($this->once())->method('milestoneCreated')->with($milestone);
+        $this->event->expects($this->never())->method('errorCreatingMilestone');
 
         $listener = new CreateMilestoneListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 
     public function testListenerInformsEventOfMilestoneCreationError(): void
     {
         $e = new RuntimeException('this is the error');
-        $this->provider->createMilestone('2.0.0', '2.0.0 requirements')->willThrow($e)->shouldBeCalled();
-        $this->event->milestoneCreated(Argument::any())->shouldNotBeCalled();
-        $this->event->errorCreatingMilestone($e)->shouldBeCalled();
+        $this->provider->expects($this->once())->method('createMilestone')->with('2.0.0', '2.0.0 requirements')->willThrowException($e);
+        $this->event->expects($this->never())->method('milestoneCreated');
+        $this->event->expects($this->once())->method('errorCreatingMilestone')->with($e);
 
         $listener = new CreateMilestoneListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 }
