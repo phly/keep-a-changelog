@@ -8,64 +8,57 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Milestone;
 
+use Closure;
 use Phly\KeepAChangelog\Milestone\CloseMilestoneEvent;
 use Phly\KeepAChangelog\Milestone\CloseMilestoneListener;
+use Phly\KeepAChangelog\Provider\Milestone;
 use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
+use PhlyTest\KeepAChangelog\TestAsset\AbstractMilestoneAwareProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CloseMilestoneListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /** @var CloseMilestoneEvent|ObjectProphecy */
-    private $event;
-
-    /** @var OutputInterface|ObjectProphecy */
-    private $output;
-
-    /** @var MilestoneAwareProviderInterface|ObjectProphecy */
-    private $provider;
+    private CloseMilestoneEvent&MockObject $event;
+    private OutputInterface&MockObject $output;
+    private MilestoneAwareProviderInterface&ProviderInterface&MockObject $provider;
 
     public function setUp(): void
     {
-        $this->event    = $this->prophesize(CloseMilestoneEvent::class);
-        $this->output   = $this->prophesize(OutputInterface::class);
-        $this->provider = $this->prophesize(MilestoneAwareProviderInterface::class)
-            ->willImplement(ProviderInterface::class);
+        $this->event    = $this->createMock(CloseMilestoneEvent::class);
+        $this->output   = $this->createMock(OutputInterface::class);
+        $this->provider = $this->createMock(AbstractMilestoneAwareProvider::class);
 
-        $this->event->id()->willReturn(200);
-        $this->event->output()->will([$this->output, 'reveal']);
-        $this->event->provider()->will([$this->provider, 'reveal']);
+        $this->event->expects($this->any())->method('id')->willReturn(200);
+        $this->event->expects($this->any())->method('output')->willReturn($this->output);
+        $this->event->expects($this->any())->method('provider')->willReturn($this->provider);
 
-        $this->output->writeln(Argument::containingString('Closing milestone'))->shouldBeCalled();
+        $this->output->expects($this->any())->method('writeln')->with($this->stringContains('Closing milestone'));
     }
 
     public function testClosingMilestoneNotifiesEvent(): void
     {
-        $this->provider->closeMilestone(200)->willReturn(true);
-        $this->event->errorClosingMilestone(Argument::any())->shouldNotBeCalled();
-        $this->event->milestoneClosed()->shouldBeCalled();
+        $this->provider->expects($this->once())->method('closeMilestone')->with(200)->willReturn(true);
+        $this->event->expects($this->never())->method('errorClosingMilestone');
+        $this->event->expects($this->once())->method('milestoneClosed');
 
         $listener = new CloseMilestoneListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 
     public function testErrorClosingMilestoneNotifiesEvent(): void
     {
         $e = new RuntimeException('this is the error message');
-        $this->provider->closeMilestone(200)->willThrow($e);
-        $this->event->errorClosingMilestone($e)->shouldBeCalled();
-        $this->event->milestoneClosed()->shouldNotBeCalled();
+        $this->provider->expects($this->once())->method('closeMilestone')->with(200)->willThrowException($e);
+        $this->event->expects($this->once())->method('errorClosingMilestone')->with($e);
+        $this->event->expects($this->never())->method('milestoneClosed');
 
         $listener = new CloseMilestoneListener();
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 }
