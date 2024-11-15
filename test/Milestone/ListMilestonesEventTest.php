@@ -10,10 +10,8 @@ namespace PhlyTest\KeepAChangelog\Milestone;
 
 use Phly\KeepAChangelog\Milestone\ListMilestonesEvent;
 use Phly\KeepAChangelog\Provider\Milestone;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,75 +19,49 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListMilestonesEventTest extends TestCase
 {
-    use ProphecyTrait;
 
-    /** @var EventDispatcherInterface|ObjectProphecy */
-    private $dispatcher;
-
-    /** @var ListMilestonesEvent */
-    private $event;
-
-    /** @var InputInterface|ObjectProphecy */
-    private $input;
-
-    /** @var OutputInterface|ObjectProphecy */
-    private $output;
+    private EventDispatcherInterface&MockObject $dispatcher;
+    private ListMilestonesEvent $event;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
 
     public function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
-        $this->event      = new ListMilestonesEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $this->dispatcher->reveal()
-        );
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->event      = new ListMilestonesEvent($this->input, $this->output, $this->dispatcher);
     }
 
     public function testIndicatingMilestonesWithEmptyArraySendsOutputIndicatingNoneFound(): void
     {
-        $this->output->writeln(Argument::containingString('No milestones discovered'))->shouldBeCalled();
+        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('No milestones discovered'));
         $this->assertNull($this->event->milestonesRetrieved([]));
     }
 
     public function testIndicatingMilestonesWithArraySendsOutputListingMilestoneData(): void
     {
-        $output     = $this->output;
         $milestone1 = new Milestone(1, '1.0.0', '1.0.0 requirements');
         $milestone2 = new Milestone(2, '1.0.1', '1.0.1 requirements');
         $milestone3 = new Milestone(3, '1.1.0', '1.1.0 requirements');
         $milestone4 = new Milestone(4, '2.0.0', '2.0.0 requirements');
 
-        $milestone4Expectation = function () use ($output) {
-            $output->writeln(Argument::containingString('- (4) 2.0.0: 2.0.0 requirements'))->shouldBeCalled();
-        };
+        $invokedCount = $this->atLeast(5);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Found the following milestones', $message),
+                    2       => TestCase::assertStringContainsString('- (1) 1.0.0: 1.0.0 requirements', $message),
+                    3       => TestCase::assertStringContainsString('- (2) 1.0.1: 1.0.1 requirements', $message),
+                    4       => TestCase::assertStringContainsString('- (3) 1.1.0: 1.1.0 requirements', $message),
+                    5       => TestCase::assertStringContainsString('- (4) 2.0.0: 2.0.0 requirements', $message),
+                    default => true,
+                };
 
-        $milestone3Expectation = function () use ($output, $milestone4Expectation) {
-            $output
-                ->writeln(Argument::containingString('- (3) 1.1.0: 1.1.0 requirements'))
-                ->will($milestone4Expectation)
-                ->shouldBeCalled();
-        };
-
-        $milestone2Expectation = function () use ($output, $milestone3Expectation) {
-            $output
-                ->writeln(Argument::containingString('- (2) 1.0.1: 1.0.1 requirements'))
-                ->will($milestone3Expectation)
-                ->shouldBeCalled();
-        };
-
-        $milestone1Expectation = function () use ($output, $milestone2Expectation) {
-            $output
-                ->writeln(Argument::containingString('- (1) 1.0.0: 1.0.0 requirements'))
-                ->will($milestone2Expectation)
-                ->shouldBeCalled();
-        };
-
-        $output
-            ->writeln(Argument::containingString('Found the following milestones'))
-            ->will($milestone1Expectation)
-            ->shouldBeCalled();
+                return true;
+            }));
 
         $this->assertNull($this->event->milestonesRetrieved([
             $milestone1,
@@ -101,28 +73,23 @@ class ListMilestonesEventTest extends TestCase
 
     public function testIndicatingErrorRetrievingMilestonesSendsOutputAndMarksEventFailed(): void
     {
-        $output = $this->output;
-        $e      = new RuntimeException('this is the error message');
+        $e = new RuntimeException('this is the error message');
 
-        $finalExpectation = function () use ($output) {
-            $output->writeln(Argument::containingString('Error Message: this is the error message'))->shouldBeCalled();
-        };
+        $invokedCount = $this->atLeast(4);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Error listing milestones', $message),
+                    2       => TestCase::assertStringContainsString('retrieve milestones', $message),
+                    3       => TestCase::assertStringContainsString('', $message),
+                    4       => TestCase::assertStringContainsString('Error Message: this is the error message', $message),
+                    default => true,
+                };
 
-        $emptyExpectation = function () use ($output, $finalExpectation) {
-            $output->writeln('')->will($finalExpectation)->shouldBeCalled();
-        };
-
-        $descExpectation = function () use ($output, $emptyExpectation) {
-            $output
-                ->writeln(Argument::containingString('retrieve milestones'))
-                ->will($emptyExpectation)
-                ->shouldBeCalled();
-        };
-
-        $output
-            ->writeln(Argument::containingString('Error listing milestones'))
-            ->will($descExpectation)
-            ->shouldBeCalled();
+                return true;
+            }));
 
         $this->assertNull($this->event->errorListingMilestones($e));
     }
@@ -131,17 +98,19 @@ class ListMilestonesEventTest extends TestCase
     {
         $e = new RuntimeException('this is the error message', 401);
 
-        $output = $this->output;
-        $output
-            ->writeln(Argument::containingString('Invalid credentials'))
-            ->will(function () use ($output) {
-                $output
-                    ->writeln(Argument::containingString(
-                        'The credentials associated with your Git provider are invalid'
-                    ))
-                    ->shouldBeCalled();
-            })
-            ->shouldBeCalled();
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Invalid credentials', $message),
+                    2       => TestCase::assertStringContainsString('The credentials associated with your Git provider are invalid', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
 
         $this->assertNull($this->event->errorListingMilestones($e));
         $this->assertTrue($this->event->failed());
