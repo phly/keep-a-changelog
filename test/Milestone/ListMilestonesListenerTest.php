@@ -13,57 +13,48 @@ use Phly\KeepAChangelog\Milestone\ListMilestonesListener;
 use Phly\KeepAChangelog\Provider\Milestone;
 use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
+use PhlyTest\KeepAChangelog\TestAsset\AbstractMilestoneAwareProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ListMilestonesListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /** @var ListMilestonesEvent|ObjectProphecy */
-    private $event;
-
-    /** @var OutputInterface|ObjectProphecy */
-    private $output;
-
-    /** @var MilestoneAwareProviderInterface|ObjectProphecy */
-    private $provider;
+    private ListMilestonesEvent&MockObject $event;
+    private OutputInterface&MockObject $output;
+    private MilestoneAwareProviderInterface&ProviderInterface&MockObject $provider;
 
     public function setUp(): void
     {
-        $this->event    = $this->prophesize(ListMilestonesEvent::class);
-        $this->output   = $this->prophesize(OutputInterface::class);
-        $this->provider = $this->prophesize(MilestoneAwareProviderInterface::class)
-            ->willImplement(ProviderInterface::class);
+        $this->event    = $this->createMock(ListMilestonesEvent::class);
+        $this->output   = $this->createMock(OutputInterface::class);
+        $this->provider = $this->createMock(AbstractMilestoneAwareProvider::class);
 
-        $this->event->output()->will([$this->output, 'reveal']);
-        $this->event->provider()->will([$this->provider, 'reveal']);
-        $this->output->writeln(Argument::containingString('Fetching milestones'))->shouldBeCalled();
+        $this->event->expects($this->any())->method('output')->willReturn($this->output);
+        $this->event->expects($this->any())->method('provider')->willReturn($this->provider);
+        $this->output->expects($this->atLeastOnce())->method('writeln')->with($this->stringContains('Fetching milestones'));
     }
 
     public function testNotifiesEventWithDiscoveredMilestonesOnSuccess(): void
     {
         $expected = [new Milestone(1, '1.0.0'), new Milestone(2, '1.0.1')];
-        $this->provider->listMilestones()->willReturn($expected)->shouldBeCalled();
-        $this->event->errorListingMilestones(Argument::any())->shouldNotBeCalled();
-        $this->event->milestonesRetrieved($expected)->shouldBeCalled();
+        $this->provider->expects($this->once())->method('listMilestones')->willReturn($expected);
+        $this->event->expects($this->never())->method('errorListingMilestones');
+        $this->event->expects($this->once())->method('milestonesRetrieved')->with($expected);
 
         $listener = new ListMilestonesListener();
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 
     public function testNotifiesEventOfErrorsRetrievingMilestones(): void
     {
         $e = new RuntimeException('this is the error message');
-        $this->provider->listMilestones()->willThrow($e)->shouldBeCalled();
-        $this->event->errorListingMilestones($e)->shouldBeCalled();
-        $this->event->milestonesRetrieved(Argument::any())->shouldNotBeCalled();
+        $this->provider->expects($this->once())->method('listMilestones')->willThrowException($e);
+        $this->event->expects($this->once())->method('errorListingMilestones')->with($e);
+        $this->event->expects($this->never())->method('milestonesRetrieved');
 
         $listener = new ListMilestonesListener();
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
     }
 }
