@@ -9,30 +9,28 @@ declare(strict_types=1);
 namespace Phly\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Common\EventInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ListVersionsEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function createEvent(): ListVersionsEvent
     {
-        return new ListVersionsEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $this->dispatcher->reveal()
-        );
+        return new ListVersionsEvent($this->input, $this->output, $this->dispatcher);
     }
 
     public function testEventImplementsPackageEvent(): ListVersionsEvent
