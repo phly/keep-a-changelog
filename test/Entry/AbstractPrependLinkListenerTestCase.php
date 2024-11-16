@@ -13,95 +13,80 @@ use Phly\KeepAChangelog\Entry\AbstractPrependLinkListener;
 use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
 use Phly\KeepAChangelog\Provider\ProviderInterface;
 use Phly\KeepAChangelog\Provider\ProviderSpec;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 
 use function sprintf;
 
 abstract class AbstractPrependLinkListenerTestCase extends TestCase
 {
-    use ProphecyTrait;
-
-    /** @var Config|ObjectProphecy */
-    protected $config;
-
-    /** @var null|int */
-    protected $identifier;
-
-    /** @var null|string */
-    protected $link;
-
-    /** @var ProviderInterface|ObjectProphecy */
-    protected $provider;
-
-    /** @var callable */
-    protected $voidReturn;
+    protected Config&MockObject $config;
+    protected null|int $identifier;
+    protected null|string $link;
+    protected ProviderInterface&MockObject $provider;
+    protected providerSpec&MockObject $providerSpec;
 
     abstract public function getListener(): AbstractPrependLinkListener;
 
     /**
      * Setup mock for retrieving empty patch|issue identifier
      */
-    abstract public function emptyIdentifierRequested(ObjectProphecy $event): void;
+    abstract public function emptyIdentifierRequested(AddChangelogEntryEvent&MockObject $event): void;
 
     /**
      * Setup mock for retrieving invalid patch|issue identifier
      */
-    abstract public function invalidIdentifierRequested(ObjectProphecy $event): void;
+    abstract public function invalidIdentifierRequested(AddChangelogEntryEvent&MockObject $event): void;
 
     /**
      * Setup mock for retrieving patch|issue identifier.
      *
      * Should set $identifier.
      */
-    abstract public function identifierRequested(ObjectProphecy $event): void;
+    abstract public function identifierRequested(AddChangelogEntryEvent&MockObject $event): void;
 
     /**
      * Setup mock for reporting invalid patch|issue identifier
      */
-    abstract public function reportInvalidIdentifierRequested(ObjectProphecy $event): void;
+    abstract public function reportInvalidIdentifierRequested(AddChangelogEntryEvent&MockObject $event): void;
 
     /**
      * Setup mock for generating an empty patch|issue link
      */
-    abstract public function generateEmptyLinkRequested(ObjectProphecy $provider): void;
+    abstract public function generateEmptyLinkRequested(ProviderInterface&MockObject $provider): void;
 
     /**
      * Setup mock for generating a patch|issue link
      *
      * Should set $link.
      */
-    abstract public function generateLinkRequested(ObjectProphecy $provider): void;
+    abstract public function generateLinkRequested(ProviderInterface&MockObject $provider): void;
 
     /**
      * Setup mock for reporting invalid patch|issue link
      */
-    abstract public function reportInvalidLinkRequested(ObjectProphecy $event): void;
+    abstract public function reportInvalidLinkRequested(AddChangelogEntryEvent&MockObject $event): void;
 
     protected function setUp(): void
     {
         $this->identifier   = null;
         $this->link         = null;
-        $this->provider     = $this->prophesize(ProviderInterface::class);
-        $this->providerSpec = $this->prophesize(ProviderSpec::class);
-        $this->config       = $this->prophesize(Config::class);
+        $this->provider     = $this->createMock(ProviderInterface::class);
+        $this->providerSpec = $this->createMock(ProviderSpec::class);
+        $this->config       = $this->createMock(Config::class);
 
-        $this->providerSpec->createProvider()->will([$this->provider, 'reveal']);
-        $this->config->provider()->will([$this->providerSpec, 'reveal']);
-
-        $this->voidReturn = function () {
-        };
+        $this->providerSpec->expects($this->any())->method('createProvider')->willReturn($this->provider);
+        $this->config->expects($this->any())->method('provider')->willReturn($this->providerSpec);
     }
 
-    public function getEvent(): ObjectProphecy
+    public function getEvent(): AddChangelogEntryEvent&MockObject
     {
-        $event = $this->prophesize(AddChangelogEntryEvent::class);
-        $event->config()->will([$this->config, 'reveal']);
-        $event->entry()->willReturn('This is the entry');
-        $event->updateEntry(Argument::type('string'))->will($this->voidReturn);
-        $event->providerCannotGenerateLinks()->will($this->voidReturn);
+        /** @var AddChangelogEntryEvent&MockObject $event */
+        $event = $this->createMock(AddChangelogEntryEvent::class);
+
+        $event->expects($this->any())->method('config')->willReturn($this->config);
+        $event->expects($this->any())->method('entry')->willReturn('This is the entry');
+
         return $event;
     }
 
@@ -111,9 +96,10 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
         $this->emptyIdentifierRequested($event);
         $listener = $this->getListener();
 
-        $this->assertNull($listener($event->reveal()));
-        $this->config->provider()->shouldNotHaveBeenCalled();
-        $event->updateEntry(Argument::any())->shouldNotHaveBeenCalled();
+        $this->config->expects($this->never())->method('provider');
+        $event->expects($this->never())->method('updateEntry');
+
+        $this->assertNull($listener($event));
     }
 
     public function testInvalidIdentifierResultsInEarlyReturn()
@@ -122,11 +108,12 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
         $this->invalidIdentifierRequested($event);
         $this->reportInvalidIdentifierRequested($event);
 
+        $this->config->expects($this->never())->method('provider');
+        $event->expects($this->never())->method('updateEntry');
+
         $listener = $this->getListener();
 
-        $this->assertNull($listener($event->reveal()));
-        $this->config->provider()->shouldNotHaveBeenCalled();
-        $event->updateEntry(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testProviderThatCannotGenerateLinksResultsInEarlyReturn()
@@ -134,14 +121,14 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
         $event = $this->getEvent();
         $this->identifierRequested($event);
 
-        $this->provider->canGenerateLinks()->willReturn(false);
+        $this->config->expects($this->atLeastOnce())->method('provider');
+        $event->expects($this->atLeastOnce())->method('providerCannotGenerateLinks');
+        $event->expects($this->never())->method('updateEntry');
+        $this->provider->expects($this->once())->method('canGenerateLinks')->willReturn(false);
 
         $listener = $this->getListener();
 
-        $this->assertNull($listener($event->reveal()));
-        $this->config->provider()->shouldHaveBeenCalled();
-        $event->providerCannotGenerateLinks()->shouldHaveBeenCalled();
-        $event->updateEntry(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testEmptyLinkGeneratedByProviderResultsInEarlyReturn()
@@ -150,15 +137,15 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
         $this->identifierRequested($event);
         $this->reportInvalidLinkRequested($event);
 
-        $this->provider->canGenerateLinks()->willReturn(true);
+        $this->config->expects($this->atLeastOnce())->method('provider');
+        $event->expects($this->never())->method('providerCannotGenerateLinks');
+        $event->expects($this->never())->method('updateEntry');
+        $this->provider->expects($this->once())->method('canGenerateLinks')->willReturn(true);
         $this->generateEmptyLinkRequested($this->provider);
 
         $listener = $this->getListener();
 
-        $this->assertNull($listener($event->reveal()));
-        $this->config->provider()->shouldHaveBeenCalled();
-        $event->providerCannotGenerateLinks()->shouldNotHaveBeenCalled();
-        $event->updateEntry(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testNonProbableLinkGeneratedByProviderResultsInEarlyReturn()
@@ -166,7 +153,10 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
         $event = $this->getEvent();
         $this->identifierRequested($event);
 
-        $this->provider->canGenerateLinks()->willReturn(true);
+        $this->config->expects($this->atLeastOnce())->method('provider');
+        $event->expects($this->never())->method('providerCannotGenerateLinks');
+        $event->expects($this->never())->method('updateEntry');
+        $this->provider->expects($this->once())->method('canGenerateLinks')->willReturn(true);
 
         $this->generateLinkRequested($this->provider);
         $this->reportInvalidLinkRequested($event);
@@ -174,28 +164,24 @@ abstract class AbstractPrependLinkListenerTestCase extends TestCase
         $listener                  = $this->getListener();
         $listener->probeLinkStatus = false;
 
-        $this->assertNull($listener($event->reveal()));
-        $this->config->provider()->shouldHaveBeenCalled();
-        $event->providerCannotGenerateLinks()->shouldNotHaveBeenCalled();
-        $event->updateEntry(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testUpdatesEntryInEventWhenComplete()
     {
         $event = $this->getEvent();
-        $this->provider->canGenerateLinks()->willReturn(true);
 
         $this->identifierRequested($event);
         $this->generateLinkRequested($this->provider);
 
+        $this->config->expects($this->atLeastOnce())->method('provider');
+        $event->expects($this->never())->method('providerCannotGenerateLinks');
+        $event->expects($this->once())->method('updateEntry')->with(sprintf('%s This is the entry', $this->link));
+        $this->provider->expects($this->once())->method('canGenerateLinks')->willReturn(true);
+
         $listener                  = $this->getListener();
         $listener->probeLinkStatus = true;
 
-        $this->assertNull($listener($event->reveal()));
-        $this->config->provider()->shouldHaveBeenCalled();
-        $event->providerCannotGenerateLinks()->shouldNotHaveBeenCalled();
-        $event
-            ->updateEntry(sprintf('%s This is the entry', $this->link))
-            ->shouldHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 }

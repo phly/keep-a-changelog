@@ -9,9 +9,10 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\Entry;
 
 use Phly\KeepAChangelog\Entry\AbstractPrependLinkListener;
+use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
 use Phly\KeepAChangelog\Entry\PrependIssueLinkListener;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
+use Phly\KeepAChangelog\Provider\ProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 use function sprintf;
 
@@ -25,18 +26,18 @@ class PrependIssueLinkListenerTest extends AbstractPrependLinkListenerTestCase
     /**
      * Setup mock for retrieving empty patch|issue identifier
      */
-    public function emptyIdentifierRequested(ObjectProphecy $event): void
+    public function emptyIdentifierRequested(AddChangelogEntryEvent&MockObject $event): void
     {
-        $event->issueNumber()->willReturn(null);
+        $event->expects($this->any())->method('issueNumber')->willReturn(null);
     }
 
     /**
      * Setup mock for retrieving invalid patch|issue identifier
      */
-    public function invalidIdentifierRequested(ObjectProphecy $event): void
+    public function invalidIdentifierRequested(AddChangelogEntryEvent&MockObject $event): void
     {
         $this->identifier = -1;
-        $event->issueNumber()->willReturn($this->identifier);
+        $event->expects($this->any())->method('issueNumber')->willReturn($this->identifier);
     }
 
     /**
@@ -44,33 +45,34 @@ class PrependIssueLinkListenerTest extends AbstractPrependLinkListenerTestCase
      *
      * Should set $identifier.
      */
-    public function identifierRequested(ObjectProphecy $event): void
+    public function identifierRequested(AddChangelogEntryEvent&MockObject $event): void
     {
         $this->identifier = 42;
-        $event->issueNumber()->willReturn($this->identifier);
+        $event->expects($this->any())->method('issueNumber')->willReturn($this->identifier);
     }
 
     /**
      * Setup mock for reporting invalid patch|issue identifier
      */
-    public function reportInvalidIdentifierRequested(ObjectProphecy $event): void
+    public function reportInvalidIdentifierRequested(AddChangelogEntryEvent&MockObject $event): void
     {
         $event
-            ->issueNumberIsInvalid($this->identifier)
-            ->will($this->voidReturn)
-            ->shouldBeCalled();
+            ->expects($this->atLeastOnce())
+            ->method('issueNumberIsInvalid')
+            ->willReturn($this->identifier);
     }
 
     /**
      * Setup mock for generating an empty patch|issue link
      */
-    public function generateEmptyLinkRequested(ObjectProphecy $provider): void
+    public function generateEmptyLinkRequested(ProviderInterface&MockObject $provider): void
     {
         $this->link = '';
-        $this->provider
-            ->generateIssueLink($this->identifier)
-            ->willReturn($this->link)
-            ->shouldBeCalled();
+        $provider
+            ->expects($this->atLeastOnce())
+            ->method('generateIssueLink')
+            ->with($this->identifier)
+            ->willReturn($this->link);
     }
 
     /**
@@ -78,23 +80,24 @@ class PrependIssueLinkListenerTest extends AbstractPrependLinkListenerTestCase
      *
      * Should set $link.
      */
-    public function generateLinkRequested(ObjectProphecy $provider): void
+    public function generateLinkRequested(ProviderInterface&MockObject $provider): void
     {
         $this->link = sprintf('[#%s](https://git.mwop.net/issue/%s)', $this->identifier, $this->identifier);
-        $this->provider
-            ->generateIssueLink($this->identifier)
-            ->willReturn($this->link)
-            ->shouldBeCalled();
+        $provider
+            ->expects($this->atLeastOnce())
+            ->method('generateIssueLink')
+            ->with($this->identifier)
+            ->willReturn($this->link);
     }
 
     /**
      * Setup mock for reporting invalid patch|issue link
      */
-    public function reportInvalidLinkRequested(ObjectProphecy $event): void
+    public function reportInvalidLinkRequested(AddChangelogEntryEvent&MockObject $event): void
     {
         $event
-            ->issueLinkIsInvalid(empty($this->link) ? '' : Argument::containingString($this->link))
-            ->will($this->voidReturn)
-            ->shouldBeCalled();
+            ->expects($this->atLeastOnce())
+            ->method('issueLinkIsInvalid')
+            ->willReturn(empty($this->link) ? '' : $this->stringContains($this->link));
     }
 }
