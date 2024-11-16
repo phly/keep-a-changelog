@@ -14,64 +14,61 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Unreleased\PromoteEvent;
 use Phly\KeepAChangelog\Unreleased\PromoteUnreleasedToNewVersionListener;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class PromoteUnreleasedToNewVersionListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testWritesChangelogEntry(): void
     {
-        $config = $this->prophesize(Config::class);
-        $config->changelogFile()->willReturn('changelog.txt');
+        $config = $this->createMock(Config::class);
+        $config->expects($this->once())->method('changelogFile')->willReturn('changelog.txt');
 
         $entry           = new ChangelogEntry();
         $entry->contents = <<<'END'
-## Unreleased
+            ## Unreleased
 
-### Added
+            ### Added
 
-- Nothing.
+            - Nothing.
 
-### Changed
+            ### Changed
 
-- Nothing.
+            - Nothing.
 
-### Removed
+            ### Removed
 
-- Nothing.
+            - Nothing.
 
-### Deprecated
+            ### Deprecated
 
-- Nothing.
+            - Nothing.
 
-### Fixed
+            ### Fixed
 
-- Nothing.
-END;
+            - Nothing.
+            END;
         $entry->index    = 4;
         $entry->length   = 22;
 
-        $event = $this->prophesize(PromoteEvent::class);
-        $event->changelogEntry()->willReturn($entry)->shouldBeCalled();
-        $event->newVersion()->willReturn('2.5.0')->shouldBeCalled();
-        $event->releaseDate()->willReturn('2020-07-16')->shouldBeCalled();
-        $event->config()->will([$config, 'reveal'])->shouldBeCalled();
-        $event->changelogReady()->shouldBeCalled();
+        $event = $this->createMock(PromoteEvent::class);
+        $event->expects($this->atLeastOnce())->method('changelogEntry')->willReturn($entry);
+        $event->expects($this->atLeastOnce())->method('newVersion')->willReturn('2.5.0');
+        $event->expects($this->atLeastOnce())->method('releaseDate')->willReturn('2020-07-16');
+        $event->expects($this->atLeastOnce())->method('config')->willReturn($config);
+        $event->expects($this->atLeastOnce())->method('changelogReady');
 
-        $editor = $this->prophesize(ChangelogEditor::class);
+        $editor = $this->createMock(ChangelogEditor::class);
         $editor
-            ->update(
+            ->expects($this->once())
+            ->method('update')
+            ->with(
                 'changelog.txt',
-                Argument::containingString('## 2.5.0 - 2020-07-16'),
+                $this->stringContains('## 2.5.0 - 2020-07-16'),
                 $entry
-            )
-            ->shouldBeCalled();
+            );
 
         $listener                  = new PromoteUnreleasedToNewVersionListener();
-        $listener->changelogEditor = $editor->reveal();
+        $listener->changelogEditor = $editor;
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 }
