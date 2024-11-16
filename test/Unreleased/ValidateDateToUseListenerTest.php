@@ -11,31 +11,28 @@ namespace PhlyTest\KeepAChangelog\Unreleased;
 use Phly\KeepAChangelog\Unreleased\PromoteEvent;
 use Phly\KeepAChangelog\Unreleased\ValidateDateToUseListener;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class ValidateDateToUseListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testDoesNothingIfReleaseDateIsValid(): void
     {
-        $event = $this->prophesize(PromoteEvent::class);
-        $event->releaseDate()->willReturn('2020-07-16')->shouldBeCalled();
+        $event = $this->createMock(PromoteEvent::class);
+        $event->expects($this->atLeastOnce())->method('releaseDate')->willReturn('2020-07-16');
+        $event->expects($this->never())->method('didNotPromote');
 
         $listener = new ValidateDateToUseListener();
 
-        $this->assertNull($listener($event->reveal()));
-        $event->didNotPromote()->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testNotifiesEventOfInabilityToPromote(): void
     {
-        $event = $this->prophesize(PromoteEvent::class);
-        $event->releaseDate()->willReturn('TBD')->shouldBeCalled();
-        $event->didNotPromote()->shouldBeCalled();
+        $event = $this->createMock(PromoteEvent::class);
+        $event->expects($this->atLeastOnce())->method('releaseDate')->willReturn('TBD');
+        $event->expects($this->once())->method('didNotPromote');
 
         $listener = new ValidateDateToUseListener();
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 }
