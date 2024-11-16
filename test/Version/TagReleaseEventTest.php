@@ -12,9 +12,8 @@ use Phly\KeepAChangelog\Common\ChangelogAwareEventInterface;
 use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\TagReleaseEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,30 +21,31 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class TagReleaseEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config&MockObject $config;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->config     = $this->prophesize(Config::class);
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->config     = $this->createMock(Config::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->config->package()->willReturn('some/package');
-        $this->output->write(Argument::type('string'))->willReturn(null);
-        $this->output->writeln(Argument::type('string'))->willReturn(null);
+        $this->config->expects($this->any())->method('package')->willReturn('some/package');
     }
 
     public function createEvent(string $version, string $tagName): TagReleaseEvent
     {
         $event = new TagReleaseEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $this->dispatcher->reveal(),
+            $this->input,
+            $this->output,
+            $this->dispatcher,
             $version,
             $tagName
         );
-        $event->discoveredConfiguration($this->config->reveal());
+        $event->discoveredConfiguration($this->config);
         return $event;
     }
 
@@ -77,9 +77,9 @@ class TagReleaseEventTest extends TestCase
     {
         // New test, as setUp is called for each test, creating different instances.
         $event = $this->createEvent('1.2.3', 'v1.2.3');
-        $this->assertSame($this->input->reveal(), $event->input());
-        $this->assertSame($this->output->reveal(), $event->output());
-        $this->assertSame($this->dispatcher->reveal(), $event->dispatcher());
+        $this->assertSame($this->input, $event->input());
+        $this->assertSame($this->output, $event->output());
+        $this->assertSame($this->dispatcher, $event->dispatcher());
         $this->assertSame('1.2.3', $event->version());
         $this->assertSame('v1.2.3', $event->tagName());
     }
@@ -112,62 +112,86 @@ class TagReleaseEventTest extends TestCase
     {
         $changelog = 'This is the changelog';
         $event     = $this->createEvent('1.2.3', 'v1.2.3');
+
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Created tag "v1.2.3" for package "some/package"'));
+        $this->output->expects($this->once())->method('write')->with($changelog);
+
         $event->updateChangelog($changelog);
 
         $this->assertNull($event->taggingComplete());
-
-        $this->output
-            ->writeln(Argument::containingString('Created tag "v1.2.3" for package "some/package"'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->write($changelog)
-            ->shouldHaveBeenCalled();
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
 
     public function testTagOperationFailedMarksEventFailed(): void
     {
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Error creating tag', $message),
+                    2       => TestCase::assertStringContainsString('"git tag" operation failed', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
+
         $event = $this->createEvent('1.2.3', 'v1.2.3');
 
         $event->tagOperationFailed();
 
-        $this->output
-            ->writeln(Argument::containingString('Error creating tag'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('"git tag" operation failed'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->failed());
     }
 
     public function testUnversionedChangesPresentMarksEventFailed(): void
     {
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('changes present', $message),
+                    2       => TestCase::assertStringContainsString('check them in', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
+
         $event = $this->createEvent('1.2.3', 'v1.2.3');
 
         $event->unversionedChangesPresent();
 
-        $this->output
-            ->writeln(Argument::containingString('changes present'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('check them in'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->failed());
     }
 
     public function testChangelogMissingDateMarksEventFailed(): void
     {
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('does not have a release date associated', $message),
+                    2       => TestCase::assertStringContainsString('run version:ready', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
+
         $event = $this->createEvent('1.2.3', 'v1.2.3');
 
         $event->changelogMissingDate();
 
-        $this->output
-            ->writeln(Argument::containingString('does not have a release date associated'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('run version:ready'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->failed());
     }
 }
