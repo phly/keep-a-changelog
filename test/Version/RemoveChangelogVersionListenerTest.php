@@ -13,44 +13,41 @@ use Phly\KeepAChangelog\Common\ChangelogEntry;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\RemoveChangelogVersionEvent;
 use Phly\KeepAChangelog\Version\RemoveChangelogVersionListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class RemoveChangelogVersionListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private Config&MockObject $config;
+    private ChangelogEntry $entry;
+    private ChangelogEditor&MockObject $editor;
+    private RemoveChangelogVersionEvent&MockObject $event;
+    private RemoveChangelogVersionListener $listener;
 
     protected function setUp(): void
     {
         $this->entry  = new ChangelogEntry();
-        $this->config = $this->prophesize(Config::class);
-        $this->editor = $this->prophesize(ChangelogEditor::class);
-        $this->event  = $this->prophesize(RemoveChangelogVersionEvent::class);
+        $this->config = $this->createMock(Config::class);
+        $this->editor = $this->createMock(ChangelogEditor::class);
+        $this->event  = $this->createMock(RemoveChangelogVersionEvent::class);
 
-        $this->config->changelogFile()->willReturn('changelog.txt');
+        $this->config->expects($this->any())->method('changelogFile')->willReturn('changelog.txt');
 
-        $this->event->config()->will([$this->config, 'reveal']);
-        $this->event->changelogEntry()->willReturn($this->entry);
-        $this->event->versionRemoved()->will(function () {
-        });
+        $this->event->expects($this->any())->method('config')->willReturn($this->config);
+        $this->event->expects($this->any())->method('changelogEntry')->willReturn($this->entry);
 
         $this->listener                  = new RemoveChangelogVersionListener();
-        $this->listener->changelogEditor = $this->editor->reveal();
+        $this->listener->changelogEditor = $this->editor;
     }
 
     public function testUpdatesChangelogWithEmptyContentsForEntry()
     {
         $this->editor
-            ->update(
-                'changelog.txt',
-                '',
-                $this->entry
-            )
-            ->will(function () {
-            })
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('update')
+            ->with('changelog.txt', '', $this->entry);
+        $this->event->expects($this->once())->method('versionRemoved');
 
-        $this->assertNull(($this->listener)($this->event->reveal()));
-        $this->event->versionRemoved()->shouldHaveBeenCalled();
+        $this->assertNull(($this->listener)($this->event));
     }
 }
