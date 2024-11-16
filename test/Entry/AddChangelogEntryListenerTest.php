@@ -14,127 +14,128 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
 use Phly\KeepAChangelog\Entry\AddChangelogEntryListener;
 use Phly\KeepAChangelog\Entry\EntryTypes;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class AddChangelogEntryListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     private const CHANGELOG_INITIAL_ENTRY = <<<'EOC'
-## 1.2.3 - TBD
+        ## 1.2.3 - TBD
 
-### Added
+        ### Added
 
-- Nothing.
+        - Nothing.
 
-### Changed
+        ### Changed
 
-- Nothing.
+        - Nothing.
 
-### Deprecated
+        ### Deprecated
 
-- Nothing.
+        - Nothing.
 
-### Removed
+        ### Removed
 
-- Nothing.
+        - Nothing.
 
-### Fixed
+        ### Fixed
 
-- Nothing.
+        - Nothing.
 
-EOC;
+        EOC;
 
     private const CHANGELOG_WITH_ENTRIES = <<<'EOC'
-## 1.2.3 - TBD
+        ## 1.2.3 - TBD
 
-### Added
+        ### Added
 
-- Initial added entry
+        - Initial added entry
 
-### Changed
+        ### Changed
 
-- Initial changed entry
+        - Initial changed entry
 
-### Deprecated
+        ### Deprecated
 
-- Initial deprecated entry
+        - Initial deprecated entry
 
-### Removed
+        ### Removed
 
-- Initial removed entry
+        - Initial removed entry
 
-### Fixed
+        ### Fixed
 
-- Initial fixed entry
+        - Initial fixed entry
 
-EOC;
+        EOC;
+
+    private ChangelogEntry $entry;
+    private Config&MockObject $config;
+    private ChangelogEditor&MockObject $editor;
+    private AddChangelogEntryEvent&MockObject $event;
 
     protected function setUp(): void
     {
         $this->entry  = new ChangelogEntry();
-        $this->config = $this->prophesize(Config::class);
-        $this->editor = $this->prophesize(ChangelogEditor::class);
-        $this->event  = $this->prophesize(AddChangelogEntryEvent::class);
-        $this->event->changelogEntry()->willReturn($this->entry);
-        $this->event->config()->will([$this->config, 'reveal']);
+        $this->config = $this->createMock(Config::class);
+        $this->editor = $this->createMock(ChangelogEditor::class);
+        $this->event  = $this->createMock(AddChangelogEntryEvent::class);
+
+        $this->event->expects($this->any())->method('changelogEntry')->willReturn($this->entry);
+        $this->event->expects($this->any())->method('config')->willReturn($this->config);
     }
 
     public function testNotifiesEventOfInvalidType()
     {
-        $this->event->entryType()->willReturn('unknown-type');
-        $this->event->entryTypeIsInvalid()->shouldBeCalled();
+        $this->event->expects($this->once())->method('entryType')->willReturn('unknown-type');
+        $this->event->expects($this->once())->method('entryTypeIsInvalid');
+        $this->event->expects($this->never())->method('changelogEntry');
+        $this->event->expects($this->never())->method('config');
+        $this->event->expects($this->any())->method('matchingEntryTypeNotFound');
+        $this->event->expects($this->any())->method('entry');
+        $this->event->expects($this->never())->method('addedChangelogEntry');
+        $this->editor->expects($this->never())->method('update');
 
         $listener = new AddChangelogEntryListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->changelogEntry()->shouldNotHaveBeenCalled();
-        $this->event->config()->shouldNotHaveBeenCalled();
-        $this->event->matchingEntryTypeNotFound();
-        $this->event->entry()->shouldNotHaveBeenCalled();
-        $this->event->addedChangelogEntry(Argument::any())->shouldNotHaveBeenCalled();
-        $this->editor->update(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testNotifiesEventWhenMatchingEntryTypeNotPresent()
     {
         $this->entry->contents = <<<'EOC'
-## 2.0.0 - 2019-05-30
+            ## 2.0.0 - 2019-05-30
 
-### Changed
+            ### Changed
 
-- Changed some things.
+            - Changed some things.
 
-### Deprecated
+            ### Deprecated
 
-- Deprecated things we will remove in the future.
+            - Deprecated things we will remove in the future.
 
-### Removed
+            ### Removed
 
-- Removed things no longer used.
+            - Removed things no longer used.
 
-### Fixed
+            ### Fixed
 
-- Fixed bugs.
+            - Fixed bugs.
 
-EOC;
+            EOC;
 
-        $this->event->entryType()->willReturn(EntryTypes::TYPE_ADDED);
-        $this->event->matchingEntryTypeNotFound()->shouldBeCalled();
+        $this->event->expects($this->once())->method('entryType')->willReturn(EntryTypes::TYPE_ADDED);
+        $this->event->expects($this->never())->method('entryTypeIsInvalid');
+        $this->event->expects($this->atLeastOnce())->method('changelogEntry');
+        $this->event->expects($this->never())->method('config');
+        $this->event->expects($this->atLeastOnce())->method('matchingEntryTypeNotFound');
+        $this->event->expects($this->any())->method('entry');
+        $this->event->expects($this->never())->method('addedChangelogEntry');
+        $this->editor->expects($this->never())->method('update');
 
         $listener = new AddChangelogEntryListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->entryTypeIsInvalid()->shouldNotHaveBeenCalled();
-        $this->event->changelogEntry()->shouldHaveBeenCalled();
-        $this->event->config()->shouldNotHaveBeenCalled();
-        $this->event->entry()->shouldNotHaveBeenCalled();
-        $this->event->addedChangelogEntry(Argument::any())->shouldNotHaveBeenCalled();
-        $this->editor->update(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function expectedResults(): iterable
@@ -168,50 +169,50 @@ EOC;
         $this->entry->index    = 4;
         $this->entry->length   = 22;
 
-        $this->config->changelogFile()->willReturn('CHANGELOG.md');
+        $this->config->expects($this->atLeastOnce())->method('changelogFile')->willReturn('CHANGELOG.md');
 
         $this->editor
-            ->update(
+            ->expects($this->once())
+            ->method('update')
+            ->with(
                 'CHANGELOG.md',
-                Argument::that(function ($newEntry) use ($regExpForExpectedResult) {
-                    TestCase::assertMatchesRegularExpression($regExpForExpectedResult, $newEntry);
-                    return $newEntry;
-                }),
+                $this->matchesRegularExpression($regExpForExpectedResult),
                 $this->entry
-            )
-            ->shouldBeCalled();
+            );
 
-        $this->event->entryType()->willReturn($section);
-        $this->event->entry()->willReturn($entry);
-        $this->event->addedChangelogEntry('CHANGELOG.md', $section)->shouldBeCalled();
+        $this->event->expects($this->once())->method('entryType')->willReturn($section);
+        $this->event->expects($this->atLeastOnce())->method('entry')->willReturn($entry);
+        $this->event->expects($this->once())->method('addedChangelogEntry')->with('CHANGELOG.md', $section);
+        $this->event->expects($this->never())->method('entryTypeIsInvalid');
+        $this->event->expects($this->never())->method('matchingEntryTypeNotFound');
 
         $listener                  = new AddChangelogEntryListener();
-        $listener->changelogEditor = $this->editor->reveal();
+        $listener->changelogEditor = $this->editor;
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->assertNull($listener($this->event));
 
-        $this->event->entryTypeIsInvalid()->shouldNotHaveBeenCalled();
-        $this->event->matchingEntryTypeNotFound()->shouldNotHaveBeenCalled();
     }
 
     public function testIndentsMultilineEntries()
     {
         $entry = <<<'EOH'
-This is a multiline entry.
-All lines after the first one
-should be indented.
-EOH;
+            This is a multiline entry.
+            All lines after the first one
+            should be indented.
+            EOH;
 
         $this->entry->contents = self::CHANGELOG_INITIAL_ENTRY;
         $this->entry->index    = 4;
         $this->entry->length   = 22;
 
-        $this->config->changelogFile()->willReturn('CHANGELOG.md');
+        $this->config->expects($this->atLeastOnce())->method('changelogFile')->willReturn('CHANGELOG.md');
 
         $this->editor
-            ->update(
+            ->expects($this->once())
+            ->method('update')
+            ->with(
                 'CHANGELOG.md',
-                Argument::that(function ($newEntry) {
+                $this->callback(function (string $newEntry): bool {
                     TestCase::assertMatchesRegularExpression(
                         "/\n### Added\n\n- This is a multiline entry.\n/s",
                         $newEntry
@@ -219,22 +220,20 @@ EOH;
                     TestCase::assertMatchesRegularExpression('/^- This is a multiline entry.$/m', $newEntry);
                     TestCase::assertMatchesRegularExpression('/^  All lines after the first one$/m', $newEntry);
                     TestCase::assertMatchesRegularExpression('/^  should be indented.$/m', $newEntry);
-                    return $newEntry;
+                    return true;
                 }),
                 $this->entry
-            )
-            ->shouldBeCalled();
+            );
 
-        $this->event->entryType()->willReturn(EntryTypes::TYPE_ADDED);
-        $this->event->entry()->willReturn($entry);
-        $this->event->addedChangelogEntry('CHANGELOG.md', EntryTypes::TYPE_ADDED)->shouldBeCalled();
+        $this->event->expects($this->once())->method('entryType')->willReturn(EntryTypes::TYPE_ADDED);
+        $this->event->expects($this->atLeastOnce())->method('entry')->willReturn($entry);
+        $this->event->expects($this->once())->method('addedChangelogEntry')->with('CHANGELOG.md', EntryTypes::TYPE_ADDED);
+        $this->event->expects($this->never())->method('entryTypeIsInvalid');
+        $this->event->expects($this->never())->method('matchingEntryTypeNotFound');
 
         $listener                  = new AddChangelogEntryListener();
-        $listener->changelogEditor = $this->editor->reveal();
+        $listener->changelogEditor = $this->editor;
 
-        $this->assertNull($listener($this->event->reveal()));
-
-        $this->event->entryTypeIsInvalid()->shouldNotHaveBeenCalled();
-        $this->event->matchingEntryTypeNotFound()->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 }
