@@ -12,9 +12,8 @@ use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
 use Phly\KeepAChangelog\Entry\EntryCommand;
 use Phly\KeepAChangelog\Entry\EntryTypes;
 use Phly\KeepAChangelog\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,26 +22,28 @@ use TypeError;
 
 class EntryCommandTest extends TestCase
 {
-    use ProphecyTrait;
+    private EventDispatcherInterface&MockObject $dispatcher;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
 
     protected function setUp(): void
     {
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
     }
 
     public function executeCommand(EntryCommand $command): int
     {
         $r = new ReflectionMethod($command, 'execute');
         $r->setAccessible(true);
-        return $r->invoke($command, $this->input->reveal(), $this->output->reveal());
+        return $r->invoke($command, $this->input, $this->output);
     }
 
     public function testConstructorRequiresAName()
     {
         $this->expectException(TypeError::class);
-        new EntryCommand($this->dispatcher->reveal());
+        new EntryCommand($this->dispatcher);
     }
 
     public function nonNamespacedCommandNames(): iterable
@@ -61,81 +62,83 @@ class EntryCommandTest extends TestCase
     public function testConstructorRaisesExceptionForNonNamespacedCommandNames(?string $name)
     {
         $this->expectException(Exception\InvalidNoteTypeException::class);
-        new EntryCommand($this->dispatcher->reveal(), $name);
+        new EntryCommand($this->dispatcher, $name);
     }
 
     public function testConstructorRaisesExceptionWhenNamespacedCommandDoesNotEndInValidType()
     {
         $this->expectException(Exception\InvalidNoteTypeException::class);
-        new EntryCommand($this->dispatcher->reveal(), 'command:invalid');
+        new EntryCommand($this->dispatcher, 'command:invalid');
     }
 
     public function testNonFailureStatusFromExecutionReturnsZero()
     {
-        $input      = $this->input;
-        $output     = $this->output;
-        $dispatcher = $this->dispatcher;
+        $this->input->expects($this->once())->method('getArgument')->with('entry')->willReturn('New entry');
+        $this->input
+            ->expects($this->atLeast(3))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['pr', 2],
+                ['issue', 1],
+                ['release-version', '1.2.3'],
+            ]));
 
-        $input->getOption('pr')->willReturn(2);
-        $input->getOption('issue')->willReturn(1);
-        $input->getArgument('entry')->willReturn('New entry');
-        $input->getOption('release-version')->willReturn('1.2.3');
+        $expectedEvent = $this->createMock(AddChangelogEntryEvent::class);
+        $expectedEvent->expects($this->once())->method('failed')->willReturn(false);
 
-        $expectedEvent = $this->prophesize(AddChangelogEntryEvent::class);
-        $expectedEvent->failed()->willReturn(false);
-
-        $dispatcher
-            ->dispatch(Argument::that(function ($event) use ($input, $output, $dispatcher) {
-                TestCase::assertSame($input->reveal(), $event->input());
-                TestCase::assertSame($output->reveal(), $event->output());
-                TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+        $this->dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (AddChangelogEntryEvent $event): bool {
+                TestCase::assertSame($this->input, $event->input());
+                TestCase::assertSame($this->output, $event->output());
+                TestCase::assertSame($this->dispatcher, $event->dispatcher());
                 TestCase::assertSame(EntryTypes::TYPE_ADDED, $event->entryType());
                 TestCase::assertSame('New entry', $event->entry());
                 TestCase::assertSame('1.2.3', $event->version());
                 TestCase::assertSame(2, $event->patchNumber());
                 TestCase::assertSame(1, $event->issueNumber());
-                return $event;
+                return true;
             }))
-            ->will(function () use ($expectedEvent) {
-                return $expectedEvent->reveal();
-            });
+            ->willReturn($expectedEvent);
 
-        $command = new EntryCommand($dispatcher->reveal(), 'entry:added');
+        $command = new EntryCommand($this->dispatcher, 'entry:added');
 
         $this->assertSame(0, $this->executeCommand($command));
     }
 
     public function testFailureStatusFromExecutionReturnsOne()
     {
-        $input      = $this->input;
-        $output     = $this->output;
-        $dispatcher = $this->dispatcher;
+        $this->input->expects($this->once())->method('getArgument')->with('entry')->willReturn('New entry');
+        $this->input
+            ->expects($this->atLeast(3))
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['pr', 2],
+                ['issue', 1],
+                ['release-version', '1.2.3'],
+            ]));
 
-        $input->getOption('pr')->willReturn(2);
-        $input->getOption('issue')->willReturn(1);
-        $input->getArgument('entry')->willReturn('New entry');
-        $input->getOption('release-version')->willReturn('1.2.3');
+        $expectedEvent = $this->createMock(AddChangelogEntryEvent::class);
+        $expectedEvent->expects($this->once())->method('failed')->willReturn(true);
 
-        $expectedEvent = $this->prophesize(AddChangelogEntryEvent::class);
-        $expectedEvent->failed()->willReturn(true);
-
-        $dispatcher
-            ->dispatch(Argument::that(function ($event) use ($input, $output, $dispatcher) {
-                TestCase::assertSame($input->reveal(), $event->input());
-                TestCase::assertSame($output->reveal(), $event->output());
-                TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+        $this->dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (AddChangelogEntryEvent $event): bool {
+                TestCase::assertSame($this->input, $event->input());
+                TestCase::assertSame($this->output, $event->output());
+                TestCase::assertSame($this->dispatcher, $event->dispatcher());
                 TestCase::assertSame(EntryTypes::TYPE_ADDED, $event->entryType());
                 TestCase::assertSame('New entry', $event->entry());
                 TestCase::assertSame('1.2.3', $event->version());
                 TestCase::assertSame(2, $event->patchNumber());
                 TestCase::assertSame(1, $event->issueNumber());
-                return $event;
+                return true;
             }))
-            ->will(function () use ($expectedEvent) {
-                return $expectedEvent->reveal();
-            });
+            ->willReturn($expectedEvent);
 
-        $command = new EntryCommand($dispatcher->reveal(), 'entry:added');
+        $command = new EntryCommand($this->dispatcher, 'entry:added');
 
         $this->assertSame(1, $this->executeCommand($command));
     }
