@@ -10,19 +10,17 @@ namespace PhlyTest\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Version\ReleaseEvent;
 use Phly\KeepAChangelog\Version\VerifyTagExistsListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class VerifyTagExistsListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private ReleaseEvent&MockObject $event;
 
     protected function setUp(): void
     {
-        $this->event = $this->prophesize(ReleaseEvent::class);
-        $this->event
-            ->tagName()
-            ->willReturn('v1.2.3');
+        $this->event = $this->createMock(ReleaseEvent::class);
+        $this->event->expects($this->any())->method('tagName')->willReturn('v1.2.3');
     }
 
     public function testCallsExecAndDoesNothingWhenReturnIsZero()
@@ -32,9 +30,9 @@ class VerifyTagExistsListenerTest extends TestCase
             $return = 0;
         };
 
-        $this->assertNull($listener($this->event->reveal()));
+        $this->event->expects($this->never())->method('couldNotFindTag');
 
-        $this->event->couldNotFindTag()->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testCallsExecAndIndicatesTagNotFoundWhenReturnIsNotZero()
@@ -44,7 +42,8 @@ class VerifyTagExistsListenerTest extends TestCase
             $return = 1;
         };
 
-        $this->event->couldNotFindTag()->shouldBeCalled();
-        $this->assertNull($listener($this->event->reveal()));
+        $this->event->expects($this->once())->method('couldNotFindTag');
+
+        $this->assertNull($listener($this->event));
     }
 }
