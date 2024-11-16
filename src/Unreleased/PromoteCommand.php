@@ -25,13 +25,13 @@ class PromoteCommand extends Command
     private const DESCRIPTION = 'Give a name to an unreleased version.';
 
     private const HELP = <<<'EOH'
-Renames the current Unreleased version to the <version> provided, and sets the
-release date to today (unless the --date|-d option is provided).
-
-If --create-milestone or --create-milestone-with-name are provided, a milestone
-will be created for the repository as well.
-
-EOH;
+        Renames the current Unreleased version to the <version> provided, and sets the
+        release date to today (unless the --date|-d option is provided).
+        
+        If --create-milestone or --create-milestone-with-name are provided, a milestone
+        will be created for the repository as well.
+        
+        EOH;
 
     /** @var EventDispatcherInterface */
     private $dispatcher;

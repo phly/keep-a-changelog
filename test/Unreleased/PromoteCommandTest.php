@@ -12,10 +12,8 @@ use Phly\KeepAChangelog\Milestone\CreateMilestoneEvent;
 use Phly\KeepAChangelog\Unreleased\PromoteCommand;
 use Phly\KeepAChangelog\Unreleased\PromoteEvent;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,20 +23,16 @@ use function date;
 class PromoteCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
 
-    /** @var PromoteCommand */
-    private $command;
-
-    /** @var EventDispatcherInterface|ObjectProphecy */
-    private $dispatcher;
+    private PromoteCommand $command;
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     public function setUp(): void
     {
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->command    = new PromoteCommand($this->dispatcher->reveal());
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->command    = new PromoteCommand($this->dispatcher);
     }
 
     public function providedInput(): iterable
@@ -57,37 +51,35 @@ class PromoteCommandTest extends TestCase
         string $version,
         ?string $date
     ): void {
-        $input      = $this->input;
-        $output     = $this->output;
-        $dispatcher = $this->dispatcher;
-        $date       = $date ?: date('Y-m-d');
+        $date = $date ?: date('Y-m-d');
 
-        $input->getArgument('version')->willReturn($version);
-        $input->getOption('date')->willReturn($date);
-        $input->getOption('create-milestone')->willReturn(false);
-        $input->getOption('create-milestone-with-name')->willReturn(null);
+        $this->input->expects($this->atLeastOnce())->method('getArgument')->with('version')->willReturn($version);
+        $this->input
+            ->expects($this->any())
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['date', $date],
+                ['create-milestone', false],
+                ['create-milestone->with-name', null],
+            ]));
 
-        /** @var PromoteEvent|ObjectProphecy $event */
-        $event = $this->prophesize(PromoteEvent::class);
-        $event->failed()->willReturn($failureStatus);
+        $event = $this->createMock(PromoteEvent::class);
+        $event->expects($this->once())->method('failed')->willReturn($failureStatus);
 
         $this->dispatcher
-            ->dispatch(Argument::that(
-                function ($event) use ($input, $output, $dispatcher, $version, $date) {
-                    /** @var PromoteEvent $event */
-                    TestCase::assertInstanceOf(PromoteEvent::class, $event);
-                    TestCase::assertSame($input->reveal(), $event->input());
-                    TestCase::assertSame($output->reveal(), $event->output());
-                    TestCase::assertSame($dispatcher->reveal(), $event->dispatcher());
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (PromoteEvent $event) use ($version, $date): bool {
+                    TestCase::assertSame($this->input, $event->input());
+                    TestCase::assertSame($this->output, $event->output());
+                    TestCase::assertSame($this->dispatcher, $event->dispatcher());
                     TestCase::assertSame($version, $event->newVersion());
                     TestCase::assertSame($date, $event->releaseDate());
 
-                    return $event;
+                    return true;
                 }
             ))
-            ->will(function () use ($event) {
-                return $event->reveal();
-            });
+            ->willReturn($event);
 
         $expectedStatus = $failureStatus ? 1 : 0;
         $this->assertSame($expectedStatus, $this->executeCommand($this->command));
@@ -106,37 +98,50 @@ class PromoteCommandTest extends TestCase
         bool $failed,
         int $expectedStatus
     ): void {
-        $version    = '1.2.3';
-        $date       = date('Y-m-d');
-        $dispatcher = $this->dispatcher;
-        /** @var PromoteEvent|ObjectProphecy $promoteEvent */
-        $promoteEvent = $this->prophesize(PromoteEvent::class);
-        /** @var CreateMilestoneEvent|ObjectProphecy $milestoneEvent */
-        $milestoneEvent = $this->prophesize(CreateMilestoneEvent::class);
+        $version        = '1.2.3';
+        $date           = date('Y-m-d');
+        $promoteEvent   = $this->createMock(PromoteEvent::class);
+        $milestoneEvent = $this->createMock(CreateMilestoneEvent::class);
 
-        $promoteEvent->failed()->willReturn(false)->shouldBeCalled();
-        $milestoneEvent->failed()->willReturn($failed)->shouldBeCalled();
+        $promoteEvent->expects($this->atLeastOnce())->method('failed')->willReturn(false);
+        $milestoneEvent->expects($this->atLeastOnce())->method('failed')->willReturn($failed);
 
-        $dispatchCreateMilestoneEvent = function () use ($version, $dispatcher, $promoteEvent, $milestoneEvent) {
-            $dispatcher
-                ->dispatch(Argument::that(function (CreateMilestoneEvent $event) use ($version) {
+        $this->input->expects($this->atLeastOnce())->method('getArgument')->with('version')->willReturn($version);
+        $this->input
+            ->expects($this->any())
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['date', $date],
+                ['create-milestone', true],
+                ['create-milestone-with-name', null],
+            ]));
+
+        $invokedCount = $this->exactly(2);
+        $this->dispatcher
+            ->expects($invokedCount)
+            ->method('dispatch')
+            ->with($this->callback(function ($event) use ($invokedCount, $version): bool {
+                if ($invokedCount->getInvocationCount() === 1) {
+                    TestCase::assertInstanceOf(PromoteEvent::class, $event);
+                    return true;
+                }
+                if ($invokedCount->getInvocationCount() === 2) {
+                    TestCase::assertInstanceOf(CreateMilestoneEvent::class, $event);
                     TestCase::assertSame($version, $event->title());
-                    return $event;
-                }))
-                ->will([$milestoneEvent, 'reveal']);
-            return $promoteEvent->reveal();
-        };
+                    return true;
+                }
+            }))
+            ->will($this->returnCallback(function () use ($invokedCount, $promoteEvent, $milestoneEvent) {
 
-        $dispatcher
-            ->dispatch(Argument::type(PromoteEvent::class))
-            ->will($dispatchCreateMilestoneEvent);
+                if ($invokedCount->getInvocationCount() === 1) {
+                    return $promoteEvent;
+                }
+                if ($invokedCount->getInvocationCount() === 2) {
+                    return $milestoneEvent;
+                }
+            }));
 
-        $this->input->getArgument('version')->willReturn($version);
-        $this->input->getOption('date')->willReturn($date);
-        $this->input->getOption('create-milestone')->willReturn(true)->shouldBeCalled();
-        $this->input->getOption('create-milestone-with-name')->willReturn(null)->shouldBeCalled();
-
-        $command = new PromoteCommand($this->dispatcher->reveal());
+        $command = new PromoteCommand($this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
@@ -148,36 +153,49 @@ class PromoteCommandTest extends TestCase
         bool $failed,
         int $expectedStatus
     ): void {
-        $dispatcher = $this->dispatcher;
-        $date       = date('Y-m-d');
-        /** @var PromoteEvent|ObjectProphecy $promoteEvent */
-        $promoteEvent = $this->prophesize(PromoteEvent::class);
-        /** @var CreateMilestoneEvent|ObjectProphecy $milestoneEvent */
-        $milestoneEvent = $this->prophesize(CreateMilestoneEvent::class);
+        $date           = date('Y-m-d');
+        $promoteEvent   = $this->createMock(PromoteEvent::class);
+        $milestoneEvent = $this->createMock(CreateMilestoneEvent::class);
 
-        $promoteEvent->failed()->willReturn(false)->shouldBeCalled();
-        $milestoneEvent->failed()->willReturn($failed)->shouldBeCalled();
+        $promoteEvent->expects($this->atLeastOnce())->method('failed')->willReturn(false);
+        $milestoneEvent->expects($this->atLeastOnce())->method('failed')->willReturn($failed);
 
-        $dispatchCreateMilestoneEvent = function () use ($dispatcher, $promoteEvent, $milestoneEvent) {
-            $dispatcher
-                ->dispatch(Argument::that(function (CreateMilestoneEvent $event) {
+        $this->input->expects($this->atLeastOnce())->method('getArgument')->with('version')->willReturn('2.0.0');
+        $this->input
+            ->expects($this->any())
+            ->method('getOption')
+            ->will($this->returnValueMap([
+                ['date', $date],
+                ['create-milestone', null],
+                ['create-milestone-with-name', '2.0.0 The Big Kahuna'],
+            ]));
+
+        $invokedCount = $this->exactly(2);
+        $this->dispatcher
+            ->expects($invokedCount)
+            ->method('dispatch')
+            ->with($this->callback(function ($event) use ($invokedCount): bool {
+                if ($invokedCount->getInvocationCount() === 1) {
+                    TestCase::assertInstanceOf(PromoteEvent::class, $event);
+                    return true;
+                }
+                if ($invokedCount->getInvocationCount() === 2) {
+                    TestCase::assertInstanceOf(CreateMilestoneEvent::class, $event);
                     TestCase::assertSame('2.0.0 The Big Kahuna', $event->title());
-                    return $event;
-                }))
-                ->will([$milestoneEvent, 'reveal']);
-            return $promoteEvent->reveal();
-        };
+                    return true;
+                }
+            }))
+            ->will($this->returnCallback(function () use ($invokedCount, $promoteEvent, $milestoneEvent) {
 
-        $dispatcher
-            ->dispatch(Argument::type(PromoteEvent::class))
-            ->will($dispatchCreateMilestoneEvent);
+                if ($invokedCount->getInvocationCount() === 1) {
+                    return $promoteEvent;
+                }
+                if ($invokedCount->getInvocationCount() === 2) {
+                    return $milestoneEvent;
+                }
+            }));
 
-        $this->input->getArgument('version')->willReturn('2.0.0');
-        $this->input->getOption('date')->willReturn($date);
-        $this->input->getOption('create-milestone')->willReturn(null)->shouldBeCalled();
-        $this->input->getOption('create-milestone-with-name')->willReturn('2.0.0 The Big Kahuna')->shouldBeCalled();
-
-        $command = new PromoteCommand($this->dispatcher->reveal());
+        $command = new PromoteCommand($this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
