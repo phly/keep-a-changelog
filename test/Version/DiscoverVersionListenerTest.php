@@ -12,8 +12,6 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\DiscoverVersionListener;
 use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,102 +19,98 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class DiscoverVersionListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testReturnsEarlyWhenEventHasVersionComposed(): void
     {
-        $event = $this->prophesize(TagReleaseEvent::class);
-        $event->version()->willReturn('1.2.3')->shouldBeCalled();
+        $event = $this->createMock(TagReleaseEvent::class);
+        $event->expects($this->atLeastOnce())->method('version')->willReturn('1.2.3');
+        $event->expects($this->never())->method('versionNotAccepted');
+        $event->expects($this->never())->method('foundVersion');
 
         $listener = new DiscoverVersionListener();
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->versionNotAccepted()->shouldNotHaveBeenCalled();
-        $event->foundVersion(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testReturnsEarlyWhenEventDoesNotHaveVersionComposedAndChangelogDoesNotHaveDatedEntries(): void
     {
-        $config = $this->prophesize(Config::class);
+        $config = $this->createMock(Config::class);
         $config
-            ->changelogFile()
-            ->willReturn(__DIR__ . '/../_files/CHANGELOG-MULTIPLE-UNRELEASED.md')
-            ->shouldBeCalled();
+            ->expects($this->atLeastOnce())
+            ->method('changelogFile')
+            ->willReturn(__DIR__ . '/../_files/CHANGELOG-MULTIPLE-UNRELEASED.md');
 
-        $event = $this->prophesize(TagReleaseEvent::class);
-        $event->version()->willReturn(null)->shouldBeCalled();
-        $event->config()->will([$config, 'reveal'])->shouldBeCalled();
+        $event = $this->createMock(TagReleaseEvent::class);
+        $event->expects($this->atLeastOnce())->method('version')->willReturn(null);
+        $event->expects($this->atLeastOnce())->method('config')->willReturn($config);
+        $event->expects($this->never())->method('versionNotAccepted');
+        $event->expects($this->never())->method('foundVersion');
 
         $listener = new DiscoverVersionListener();
 
-        $this->assertNull($listener($event->reveal()));
-
-        $event->versionNotAccepted()->shouldNotHaveBeenCalled();
-        $event->foundVersion(Argument::any())->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($event));
     }
 
     public function testNotifiesEventOfInvalidVersionSpecifiedWhenQuestionAnsweredIncorrectly(): void
     {
-        $config = $this->prophesize(Config::class);
+        $config = $this->createMock(Config::class);
         $config
-            ->changelogFile()
-            ->willReturn(__DIR__ . '/../_files/CHANGELOG-WITH-RELEASED-VERSIONS.md')
-            ->shouldBeCalled();
+            ->expects($this->atLeastOnce())
+            ->method('changelogFile')
+            ->willReturn(__DIR__ . '/../_files/CHANGELOG-WITH-RELEASED-VERSIONS.md');
 
-        $input  = $this->prophesize(InputInterface::class)->reveal();
-        $output = $this->prophesize(OutputInterface::class)->reveal();
+        $input  = $this->createMock(InputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
 
-        $event = $this->prophesize(TagReleaseEvent::class);
-        $event->version()->willReturn(null)->shouldBeCalled();
-        $event->config()->will([$config, 'reveal'])->shouldBeCalled();
-        $event->input()->willReturn($input)->shouldBeCalled();
-        $event->output()->willReturn($output)->shouldBeCalled();
+        $event = $this->createMock(TagReleaseEvent::class);
+        $event->expects($this->atLeastOnce())->method('version')->willReturn(null);
+        $event->expects($this->atLeastOnce())->method('config')->willReturn($config);
+        $event->expects($this->atLeastOnce())->method('input')->willReturn($input);
+        $event->expects($this->atLeastOnce())->method('output')->willReturn($output);
+        $event->expects($this->once())->method('versionNotAccepted');
+        $event->expects($this->never())->method('foundVersion');
 
-        $event->versionNotAccepted()->shouldBeCalled();
-        $event->foundVersion(Argument::any())->shouldNotBeCalled();
-
-        $questionHelper = $this->prophesize(QuestionHelper::class);
+        $questionHelper = $this->createMock(QuestionHelper::class);
         $questionHelper
-            ->ask($input, $output, Argument::type(ConfirmationQuestion::class))
-            ->willReturn(false)
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('ask')
+            ->with($input, $output, $this->isInstanceOf(ConfirmationQuestion::class))
+            ->willReturn(false);
 
         $listener                 = new DiscoverVersionListener();
-        $listener->questionHelper = $questionHelper->reveal();
+        $listener->questionHelper = $questionHelper;
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 
     public function testNotifiesEventOfVersionWhenUserProvidesIt(): void
     {
-        $config = $this->prophesize(Config::class);
+        $config = $this->createMock(Config::class);
         $config
-            ->changelogFile()
-            ->willReturn(__DIR__ . '/../_files/CHANGELOG-WITH-RELEASED-VERSIONS.md')
-            ->shouldBeCalled();
+            ->expects($this->atLeastOnce())
+            ->method('changelogFile')
+            ->willReturn(__DIR__ . '/../_files/CHANGELOG-WITH-RELEASED-VERSIONS.md');
 
-        $input  = $this->prophesize(InputInterface::class)->reveal();
-        $output = $this->prophesize(OutputInterface::class)->reveal();
+        $input  = $this->createMock(InputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
 
-        $event = $this->prophesize(TagReleaseEvent::class);
-        $event->version()->willReturn(null)->shouldBeCalled();
-        $event->config()->will([$config, 'reveal'])->shouldBeCalled();
-        $event->input()->willReturn($input)->shouldBeCalled();
-        $event->output()->willReturn($output)->shouldBeCalled();
+        $event = $this->createMock(TagReleaseEvent::class);
+        $event->expects($this->atLeastOnce())->method('version')->willReturn(null);
+        $event->expects($this->atLeastOnce())->method('config')->willReturn($config);
+        $event->expects($this->atLeastOnce())->method('input')->willReturn($input);
+        $event->expects($this->atLeastOnce())->method('output')->willReturn($output);
+        $event->expects($this->never())->method('versionNotAccepted');
+        $event->expects($this->once())->method('foundVersion')->with('2.0.0');
 
-        $event->versionNotAccepted()->shouldNotBeCalled();
-        $event->foundVersion('2.0.0')->shouldBeCalled();
-
-        $questionHelper = $this->prophesize(QuestionHelper::class);
+        $questionHelper = $this->createMock(QuestionHelper::class);
         $questionHelper
-            ->ask($input, $output, Argument::type(ConfirmationQuestion::class))
-            ->willReturn(true)
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('ask')
+            ->with($input, $output, $this->isInstanceOf(ConfirmationQuestion::class))
+            ->willReturn(true);
 
         $listener                 = new DiscoverVersionListener();
-        $listener->questionHelper = $questionHelper->reveal();
+        $listener->questionHelper = $questionHelper;
 
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 }
