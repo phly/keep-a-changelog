@@ -11,9 +11,8 @@ namespace PhlyTest\KeepAChangelog\Version;
 use Phly\KeepAChangelog\Version\RemoveChangelogVersionEvent;
 use Phly\KeepAChangelog\Version\RemoveCommand;
 use PhlyTest\KeepAChangelog\ExecuteCommandTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,13 +20,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RemoveCommandTest extends TestCase
 {
     use ExecuteCommandTrait;
-    use ProphecyTrait;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function failureStatus(): iterable
@@ -43,27 +43,23 @@ class RemoveCommandTest extends TestCase
         bool $failedFlag,
         int $expectedStatus
     ) {
-        $expected = $this->prophesize(RemoveChangelogVersionEvent::class);
-        $expected->failed()->willReturn($failedFlag);
+        $expected = $this->createMock(RemoveChangelogVersionEvent::class);
+        $expected->expects($this->once())->method('failed')->willReturn($failedFlag);
 
-        $this->input->getArgument('version')->willReturn('1.2.3');
-
-        $input  = $this->input->reveal();
-        $output = $this->output->reveal();
+        $this->input->method('getArgument')->with('version')->willReturn('1.2.3');
 
         $this->dispatcher
-            ->dispatch(Argument::that(function ($event) use ($input, $output) {
-                TestCase::assertInstanceOf(RemoveChangelogVersionEvent::class, $event);
-                TestCase::assertSame($input, $event->input());
-                TestCase::assertSame($output, $event->output());
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (RemoveChangelogVersionEvent $event): bool {
+                TestCase::assertSame($this->input, $event->input());
+                TestCase::assertSame($this->output, $event->output());
                 TestCase::assertSame('1.2.3', $event->version());
-                return $event;
+                return true;
             }))
-            ->will(function () use ($expected) {
-                return $expected->reveal();
-            });
+            ->willReturn($expected);
 
-        $command = new RemoveCommand($this->dispatcher->reveal());
+        $command = new RemoveCommand($this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));
     }
