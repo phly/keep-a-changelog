@@ -12,42 +12,41 @@ use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\TagReleaseEvent;
 use Phly\KeepAChangelog\Version\VerifyVersionHasReleaseDateListener;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class VerifyVersionHasReleaseDateListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testDoesNothingIfChangelogHasAssociatedReleaseDate(): void
     {
-        $config = $this->prophesize(Config::class);
-        $config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG.md')->shouldBeCalled();
+        $config = $this->createMock(Config::class);
+        $config
+            ->expects($this->atLeastOnce())
+            ->method('changelogFile')
+            ->willReturn(__DIR__ . '/../_files/CHANGELOG.md');
 
-        /** @var TagReleaseEvent|ObjectProphecy $event */
-        $event = $this->prophesize(TagReleaseEvent::class);
-        $event->config()->will([$config, 'reveal'])->shouldBeCalled();
-        $event->version()->willReturn('1.1.0')->shouldBeCalledTimes(1);
-        $event->changelogMissingDate()->shouldNotBeCalled();
-        $event->output()->shouldNotBeCalled();
+        $event = $this->createMock(TagReleaseEvent::class);
+        $event->expects($this->once())->method('config')->willReturn($config);
+        $event->expects($this->once())->method('version')->willReturn('1.1.0');
+        $event->expects($this->never())->method('changelogMissingDate');
+        $event->expects($this->never())->method('output');
 
         $listener = new VerifyVersionHasReleaseDateListener();
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 
     public function testNotifiesEventTaggingFailedIfChangelogDoesNotHaveReleaseDate(): void
     {
-        $config = $this->prophesize(Config::class);
-        $output = $this->prophesize(OutputInterface::class);
-        $event  = $this->prophesize(TagReleaseEvent::class);
+        $config = $this->createMock(Config::class);
+        $event  = $this->createMock(TagReleaseEvent::class);
 
-        $config->changelogFile()->willReturn(__DIR__ . '/../_files/CHANGELOG.md')->shouldBeCalled();
-        $event->config()->will([$config, 'reveal'])->shouldBeCalled();
-        $event->version()->willReturn('2.0.0')->shouldBeCalled();
-        $event->changelogMissingDate()->shouldBeCalled();
+        $config
+            ->expects($this->atLeastOnce())
+            ->method('changelogFile')
+            ->willReturn(__DIR__ . '/../_files/CHANGELOG.md');
+        $event->expects($this->once())->method('config')->willReturn($config);
+        $event->expects($this->once())->method('version')->willReturn('2.0.0');
+        $event->expects($this->once())->method('changelogMissingDate');
 
         $listener = new VerifyVersionHasReleaseDateListener();
-        $this->assertNull($listener($event->reveal()));
+        $this->assertNull($listener($event));
     }
 }
