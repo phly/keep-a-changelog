@@ -10,9 +10,8 @@ namespace PhlyTest\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\ReleaseEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,22 +19,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ReleaseEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private EventDispatcherInterface&MockObject $dispatcher;
+    private ReleaseEvent $event;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->input->getArgument('version')->willReturn('1.2.3');
-        $this->input->getOption('tag-name')->willReturn('v1.2.3');
+        $this->input->expects($this->any())->method('getArgument')->with('version')->willReturn('1.2.3');
+        $this->input->expects($this->any())->method('getOption')->with('tag-name')->willReturn('v1.2.3');
 
-        $this->event = new ReleaseEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $this->dispatcher
-        );
+        $this->event = new ReleaseEvent($this->input, $this->output, $this->dispatcher);
     }
 
     public function testPropagationIsNotStoppedInitially()
@@ -60,15 +58,11 @@ class ReleaseEventTest extends TestCase
 
     public function testTagNameMatchesVersionWhenNoTagNameOptionPresentInInput()
     {
-        $input = $this->prophesize(InputInterface::class);
-        $input->getArgument('version')->willReturn('1.2.3');
-        $input->getOption('tag-name')->willReturn(null);
+        $input = $this->createMock(InputInterface::class);
+        $input->expects($this->any())->method('getArgument')->with('version')->willReturn('1.2.3');
+        $input->expects($this->any())->method('getOption')->with('tag-name')->willReturn(null);
 
-        $event = new ReleaseEvent(
-            $input->reveal(),
-            $this->output->reveal(),
-            $this->dispatcher
-        );
+        $event = new ReleaseEvent($input, $this->output, $this->dispatcher);
 
         $this->assertSame('1.2.3', $event->tagName());
     }
@@ -113,7 +107,7 @@ class ReleaseEventTest extends TestCase
 
     public function testIndicatingChangelogFileIsUnreadableStopsPropagationWithError()
     {
-        $this->output->writeln(Argument::containingString('unreadable'))->shouldBeCalled();
+        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('unreadable'));
         $this->assertNull($this->event->changelogFileIsUnreadable('changelog.txt'));
         $this->assertTrue($this->event->isPropagationStopped());
         $this->assertTrue($this->event->failed());
@@ -121,10 +115,22 @@ class ReleaseEventTest extends TestCase
 
     public function testIndicatingErrorParsingChangelogStopsPropagationWithError()
     {
-        $message = 'this is an error message';
-        $error   = new RuntimeException($message);
-        $this->output->writeln(Argument::containingString('parsing'))->shouldBeCalled();
-        $this->output->writeln(Argument::containingString($message))->shouldBeCalled();
+        $expected = 'this is an error message';
+        $error    = new RuntimeException($expected);
+
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount, $expected): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('parsing', $message),
+                    2       => TestCase::assertStringContainsString($expected, $message),
+                    default => true,
+                };
+
+                return true;
+            }));
 
         $this->assertNull($this->event->errorParsingChangelog('changelog.txt', $error));
 
@@ -134,7 +140,7 @@ class ReleaseEventTest extends TestCase
 
     public function testIndicatingProviderIsCompleteStopsPropagationWithFailure()
     {
-        $this->output->writeln(Argument::any())->shouldBeCalledTimes(8);
+        $this->output->expects($this->exactly(8))->method('writeln')->with($this->isType('string'));
 
         $this->assertNull($this->event->providerIsIncomplete());
 
@@ -144,7 +150,7 @@ class ReleaseEventTest extends TestCase
 
     public function testIndicatingCouldNotFindTagStopsPropagationWithFailure()
     {
-        $this->output->writeln(Argument::any())->shouldBeCalledTimes(1);
+        $this->output->expects($this->exactly(1))->method('writeln')->with($this->isType('string'));
 
         $this->event->couldNotFindTag();
 
@@ -154,7 +160,7 @@ class ReleaseEventTest extends TestCase
 
     public function testIndicatingTaggingFailedStopsPropagationWithFailure()
     {
-        $this->output->writeln(Argument::any())->shouldBeCalledTimes(2);
+        $this->output->expects($this->exactly(2))->method('writeln')->with($this->isType('string'));
 
         $this->event->taggingFailed();
 
@@ -164,11 +170,23 @@ class ReleaseEventTest extends TestCase
 
     public function testIndicatingErrorCreatingReleaseStopsPropagationWithFailure()
     {
-        $message = 'this is an error message';
-        $error   = new RuntimeException($message);
-        $this->output->writeln(Argument::containingString('creating release'))->shouldBeCalled();
-        $this->output->writeln(Argument::containingString('error was caught'))->shouldBeCalled();
-        $this->output->writeln(Argument::containingString($message))->shouldBeCalled();
+        $expected = 'this is an error message';
+        $error    = new RuntimeException($expected);
+
+        $invokedCount = $this->atLeast(3);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount, $expected): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('creating release', $message),
+                    2       => TestCase::assertStringContainsString('error was caught', $message),
+                    3       => TestCase::assertStringContainsString($expected, $message),
+                    default => true,
+                };
+
+                return true;
+            }));
 
         $this->assertNull($this->event->errorCreatingRelease($error));
 
@@ -178,8 +196,19 @@ class ReleaseEventTest extends TestCase
 
     public function testIndicatingUnexpectedProviderResultWhenCreatingReleaseStopsPropagationWithFailure()
     {
-        $this->output->writeln(Argument::containingString('creating release'))->shouldBeCalled();
-        $this->output->writeln(Argument::containingString('API call'))->shouldBeCalled();
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('creating release', $message),
+                    2       => TestCase::assertStringContainsString('API call', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
 
         $this->assertNull($this->event->unexpectedProviderResult());
 
@@ -191,17 +220,19 @@ class ReleaseEventTest extends TestCase
     {
         $e = new RuntimeException('this is the error message', 401);
 
-        $output = $this->output;
-        $output
-            ->writeln(Argument::containingString('Invalid credentials'))
-            ->will(function () use ($output) {
-                $output
-                    ->writeln(Argument::containingString(
-                        'The credentials associated with your Git provider are invalid'
-                    ))
-                    ->shouldBeCalled();
-            })
-            ->shouldBeCalled();
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Invalid credentials', $message),
+                    2       => TestCase::assertStringContainsString('The credentials associated with your Git provider are invalid', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
 
         $this->assertNull($this->event->errorCreatingRelease($e));
         $this->assertTrue($this->event->failed());
