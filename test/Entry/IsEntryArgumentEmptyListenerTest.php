@@ -10,37 +10,35 @@ namespace PhlyTest\KeepAChangelog\Entry;
 
 use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
 use Phly\KeepAChangelog\Entry\IsEntryArgumentEmptyListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class IsEntryArgumentEmptyListenerTest extends TestCase
 {
-    use ProphecyTrait;
+    private AddChangelogEntryEvent&MockObject $event;
 
     protected function setUp(): void
     {
-        $this->event = $this->prophesize(AddChangelogEntryEvent::class);
-        $this->event->entryIsEmpty()->will(function () {
-        });
+        $this->event = $this->createMock(AddChangelogEntryEvent::class);
+        $this->event->expects($this->any())->method('entryIsEmpty');
     }
 
     public function testDoesNothingIfEventHasEntry()
     {
-        $this->event->entry()->willReturn('foo')->shouldBeCalled();
+        $this->event->expects($this->atLeastOnce())->method('entry')->willReturn('foo');
+        $this->event->expects($this->never())->method('entryIsEmpty');
 
         $listener = new IsEntryArgumentEmptyListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->entryIsEmpty()->shouldNotHaveBeenCalled();
+        $this->assertNull($listener($this->event));
     }
 
     public function testNotifiesEventWhenEntryIsEmpty()
     {
-        $this->event->entry()->willReturn('')->shouldBeCalled();
+        $this->event->expects($this->atLeastOnce())->method('entry')->willReturn('');
+        $this->event->expects($this->once())->method('entryIsEmpty');
 
         $listener = new IsEntryArgumentEmptyListener();
 
-        $this->assertNull($listener($this->event->reveal()));
-        $this->event->entryIsEmpty()->shouldHaveBeenCalled();
-    }
+        $this->assertNull($listener($this->event));
 }
