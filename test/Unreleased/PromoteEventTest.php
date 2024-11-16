@@ -9,39 +9,30 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\Unreleased;
 
 use Phly\KeepAChangelog\Unreleased\PromoteEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class PromoteEventTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
-
-    /** @var InputInterface */
-    private $input;
-
-    /** @var OutputInterface|ObjectProphecy */
-    private $output;
+    private EventDispatcherInterface&MockObject $dispatcher;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
 
     public function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class)->reveal();
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class)->reveal();
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function testConstructorSetsVersionNewVersionAndReleaseDate(): void
     {
         $event = new PromoteEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             '2.5.0',
             '2020-07-16'
@@ -56,13 +47,13 @@ class PromoteEventTest extends TestCase
     {
         $event = new PromoteEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             '2.5.0',
             '2020-07-16'
         );
 
-        $this->output->writeln(Argument::containingString('Invalid date'))->shouldBeCalled();
+        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('Invalid date'));
 
         $event->didNotPromote();
         $this->assertTrue($event->isPropagationStopped());
@@ -72,17 +63,16 @@ class PromoteEventTest extends TestCase
     {
         $event = new PromoteEvent(
             $this->input,
-            $this->output->reveal(),
+            $this->output,
             $this->dispatcher,
             '2.5.0',
             '2020-07-16'
         );
 
         $this->output
-            ->writeln(Argument::containingString(
-                'Renamed Unreleased entry to "2.5.0" with release date of "2020-07-16"'
-            ))
-            ->shouldBeCalled();
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Renamed Unreleased entry to "2.5.0" with release date of "2020-07-16"'));
 
         $event->changelogReady();
         $this->assertFalse($event->isPropagationStopped());
