@@ -12,24 +12,23 @@ use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
 use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
 use Phly\KeepAChangelog\Entry\EntryTypes;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AddChangelogEntryEventTest extends TestCase
 {
-    use ProphecyTrait;
+    private InputInterface&MockObject $input;
+    private OutputInterface&MockObject $output;
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     protected function setUp(): void
     {
-        $this->input      = $this->prophesize(InputInterface::class);
-        $this->output     = $this->prophesize(OutputInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
-
-        $this->output->writeln(Argument::type('string'))->willReturn(null);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
     }
 
     public function createEvent(
@@ -40,9 +39,9 @@ class AddChangelogEntryEventTest extends TestCase
         ?int $issueNumber = null
     ): AddChangelogEntryEvent {
         return new AddChangelogEntryEvent(
-            $this->input->reveal(),
-            $this->output->reveal(),
-            $this->dispatcher->reveal(),
+            $this->input,
+            $this->output,
+            $this->dispatcher,
             $entryType,
             $entry,
             $version,
@@ -86,9 +85,9 @@ class AddChangelogEntryEventTest extends TestCase
     {
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog', '1.2.3', 42, 84);
 
-        $this->assertSame($this->input->reveal(), $event->input());
-        $this->assertSame($this->output->reveal(), $event->output());
-        $this->assertSame($this->dispatcher->reveal(), $event->dispatcher());
+        $this->assertSame($this->input, $event->input());
+        $this->assertSame($this->output, $event->output());
+        $this->assertSame($this->dispatcher, $event->dispatcher());
         $this->assertSame(EntryTypes::TYPE_ADDED, $event->entryType());
         $this->assertSame('New entry for changelog', $event->entry());
         $this->assertSame('1.2.3', $event->version());
@@ -108,132 +107,200 @@ class AddChangelogEntryEventTest extends TestCase
 
     public function testAddingChangelogEntryEmitsOutputWithoutStoppingPropagationOrFailure()
     {
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Wrote "Added" entry to CHANGELOG.md'));
+
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog');
 
         $event->addedChangelogEntry('CHANGELOG.md', EntryTypes::TYPE_ADDED);
 
-        $this->output
-            ->writeln(Argument::containingString('Wrote "Added" entry to CHANGELOG.md'))
-            ->shouldHaveBeenCalled();
         $this->assertFalse($event->isPropagationStopped());
         $this->assertFalse($event->failed());
     }
 
     public function testMarkingEntryAsEmptyEmitsOutputAndStopsPropagationWithFailure()
     {
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('MUST be a non-empty string'));
+
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, '');
 
         $event->entryIsEmpty();
 
-        $this->output
-            ->writeln(Argument::containingString('MUST be a non-empty string'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
 
     public function testIndicatingInvalidIssueNumberEmitsOutputAndStopsPropagationWithFailure()
     {
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('--issue argument (-1) is invalid', $message),
+                    2       => TestCase::assertStringContainsString('The value must be numeric, and start with a digit between 1 and 9', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
+
+
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog');
 
         $event->issueNumberIsInvalid(-1);
 
-        $this->output
-            ->writeln(Argument::containingString('--issue argument (-1) is invalid'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
 
     public function testIndicatingInvalidPatchNumberEmitsOutputAndStopsPropagationWithFailure()
     {
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('--pr argument (-1) is invalid', $message),
+                    2       => TestCase::assertStringContainsString('The value must be numeric, and start with a digit between 1 and 9', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
+
+
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog');
 
         $event->patchNumberIsInvalid(-1);
 
-        $this->output
-            ->writeln(Argument::containingString('--pr argument (-1) is invalid'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
 
     public function testIndicatingProviderCannotGenerateLinksEmitsOutputAndStopsPropagationWithFailure()
     {
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Cannot generate link to patch or issue', $message),
+                    2       => TestCase::assertStringContainsString('missing package argument', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
+
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog');
 
         $event->providerCannotGenerateLinks();
 
-        $this->output
-            ->writeln(Argument::containingString('Cannot generate link to patch or issue'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('missing package argument'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
 
     public function testIndicatingInvalidIssueLinkEmitsOutputAndStopsPropagationWithFailure()
     {
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Generated issue link is invalid', $message),
+                    2       => TestCase::assertStringContainsString('link "invalid link"', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
+
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog');
 
         $event->issueLinkIsInvalid('invalid link');
 
-        $this->output
-            ->writeln(Argument::containingString('Generated issue link is invalid'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('link "invalid link"'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
 
     public function testIndicatingInvalidPatchLinkEmitsOutputAndStopsPropagationWithFailure()
     {
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Generated patch link is invalid', $message),
+                    2       => TestCase::assertStringContainsString('link "invalid link"', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
+
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog');
 
         $event->patchLinkIsInvalid('invalid link');
 
-        $this->output
-            ->writeln(Argument::containingString('Generated patch link is invalid'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('link "invalid link"'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
 
     public function testIndicatingEntryTypeIsInvalidEmitsOutputAndStopsPropagationWithFailure()
     {
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Entry type is invalid', $message),
+                    2       => TestCase::assertStringContainsString('entry of type "bogus-entry-type"', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
+
         $event = $this->createEvent('bogus-entry-type', 'New entry for changelog');
 
         $event->entryTypeIsInvalid();
 
-        $this->output
-            ->writeln(Argument::containingString('Entry type is invalid'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('entry of type "bogus-entry-type"'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
 
     public function testIndicatingEntryTypeNotFoundEmitsOutputAndStopsPropagationWithFailure()
     {
+        $invokedCount = $this->atLeast(2);
+        $this->output
+            ->expects($invokedCount)
+            ->method('writeln')
+            ->with($this->callback(function (string $message) use ($invokedCount): bool {
+                match ($invokedCount->getInvocationCount()) {
+                    1       => TestCase::assertStringContainsString('Unable to find matching entry type', $message),
+                    2       => TestCase::assertStringContainsString('entry type "added" could not be found', $message),
+                    default => true,
+                };
+
+                return true;
+            }));
+
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog');
 
         $event->matchingEntryTypeNotFound();
 
-        $this->output
-            ->writeln(Argument::containingString('Unable to find matching entry type'))
-            ->shouldHaveBeenCalled();
-        $this->output
-            ->writeln(Argument::containingString('entry type "added" could not be found'))
-            ->shouldHaveBeenCalled();
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
     }
