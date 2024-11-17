@@ -190,7 +190,6 @@ class AddChangelogEntryListenerTest extends TestCase
         $listener->changelogEditor = $this->editor;
 
         $this->assertNull($listener($this->event));
-
     }
 
     public function testIndentsMultilineEntries()
@@ -227,7 +226,10 @@ class AddChangelogEntryListenerTest extends TestCase
 
         $this->event->expects($this->once())->method('entryType')->willReturn(EntryTypes::TYPE_ADDED);
         $this->event->expects($this->atLeastOnce())->method('entry')->willReturn($entry);
-        $this->event->expects($this->once())->method('addedChangelogEntry')->with('CHANGELOG.md', EntryTypes::TYPE_ADDED);
+        $this->event
+            ->expects($this->once())
+            ->method('addedChangelogEntry')
+            ->with('CHANGELOG.md', EntryTypes::TYPE_ADDED);
         $this->event->expects($this->never())->method('entryTypeIsInvalid');
         $this->event->expects($this->never())->method('matchingEntryTypeNotFound');
 

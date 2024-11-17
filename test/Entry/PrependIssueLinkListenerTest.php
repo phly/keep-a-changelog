@@ -9,9 +9,9 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\Entry;
 
 use Phly\KeepAChangelog\Entry\AbstractPrependLinkListener;
-use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
+use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent; // phpcs:ignore
 use Phly\KeepAChangelog\Entry\PrependIssueLinkListener;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
+use Phly\KeepAChangelog\Provider\ProviderInterface; // phpcs:ignore
 use PHPUnit\Framework\MockObject\MockObject;
 
 use function sprintf;
@@ -59,7 +59,7 @@ class PrependIssueLinkListenerTest extends AbstractPrependLinkListenerTestCase
         $event
             ->expects($this->atLeastOnce())
             ->method('issueNumberIsInvalid')
-            ->willReturn($this->identifier);
+            ->with($this->identifier);
     }
 
     /**
@@ -98,6 +98,6 @@ class PrependIssueLinkListenerTest extends AbstractPrependLinkListenerTestCase
         $event
             ->expects($this->atLeastOnce())
             ->method('issueLinkIsInvalid')
-            ->willReturn(empty($this->link) ? '' : $this->stringContains($this->link));
+            ->with(empty($this->link) ? '' : $this->stringContains($this->link));
     }
 }

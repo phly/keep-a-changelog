@@ -91,6 +91,5 @@ class PromptForGitRemoteListenerTest extends TestCase
         $listener = new PromptForGitRemoteListener();
 
         $this->assertNull($listener($this->event));
-
     }
 }

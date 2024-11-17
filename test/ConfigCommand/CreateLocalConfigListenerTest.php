@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractCreateConfigListener;
-use Phly\KeepAChangelog\ConfigCommand\CreateConfigEvent;
+use Phly\KeepAChangelog\ConfigCommand\CreateConfigEvent; // phpcs:ignore
 use Phly\KeepAChangelog\ConfigCommand\CreateLocalConfigListener;
 use PHPUnit\Framework\MockObject\MockObject;
 

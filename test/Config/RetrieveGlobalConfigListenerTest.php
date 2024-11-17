@@ -6,9 +6,11 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Config;
+namespace PhlyTest\KeepAChangelog\Config;
 
 use Phly\KeepAChangelog\Config;
+use Phly\KeepAChangelog\Config\ConfigDiscovery;
+use Phly\KeepAChangelog\Config\RetrieveGlobalConfigListener;
 use Phly\KeepAChangelog\Provider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

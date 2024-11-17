@@ -19,7 +19,6 @@ use function sprintf;
 
 class DiscoverEditorListenerTest extends TestCase
 {
-
     private ?string $editorEnvValue;
     private EditorAwareEventInterface&MockObject $event;
     private array $serverSuperGlobal = [];

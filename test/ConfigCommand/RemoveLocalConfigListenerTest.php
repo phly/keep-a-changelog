@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\ConfigCommand;
 
 use Phly\KeepAChangelog\ConfigCommand\AbstractRemoveConfigListener;
-use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent;
+use Phly\KeepAChangelog\ConfigCommand\RemoveConfigEvent; // phpcs:ignore
 use Phly\KeepAChangelog\ConfigCommand\RemoveLocalConfigListener;
 use PHPUnit\Framework\MockObject\MockObject;
 

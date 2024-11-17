@@ -8,12 +8,8 @@ declare(strict_types=1);
 
 namespace PhlyTest\KeepAChangelog\Milestone;
 
-use Closure;
 use Phly\KeepAChangelog\Milestone\CloseMilestoneEvent;
 use Phly\KeepAChangelog\Milestone\CloseMilestoneListener;
-use Phly\KeepAChangelog\Provider\Milestone;
-use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
 use PhlyTest\KeepAChangelog\TestAsset\AbstractMilestoneAwareProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -24,7 +20,7 @@ class CloseMilestoneListenerTest extends TestCase
 {
     private CloseMilestoneEvent&MockObject $event;
     private OutputInterface&MockObject $output;
-    private MilestoneAwareProviderInterface&ProviderInterface&MockObject $provider;
+    private AbstractMilestoneAwareProvider&MockObject $provider;
 
     public function setUp(): void
     {

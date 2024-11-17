@@ -54,7 +54,6 @@ abstract class AbstractEditConfigListenerTestCase extends TestCase
         $listener = $this->getListener();
 
         $this->assertNull($listener($event));
-
     }
 
     public function testListenerReturnsEarlyIfConfigFileNotFound()

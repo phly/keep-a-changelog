@@ -38,8 +38,16 @@ class RetrieveInputOptionsListenerTest extends TestCase
 
     public function testRaisesExceptionSettingProviderFromProviderClassOptionWhenClassDoesNotExist()
     {
-        $this->input->expects($this->atLeastOnce())->method('hasOption')->with('provider-class')->willReturn(true);
-        $this->input->expects($this->atLeastOnce())->method('getOption')->with('provider-class')->willReturn(ThisClassDoesNotExist::class);
+        $this->input
+            ->expects($this->atLeastOnce())
+            ->method('hasOption')
+            ->with('provider-class')
+            ->willReturn(true);
+        $this->input
+            ->expects($this->atLeastOnce())
+            ->method('getOption')
+            ->with('provider-class')
+            ->willReturn(ThisClassDoesNotExist::class);
         $listener = new RetrieveInputOptionsListener();
         $this->expectException(InvalidProviderException::class);
         $listener($this->event);
@@ -54,7 +62,11 @@ class RetrieveInputOptionsListenerTest extends TestCase
                 ['provider-class', false],
                 ['provider', true],
             ]));
-        $this->input->expects($this->atLeastOnce())->method('getOption')->with('provider')->willReturn('unknown-provider-type');
+        $this->input
+            ->expects($this->atLeastOnce())
+            ->method('getOption')
+            ->with('provider')
+            ->willReturn('unknown-provider-type');
         $listener = new RetrieveInputOptionsListener();
         $this->expectException(InvalidProviderException::class);
         $listener($this->event);
@@ -73,7 +85,11 @@ class RetrieveInputOptionsListenerTest extends TestCase
                 ['changelog', false],
                 ['remote', false],
             ]));
-        $this->input->expects($this->atLeastOnce())->method('getOption')->with('provider-class')->willReturn(Provider\GitLab::class);
+        $this->input
+            ->expects($this->atLeastOnce())
+            ->method('getOption')
+            ->with('provider-class')
+            ->willReturn(Provider\GitLab::class);
 
         $listener = new RetrieveInputOptionsListener();
 

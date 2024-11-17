@@ -9,9 +9,9 @@ declare(strict_types=1);
 namespace PhlyTest\KeepAChangelog\Entry;
 
 use Phly\KeepAChangelog\Entry\AbstractPrependLinkListener;
-use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent;
+use Phly\KeepAChangelog\Entry\AddChangelogEntryEvent; // phpcs:ignore
 use Phly\KeepAChangelog\Entry\PrependPatchLinkListener;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
+use Phly\KeepAChangelog\Provider\ProviderInterface; // phpcs:ignore
 use PHPUnit\Framework\MockObject\MockObject;
 
 use function sprintf;

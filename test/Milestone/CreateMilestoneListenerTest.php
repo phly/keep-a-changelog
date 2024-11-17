@@ -11,8 +11,6 @@ namespace PhlyTest\KeepAChangelog\Milestone;
 use Phly\KeepAChangelog\Milestone\CreateMilestoneEvent;
 use Phly\KeepAChangelog\Milestone\CreateMilestoneListener;
 use Phly\KeepAChangelog\Provider\Milestone;
-use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
 use PhlyTest\KeepAChangelog\TestAsset\AbstractMilestoneAwareProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -23,7 +21,7 @@ class CreateMilestoneListenerTest extends TestCase
 {
     private CreateMilestoneEvent&MockObject $event;
     private OutputInterface&MockObject $output;
-    private MilestoneAwareProviderInterface&ProviderInterface&MockObject $provider;
+    private AbstractMilestoneAwareProvider&MockObject $provider;
 
     public function setUp(): void
     {
@@ -41,7 +39,11 @@ class CreateMilestoneListenerTest extends TestCase
     {
         $milestone = $this->createMock(Milestone::class);
 
-        $this->provider->expects($this->once())->method('createMilestone')->with('2.0.0', '2.0.0 requirements')->willReturn($milestone);
+        $this->provider
+            ->expects($this->once())
+            ->method('createMilestone')
+            ->with('2.0.0', '2.0.0 requirements')
+            ->willReturn($milestone);
         $this->event->expects($this->once())->method('milestoneCreated')->with($milestone);
         $this->event->expects($this->never())->method('errorCreatingMilestone');
 
@@ -53,7 +55,11 @@ class CreateMilestoneListenerTest extends TestCase
     public function testListenerInformsEventOfMilestoneCreationError(): void
     {
         $e = new RuntimeException('this is the error');
-        $this->provider->expects($this->once())->method('createMilestone')->with('2.0.0', '2.0.0 requirements')->willThrowException($e);
+        $this->provider
+            ->expects($this->once())
+            ->method('createMilestone')
+            ->with('2.0.0', '2.0.0 requirements')
+            ->willThrowException($e);
         $this->event->expects($this->never())->method('milestoneCreated');
         $this->event->expects($this->once())->method('errorCreatingMilestone')->with($e);
 

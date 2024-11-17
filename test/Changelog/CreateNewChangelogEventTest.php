@@ -84,7 +84,7 @@ class CreateNewChangelogEventTest extends TestCase
         $this->output
             ->expects($invokedCount)
             ->method('writeln')
-            ->with($this->callback(function($message) use ($invokedCount) {
+            ->with($this->callback(function ($message) use ($invokedCount) {
                 match ($invokedCount->getInvocationCount()) {
                     1 => TestCase::assertStringContainsString('file exists', $message),
                     2 => TestCase::assertStringContainsString('use the --overwrite|-o option', $message),

@@ -180,8 +180,14 @@ class TagReleaseEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1       => TestCase::assertStringContainsString('does not have a release date associated', $message),
-                    2       => TestCase::assertStringContainsString('run version:ready', $message),
+                    1       => TestCase::assertStringContainsString(
+                        'does not have a release date associated',
+                        $message
+                    ),
+                    2       => TestCase::assertStringContainsString(
+                        'run version:ready',
+                        $message
+                    ),
                     default => true,
                 };
 

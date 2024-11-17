@@ -6,8 +6,10 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Common;
+namespace PhlyTest\KeepAChangelog\Common;
 
+use Phly\KeepAChangelog\Common\ValidateVersionListener;
+use Phly\KeepAChangelog\Common\VersionAwareEventInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

@@ -124,7 +124,10 @@ class EditConfigEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1 => TestCase::assertStringContainsString('Could not find config file keep-a-changelog.ini', $message),
+                    1 => TestCase::assertStringContainsString(
+                        'Could not find config file keep-a-changelog.ini',
+                        $message
+                    ),
                     default => true,
                 };
                 return true;
@@ -146,7 +149,10 @@ class EditConfigEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1 => TestCase::assertStringContainsString('Editing config file keep-a-changelog.ini failed', $message),
+                    1 => TestCase::assertStringContainsString(
+                        'Editing config file keep-a-changelog.ini failed',
+                        $message
+                    ),
                     default => true,
                 };
                 return true;

@@ -88,7 +88,6 @@ class ReadyLatestChangelogEventTest extends TestCase
 
         $this->assertTrue($event->isPropagationStopped());
         $this->assertTrue($event->failed());
-
     }
 
     public function versionArguments(): iterable

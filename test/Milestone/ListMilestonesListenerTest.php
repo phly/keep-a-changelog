@@ -11,8 +11,6 @@ namespace PhlyTest\KeepAChangelog\Milestone;
 use Phly\KeepAChangelog\Milestone\ListMilestonesEvent;
 use Phly\KeepAChangelog\Milestone\ListMilestonesListener;
 use Phly\KeepAChangelog\Provider\Milestone;
-use Phly\KeepAChangelog\Provider\MilestoneAwareProviderInterface;
-use Phly\KeepAChangelog\Provider\ProviderInterface;
 use PhlyTest\KeepAChangelog\TestAsset\AbstractMilestoneAwareProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -23,7 +21,7 @@ class ListMilestonesListenerTest extends TestCase
 {
     private ListMilestonesEvent&MockObject $event;
     private OutputInterface&MockObject $output;
-    private MilestoneAwareProviderInterface&ProviderInterface&MockObject $provider;
+    private AbstractMilestoneAwareProvider&MockObject $provider;
 
     public function setUp(): void
     {
@@ -33,7 +31,10 @@ class ListMilestonesListenerTest extends TestCase
 
         $this->event->expects($this->any())->method('output')->willReturn($this->output);
         $this->event->expects($this->any())->method('provider')->willReturn($this->provider);
-        $this->output->expects($this->atLeastOnce())->method('writeln')->with($this->stringContains('Fetching milestones'));
+        $this->output
+            ->expects($this->atLeastOnce())
+            ->method('writeln')
+            ->with($this->stringContains('Fetching milestones'));
     }
 
     public function testNotifiesEventWithDiscoveredMilestonesOnSuccess(): void
