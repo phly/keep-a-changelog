@@ -143,14 +143,19 @@ class AddChangelogEntryEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1       => TestCase::assertStringContainsString('--issue argument (-1) is invalid', $message),
-                    2       => TestCase::assertStringContainsString('The value must be numeric, and start with a digit between 1 and 9', $message),
+                    1       => TestCase::assertStringContainsString(
+                        '--issue argument (-1) is invalid',
+                        $message
+                    ),
+                    2       => TestCase::assertStringContainsString(
+                        'The value must be numeric, and start with a digit between 1 and 9',
+                        $message
+                    ),
                     default => true,
                 };
 
                 return true;
             }));
-
 
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog');
 
@@ -168,14 +173,19 @@ class AddChangelogEntryEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1       => TestCase::assertStringContainsString('--pr argument (-1) is invalid', $message),
-                    2       => TestCase::assertStringContainsString('The value must be numeric, and start with a digit between 1 and 9', $message),
+                    1       => TestCase::assertStringContainsString(
+                        '--pr argument (-1) is invalid',
+                        $message
+                    ),
+                    2       => TestCase::assertStringContainsString(
+                        'The value must be numeric, and start with a digit between 1 and 9',
+                        $message
+                    ),
                     default => true,
                 };
 
                 return true;
             }));
-
 
         $event = $this->createEvent(EntryTypes::TYPE_ADDED, 'New entry for changelog');
 

@@ -19,7 +19,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListMilestonesEventTest extends TestCase
 {
-
     private EventDispatcherInterface&MockObject $dispatcher;
     private ListMilestonesEvent $event;
     private InputInterface&MockObject $input;
@@ -35,7 +34,10 @@ class ListMilestonesEventTest extends TestCase
 
     public function testIndicatingMilestonesWithEmptyArraySendsOutputIndicatingNoneFound(): void
     {
-        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('No milestones discovered'));
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('No milestones discovered'));
         $this->assertNull($this->event->milestonesRetrieved([]));
     }
 
@@ -84,7 +86,10 @@ class ListMilestonesEventTest extends TestCase
                     1       => TestCase::assertStringContainsString('Error listing milestones', $message),
                     2       => TestCase::assertStringContainsString('retrieve milestones', $message),
                     3       => TestCase::assertStringContainsString('', $message),
-                    4       => TestCase::assertStringContainsString('Error Message: this is the error message', $message),
+                    4       => TestCase::assertStringContainsString(
+                        'Error Message: this is the error message',
+                        $message
+                    ),
                     default => true,
                 };
 
@@ -104,8 +109,14 @@ class ListMilestonesEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1       => TestCase::assertStringContainsString('Invalid credentials', $message),
-                    2       => TestCase::assertStringContainsString('The credentials associated with your Git provider are invalid', $message),
+                    1       => TestCase::assertStringContainsString(
+                        'Invalid credentials',
+                        $message
+                    ),
+                    2       => TestCase::assertStringContainsString(
+                        'The credentials associated with your Git provider are invalid',
+                        $message
+                    ),
                     default => true,
                 };
 

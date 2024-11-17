@@ -21,6 +21,12 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function array_keys;
+use function count;
+use function implode;
+use function sprintf;
+use function str_contains;
+
 class ConfigListenerTest extends TestCase
 {
     private Config $config;

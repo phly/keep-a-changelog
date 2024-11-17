@@ -83,8 +83,14 @@ class CloseMilestoneEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1       => TestCase::assertStringContainsString('Invalid credentials', $message),
-                    2       => TestCase::assertStringContainsString('The credentials associated with your Git provider are invalid', $message),
+                    1       => TestCase::assertStringContainsString(
+                        'Invalid credentials',
+                        $message
+                    ),
+                    2       => TestCase::assertStringContainsString(
+                        'The credentials associated with your Git provider are invalid',
+                        $message
+                    ),
                     default => true,
                 };
 

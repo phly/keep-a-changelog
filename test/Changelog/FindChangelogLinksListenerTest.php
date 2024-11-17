@@ -62,6 +62,5 @@ class FindChangelogLinksListenerTest extends TestCase
 
         $listener = new FindChangelogLinksListener();
         $this->assertNull($listener($this->event));
-
     }
 }

@@ -25,7 +25,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
     {
         $this->provider = $this->createMock(ProviderSpec::class);
         $this->config   = $this->createMock(Config::class);
-        $this->event = $this->createMock(RemoteNameDiscovery::class);
+        $this->event    = $this->createMock(RemoteNameDiscovery::class);
     }
 
     public function testReturnsEarlyIfEventIndicatesRemoteWasAlreadyFound()

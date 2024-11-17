@@ -38,7 +38,6 @@ class IsChangelogReadableListenerTest extends TestCase
         $listener = new IsChangelogReadableListener();
 
         $this->assertNull($listener($this->event));
-
     }
 
     public function testTellsEventChangelogFileIsUnreadableIfProvidedFileIsNotReadable()

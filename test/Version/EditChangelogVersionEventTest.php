@@ -6,12 +6,13 @@
 
 declare(strict_types=1);
 
-namespace Phly\KeepAChangelog\Version;
+namespace PhlyTest\KeepAChangelog\Version;
 
 use Phly\KeepAChangelog\Common\ChangelogEntryAwareEventInterface;
 use Phly\KeepAChangelog\Common\EditorAwareEventInterface;
 use Phly\KeepAChangelog\Common\EventInterface;
 use Phly\KeepAChangelog\Config;
+use Phly\KeepAChangelog\Version\EditChangelogVersionEvent;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;

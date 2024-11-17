@@ -104,7 +104,10 @@ class ShowConfigEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount, $config): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1 => TestCase::assertStringContainsString('Showing local configuration (.keep-a-changelog.ini)', $message),
+                    1 => TestCase::assertStringContainsString(
+                        'Showing local configuration (.keep-a-changelog.ini)',
+                        $message
+                    ),
                     2 => TestCase::assertEquals($config, $message),
                     3 => TestCase::assertEquals('', $message),
                 };
@@ -127,7 +130,10 @@ class ShowConfigEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount, $config): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1 => TestCase::assertStringContainsString('Showing merged configuration', $message),
+                    1 => TestCase::assertStringContainsString(
+                        'Showing merged configuration',
+                        $message
+                    ),
                     2 => TestCase::assertEquals($config, $message),
                     3 => TestCase::assertEquals('', $message),
                 };
@@ -150,8 +156,14 @@ class ShowConfigEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1 => TestCase::assertStringContainsString('Unable to read configuration', $message),
-                    2 => TestCase::assertStringContainsString('global configuration file "keep-a-changelog.ini"', $message),
+                    1 => TestCase::assertStringContainsString(
+                        'Unable to read configuration',
+                        $message
+                    ),
+                    2 => TestCase::assertStringContainsString(
+                        'global configuration file "keep-a-changelog.ini"',
+                        $message
+                    ),
                 };
                 return true;
             }));

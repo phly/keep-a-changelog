@@ -77,8 +77,7 @@ class PromoteCommandTest extends TestCase
                     TestCase::assertSame($date, $event->releaseDate());
 
                     return true;
-                }
-            ))
+            }))
             ->willReturn($event);
 
         $expectedStatus = $failureStatus ? 1 : 0;
@@ -132,7 +131,6 @@ class PromoteCommandTest extends TestCase
                 }
             }))
             ->will($this->returnCallback(function () use ($invokedCount, $promoteEvent, $milestoneEvent) {
-
                 if ($invokedCount->getInvocationCount() === 1) {
                     return $promoteEvent;
                 }
@@ -186,7 +184,6 @@ class PromoteCommandTest extends TestCase
                 }
             }))
             ->will($this->returnCallback(function () use ($invokedCount, $promoteEvent, $milestoneEvent) {
-
                 if ($invokedCount->getInvocationCount() === 1) {
                     return $promoteEvent;
                 }

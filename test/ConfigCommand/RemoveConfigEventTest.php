@@ -126,8 +126,14 @@ class RemoveConfigEventTest extends TestCase
             ->method('writeln')
             ->with($this->callback(function (string $message) use ($invokedCount): bool {
                 match ($invokedCount->getInvocationCount()) {
-                    1       => TestCase::assertStringContainsString('Operation failed', $message),
-                    2       => TestCase::assertStringContainsString('Unable to remove the file changelog.txt', $message),
+                    1       => TestCase::assertStringContainsString(
+                        'Operation failed',
+                        $message
+                    ),
+                    2       => TestCase::assertStringContainsString(
+                        'Unable to remove the file changelog.txt',
+                        $message
+                    ),
                     default => true,
                 };
                 return true;

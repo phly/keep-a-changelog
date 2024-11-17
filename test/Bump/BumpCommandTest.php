@@ -224,7 +224,7 @@ class BumpCommandTest extends TestCase
                 ['create-milestone', null],
                 ['create-milestone-with-name', '2.0.0 The Big Kahuna'],
             ]));
-        
+
         $command = new BumpCommand(BumpCommand::BUMP_PATCH, $this->dispatcher);
 
         $this->assertSame($expectedStatus, $this->executeCommand($command));

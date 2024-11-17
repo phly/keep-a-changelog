@@ -178,7 +178,6 @@ class BumpToVersionCommandTest extends TestCase
                 return $milestoneEvent;
             }));
 
-
         $input = $this->input;
         $input->expects($this->atLeastOnce())->method('getArgument')->with('version')->willReturn('2.0.0');
         $input

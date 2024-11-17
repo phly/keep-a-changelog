@@ -96,7 +96,10 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
             )
             ->willReturn(false);
 
-        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('Found the following configuration file'));
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Found the following configuration file'));
 
         $this->configureEventToRemove($event);
         $event->expects($this->never())->method('configFileNotFound');
@@ -128,7 +131,10 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
             )
             ->willReturn(true);
 
-        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('Found the following configuration file'));
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Found the following configuration file'));
 
         $this->configureEventToRemove($event);
         $event->expects($this->never())->method('configFileNotFound');
@@ -160,7 +166,10 @@ abstract class AbstractRemoveConfigListenerTestCase extends TestCase
             )
             ->willReturn(true);
 
-        $this->output->expects($this->once())->method('writeln')->with($this->stringContains('Found the following configuration file'));
+        $this->output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with($this->stringContains('Found the following configuration file'));
 
         $this->configureEventToRemove($event);
         $event->expects($this->never())->method('configFileNotFound');

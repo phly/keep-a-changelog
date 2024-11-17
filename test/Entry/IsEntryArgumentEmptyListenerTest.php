@@ -41,4 +41,5 @@ class IsEntryArgumentEmptyListenerTest extends TestCase
         $listener = new IsEntryArgumentEmptyListener();
 
         $this->assertNull($listener($this->event));
+    }
 }

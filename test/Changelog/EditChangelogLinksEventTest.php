@@ -126,7 +126,7 @@ class EditChangelogLinksEventTest extends TestCase
         $this->output
             ->expects($invokedCount)
             ->method('writeln')
-            ->with($this->callback(function($value) use ($invokedCount) {
+            ->with($this->callback(function ($value) use ($invokedCount) {
                 if ($invokedCount->getInvocationCount() !== 1) {
                     return true;
                 }
