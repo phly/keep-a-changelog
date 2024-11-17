@@ -2,13 +2,15 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.13.0 - 2024-11-07
+## 2.13.0 - TBD
 
 ### Added
 
-- Nothing.
+- Adds support for PHP 8.4.
 
 ### Changed
+
+- Bumps the laminas/laminas-diactoros minimum supported version to 3.3.0.
 
 - [#121](https://github.com/phly/keep-a-changelog/pull/121) updates the symfony/console dependency to allow version 7 releases. (Contributed by [fezfez](https://github.com/fezfez))
 
@@ -17,6 +19,8 @@ All notable changes to this project will be documented in this file, in reverse 
 - Nothing.
 
 ### Removed
+
+- Removes support for PHP versions older than 8.1.0.
 
 - Removes support for PHP versions prior to PHP 8.1.
 
