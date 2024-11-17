@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.13.2 - TBD
+## 2.13.2 - 2024-11-17
 
 ### Added
 
@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- Fixed php-scoper configuration to allow phar build to complete successfully.
 
 ## 2.13.1 - 2024-11-17
 
