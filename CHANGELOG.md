@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.13.1 - TBD
+## 2.13.1 - 2024-11-17
 
 ### Added
 
@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- Fixed the workflow for generating the Phar distribution.
 
 ## 2.13.0 - 2024-11-17
 
