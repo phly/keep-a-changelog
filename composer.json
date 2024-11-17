@@ -14,7 +14,7 @@
         "php": "^8.1",
         "composer-runtime-api": "^2.0",
         "knplabs/github-api": "^3.4",
-        "laminas/laminas-diactoros": "^2.4.1",
+        "laminas/laminas-diactoros": "^3.3",
         "m4tthumphrey/php-gitlab-api": "^11.0",
         "php-http/guzzle7-adapter": "^1.0",
         "psr/event-dispatcher": "^1.0",
