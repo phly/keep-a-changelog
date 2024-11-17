@@ -25,8 +25,9 @@ class DiscoverEditorListenerTest extends TestCase
 
     protected function setUp(): void
     {
+        $editor                  = getenv('EDITOR');
         $this->serverSuperGlobal = $_SERVER;
-        $this->editorEnvValue    = getenv('EDITOR') ?? 'vim';
+        $this->editorEnvValue    = $editor === false || $editor === null ? 'vim' : $editor;
         $this->event             = $this->createMock(EditorAwareEventInterface::class);
     }
 
