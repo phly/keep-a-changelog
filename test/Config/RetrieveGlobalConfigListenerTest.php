@@ -68,7 +68,7 @@ class RetrieveGlobalConfigListenerTest extends TestCase
         $provider = $providers->get('github');
         $this->assertInstanceOf(Provider\ProviderSpec::class, $provider);
         $this->assertSame('github', $provider->name());
-        $this->assertSame('https://github.mwop.net', $this->getAttributeValue($provider, 'url'));
+        $this->assertSame('https://github.example.org', $this->getAttributeValue($provider, 'url'));
         $this->assertSame('this-is-a-github-token', $this->getAttributeValue($provider, 'token'));
     }
 }

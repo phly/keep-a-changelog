@@ -82,7 +82,7 @@ class PrependPatchLinkListenerTest extends AbstractPrependLinkListenerTestCase
      */
     public function generateLinkRequested(ProviderInterface&MockObject $provider): void
     {
-        $this->link = sprintf('[#%s](https://git.mwop.net/issue/%s)', $this->identifier, $this->identifier);
+        $this->link = sprintf('[#%s](https://git.example.org/issue/%s)', $this->identifier, $this->identifier);
         $provider
             ->expects($this->atLeastOnce())
             ->method('generatePatchLink')

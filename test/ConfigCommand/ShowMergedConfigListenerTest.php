@@ -72,7 +72,7 @@ class ShowMergedConfigListenerTest extends TestCase
                 TestCase::assertSame('CHANGELOG.txt', $config['defaults']['changelog_file']);
                 TestCase::assertSame('github', $config['defaults']['provider']);
                 TestCase::assertSame('origin', $config['defaults']['remote']);
-                TestCase::assertSame('https://github.mwop.net', $config['providers']['github']['url']);
+                TestCase::assertSame('https://github.example.org', $config['providers']['github']['url']);
                 return true;
             }));
 

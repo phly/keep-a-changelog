@@ -121,7 +121,7 @@ class RetrieveInputOptionsListenerTest extends TestCase
             ->will($this->returnValueMap([
                 ['provider', 'gitlab'],
                 ['provider-token', 'this-is-the-token'],
-                ['provider-url', 'https://git.mwop.net'],
+                ['provider-url', 'https://git.example.org'],
                 ['package', 'some/package'],
             ]));
 

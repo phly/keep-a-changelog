@@ -56,7 +56,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 
     public function testDoesNotNotifyEventOfAnythingIfNoRemotesFound()
     {
-        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.example.org');
         $this->config->expects($this->once())->method('provider')->willReturn($this->provider);
         $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
         $this->event->expects($this->once())->method('config')->willReturn($this->config);
@@ -72,7 +72,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 
     public function testDoesNotNotifyEventOfAnythingIfNoRemoteUrlsFound()
     {
-        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.example.org');
         $this->config->expects($this->once())->method('provider')->willReturn($this->provider);
         $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
         $this->event->expects($this->once())->method('config')->willReturn($this->config);
@@ -93,7 +93,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 
     public function testDoesNotNotifyEventOfAnythingIfNoMatchingRemotesFound()
     {
-        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.example.org');
         $this->config->expects($this->once())->method('provider')->willReturn($this->provider);
         $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
         $this->event->expects($this->once())->method('config')->willReturn($this->config);
@@ -118,7 +118,7 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
 
     public function testNotifiesEventOfFirstMatchingRemoteFound()
     {
-        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.example.org');
         $this->config->expects($this->once())->method('provider')->willReturn($this->provider);
         $this->event->expects($this->once())->method('packageWasFound')->willReturn(false);
         $this->event->expects($this->once())->method('config')->willReturn($this->config);
@@ -132,10 +132,10 @@ class DiscoverPackageFromGitRemoteListenerTest extends TestCase
                 return;
             }
             if (preg_match('/origin/', $command)) {
-                $output = ['me@git.mwop.net:some/package.git'];
+                $output = ['me@git.example.org:some/package.git'];
                 return;
             }
-            $output = ['you@git.mwop.net:another/package.git'];
+            $output = ['you@git.example.org:another/package.git'];
         };
 
         $this->assertNull($listener($this->event));

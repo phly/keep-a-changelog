@@ -79,13 +79,13 @@ class ProviderSpecTest extends TestCase
     {
         $spec = new ProviderSpec('test');
         $spec->setClassName(Provider::class);
-        $spec->setUrl('https://mwop.net');
+        $spec->setUrl('https://example.org');
 
         $provider = $spec->createProvider();
 
         $this->assertInstanceOf(Provider::class, $provider);
         $this->assertNull($provider->package);
         $this->assertNull($provider->token);
-        $this->assertSame('https://mwop.net', $provider->url);
+        $this->assertSame('https://example.org', $provider->url);
     }
 }

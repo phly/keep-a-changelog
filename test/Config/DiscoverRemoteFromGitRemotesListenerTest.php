@@ -67,7 +67,7 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
         $this->event->expects($this->never())->method('reportNoMatchingGitRemoteFound');
         $this->event->expects($this->never())->method('foundRemote');
         $this->event->expects($this->never())->method('setRemotes');
-        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.example.org');
 
         $listener = new DiscoverRemoteFromGitRemotesListener();
 
@@ -83,10 +83,10 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
         $this->event
             ->expects($this->once())
             ->method('reportNoMatchingGitRemoteFound')
-            ->with('git.mwop.net', 'some/package');
+            ->with('git.example.org', 'some/package');
         $this->event->expects($this->never())->method('foundRemote');
         $this->event->expects($this->never())->method('setRemotes');
-        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.example.org');
 
         $listener       = new DiscoverRemoteFromGitRemotesListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
@@ -105,18 +105,18 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
         $this->event
             ->expects($this->once())
             ->method('reportNoMatchingGitRemoteFound')
-            ->with('git.mwop.net', 'some/package');
+            ->with('git.example.org', 'some/package');
         $this->event->expects($this->never())->method('foundRemote');
         $this->event->expects($this->never())->method('setRemotes');
-        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.example.org');
 
         $listener       = new DiscoverRemoteFromGitRemotesListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $output = [
                 'origin https://github.com/some/package.git (push)',
                 'upstream me@gitlab.com:some/package.git (push)',
-                'myself git://git.mwop.net/another/package.git (push)',
-                'readonly git://git.mwop.net/some/package.git (pull)',
+                'myself git://git.example.org/another/package.git (push)',
+                'readonly git://git.example.org/some/package.git (pull)',
             ];
         };
 
@@ -135,14 +135,14 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
             ->with('myself');
         $this->event->expects($this->never())->method('reportNoMatchingGitRemoteFound');
         $this->event->expects($this->never())->method('setRemotes');
-        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.example.org');
 
         $listener       = new DiscoverRemoteFromGitRemotesListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $output = [
                 'origin https://github.com/some/package.git (push)',
                 'upstream me@gitlab.com:some/package.git (push)',
-                'myself git://git.mwop.net/some/package.git (push)',
+                'myself git://git.example.org/some/package.git (push)',
             ];
         };
 
@@ -161,14 +161,14 @@ class DiscoverRemoteFromGitRemotesListenerTest extends TestCase
             ->with(['upstream', 'myself']);
         $this->event->expects($this->never())->method('reportNoMatchingGitRemoteFound');
         $this->event->expects($this->never())->method('foundRemote');
-        $this->provider->expects($this->once())->method('url')->willReturn('https://git.mwop.net');
+        $this->provider->expects($this->once())->method('url')->willReturn('https://git.example.org');
 
         $listener       = new DiscoverRemoteFromGitRemotesListener();
         $listener->exec = function (string $command, array &$output, int &$return) {
             $output = [
                 'origin https://github.com/some/package.git (push)',
-                'upstream me@git.mwop.net:some/package.git (push)',
-                'myself git://git.mwop.net/some/package.git (push)',
+                'upstream me@git.example.org:some/package.git (push)',
+                'myself git://git.example.org/some/package.git (push)',
             ];
         };
 
